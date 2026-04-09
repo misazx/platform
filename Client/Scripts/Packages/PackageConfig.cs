@@ -44,7 +44,7 @@ namespace RoguelikeGame.Packages
 		public AudioConfig Audio { get; set; } = new();
 
 		[JsonPropertyName("customSettings")]
-		public Dictionary<string, object> CustomSettings { get; set; } = new();
+		public Dictionary<string, Variant> CustomSettings { get; set; } = new();
 
 		[JsonPropertyName("lastModified")]
 		public DateTime LastModified { get; set; } = DateTime.Now;

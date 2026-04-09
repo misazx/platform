@@ -267,7 +267,7 @@ namespace RoguelikeGame.UI
 			var descLabel = new Label
 			{
 				Text = package.Description,
-				AutowrapMode = TextServer.AutowrapWordSmart,
+				AutowrapMode = TextServer.AutowrapMode.WordSmart,
 				MouseFilter = MouseFilterEnum.Ignore,
 				CustomMinimumSize = new Vector2(400, 30)
 			};

@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Threading.Tasks;
 using RoguelikeGame.Core;
 using RoguelikeGame.Packages;
 
@@ -192,8 +193,12 @@ namespace RoguelikeGame.UI
 		{
 			if (PackageManager.Instance == null) return;
 
-			int installedCount = PackageManager.Instance.InstalledPackages.Count(p =>
-				p.Value.Status == PackageStatus.Installed);
+			int installedCount = 0;
+			foreach (var p in PackageManager.Instance.InstalledPackages)
+			{
+				if (p.Value.Status == PackageStatus.Installed)
+					installedCount++;
+			}
 
 			int availableCount = PackageManager.Instance.AvailablePackages.Count;
 
@@ -249,8 +254,8 @@ namespace RoguelikeGame.UI
 			{
 				string[] possiblePaths =
 				{
-					"res://Images/Backgrounds/glory.png",
-					"res://Images/Backgrounds/overgrowth.png"
+					"res://GameModes/base_game/Resources/Images/Backgrounds/glory.png",
+					"res://GameModes/base_game/Resources/Images/Backgrounds/overgrowth.png"
 				};
 
 				foreach (var path in possiblePaths)

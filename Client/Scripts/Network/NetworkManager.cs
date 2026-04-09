@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Godot;
+using RoguelikeGame.Core;
 using RoguelikeGame.Network.Core;
 
 namespace RoguelikeGame.Network

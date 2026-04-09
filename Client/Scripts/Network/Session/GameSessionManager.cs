@@ -68,11 +68,11 @@ namespace RoguelikeGame.Network.Session
 		[Signal]
 		public delegate void GameEndedEventHandler(bool victory);
 		[Signal]
-		public delegate void StateSyncedEventHandler(GameState state);
+		public delegate void StateSyncedEventHandler(string roomId, int currentTurn);
 		[Signal]
 		public delegate void TurnChangedEventHandler(int newTurn);
 		[Signal]
-		public delegate void PlayerActionReceivedEventHandler(CardAction action);
+		public delegate void PlayerActionReceivedEventHandler(string playerId, string actionType);
 
 		public override void _Ready()
 		{

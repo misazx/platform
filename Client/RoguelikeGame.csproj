@@ -4,4 +4,16 @@
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="GameModes\base_game\Code\Tests\**" />
+    <Compile Remove="Scripts\Tests\**" />
+    <Compile Remove="GameModes\base_game\Code\Combat\CombatNetworkSync.cs" />
+    <Compile Remove="Scripts\Packages\Samples\SampleExtensions.cs" />
+    <Compile Remove="Scripts\Network\**" />
+    <Compile Remove="Scripts\UI\MainMenuNetworkIntegrator.cs" />
+    <Compile Remove="Scripts\UI\Panels\ConnectionStatusIndicator.cs" />
+    <Compile Remove="Scripts\UI\Panels\LobbyPanel.cs" />
+    <Compile Remove="Scripts\UI\Panels\LoginPanel.cs" />
+    <Compile Remove="Scripts\UI\Panels\MultiplayerPanel.cs" />
+  </ItemGroup>
 </Project>

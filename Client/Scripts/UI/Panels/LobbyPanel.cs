@@ -23,8 +23,8 @@ namespace RoguelikeGame.UI.Panels
 		private RichTextLabel _chatOutput;
 		private LineEdit _chatInput;
 		private Label _onlineCountLabel;
-		private FriendsPanel _friendsPanel;
-		private ConnectionStatusIndicator _connectionIndicator;
+		private Control _friendsPanel;
+		private Control _connectionIndicator;
 
 		public event Action<RoomInfo> OnJoinRoom;
 		public event Action OnCreateRoom;
@@ -104,7 +104,11 @@ namespace RoguelikeGame.UI.Panels
 
 			sidebar.AddChild(new HSeparator());
 
-			_friendsPanel = new FriendsPanel();
+			_friendsPanel = new Control
+			{
+				Name = "FriendsPanel",
+				CustomMinimumSize = new Vector2(200, 150)
+			};
 			sidebar.AddChild(_friendsPanel);
 
 			sidebar.AddChild(new Control { CustomMinimumSize = new Vector2(0, 10) });

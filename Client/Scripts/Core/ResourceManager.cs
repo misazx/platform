@@ -63,8 +63,8 @@ namespace RoguelikeGame.Core
             return audio;
         }
 
-        public AudioStream GetBGM(string name) => LoadAudio($"res://Audio/BGM/{name}.ogg");
-        public AudioStream GetSFX(string name) => LoadAudio($"res://Audio/SFX/{name}.wav");
+        public AudioStream GetBGM(string name) => LoadAudio($"res://GameModes/base_game/Resources/Audio/BGM/{name}.ogg");
+        public AudioStream GetSFX(string name) => LoadAudio($"res://GameModes/base_game/Resources/Audio/SFX/{name}.wav");
 
         public PackedScene LoadScene(string path)
         {

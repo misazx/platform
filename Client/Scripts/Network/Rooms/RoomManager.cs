@@ -83,15 +83,15 @@ namespace RoguelikeGame.Network.Rooms
 		public bool IsHost => InRoom && AuthSystem.Instance?.CurrentUser?.Id == _currentRoom?.HostId;
 
 		[Signal]
-		public delegate void RoomCreatedEventHandler(RoomInfo room);
+		public delegate void RoomCreatedEventHandler(string roomId, string roomName);
 		[Signal]
-		public delegate void RoomJoinedEventHandler(RoomInfo room);
+		public delegate void RoomJoinedEventHandler(string roomId, string roomName);
 		[Signal]
 		public delegate void RoomLeftEventHandler(string roomId);
 		[Signal]
-		public delegate void RoomUpdatedEventHandler(RoomInfo room);
+		public delegate void RoomUpdatedEventHandler(string roomId);
 		[Signal]
-		public delegate void PlayerJoinedRoomEventHandler(PlayerInfo player);
+		public delegate void PlayerJoinedRoomEventHandler(string playerId, string playerName);
 		[Signal]
 		public delegate void PlayerLeftRoomEventHandler(string playerId);
 		[Signal]

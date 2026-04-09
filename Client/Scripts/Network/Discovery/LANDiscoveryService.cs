@@ -34,8 +34,8 @@ namespace RoguelikeGame.Network.Discovery
 
 		private UdpClient _udpClient;
 		private CancellationTokenSource _cts;
-		private Timer _broadcastTimer;
-		private Timer _cleanupTimer;
+		private Godot.Timer _broadcastTimer;
+		private Godot.Timer _cleanupTimer;
 
 		private Dictionary<string, LANHostInfo> _discoveredHosts = new();
 		private bool _isHosting = false;
@@ -50,7 +50,7 @@ namespace RoguelikeGame.Network.Discovery
 		public bool IsSearching => _isSearching;
 
 		[Signal]
-		public delegate void HostDiscoveredEventHandler(LANHostInfo hostInfo);
+		public delegate void HostDiscoveredEventHandler(string hostId, string hostName, string address, int port);
 
 		[Signal]
 		public delegate void HostLostEventHandler(string hostId);

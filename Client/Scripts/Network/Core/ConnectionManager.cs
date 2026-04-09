@@ -20,10 +20,10 @@ namespace RoguelikeGame.Network.Core
 		public static ConnectionManager Instance => _instance;
 
 		public ConnectionMode ActiveMode { get; private set; } = ConnectionMode.Offline;
-		public IConnectionMode ActiveAdapter { get; private set; }
-		public bool IsConnected => ActiveAdapter?.IsConnected ?? false;
+		public IConnectionAdapter ActiveAdapter { get; private set; }
+		public new bool IsConnected => ActiveAdapter?.IsConnected ?? false;
 
-		private Dictionary<ConnectionMode, IConnectionMode> _adapters;
+		private Dictionary<ConnectionMode, IConnectionAdapter> _adapters;
 
 		public override void _Ready()
 		{

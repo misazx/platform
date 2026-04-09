@@ -31,9 +31,9 @@ namespace RoguelikeGame.Network.Friends
 		public IReadOnlyList<FriendInfo> PendingRequests => _pendingRequests.AsReadOnly();
 
 		[Signal]
-		public delegate void FriendsListUpdatedEventHandler(List<FriendInfo> friends);
+		public delegate void FriendsListUpdatedEventHandler();
 		[Signal]
-		public delegate void FriendRequestReceivedEventHandler(FriendInfo friend);
+		public delegate void FriendRequestReceivedEventHandler(string friendId, string friendName);
 		[Signal]
 		public delegate void FriendRequestAcceptedEventHandler(string friendId);
 		[Signal]

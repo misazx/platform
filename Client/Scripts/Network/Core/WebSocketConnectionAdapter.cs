@@ -4,7 +4,7 @@ using Godot;
 
 namespace RoguelikeGame.Network.Core
 {
-	public class WebRTCConnectionAdapter : IConnectionAdapter
+	public partial class WebRTCConnectionAdapter : Node, IConnectionAdapter
 	{
 		private WebSocketPeer _webSocketPeer;
 		private bool _isConnected = false;
@@ -43,7 +43,7 @@ namespace RoguelikeGame.Network.Core
 
 				_isConnected = true;
 
-				GD.Print($"[WebRTCAdapter] ✓ WebSocket连接成功");
+				GD.Print($"[WebRTCAdapter] WebSocket连接成功");
 
 				OnConnected?.Invoke();
 
@@ -137,12 +137,6 @@ namespace RoguelikeGame.Network.Core
 					GD.Print("[WebRTCAdapter] 连接正在关闭...");
 					break;
 			}
-		}
-
-		public new void Dispose()
-		{
-			DisconnectAsync().Wait();
-			_webSocketPeer?.Free();
 		}
 	}
 }

@@ -10,8 +10,8 @@ namespace RoguelikeGame.Core
         public static ResourceGenerator Instance { get; private set; }
 
         private readonly RandomNumberGenerator _rng = new();
-        private const string IMAGES_PATH = "res://Images/";
-        private const string ICONS_PATH = "res://Icons/";
+        private const string IMAGES_PATH = "res://GameModes/base_game/Resources/Images/";
+        private const string ICONS_PATH = "res://GameModes/base_game/Resources/Icons/";
 
         public override void _Ready()
         {

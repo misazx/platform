@@ -261,7 +261,7 @@ namespace RoguelikeGame.Network.Auth
 			return userInfo != null;
 		}
 
-		public void Logout()
+		public void PerformLogout()
 		{
 			GD.Print("[AuthSystem] 用户登出");
 

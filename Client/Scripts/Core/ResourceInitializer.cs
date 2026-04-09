@@ -111,16 +111,16 @@ namespace RoguelikeGame.Core
 
 			var requiredImages = new List<string>
 			{
-				"res://Images/Characters/Ironclad.png",
-				"res://Images/Characters/Silent.png",
-				"res://Images/Characters/Defect.png",
-				"res://Images/Characters/Watcher.png",
-				"res://Images/Characters/Necromancer.png",
-				"res://Images/Characters/Heir.png",
-				"res://Images/Backgrounds/glory.png",
-				"res://Images/Backgrounds/hive.png",
-				"res://Images/Backgrounds/overgrowth.png",
-                "res://Images/Backgrounds/underdocks.png"
+				"res://GameModes/base_game/Resources/Images/Characters/Ironclad.png",
+				"res://GameModes/base_game/Resources/Images/Characters/Silent.png",
+				"res://GameModes/base_game/Resources/Images/Characters/Defect.png",
+				"res://GameModes/base_game/Resources/Images/Characters/Watcher.png",
+				"res://GameModes/base_game/Resources/Images/Characters/Necromancer.png",
+				"res://GameModes/base_game/Resources/Images/Characters/Heir.png",
+				"res://GameModes/base_game/Resources/Images/Backgrounds/glory.png",
+				"res://GameModes/base_game/Resources/Images/Backgrounds/hive.png",
+				"res://GameModes/base_game/Resources/Images/Backgrounds/overgrowth.png",
+                "res://GameModes/base_game/Resources/Images/Backgrounds/underdocks.png"
 			};
 
 			int missingCount = 0;
@@ -165,9 +165,9 @@ namespace RoguelikeGame.Core
 			{
 				{"version", RESOURCES_VERSION},
 				{"flag_exists", Godot.FileAccess.FileExists(RESOURCES_FLAG_FILE)},
-				{"images_count", CountFilesInDirectory("res://Images/")},
-				{"icons_count", CountFilesInDirectory("res://Icons/")},
-				{"audio_count", CountFilesInDirectory("res://Audio/")}
+				{"images_count", CountFilesInDirectory("res://GameModes/base_game/Resources/Images/")},
+				{"icons_count", CountFilesInDirectory("res://GameModes/base_game/Resources/Icons/")},
+				{"audio_count", CountFilesInDirectory("res://GameModes/base_game/Resources/Audio/")}
 			};
 
 			return status;

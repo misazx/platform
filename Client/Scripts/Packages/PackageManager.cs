@@ -100,8 +100,8 @@ namespace RoguelikeGame.Packages
 				Version = "1.0.0",
 				Type = PackageType.BaseGame,
 				Author = "Development Team",
-				IconPath = "res://Icons/Relics/burningblood.png",
-				ThumbnailPath = "res://Images/Backgrounds/glory.png",
+				IconPath = "res://GameModes/base_game/Resources/Icons/Relics/burningblood.png",
+				ThumbnailPath = "res://GameModes/base_game/Resources/Images/Backgrounds/glory.png",
 				IsFree = true,
 				RequiredBaseVersion = "1.0.0",
 				Tags = new List<string> { "roguelike", "card", "strategy", "official" },
@@ -113,8 +113,8 @@ namespace RoguelikeGame.Packages
 					"圣物收集系统",
 					"药水与事件"
 				},
-				EntryScene = "res://Scenes/CombatScene.tscn",
-				ConfigFile = "res://Config/Data/cards.json",
+				EntryScene = "res://GameModes/base_game/Scenes/CombatScene.tscn",
+				ConfigFile = "res://GameModes/base_game/Config/Data/cards.json",
 				ReleaseDate = DateTime.Now,
 				Rating = 4.8,
 				DownloadCount = 10000
@@ -845,7 +845,7 @@ namespace RoguelikeGame.Packages
 					}
 				}
 
-				GD.PrintWarn($"[PackageManager] No config file found for {packageId}, using defaults");
+				GD.PushWarning($"[PackageManager] No config file found for {packageId}, using defaults");
 
 				var defaultConfig = CreateDefaultConfig(packageId);
 				_packageConfigs[packageId] = defaultConfig;
@@ -885,35 +885,35 @@ namespace RoguelikeGame.Packages
 
 				if (parsed.ContainsKey("gameplay"))
 				{
-					config.Gameplay = ParseGameplayConfig(parsed["gameplay"].AsGodot.Collections.Dictionary());
+					config.Gameplay = ParseGameplayConfig((Godot.Collections.Dictionary)parsed["gameplay"]);
 				}
 
 				if (parsed.ContainsKey("difficulty"))
 				{
-					config.Difficulty = ParseDifficultyConfig(parsed["difficulty"].AsGodot.Collections.Dictionary());
+					config.Difficulty = ParseDifficultyConfig((Godot.Collections.Dictionary)parsed["difficulty"]);
 				}
 
 				if (parsed.ContainsKey("content"))
 				{
-					config.Content = ParseContentConfig(parsed["content"].AsGodot.Collections.Dictionary());
+					config.Content = ParseContentConfig((Godot.Collections.Dictionary)parsed["content"]);
 				}
 
 				if (parsed.ContainsKey("ui"))
 				{
-					config.UI = ParseUIConfig(parsed["ui"].AsGodot.Collections.Dictionary());
+					config.UI = ParseUIConfig((Godot.Collections.Dictionary)parsed["ui"]);
 				}
 
 				if (parsed.ContainsKey("audio"))
 				{
-					config.Audio = ParseAudioConfig(parsed["audio"].AsGodot.Collections.Dictionary());
+					config.Audio = ParseAudioConfig((Godot.Collections.Dictionary)parsed["audio"]);
 				}
 
 				if (parsed.ContainsKey("customSettings"))
 				{
-					var customDict = parsed["customSettings"].AsGodot.Collections.Dictionary();
+					var customDict = (Godot.Collections.Dictionary)parsed["customSettings"];
 					foreach (var key in customDict.Keys)
 					{
-						config.CustomSettings[key.AsString()] = customDict[key].Variant;
+						config.CustomSettings[key.AsString()] = customDict[key];
 					}
 				}
 
@@ -1011,7 +1011,7 @@ namespace RoguelikeGame.Packages
 			var result = new Dictionary<string, float>();
 			if (!parent.ContainsKey(key)) return result;
 
-			var dict = parent[key].AsGodot.Collections.Dictionary();
+			var dict = (Godot.Collections.Dictionary)parent[key];
 			foreach (var k in dict.Keys)
 			{
 				result[k.AsString()] = (float)dict[k].AsDouble();
@@ -1024,7 +1024,7 @@ namespace RoguelikeGame.Packages
 			var result = new Dictionary<string, int>();
 			if (!parent.ContainsKey(key)) return result;
 
-			var dict = parent[key].AsGodot.Collections.Dictionary();
+			var dict = (Godot.Collections.Dictionary)parent[key];
 			foreach (var k in dict.Keys)
 			{
 				result[k.AsString()] = ConvertToInt(dict[k]);
@@ -1071,7 +1071,7 @@ namespace RoguelikeGame.Packages
 					{ "content", SerializeContentConfig(config.Content) },
 					{ "ui", SerializeUIConfig(config.UI) },
 					{ "audio", SerializeAudioConfig(config.Audio) },
-					{ "customSettings", new Godot.Collections.Dictionary(config.CustomSettings) },
+					{ "customSettings", SerializeCustomSettings(config.CustomSettings) },
 					{ "lastModified", DateTime.Now.ToString("o") }
 				};
 
@@ -1115,11 +1115,10 @@ namespace RoguelikeGame.Packages
 			return new Godot.Collections.Dictionary
 			{
 				{ "defaultDifficulty", difficulty.DefaultDifficulty },
-				{ "availableDifficulties", new Godot.Collections.Array(difficulty.AvailableDifficulties) },
-				{ "enemyScaling", new Godot.Collections.Dictionary(difficulty.EnemyScaling) },
-				{ "goldMultiplier", new Godot.Collections.Dictionary(difficulty.GoldMultiplier) },
-				{ "hpModifier", new Godot.Collections.Dictionary(difficulty.HpModifier.Select(kvp => 
-					new Godot.Collections.Dictionary { { kvp.Key, kvp.Value } }).ToArray()) }
+				{ "availableDifficulties", ToGodotArray(difficulty.AvailableDifficulties) },
+				{ "enemyScaling", ToGodotDict(difficulty.EnemyScaling) },
+				{ "goldMultiplier", ToGodotDict(difficulty.GoldMultiplier) },
+				{ "hpModifier", ToGodotDict(difficulty.HpModifier) }
 			};
 		}
 
@@ -1127,12 +1126,12 @@ namespace RoguelikeGame.Packages
 		{
 			return new Godot.Collections.Dictionary
 			{
-				{ "enabledCharacters", new Godot.Collections.Array(content.EnabledCharacters) },
-				{ "disabledCharacters", new Godot.Collections.Array(content.DisabledCharacters) },
-				{ "enabledCardPools", new Godot.Collections.Array(content.EnabledCardPools) },
-				{ "customCardSets", new Godot.Collections.Array(content.CustomCardSets) },
-				{ "enabledRelicPools", new Godot.Collections.Array(content.EnabledRelicPools) },
-				{ "enabledEventPools", new Godot.Collections.Array(content.EnabledEventPools) },
+				{ "enabledCharacters", ToGodotArray(content.EnabledCharacters) },
+				{ "disabledCharacters", ToGodotArray(content.DisabledCharacters) },
+				{ "enabledCardPools", ToGodotArray(content.EnabledCardPools) },
+				{ "customCardSets", ToGodotArray(content.CustomCardSets) },
+				{ "enabledRelicPools", ToGodotArray(content.EnabledRelicPools) },
+				{ "enabledEventPools", ToGodotArray(content.EnabledEventPools) },
 				{ "maxFloorCount", content.MaxFloorCount }
 			};
 		}
@@ -1166,6 +1165,46 @@ namespace RoguelikeGame.Packages
 				{ "enableDynamicMusic", audio.EnableDynamicMusic },
 				{ "combatMusicIntensity", audio.CombatMusicIntensity }
 			};
+		}
+
+		private Godot.Collections.Dictionary SerializeCustomSettings(Dictionary<string, Variant> settings)
+		{
+			var dict = new Godot.Collections.Dictionary();
+			foreach (var kvp in settings)
+			{
+				dict[kvp.Key] = kvp.Value;
+			}
+			return dict;
+		}
+
+		private Godot.Collections.Array ToGodotArray(List<string> list)
+		{
+			var arr = new Godot.Collections.Array();
+			foreach (var item in list)
+			{
+				arr.Add(item);
+			}
+			return arr;
+		}
+
+		private Godot.Collections.Dictionary ToGodotDict(Dictionary<string, float> dict)
+		{
+			var result = new Godot.Collections.Dictionary();
+			foreach (var kvp in dict)
+			{
+				result[kvp.Key] = kvp.Value;
+			}
+			return result;
+		}
+
+		private Godot.Collections.Dictionary ToGodotDict(Dictionary<string, int> dict)
+		{
+			var result = new Godot.Collections.Dictionary();
+			foreach (var kvp in dict)
+			{
+				result[kvp.Key] = kvp.Value;
+			}
+			return result;
 		}
 
 		private PackageConfig CreateDefaultConfig(string packageId)

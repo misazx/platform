@@ -17,19 +17,13 @@ namespace RoguelikeGame.Core
         public delegate void NetworkDisconnectedEventHandler();
 
         [Signal]
-        public delegate void NetworkErrorHandler(string error);
+        public delegate void NetworkErrorEventHandler(string error);
 
         [Signal]
         public delegate void NetworkDataReceivedEventHandler(byte[] data);
 
         [Signal]
-        public delegate void GameStateUpdatedEventHandler(object state);
-
-        public event Action NetworkConnected;
-        public event Action NetworkDisconnected;
-        public event Action<string> NetworkError;
-        public event Action<byte[]> NetworkDataReceived;
-        public event Action<object> GameStateUpdated;
+        public delegate void GameStateUpdatedEventHandler(Variant state);
 
         public override void _Ready()
         {
