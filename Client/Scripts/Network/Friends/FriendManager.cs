@@ -23,7 +23,7 @@ namespace RoguelikeGame.Network.Friends
 
 		public static FriendManager Instance => _instance;
 
-		private HttpClient _httpClient;
+		private System.Net.Http.HttpClient _httpClient;
 		private List<FriendInfo> _friends = new();
 		private List<FriendInfo> _pendingRequests = new();
 

@@ -33,7 +33,7 @@ namespace RoguelikeGame.Network.Auth
 
 		public static AuthSystem Instance => _instance;
 
-		private HttpClient _httpClient;
+		private System.Net.Http.HttpClient _httpClient;
 		private string _baseUrl = "http://127.0.0.1:5000";
 		private string _currentToken = "";
 		private UserInfo? _currentUser;

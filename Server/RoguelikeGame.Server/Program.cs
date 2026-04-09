@@ -1,4 +1,12 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using RoguelikeGame.Server.Data;
+using RoguelikeGame.Server.Services;
+using RoguelikeGame.Server.Hubs;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using RoguelikeGame.Server.Services;
 
 namespace RoguelikeGame.Server.Controllers

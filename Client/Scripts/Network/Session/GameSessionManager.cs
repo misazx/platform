@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Godot;
 using RoguelikeGame.Core;
 using RoguelikeGame.Network.Rooms;
