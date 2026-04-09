@@ -1,0 +1,2 @@
+会话时需要时刻注意调用mcp工具 tranycode-core对应mcp工具查看分析
+每次会话完成提交git

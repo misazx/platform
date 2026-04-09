@@ -1,0 +1,126 @@
+{
+  "version": "1.0.0",
+  "effects": [
+    {
+      "id": "slash_attack",
+      "name": "斩击攻击",
+      "type": "SlashEffect",
+      "duration": 0.25,
+      "config": {
+        "width": 3.0,
+        "color": "#FFFFFF",
+        "zIndex": 50,
+        "startPoint": [-30, -40],
+        "endPoint": [30, 40]
+      }
+    },
+    {
+      "id": "magic_cast",
+      "name": "魔法施放",
+      "type": "MagicCastEffect",
+      "duration": 0.6,
+      "config": {
+        "particleCount": 8,
+        "particleColor": "#8080FFCC",
+        "particleSizeMin": 4,
+        "particleSizeMax": 10,
+        "coreColor": "#9980FF66",
+        "coreSize": 30,
+        "zIndex": 10
+      }
+    },
+    {
+      "id": "enemy_death",
+      "name": "敌人死亡",
+      "type": "DeathEffect",
+      "duration": 0.8,
+      "config": {
+        "particleCount": 12,
+        "particleColor": "#FF4D33E6",
+        "particleSizeMin": 3,
+        "particleSizeMax": 8,
+        "burstColor": "#FF664D99",
+        "burstSize": 40,
+        "zIndex": 10
+      }
+    },
+    {
+      "id": "block_spark",
+      "name": "格挡火花",
+      "type": "BlockSparkEffect",
+      "duration": 0.35,
+      "config": {
+        "sparkCount": 6,
+        "sparkColor": "#6699FFFF",
+        "sparkWidth": 2,
+        "sparkHeightMin": 6,
+        "sparkHeightMax": 10,
+        "zIndex": 10
+      }
+    },
+    {
+      "id": "heal_glow",
+      "name": "治疗光辉",
+      "type": "HealGlowEffect",
+      "duration": 0.7,
+      "config": {
+        "glowColor": "#4DFF6680",
+        "glowSize": 50,
+        "riseCount": 5,
+        "riseColor": "#66FF80CC",
+        "riseWidth": 3,
+        "riseHeightMin": 8,
+        "riseHeightMax": 14,
+        "zIndex": 10
+      }
+    },
+    {
+      "id": "damage_burst",
+      "name": "伤害爆发",
+      "type": "DamageBurstEffect",
+      "duration": 0.4,
+      "config": {
+        "burstColor": "#FF4033B3",
+        "burstSize": 40,
+        "zIndex": 5
+      }
+    },
+    {
+      "id": "card_play",
+      "name": "卡牌打出",
+      "type": "CardPlayEffect",
+      "duration": 0.3,
+      "config": {
+        "flashColor": "#FFFFFF4D",
+        "flashWidth": 50,
+        "flashHeight": 70,
+        "zIndex": 5
+      }
+    },
+    {
+      "id": "relic_activate",
+      "name": "遗物激活",
+      "type": "RelicActivateEffect",
+      "duration": 0.6,
+      "config": {
+        "ringColor": "#FFD94D80",
+        "ringSize": 60,
+        "starCount": 8,
+        "starColor": "#FFEB66E6",
+        "starSize": 4,
+        "zIndex": 10
+      }
+    },
+    {
+      "id": "gold_pickup",
+      "name": "金币拾取",
+      "type": "GoldPickupEffect",
+      "duration": 0.5,
+      "config": {
+        "coinColor": "#FFD933",
+        "coinSize": 24,
+        "zIndex": 10
+      }
+    }
+  ]
+}

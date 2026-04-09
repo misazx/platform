@@ -1,0 +1,117 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="杀戮尖塔2"
+run/main_scene="res://Scenes/Main.tscn"
+config/features=PackedStringArray("4.6", "C#", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+EventBus="*res://Scripts/Core/EventBus.cs"
+ResourceManager="*res://Scripts/Core/ResourceManager.cs"
+CardDatabase="*res://Scripts/Database/CardDatabase.cs"
+CharacterDatabase="*res://Scripts/Database/CharacterDatabase.cs"
+EnemyDatabase="*res://Scripts/Database/EnemyDatabase.cs"
+EventDatabase="*res://Scripts/Database/EventDatabase.cs"
+PotionDatabase="*res://Scripts/Database/PotionDatabase.cs"
+RelicDatabase="*res://Scripts/Database/RelicDatabase.cs"
+GameManager="*res://Scripts/Core/GameManager.cs"
+CombatManager="*res://Scripts/Core/CombatManager.cs"
+MapGenerator="*res://Scripts/Generation/MapGenerator.cs"
+DungeonGenerator="*res://Scripts/Generation/DungeonGenerator.cs"
+ShopManager="*res://Scripts/Systems/ShopManager.cs"
+WaveManager="*res://Scripts/Systems/WaveManager.cs"
+ItemManager="*res://Scripts/Systems/ItemManager.cs"
+UnitManager="*res://Scripts/Systems/UnitManager.cs"
+ObjectPoolManager="*res://Scripts/Systems/ObjectPoolManager.cs"
+AudioManager="*res://Scripts/Audio/AudioManager.cs"
+UIManager="*res://Scripts/UI/UIManager.cs"
+MainMenuController="*res://Scripts/UI/MainMenuController.cs"
+ArtGenerator="*res://Scripts/Core/ArtGenerator.cs"
+ParticleManager="*res://Scripts/Effects/ParticleManager.cs"
+TimelineManager="*res://Scripts/Database/TimelineManager.cs"
+AchievementSystem="*res://Scripts/Database/AchievementSystem.cs"
+EnhancedSaveSystem="*res://Scripts/Systems/EnhancedSaveSystem.cs"
+TutorialManager="*res://Scripts/Systems/TutorialManager.cs"
+AchievementManager="*res://Scripts/Systems/AchievementManager.cs"
+ResourceGenerator="*res://Scripts/Core/ResourceGenerator.cs"
+AudioGenerator="*res://Scripts/Audio/AudioGenerator.cs"
+ResourceInitializer="*res://Scripts/Core/ResourceInitializer.cs"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[dotnet]
+
+project/assembly_name="RoguelikeGame"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/asset_matcher/plugin.cfg", "res://addons/trany_bridge/plugin.cfg")
+
+[i18n]
+
+locale/translation_remaps={}
+locale/fallback="zh_CN"
+locale/locales=["zh_CN"]
+
+[input]
+
+move_up={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":87,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+move_down={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":83,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+move_left={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":65,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+move_right={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":68,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+confirm={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":32,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194309,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194310,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+cancel={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194305,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+
+[locale]
+
+translations=PackedStringArray("res://Locales/zh_CN.translation")
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+rendering_device/driver.windows="d3d12"

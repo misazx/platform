@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "tranycode-core": {
+      "command": "python3",
+      "args": ["/Users/zhuyong/trae-game/.trany/mcps/tranycode-core/main.py"],
+      "cwd": "/Users/zhuyong/trae-game"
+    }
+  }
+}

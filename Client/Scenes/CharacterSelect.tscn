@@ -1,0 +1,128 @@
+[gd_scene load_steps=2 format=3 uid="uid://charselect001"]
+
+[ext_resource type="Script" path="res://Scripts/UI/CharacterSelect.cs" id="1_charselect"]
+
+[node name="CharacterSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_charselect")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.04, 0.1, 1)
+
+[node name="HeaderBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 50.0
+
+[node name="BackButton" type="Button" parent="HeaderBar"]
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+text = "返回"
+
+[node name="Spacer" type="Control" parent="HeaderBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TitleLabel" type="Label" parent="HeaderBar"]
+layout_mode = 2
+text = "选择角色"
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="HeaderBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CharGrid" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -480.0
+offset_top = -180.0
+offset_right = 480.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 5
+
+[node name="DescriptionPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -160.0
+offset_right = -40.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="DescVBox" type="VBoxContainer" parent="DescriptionPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 15.0
+offset_right = -20.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NameLabel" type="Label" parent="DescriptionPanel/DescVBox"]
+layout_mode = 2
+text = "选择一个角色"
+horizontal_alignment = 1
+
+[node name="ClassLabel" type="Label" parent="DescriptionPanel/DescVBox"]
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+
+[node name="DescLabel" type="RichTextLabel" parent="DescriptionPanel/DescVBox"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "点击上方角色卡片查看详情"
+fit_content = true
+
+[node name="BottomBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -55.0
+offset_right = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="SpacerLeft" type="Control" parent="BottomBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ConfirmButton" type="Button" parent="BottomBar"]
+custom_minimum_size = Vector2(160, 45)
+layout_mode = 2
+text = "确认选择"
+
+[node name="SpacerRight" type="Control" parent="BottomBar"]
+layout_mode = 2
+size_flags_horizontal = 3

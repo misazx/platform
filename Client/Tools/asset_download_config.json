@@ -1,0 +1,296 @@
+{
+	"version": "1.0.0",
+	"description": "AI智能美术资源匹配下载配置",
+
+	"ai": {
+		"provider": "doubao",
+		"model": "doubao-seed-2-0-pro-260215",
+		"api_url": "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+		"api_key": "dae84b47-92fc-4afa-bdcc-4e8bf99b486b",
+		"prompt_template": "你是一个游戏美术资源匹配专家。给定一个游戏资源需求描述和一组可选的Kenney素材文件名列表，请从列表中选择最匹配的素材文件名。只返回文件名，不要解释。\n\n需求: {requirement}\n\n可选素材:\n{candidates}\n\n最匹配的文件名:"
+	},
+
+	"download_sources": {
+		"kenney": {
+			"base_url": "https://kenney.nl/assets/",
+			"enabled": true,
+			"packs": {
+				"ui-pack": {"priority": 10, "type": "ui"},
+				"platformer-characters": {"priority": 9, "type": "character"},
+				"monster-builder-pack": {"priority": 8, "type": "enemy"},
+				"1-bit-pack": {"priority": 7, "type": "tileset"},
+				"tiny-dungeon": {"priority": 6, "type": "tileset"},
+				"impact-sounds": {"priority": 10, "type": "sfx"},
+				"interface-sounds": {"priority": 9, "type": "sfx"},
+				"music-jingles": {"priority": 10, "type": "bgm"},
+				"simplified-platformer-pack": {"priority": 5, "type": "character"},
+				"particle-pack": {"priority": 4, "type": "effect"}
+			}
+		}
+	},
+
+	"resource_mappings": {
+		"Icons/Cards/strike.png": {
+			"description": "攻击卡牌图标 - 红色剑/武器符号",
+			"category": "card_attack",
+			"keywords": ["sword", "attack", "strike", "cross", "weapon"],
+			"preferred_color": "red"
+		},
+		"Icons/Cards/defend.png": {
+			"description": "防御卡牌图标 - 蓝色盾牌符号",
+			"category": "card_defense",
+			"keywords": ["shield", "defend", "block", "checkmark", "armor"],
+			"preferred_color": "blue"
+		},
+		"Icons/Cards/bash.png": {
+			"description": "重击卡牌图标 - 红色星星/爆炸",
+			"category": "card_attack",
+			"keywords": ["star", "bash", "explosion", "impact"],
+			"preferred_color": "red"
+		},
+		"Icons/Cards/cleave.png": {
+			"description": "横扫卡牌图标 - 红色圆形/范围攻击",
+			"category": "card_attack",
+			"keywords": ["circle", "cleave", "sweep", "area"],
+			"preferred_color": "red"
+		},
+		"Icons/Cards/iron_wave.png": {
+			"description": "铁浪卡牌图标 - 蓝色方形/波浪",
+			"category": "card_attack",
+			"keywords": ["square", "wave", "iron", "outline"],
+			"preferred_color": "blue"
+		},
+		"Icons/Skills/fireball.png": {
+			"description": "火球技能图标 - 红色火焰/星星",
+			"category": "skill_fire",
+			"keywords": ["fire", "star", "flame", "explosion"],
+			"preferred_color": "red"
+		},
+		"Icons/Skills/heal.png": {
+			"description": "治疗技能图标 - 绿色十字/心形",
+			"category": "skill_heal",
+			"keywords": ["heal", "heart", "cross", "checkmark", "plus"],
+			"preferred_color": "green"
+		},
+		"Icons/Skills/dash.png": {
+			"description": "冲刺技能图标 - 蓝色箭头",
+			"category": "skill_dash",
+			"keywords": ["dash", "arrow", "speed", "right"],
+			"preferred_color": "blue"
+		},
+		"Icons/Skills/iron_skin.png": {
+			"description": "铁皮技能图标 - 黄色方形/盾牌",
+			"category": "skill_defense",
+			"keywords": ["shield", "armor", "square", "iron", "skin"],
+			"preferred_color": "yellow"
+		},
+		"Icons/Items/iron_sword.png": {
+			"description": "铁剑物品图标 - 武器/剑",
+			"category": "item_weapon",
+			"keywords": ["sword", "weapon", "head", "warrior"],
+			"preferred_color": "grey"
+		},
+		"Icons/Items/health_potion_small.png": {
+			"description": "小治疗药水图标 - 红色瓶子",
+			"category": "item_potion",
+			"keywords": ["potion", "bottle", "health", "red"],
+			"preferred_color": "red"
+		},
+		"Icons/Items/health_potion_large.png": {
+			"description": "大治疗药水图标 - 红色大瓶子",
+			"category": "item_potion",
+			"keywords": ["potion", "bottle", "health", "large"],
+			"preferred_color": "red"
+		},
+		"Icons/Items/steel_armor.png": {
+			"description": "钢甲物品图标 - 灰色盔甲",
+			"category": "item_armor",
+			"keywords": ["armor", "shield", "steel", "grey"],
+			"preferred_color": "grey"
+		},
+		"Icons/Relics/burning_blood.png": {
+			"description": "燃烧之血遗物图标 - 红色火焰/星星",
+			"category": "relic_attack",
+			"keywords": ["fire", "blood", "star", "burning", "flame"],
+			"preferred_color": "red"
+		},
+		"Icons/Relics/anchor.png": {
+			"description": "锚遗物图标 - 蓝色圆形/锚形",
+			"category": "relic_defense",
+			"keywords": ["anchor", "circle", "blue", "hold"],
+			"preferred_color": "blue"
+		},
+		"Icons/Relics/lantern.png": {
+			"description": "灯笼遗物图标 - 黄色发光",
+			"category": "relic_utility",
+			"keywords": ["lantern", "light", "glow", "star", "yellow"],
+			"preferred_color": "yellow"
+		},
+		"Icons/Relics/ice_cream.png": {
+			"description": "冰淇淋遗物图标 - 白色/蓝色",
+			"category": "relic_special",
+			"keywords": ["ice", "cream", "cold", "blue", "white"],
+			"preferred_color": "blue"
+		},
+		"Icons/Rest/heal.png": {
+			"description": "篝火治疗图标 - 绿色心形/十字",
+			"category": "rest_heal",
+			"keywords": ["heal", "heart", "cross", "plus", "green"],
+			"preferred_color": "green"
+		},
+		"Icons/Rest/upgrade.png": {
+			"description": "篝火升级图标 - 黄色向上箭头",
+			"category": "rest_upgrade",
+			"keywords": ["upgrade", "arrow", "up", "star", "yellow"],
+			"preferred_color": "yellow"
+		},
+		"Icons/Rest/recall.png": {
+			"description": "篝火回忆图标 - 蓝色循环箭头",
+			"category": "rest_recall",
+			"keywords": ["recall", "cycle", "arrow", "loop", "blue"],
+			"preferred_color": "blue"
+		},
+		"Icons/Rest/smith.png": {
+			"description": "篝火锻造图标 - 橙色锤子/工具",
+			"category": "rest_smith",
+			"keywords": ["smith", "hammer", "tool", "forge", "orange"],
+			"preferred_color": "orange"
+		},
+		"Icons/Achievements/FirstVictory.png": {
+			"description": "首次胜利成就图标 - 金色奖杯",
+			"category": "achievement",
+			"keywords": ["trophy", "victory", "star", "gold", "yellow"],
+			"preferred_color": "yellow"
+		},
+		"Icons/Achievements/Kill100.png": {
+			"description": "击杀100成就图标 - 红色骷髅",
+			"category": "achievement",
+			"keywords": ["skull", "kill", "cross", "red", "death"],
+			"preferred_color": "red"
+		},
+		"Icons/Achievements/AllRelics.png": {
+			"description": "全遗物成就图标 - 紫色钻石",
+			"category": "achievement",
+			"keywords": ["diamond", "relic", "gem", "purple", "star"],
+			"preferred_color": "purple"
+		},
+		"Icons/Achievements/NoDamage.png": {
+			"description": "无伤成就图标 - 绿色盾牌",
+			"category": "achievement",
+			"keywords": ["shield", "protect", "green", "safe", "checkmark"],
+			"preferred_color": "green"
+		},
+		"Images/Backgrounds/glory.png": {
+			"description": "荣耀背景 - 暖色调城堡/神殿",
+			"category": "background",
+			"keywords": ["glory", "castle", "temple", "warm", "gold"],
+			"size": [1280, 720]
+		},
+		"Images/Backgrounds/hive.png": {
+			"description": "蜂巢背景 - 棕色洞穴/巢穴",
+			"category": "background",
+			"keywords": ["hive", "cave", "nest", "brown", "dark"],
+			"size": [1280, 720]
+		},
+		"Images/Backgrounds/overgrowth.png": {
+			"description": "丛林背景 - 绿色森林/藤蔓",
+			"category": "background",
+			"keywords": ["forest", "jungle", "green", "nature", "overgrowth"],
+			"size": [1280, 720]
+		},
+		"Images/Backgrounds/underdocks.png": {
+			"description": "地下码头背景 - 蓝灰色水下/码头",
+			"category": "background",
+			"keywords": ["dock", "water", "underground", "blue", "dark"],
+			"size": [1280, 720]
+		},
+		"Images/Potions/HealthPotion.png": {
+			"description": "治疗药水大图 - 红色瓶子",
+			"category": "potion",
+			"keywords": ["potion", "bottle", "red", "health"],
+			"size": [56, 56]
+		},
+		"Images/Potions/StrengthPotion.png": {
+			"description": "力量药水大图 - 橙色瓶子",
+			"category": "potion",
+			"keywords": ["potion", "bottle", "orange", "strength"],
+			"size": [56, 56]
+		},
+		"Images/Potions/BlockPotion.png": {
+			"description": "格挡药水大图 - 蓝色瓶子",
+			"category": "potion",
+			"keywords": ["potion", "bottle", "blue", "block", "shield"],
+			"size": [56, 56]
+		},
+		"Images/Potions/FirePotion.png": {
+			"description": "火焰药水大图 - 红橙色瓶子",
+			"category": "potion",
+			"keywords": ["potion", "bottle", "fire", "red", "orange"],
+			"size": [56, 56]
+		},
+		"Images/Potions/EnergyPotion.png": {
+			"description": "能量药水大图 - 黄色瓶子",
+			"category": "potion",
+			"keywords": ["potion", "bottle", "energy", "yellow", "lightning"],
+			"size": [56, 56]
+		},
+		"Images/Events/BigFish.png": {
+			"description": "大鱼事件插图 - 水中巨鱼",
+			"category": "event",
+			"keywords": ["fish", "water", "big", "sea", "lake"],
+			"size": [300, 200]
+		},
+		"Images/Events/ShiningLight.png": {
+			"description": "闪光事件插图 - 发光的神圣光芒",
+			"category": "event",
+			"keywords": ["light", "shine", "glow", "holy", "star"],
+			"size": [300, 200]
+		},
+		"Images/Events/CursedTome.png": {
+			"description": "诅咒之书事件插图 - 黑色魔法书",
+			"category": "event",
+			"keywords": ["book", "tome", "curse", "dark", "magic"],
+			"size": [300, 200]
+		},
+		"Images/Relics/BurningBlood.png": {
+			"description": "燃烧之血遗物大图 - 红色火焰液体",
+			"category": "relic_image",
+			"keywords": ["blood", "fire", "burning", "red", "flame"],
+			"size": [80, 80]
+		},
+		"Images/Relics/Anchor.png": {
+			"description": "锚遗物大图 - 金属锚",
+			"category": "relic_image",
+			"keywords": ["anchor", "metal", "grey", "hold"],
+			"size": [80, 80]
+		},
+		"Images/Relics/Lantern.png": {
+			"description": "灯笼遗物大图 - 发光灯笼",
+			"category": "relic_image",
+			"keywords": ["lantern", "light", "glow", "yellow"],
+			"size": [80, 80]
+		},
+		"Images/Relics/IceCream.png": {
+			"description": "冰淇淋遗物大图 - 冰淇淋甜筒",
+			"category": "relic_image",
+			"keywords": ["ice", "cream", "cold", "white", "blue"],
+			"size": [80, 80]
+		}
+	},
+
+	"size_presets": {
+		"card_icon": [120, 170],
+		"enemy_icon": [128, 128],
+		"enemy_full": [256, 256],
+		"character_portrait": [400, 600],
+		"relic_icon": [64, 64],
+		"skill_icon": [64, 64],
+		"item_icon": [64, 64],
+		"rest_icon": [48, 48],
+		"achievement_icon": [64, 64],
+		"potion_icon": [56, 56],
+		"relic_image": [80, 80],
+		"event_image": [300, 200],
+		"background": [1280, 720]
+	}
+}

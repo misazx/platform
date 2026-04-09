@@ -1,0 +1,12 @@
+#!/bin/bash
+# 杀戮尖塔2 打包工具启动器
+
+# 获取脚本所在目录
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# 项目根目录
+PROJECT_ROOT="/Users/zhuyong/trae-game"
+
+cd "$PROJECT_ROOT" || exit 1
+
+exec /usr/bin/python3 "$PROJECT_ROOT/build_gui.py" "$@"

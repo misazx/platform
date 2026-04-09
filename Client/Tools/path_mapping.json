@@ -1,0 +1,230 @@
+{
+  "generated_at": "2026-04-10T01:41:56.761358",
+  "version": "1.0",
+  "mappings": {
+    "base_game": [
+      {
+        "type": "file",
+        "old_path": "res://Config/Data/cards.json",
+        "new_path": "res://GameModes/base_game/Config/cards.json",
+        "description": "cards.json"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Config/Data/characters.json",
+        "new_path": "res://GameModes/base_game/Config/characters.json",
+        "description": "characters.json"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Config/Data/enemies.json",
+        "new_path": "res://GameModes/base_game/Config/enemies.json",
+        "description": "enemies.json"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Config/Data/events.json",
+        "new_path": "res://GameModes/base_game/Config/events.json",
+        "description": "events.json"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Config/Data/relics.json",
+        "new_path": "res://GameModes/base_game/Config/relics.json",
+        "description": "relics.json"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Config/Data/potions.json",
+        "new_path": "res://GameModes/base_game/Config/potions.json",
+        "description": "potions.json"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Config/Data/effects.json",
+        "new_path": "res://GameModes/base_game/Config/effects.json",
+        "description": "effects.json"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Config/Data/audio.json",
+        "new_path": "res://GameModes/base_game/Config/audio.json",
+        "description": "audio.json"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Packages/base_game/base_game_config.json",
+        "new_path": "res://GameModes/base_game/package_config.json",
+        "description": "base_game_config.json"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Scenes/CombatScene.tscn",
+        "new_path": "res://GameModes/base_game/Scenes/CombatScene.tscn",
+        "description": "CombatScene.tscn"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Scenes/CharacterSelect.tscn",
+        "new_path": "res://GameModes/base_game/Scenes/CharacterSelect.tscn",
+        "description": "CharacterSelect.tscn"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Scenes/MainMenu.tscn",
+        "new_path": "res://GameModes/base_game/Scenes/MainMenu.tscn",
+        "description": "MainMenu.tscn"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Scenes/MapScene.tscn",
+        "new_path": "res://GameModes/base_game/Scenes/MapScene.tscn",
+        "description": "MapScene.tscn"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Scenes/EventPanel.tscn",
+        "new_path": "res://GameModes/base_game/Scenes/EventPanel.tscn",
+        "description": "EventPanel.tscn"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Scenes/ShopPanel.tscn",
+        "new_path": "res://GameModes/base_game/Scenes/ShopPanel.tscn",
+        "description": "ShopPanel.tscn"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Scenes/RestSitePanel.tscn",
+        "new_path": "res://GameModes/base_game/Scenes/RestSitePanel.tscn",
+        "description": "RestSitePanel.tscn"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Scenes/SettingsPanel.tscn",
+        "new_path": "res://GameModes/base_game/Scenes/SettingsPanel.tscn",
+        "description": "SettingsPanel.tscn"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Scenes/GameOverScreen.tscn",
+        "new_path": "res://GameModes/base_game/Scenes/GameOverScreen.tscn",
+        "description": "GameOverScreen.tscn"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Scenes/VictoryScreen.tscn",
+        "new_path": "res://GameModes/base_game/Scenes/VictoryScreen.tscn",
+        "description": "VictoryScreen.tscn"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Scenes/TutorialOverlay.tscn",
+        "new_path": "res://GameModes/base_game/Scenes/TutorialOverlay.tscn",
+        "description": "TutorialOverlay.tscn"
+      },
+      {
+        "type": "file",
+        "old_path": "res://Scenes/AchievementPopup.tscn",
+        "new_path": "res://GameModes/base_game/Scenes/AchievementPopup.tscn",
+        "description": "AchievementPopup.tscn"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Images/Backgrounds",
+        "new_path": "res://GameModes/base_game/Resources/Images/Backgrounds",
+        "description": "Images/Backgrounds contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Images/Characters",
+        "new_path": "res://GameModes/base_game/Resources/Images/Characters",
+        "description": "Images/Characters contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Images/Enemies",
+        "new_path": "res://GameModes/base_game/Resources/Images/Enemies",
+        "description": "Images/Enemies contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Images/Events",
+        "new_path": "res://GameModes/base_game/Resources/Images/Events",
+        "description": "Images/Events contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Images/Potions",
+        "new_path": "res://GameModes/base_game/Resources/Images/Potions",
+        "description": "Images/Potions contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Images/Relics",
+        "new_path": "res://GameModes/base_game/Resources/Images/Relics",
+        "description": "Images/Relics contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Audio/BGM",
+        "new_path": "res://GameModes/base_game/Resources/Audio/BGM",
+        "description": "Audio/BGM contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Audio/SFX",
+        "new_path": "res://GameModes/base_game/Resources/Audio/SFX",
+        "description": "Audio/SFX contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Icons/Cards",
+        "new_path": "res://GameModes/base_game/Resources/Icons/Cards",
+        "description": "Icons/Cards contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Icons/Enemies",
+        "new_path": "res://GameModes/base_game/Resources/Icons/Enemies",
+        "description": "Icons/Enemies contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Icons/Items",
+        "new_path": "res://GameModes/base_game/Resources/Icons/Items",
+        "description": "Icons/Items contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Icons/Relics",
+        "new_path": "res://GameModes/base_game/Resources/Icons/Relics",
+        "description": "Icons/Relics contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Icons/Skills",
+        "new_path": "res://GameModes/base_game/Resources/Icons/Skills",
+        "description": "Icons/Skills contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Icons/Achievements",
+        "new_path": "res://GameModes/base_game/Resources/Icons/Achievements",
+        "description": "Icons/Achievements contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Icons/Rest",
+        "new_path": "res://GameModes/base_game/Resources/Icons/Rest",
+        "description": "Icons/Rest contents"
+      },
+      {
+        "type": "directory",
+        "old_path": "res://Icons/Services",
+        "new_path": "res://GameModes/base_game/Resources/Icons/Services",
+        "description": "Icons/Services contents"
+      }
+    ]
+  }
+}

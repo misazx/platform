@@ -1,0 +1,53 @@
+{
+  "start_time": "2026-04-08T23:38:39.924136",
+  "downloaded": [
+    {
+      "id": "ui-pack",
+      "name": "UI Pack - 界面元素 (按钮/面板/框架)",
+      "size_mb": 1.17,
+      "url": "https://kenney.nl/media/pages/assets/ui-pack/af874291da-1718203990/kenney_ui-pack.zip"
+    },
+    {
+      "id": "impact-sounds",
+      "name": "Impact Sounds - 攻击/命中音效",
+      "size_mb": 0.76,
+      "url": "https://kenney.nl/media/pages/assets/impact-sounds/8aa7b545c9-1677589768/kenney_impact-sounds.zip"
+    },
+    {
+      "id": "music-jingles",
+      "name": "Music Jingles - 背景音乐BGM",
+      "size_mb": 1.18,
+      "url": "https://kenney.nl/media/pages/assets/music-jingles/4f5dd770b7-1677590399/kenney_music-jingles.zip"
+    }
+  ],
+  "failed": [
+    {
+      "id": "platformer-characters",
+      "reason": "下载失败"
+    },
+    {
+      "id": "particle-pack",
+      "reason": "下载失败"
+    },
+    {
+      "id": "roguelike-base-pack",
+      "reason": "无法提取下载URL"
+    },
+    {
+      "id": "interface-sounds",
+      "reason": "无法提取下载URL"
+    }
+  ],
+  "files_integrated": 155,
+  "by_category": {
+    "relics": 118
+  },
+  "by_type": {
+    "art": 118,
+    "audio_sfx": 22,
+    "audio_bgm": 15
+  },
+  "total_size_mb": 3.1186342239379883,
+  "end_time": "2026-04-08T23:39:32.793790",
+  "elapsed_seconds": 52.9
+}

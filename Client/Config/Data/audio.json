@@ -1,0 +1,96 @@
+{
+  "version": "1.0.0",
+  "audioSettings": {
+    "sfxPlayerCount": 8,
+    "bgmVolume": -12.0,
+    "sfxVolume": 0.0,
+    "sfxPath": "res://Audio/SFX/",
+    "bgmPath": "res://Audio/BGM/"
+  },
+  "soundEffects": [
+    {
+      "id": "card_play",
+      "name": "卡牌打出",
+      "path": "res://Audio/SFX/card_play",
+      "defaultPitchScale": 1.0,
+      "volumeDb": 0.0
+    },
+    {
+      "id": "card_draw",
+      "name": "抽牌",
+      "path": "res://Audio/SFX/card_draw",
+      "defaultPitchScale": 1.1,
+      "volumeDb": 0.0
+    },
+    {
+      "id": "attack",
+      "name": "攻击",
+      "path": "res://Audio/SFX/attack",
+      "defaultPitchScale": 0.95,
+      "volumeDb": 0.0
+    },
+    {
+      "id": "block",
+      "name": "格挡",
+      "path": "res://Audio/SFX/block",
+      "defaultPitchScale": 1.0,
+      "volumeDb": 0.0
+    },
+    {
+      "id": "damage",
+      "name": "伤害",
+      "path": "res://Audio/SFX/damage",
+      "defaultPitchScale": 0.85,
+      "volumeDb": 0.0
+    },
+    {
+      "id": "enemy_hit",
+      "name": "敌人受击",
+      "path": "res://Audio/SFX/enemy_hit",
+      "defaultPitchScale": 0.9,
+      "volumeDb": 0.0
+    },
+    {
+      "id": "enemy_death",
+      "name": "敌人死亡",
+      "path": "res://Audio/SFX/enemy_death",
+      "defaultPitchScale": 0.8,
+      "volumeDb": 0.0
+    },
+    {
+      "id": "potion_use",
+      "name": "使用药水",
+      "path": "res://Audio/SFX/potion_use",
+      "defaultPitchScale": 1.0,
+      "volumeDb": 0.0
+    },
+    {
+      "id": "relic_activate",
+      "name": "遗物激活",
+      "path": "res://Audio/SFX/relic_activate",
+      "defaultPitchScale": 1.0,
+      "volumeDb": 0.0
+    },
+    {
+      "id": "gold_pickup",
+      "name": "拾取金币",
+      "path": "res://Audio/SFX/gold_pickup",
+      "defaultPitchScale": 1.0,
+      "volumeDb": 0.0
+    },
+    {
+      "id": "button_click",
+      "name": "按钮点击",
+      "path": "res://Audio/SFX/button_click",
+      "defaultPitchScale": 1.05,
+      "volumeDb": 0.0
+    },
+    {
+      "id": "shop_buy",
+      "name": "商店购买",
+      "path": "res://Audio/SFX/shop_buy",
+      "defaultPitchScale": 1.0,
+      "volumeDb": 0.0
+    }
+  ]
+}

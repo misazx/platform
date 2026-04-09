@@ -1,0 +1,48 @@
+{
+  "start_time": "2026-04-08 01:54:28.029355",
+  "packs_downloaded": [],
+  "packs_failed": [
+    {
+      "id": "kenney-roguelike-pack",
+      "reason": "download failed"
+    },
+    {
+      "id": "kenney-rpg-urban",
+      "reason": "download failed"
+    },
+    {
+      "id": "kenney-ui-pack",
+      "reason": "download failed"
+    },
+    {
+      "id": "kenney-platformer-chars",
+      "reason": "download failed"
+    },
+    {
+      "id": "kenney-particle-fx",
+      "reason": "download failed"
+    },
+    {
+      "id": "kenney-soundeffects",
+      "reason": "download failed"
+    },
+    {
+      "id": "kenney-jingles",
+      "reason": "download failed"
+    },
+    {
+      "id": "kenney-music-pack",
+      "reason": "download failed"
+    }
+  ],
+  "files_integrated": 0,
+  "by_category": {},
+  "by_type": {
+    "art": 0,
+    "audio_sfx": 0,
+    "audio_bgm": 0
+  },
+  "errors": [],
+  "end_time": "2026-04-08T01:55:04.735664",
+  "elapsed_seconds": 36.7
+}

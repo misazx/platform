@@ -1,0 +1,87 @@
+{
+  "version": "1.0.0",
+  "potions": [
+    {
+      "id": "health_potion",
+      "name": "生命药水",
+      "description": "恢复 15 点生命值。",
+      "type": "Defense",
+      "price": 50,
+      "rarity": 1,
+      "imagePath": "res://Images/Potions/HealthPotion.png",
+      "color": "#FF0000",
+      "effects": {
+        "heal_amount": 15
+      },
+      "tags": ["heal", "basic"],
+      "isStackable": true,
+      "maxStack": 5
+    },
+    {
+      "id": "strength_potion",
+      "name": "力量药水",
+      "description": "本回合获得 2 点力量。",
+      "type": "Attack",
+      "price": 80,
+      "rarity": 2,
+      "imagePath": "res://Images/Potions/StrengthPotion.png",
+      "color": "#FF8800",
+      "effects": {
+        "strength_gain": 2,
+        "duration": "turn"
+      },
+      "tags": ["buff", "attack"],
+      "isStackable": false,
+      "maxStack": 3
+    },
+    {
+      "id": "block_potion",
+      "name": "格挡药水",
+      "description": "获得 12 点格挡。",
+      "type": "Defense",
+      "price": 60,
+      "rarity": 2,
+      "imagePath": "res://Images/Potions/BlockPotion.png",
+      "color": "#0088FF",
+      "effects": {
+        "block_gain": 12
+      },
+      "tags": ["block", "defense"],
+      "isStackable": false,
+      "maxStack": 3
+    },
+    {
+      "id": "fire_potion",
+      "name": "火焰药水",
+      "description": "对一个敌人造成 20 点伤害。",
+      "type": "Attack",
+      "price": 70,
+      "rarity": 2,
+      "imagePath": "res://Images/Potions/FirePotion.png",
+      "color": "#FF4400",
+      "effects": {
+        "damage": 20,
+        "damage_type": "fire"
+      },
+      "tags": ["damage", "aoe"],
+      "isStackable": false,
+      "maxStack": 3
+    },
+    {
+      "id": "energy_potion",
+      "name": "能量药水",
+      "description": "本回合获得 2 点能量。",
+      "type": "Utility",
+      "price": 90,
+      "rarity": 3,
+      "imagePath": "res://Images/Potions/EnergyPotion.png",
+      "color": "#FFFF00",
+      "effects": {
+        "energy_gain": 2
+      },
+      "tags": ["energy", "utility"],
+      "isStackable": false,
+      "maxStack": 3
+    }
+  ]
+}

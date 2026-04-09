@@ -1,0 +1,60 @@
+; Locale: Chinese Simplified (zh_CN)
+; 杀戮尖塔2 - 游戏文本
+
+[main_menu]
+title=杀戮尖塔 2
+start_game=开始游戏
+settings=设置
+quit_game=退出游戏
+version=v0.1.0 Alpha
+
+[character_select]
+title=选择角色
+back=返回
+confirm=确认选择
+
+[combat]
+end_turn=结束回合
+draw_pile=抽牌
+discard_pile=弃牌
+turn=回合
+floor=层
+energy=能量
+health=生命值
+block=格挡
+hand=手牌
+
+[map]
+back_to_map=返回地图
+floor_label=第 {0} 层
+gold={0} 金币
+
+[node_types]
+monster=怪物
+elite=精英
+boss=Boss
+event=事件
+shop=商店
+rest_site=休息点
+treasure=宝箱
+
+[tutorial]
+welcome_title=欢迎来到杀戮尖塔 2！
+skip_tutorial=跳过教程
+next_step=下一步 ▶
+
+[achievement]
+unlocked=成就解锁！
+points=+{0} 点
+new_achievement=新成就！
+
+[general]
+confirm=确认
+cancel=取消
+yes=是
+no=否
+ok=确定
+loading=加载中...
+saving=保存中...
+error=错误
+success=成功

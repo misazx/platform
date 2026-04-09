@@ -1,0 +1,22 @@
+{
+  "start_time": "2026-04-08T01:57:22.412249",
+  "downloads_success": [],
+  "downloads_failed": [
+    "ui-pack",
+    "particles",
+    "platformer-chars",
+    "tileset",
+    "soundeffects",
+    "jingles",
+    "music"
+  ],
+  "files_integrated": 0,
+  "by_category": {},
+  "by_type": {
+    "art": 0,
+    "audio_sfx": 0,
+    "audio_bgm": 0
+  },
+  "end_time": "2026-04-08T01:57:43.968309",
+  "elapsed_seconds": 21.6
+}

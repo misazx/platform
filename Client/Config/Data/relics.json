@@ -1,0 +1,78 @@
+{
+  "version": "1.0.0",
+  "relics": [
+    {
+      "id": "burning_blood",
+      "name": "燃烧之血",
+      "description": "每场战斗结束时，恢复 6 点生命值。",
+      "flavorText": "你的血液在燃烧，但这让你感觉更加强大。",
+      "tier": "Starter",
+      "type": "Passive",
+      "imagePath": "res://Images/Relics/BurningBlood.png",
+      "iconPath": "res://Icons/Relics/burning_blood.png",
+      "compatibleCharacters": ["*"],
+      "effects": {
+        "heal_on_combat_end": 6
+      },
+      "stats": {
+        "power_level": 2,
+        "synergy": "self_damage"
+      },
+      "isCounterpart": false,
+      "counterpartId": ""
+    },
+    {
+      "id": "anchor",
+      "name": "锚",
+      "description": "你无法再被击退。战斗开始时，获得 1 层金属化。",
+      "flavorText": "稳如泰山，不可动摇。",
+      "tier": "Common",
+      "type": "Passive",
+      "imagePath": "res://Images/Relics/Anchor.png",
+      "iconPath": "res://Icons/Relics/anchor.png",
+      "compatibleCharacters": ["*"],
+      "effects": {
+        "immunity_knockback": true,
+        "start_of_combat_metallicize": 1
+      },
+      "stats": {},
+      "isCounterpart": false,
+      "counterpartId": ""
+    },
+    {
+      "id": "lantern",
+      "name": "灯笼",
+      "description": "每打出一张牌，有 5% 概率不消耗能量。",
+      "flavorText": "微光指引着前路。",
+      "tier": "Uncommon",
+      "type": "Passive",
+      "imagePath": "res://Images/Relics/Lantern.png",
+      "iconPath": "res://Icons/Relics/lantern.png",
+      "compatibleCharacters": ["*"],
+      "effects": {
+        "free_card_chance": 0.05
+      },
+      "stats": {},
+      "isCounterpart": false,
+      "counterpartId": ""
+    },
+    {
+      "id": "ice_cream",
+      "name": "冰淇淋",
+      "description": "恢复 15 点生命值。消耗。",
+      "flavorText": "冰凉美味，但转瞬即逝。",
+      "tier": "Shop",
+      "type": "Consumable",
+      "imagePath": "res://Images/Relics/IceCream.png",
+      "iconPath": "res://Icons/Relics/ice_cream.png",
+      "compatibleCharacters": ["*"],
+      "effects": {
+        "heal_amount": 15,
+        "consumable": true
+      },
+      "stats": {},
+      "isCounterpart": false,
+      "counterpartId": ""
+    }
+  ]
+}
