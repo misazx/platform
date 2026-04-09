@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://usq610g8mt5h"
-path="res://.godot/imported/confirmation_004.ogg-f819b4d420c5523968f7bb7efb553e0f.oggvorbisstr"
+path="res://.godot/imported/confirmation_004.ogg-2b05dfdb350546bd225c2d430245e801.oggvorbisstr"
 
 [deps]
 
-source_file="res://Audio/SFX/confirmation_004.ogg"
-dest_files=["res://.godot/imported/confirmation_004.ogg-f819b4d420c5523968f7bb7efb553e0f.oggvorbisstr"]
+source_file="res://GameModes/base_game/Resources/Audio/SFX/confirmation_004.ogg"
+dest_files=["res://.godot/imported/confirmation_004.ogg-2b05dfdb350546bd225c2d430245e801.oggvorbisstr"]
 
 [params]
 

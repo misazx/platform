@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://ddh80edxho04q"
-path="res://.godot/imported/jingles_HIT02.ogg-4b086b073115253b04b2ec91f7d0c562.oggvorbisstr"
+path="res://.godot/imported/jingles_HIT02.ogg-21237c75c0bedd0be1567abfcf0ed98f.oggvorbisstr"
 
 [deps]
 
-source_file="res://Audio/BGM/jingles_HIT02.ogg"
-dest_files=["res://.godot/imported/jingles_HIT02.ogg-4b086b073115253b04b2ec91f7d0c562.oggvorbisstr"]
+source_file="res://GameModes/base_game/Resources/Audio/BGM/jingles_HIT02.ogg"
+dest_files=["res://.godot/imported/jingles_HIT02.ogg-21237c75c0bedd0be1567abfcf0ed98f.oggvorbisstr"]
 
 [params]
 

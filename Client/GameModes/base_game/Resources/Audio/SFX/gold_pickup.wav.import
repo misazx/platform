@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://nb25fpujn5po"
-path="res://.godot/imported/gold_pickup.wav-2a23da9bd5bc0dd8ebff93be652c042b.sample"
+path="res://.godot/imported/gold_pickup.wav-0d80f6daf83ea17e97904cf990d1bc33.sample"
 
 [deps]
 
-source_file="res://Audio/SFX/gold_pickup.wav"
-dest_files=["res://.godot/imported/gold_pickup.wav-2a23da9bd5bc0dd8ebff93be652c042b.sample"]
+source_file="res://GameModes/base_game/Resources/Audio/SFX/gold_pickup.wav"
+dest_files=["res://.godot/imported/gold_pickup.wav-0d80f6daf83ea17e97904cf990d1bc33.sample"]
 
 [params]
 

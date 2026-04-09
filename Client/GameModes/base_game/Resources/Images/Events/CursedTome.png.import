@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://di010hvy7rwam"
-path="res://.godot/imported/CursedTome.png-cf37e374028bb8a7c7fe4301999ab656.ctex"
+path="res://.godot/imported/CursedTome.png-5e9a5f8085e463e3fc4beb9bb916b25f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Events/CursedTome.png"
-dest_files=["res://.godot/imported/CursedTome.png-cf37e374028bb8a7c7fe4301999ab656.ctex"]
+source_file="res://GameModes/base_game/Resources/Images/Events/CursedTome.png"
+dest_files=["res://.godot/imported/CursedTome.png-5e9a5f8085e463e3fc4beb9bb916b25f.ctex"]
 
 [params]
 

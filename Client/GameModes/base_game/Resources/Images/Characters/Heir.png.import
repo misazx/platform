@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bboyywxqwgyj6"
-path="res://.godot/imported/Heir.png-2318826e698721763fe18c4e0483db26.ctex"
+path="res://.godot/imported/Heir.png-cf0df9d1e64bc010f2dd5ba2bb82a086.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Characters/Heir.png"
-dest_files=["res://.godot/imported/Heir.png-2318826e698721763fe18c4e0483db26.ctex"]
+source_file="res://GameModes/base_game/Resources/Images/Characters/Heir.png"
+dest_files=["res://.godot/imported/Heir.png-cf0df9d1e64bc010f2dd5ba2bb82a086.ctex"]
 
 [params]
 

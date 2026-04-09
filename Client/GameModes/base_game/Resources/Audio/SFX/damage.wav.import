@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cbmdv4lqx8dvt"
-path="res://.godot/imported/damage.wav-55fd82f69744c2994165d26779b94bd4.sample"
+path="res://.godot/imported/damage.wav-a33172bfd407e3f7fd3a79ad769b5ea2.sample"
 
 [deps]
 
-source_file="res://Audio/SFX/damage.wav"
-dest_files=["res://.godot/imported/damage.wav-55fd82f69744c2994165d26779b94bd4.sample"]
+source_file="res://GameModes/base_game/Resources/Audio/SFX/damage.wav"
+dest_files=["res://.godot/imported/damage.wav-a33172bfd407e3f7fd3a79ad769b5ea2.sample"]
 
 [params]
 

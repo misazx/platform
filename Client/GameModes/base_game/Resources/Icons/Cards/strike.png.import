@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c663nv21fufaa"
-path="res://.godot/imported/strike.png-adc8e8e17ad3a17e2e53f2a298f23408.ctex"
+path="res://.godot/imported/strike.png-4eb17a8a93a0567bfc141cfdbb19a260.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Cards/strike.png"
-dest_files=["res://.godot/imported/strike.png-adc8e8e17ad3a17e2e53f2a298f23408.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Cards/strike.png"
+dest_files=["res://.godot/imported/strike.png-4eb17a8a93a0567bfc141cfdbb19a260.ctex"]
 
 [params]
 

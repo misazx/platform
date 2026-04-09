@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dr8hfqypq47f4"
-path="res://.godot/imported/BlockPotion.png-c86679f3c5dcf53bddcbbe6c84604ab5.ctex"
+path="res://.godot/imported/BlockPotion.png-1e54285aab5bbac50492ddff465e2ac5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Potions/BlockPotion.png"
-dest_files=["res://.godot/imported/BlockPotion.png-c86679f3c5dcf53bddcbbe6c84604ab5.ctex"]
+source_file="res://GameModes/base_game/Resources/Images/Potions/BlockPotion.png"
+dest_files=["res://.godot/imported/BlockPotion.png-1e54285aab5bbac50492ddff465e2ac5.ctex"]
 
 [params]
 

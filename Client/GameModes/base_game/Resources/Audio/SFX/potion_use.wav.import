@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://df427hsgrwwuh"
-path="res://.godot/imported/potion_use.wav-b76f9fc839946da648f5c882f2fc8d60.sample"
+path="res://.godot/imported/potion_use.wav-03ab71885ac05818e9aaa81309344594.sample"
 
 [deps]
 
-source_file="res://Audio/SFX/potion_use.wav"
-dest_files=["res://.godot/imported/potion_use.wav-b76f9fc839946da648f5c882f2fc8d60.sample"]
+source_file="res://GameModes/base_game/Resources/Audio/SFX/potion_use.wav"
+dest_files=["res://.godot/imported/potion_use.wav-03ab71885ac05818e9aaa81309344594.sample"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://6bvxvrfpk68a"
-path="res://.godot/imported/Relic_18.png-ff3f8f87075d14168651a405e45ebeea.ctex"
+path="res://.godot/imported/Relic_18.png-758931724b382bd94bc7dc49c76d7b8a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Relics/Relic_18.png"
-dest_files=["res://.godot/imported/Relic_18.png-ff3f8f87075d14168651a405e45ebeea.ctex"]
+source_file="res://GameModes/base_game/Resources/Images/Relics/Relic_18.png"
+dest_files=["res://.godot/imported/Relic_18.png-758931724b382bd94bc7dc49c76d7b8a.ctex"]
 
 [params]
 

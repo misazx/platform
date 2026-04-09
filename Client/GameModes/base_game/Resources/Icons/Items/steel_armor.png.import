@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bs5orxvceh5ir"
-path="res://.godot/imported/steel_armor.png-bdb284dcb4a10a90aee80f82d1d3c484.ctex"
+path="res://.godot/imported/steel_armor.png-5db537219f972d88d50c5b180a412934.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Items/steel_armor.png"
-dest_files=["res://.godot/imported/steel_armor.png-bdb284dcb4a10a90aee80f82d1d3c484.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Items/steel_armor.png"
+dest_files=["res://.godot/imported/steel_armor.png-5db537219f972d88d50c5b180a412934.ctex"]
 
 [params]
 

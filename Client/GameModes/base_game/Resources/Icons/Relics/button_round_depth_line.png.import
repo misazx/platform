@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cxc310avq5yq1"
-path="res://.godot/imported/button_round_depth_line.png-1ddbeff62ffb976a684fc9f08c4dcf21.ctex"
+path="res://.godot/imported/button_round_depth_line.png-e266b665588da678ebe61daeafc62326.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/button_round_depth_line.png"
-dest_files=["res://.godot/imported/button_round_depth_line.png-1ddbeff62ffb976a684fc9f08c4dcf21.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/button_round_depth_line.png"
+dest_files=["res://.godot/imported/button_round_depth_line.png-e266b665588da678ebe61daeafc62326.ctex"]
 
 [params]
 

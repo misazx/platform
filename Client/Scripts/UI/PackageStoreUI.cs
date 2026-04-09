@@ -169,6 +169,18 @@ namespace RoguelikeGame.UI
 
 		public void RefreshPackageList()
 		{
+			if (_packageList == null)
+			{
+				GD.PushWarning("[PackageStoreUI] _packageList is null, skipping refresh");
+				return;
+			}
+
+			if (PackageManager.Instance == null)
+			{
+				GD.PushWarning("[PackageStoreUI] PackageManager.Instance is null");
+				return;
+			}
+
 			foreach (var child in _packageList.GetChildren())
 			{
 				child.QueueFree();
@@ -176,9 +188,15 @@ namespace RoguelikeGame.UI
 
 			List<PackageData> packagesToShow;
 
-			if (_selectedCategory == "all")
+			var availablePackages = PackageManager.Instance.AvailablePackages;
+			if (availablePackages == null || availablePackages.Count == 0)
 			{
-				packagesToShow = new List<PackageData>(PackageManager.Instance.AvailablePackages.Values);
+				packagesToShow = new List<PackageData>();
+				GD.Print("[PackageStoreUI] No available packages");
+			}
+			else if (_selectedCategory == "all")
+			{
+				packagesToShow = new List<PackageData>(availablePackages.Values);
 			}
 			else if (_selectedCategory == "featured")
 			{
@@ -267,7 +285,7 @@ namespace RoguelikeGame.UI
 			var descLabel = new Label
 			{
 				Text = package.Description,
-				AutowrapMode = TextServer.AutowrapMode.WordSmart,
+				AutowrapMode = TextServer.AutowrapMode.Word,
 				MouseFilter = MouseFilterEnum.Ignore,
 				CustomMinimumSize = new Vector2(400, 30)
 			};

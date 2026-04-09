@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://di0fxynadrc8k"
-path="res://.godot/imported/the_guardian.png-32639ef8a34cae4b8deaa7e863070fa3.ctex"
+path="res://.godot/imported/the_guardian.png-7988af5d03f3b307b82030df19275482.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Enemies/the_guardian.png"
-dest_files=["res://.godot/imported/the_guardian.png-32639ef8a34cae4b8deaa7e863070fa3.ctex"]
+source_file="res://GameModes/base_game/Resources/Images/Enemies/the_guardian.png"
+dest_files=["res://.godot/imported/the_guardian.png-7988af5d03f3b307b82030df19275482.ctex"]
 
 [params]
 

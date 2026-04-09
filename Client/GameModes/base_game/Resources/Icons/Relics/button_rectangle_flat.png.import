@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://sh73duqw16pt"
-path="res://.godot/imported/button_rectangle_flat.png-134b38c2cc6b89b63df67c9de2876751.ctex"
+path="res://.godot/imported/button_rectangle_flat.png-c515890ced482de5f335518779b900b5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/button_rectangle_flat.png"
-dest_files=["res://.godot/imported/button_rectangle_flat.png-134b38c2cc6b89b63df67c9de2876751.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/button_rectangle_flat.png"
+dest_files=["res://.godot/imported/button_rectangle_flat.png-c515890ced482de5f335518779b900b5.ctex"]
 
 [params]
 

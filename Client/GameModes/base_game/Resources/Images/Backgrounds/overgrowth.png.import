@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dhl4c31pfw0ld"
-path="res://.godot/imported/overgrowth.png-18edee9b3e3b7007e45bc6b08edc1551.ctex"
+path="res://.godot/imported/overgrowth.png-e61308eb9a42b88f11ad1afc9e5ec414.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Backgrounds/overgrowth.png"
-dest_files=["res://.godot/imported/overgrowth.png-18edee9b3e3b7007e45bc6b08edc1551.ctex"]
+source_file="res://GameModes/base_game/Resources/Images/Backgrounds/overgrowth.png"
+dest_files=["res://.godot/imported/overgrowth.png-e61308eb9a42b88f11ad1afc9e5ec414.ctex"]
 
 [params]
 

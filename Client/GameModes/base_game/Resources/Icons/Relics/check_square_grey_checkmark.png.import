@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnkt5x6x3p11t"
-path="res://.godot/imported/check_square_grey_checkmark.png-17afcc72df7c762c7311c5bebc59f930.ctex"
+path="res://.godot/imported/check_square_grey_checkmark.png-94661172b114edee9e5cdbec00d76f7f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/check_square_grey_checkmark.png"
-dest_files=["res://.godot/imported/check_square_grey_checkmark.png-17afcc72df7c762c7311c5bebc59f930.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/check_square_grey_checkmark.png"
+dest_files=["res://.godot/imported/check_square_grey_checkmark.png-94661172b114edee9e5cdbec00d76f7f.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b457vrb6wd1cf"
-path="res://.godot/imported/iron_wave.png-1dd7d794a9d2346e01676ee8940e15bb.ctex"
+path="res://.godot/imported/iron_wave.png-9a3b7b476070286b556973bffdd19ae0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Cards/iron_wave.png"
-dest_files=["res://.godot/imported/iron_wave.png-1dd7d794a9d2346e01676ee8940e15bb.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Cards/iron_wave.png"
+dest_files=["res://.godot/imported/iron_wave.png-9a3b7b476070286b556973bffdd19ae0.ctex"]
 
 [params]
 

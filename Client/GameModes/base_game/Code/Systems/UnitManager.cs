@@ -74,7 +74,7 @@ namespace RoguelikeGame.Systems
                 Attack = 5,
                 Defense = 2,
                 Speed = 100f,
-                ScenePath = "res://Scenes/Units/Goblin.tscn"
+                ScenePath = "res://GameModes/base_game/Scenes/Units/Goblin.tscn"
             });
 
             RegisterUnit("Skeleton", new UnitData
@@ -85,7 +85,7 @@ namespace RoguelikeGame.Systems
                 Attack = 8,
                 Defense = 3,
                 Speed = 80f,
-                ScenePath = "res://Scenes/Units/Skeleton.tscn"
+                ScenePath = "res://GameModes/base_game/Scenes/Units/Skeleton.tscn"
             });
 
             RegisterUnit("Boss_Dragon", new UnitData
@@ -96,7 +96,7 @@ namespace RoguelikeGame.Systems
                 Attack = 25,
                 Defense = 10,
                 Speed = 60f,
-                ScenePath = "res://Scenes/Units/BossDragon.tscn"
+                ScenePath = "res://GameModes/base_game/Scenes/Units/BossDragon.tscn"
             });
 
             GD.Print($"[UnitManager] Loaded {_unitDefinitions.Count} unit definitions");

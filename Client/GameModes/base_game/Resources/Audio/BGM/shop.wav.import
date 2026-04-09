@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cvbp2vlacn4fk"
-path="res://.godot/imported/shop.wav-9de608f4fb06e15eebd9db49546cd7c1.sample"
+path="res://.godot/imported/shop.wav-8b72fc2a65ab97f5b1d629978ff15f80.sample"
 
 [deps]
 
-source_file="res://Audio/BGM/shop.wav"
-dest_files=["res://.godot/imported/shop.wav-9de608f4fb06e15eebd9db49546cd7c1.sample"]
+source_file="res://GameModes/base_game/Resources/Audio/BGM/shop.wav"
+dest_files=["res://.godot/imported/shop.wav-8b72fc2a65ab97f5b1d629978ff15f80.sample"]
 
 [params]
 

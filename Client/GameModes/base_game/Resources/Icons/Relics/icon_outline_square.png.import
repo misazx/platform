@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cerie56i1wish"
-path="res://.godot/imported/icon_outline_square.png-b11a86e8a196707ac959d09614ad0d59.ctex"
+path="res://.godot/imported/icon_outline_square.png-74693c327a9bf777029b0b2751066eac.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/icon_outline_square.png"
-dest_files=["res://.godot/imported/icon_outline_square.png-b11a86e8a196707ac959d09614ad0d59.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/icon_outline_square.png"
+dest_files=["res://.godot/imported/icon_outline_square.png-74693c327a9bf777029b0b2751066eac.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://3g55mhjoc4tl"
-path="res://.godot/imported/slide_horizontal_color.png-d05b0e20b1fe60a20e9ba18ffe6ad5c8.ctex"
+path="res://.godot/imported/slide_horizontal_color.png-cef95c149be236db17e7dfa9e4c5762d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/slide_horizontal_color.png"
-dest_files=["res://.godot/imported/slide_horizontal_color.png-d05b0e20b1fe60a20e9ba18ffe6ad5c8.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/slide_horizontal_color.png"
+dest_files=["res://.godot/imported/slide_horizontal_color.png-cef95c149be236db17e7dfa9e4c5762d.ctex"]
 
 [params]
 

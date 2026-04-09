@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dstwyub2tnaeb"
-path="res://.godot/imported/iron_skin.png-af128c65805ba054c1218ed79bd26160.ctex"
+path="res://.godot/imported/iron_skin.png-0fc98020fa3c22a7b3f75d8fce0dadcf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Skills/iron_skin.png"
-dest_files=["res://.godot/imported/iron_skin.png-af128c65805ba054c1218ed79bd26160.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Skills/iron_skin.png"
+dest_files=["res://.godot/imported/iron_skin.png-0fc98020fa3c22a7b3f75d8fce0dadcf.ctex"]
 
 [params]
 

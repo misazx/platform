@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://cryxjedp08k31"
-path="res://.godot/imported/jingles_STEEL10.ogg-4a37efa8df351339d41009d7ad598b6a.oggvorbisstr"
+path="res://.godot/imported/jingles_STEEL10.ogg-c2d9434f0b1b7316274842db421a9e5c.oggvorbisstr"
 
 [deps]
 
-source_file="res://Audio/BGM/jingles_STEEL10.ogg"
-dest_files=["res://.godot/imported/jingles_STEEL10.ogg-4a37efa8df351339d41009d7ad598b6a.oggvorbisstr"]
+source_file="res://GameModes/base_game/Resources/Audio/BGM/jingles_STEEL10.ogg"
+dest_files=["res://.godot/imported/jingles_STEEL10.ogg-c2d9434f0b1b7316274842db421a9e5c.oggvorbisstr"]
 
 [params]
 

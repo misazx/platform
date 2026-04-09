@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b7q3ig4gebi60"
-path="res://.godot/imported/Defect.png-656c21f40ed8738572ad219ad6e39e0e.ctex"
+path="res://.godot/imported/Defect.png-fcc8d5387e773bcb8182af52d5c5fc69.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Characters/Defect.png"
-dest_files=["res://.godot/imported/Defect.png-656c21f40ed8738572ad219ad6e39e0e.ctex"]
+source_file="res://GameModes/base_game/Resources/Images/Characters/Defect.png"
+dest_files=["res://.godot/imported/Defect.png-fcc8d5387e773bcb8182af52d5c5fc69.ctex"]
 
 [params]
 

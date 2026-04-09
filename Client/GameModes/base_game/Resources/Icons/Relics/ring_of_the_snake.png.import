@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dtfpacb6n5wbi"
-path="res://.godot/imported/ring_of_the_snake.png-5cd7eee095efdbb08b5e4e6e1c4d46bf.ctex"
+path="res://.godot/imported/ring_of_the_snake.png-b954d1a46f52b6b183bb40b8f67d0777.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/ring_of_the_snake.png"
-dest_files=["res://.godot/imported/ring_of_the_snake.png-5cd7eee095efdbb08b5e4e6e1c4d46bf.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/ring_of_the_snake.png"
+dest_files=["res://.godot/imported/ring_of_the_snake.png-b954d1a46f52b6b183bb40b8f67d0777.ctex"]
 
 [params]
 

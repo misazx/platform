@@ -61,24 +61,28 @@ namespace RoguelikeGame.UI
 
         private Control LoadUIScreen(string screenName)
         {
-            var scenePath = $"res://Scenes/{screenName}.tscn";
-            
-            if (!ResourceLoader.Exists(scenePath))
+            string[] searchPaths =
             {
-                GD.Print($"[UIManager] Scene not found: {scenePath}, creating placeholder");
-                return CreatePlaceholder(screenName);
-            }
-            
-            var packed = ResourceLoader.Load<PackedScene>(scenePath);
-            
-            if (packed != null)
+                $"res://Scenes/{screenName}.tscn",
+                $"res://GameModes/base_game/Scenes/{screenName}.tscn"
+            };
+
+            foreach (var scenePath in searchPaths)
             {
-                var instance = (Control)packed.Instantiate();
-                instance.Visible = false;
-                AddChild(instance);
-                return instance;
+                if (ResourceLoader.Exists(scenePath))
+                {
+                    var packed = ResourceLoader.Load<PackedScene>(scenePath);
+                    if (packed != null)
+                    {
+                        var instance = (Control)packed.Instantiate();
+                        instance.Visible = false;
+                        AddChild(instance);
+                        return instance;
+                    }
+                }
             }
 
+            GD.Print($"[UIManager] Scene not found: {screenName}, creating placeholder");
             return CreatePlaceholder(screenName);
         }
 
@@ -235,7 +239,7 @@ namespace RoguelikeGame.UI
             {
                 Text = desc,
                 Modulate = Colors.LightGray,
-                AutowrapMode = TextServer.AutowrapMode.WordSmart
+                AutowrapMode = TextServer.AutowrapMode.Word
             };
             vbox.AddChild(titleLabel);
             vbox.AddChild(descLabel);

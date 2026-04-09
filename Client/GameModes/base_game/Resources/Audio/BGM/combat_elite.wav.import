@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://585qaoc6yg2a"
-path="res://.godot/imported/combat_elite.wav-12342bd4cfde70c52fe73f24f65a5406.sample"
+path="res://.godot/imported/combat_elite.wav-9a8a8c0ca10d89b45bceb4775525ca1a.sample"
 
 [deps]
 
-source_file="res://Audio/BGM/combat_elite.wav"
-dest_files=["res://.godot/imported/combat_elite.wav-12342bd4cfde70c52fe73f24f65a5406.sample"]
+source_file="res://GameModes/base_game/Resources/Audio/BGM/combat_elite.wav"
+dest_files=["res://.godot/imported/combat_elite.wav-9a8a8c0ca10d89b45bceb4775525ca1a.sample"]
 
 [params]
 

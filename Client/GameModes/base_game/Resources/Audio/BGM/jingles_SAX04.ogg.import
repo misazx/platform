@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://cmd7mnt3u6p58"
-path="res://.godot/imported/jingles_SAX04.ogg-fad09574e802aa7892f1d9f26e079958.oggvorbisstr"
+path="res://.godot/imported/jingles_SAX04.ogg-67091b8e63e8300ea733c58c31c42f4b.oggvorbisstr"
 
 [deps]
 
-source_file="res://Audio/BGM/jingles_SAX04.ogg"
-dest_files=["res://.godot/imported/jingles_SAX04.ogg-fad09574e802aa7892f1d9f26e079958.oggvorbisstr"]
+source_file="res://GameModes/base_game/Resources/Audio/BGM/jingles_SAX04.ogg"
+dest_files=["res://.godot/imported/jingles_SAX04.ogg-67091b8e63e8300ea733c58c31c42f4b.oggvorbisstr"]
 
 [params]
 

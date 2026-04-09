@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cyf5vjsuxqjxo"
-path="res://.godot/imported/combat_normal.wav-b6a3f15cdf839fe0ce73b09302fd0153.sample"
+path="res://.godot/imported/combat_normal.wav-18b08ba2a2f53c48497fd0efaa4b83d9.sample"
 
 [deps]
 
-source_file="res://Audio/BGM/combat_normal.wav"
-dest_files=["res://.godot/imported/combat_normal.wav-b6a3f15cdf839fe0ce73b09302fd0153.sample"]
+source_file="res://GameModes/base_game/Resources/Audio/BGM/combat_normal.wav"
+dest_files=["res://.godot/imported/combat_normal.wav-18b08ba2a2f53c48497fd0efaa4b83d9.sample"]
 
 [params]
 

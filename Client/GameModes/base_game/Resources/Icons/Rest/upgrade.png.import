@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqdqhuja360tn"
-path="res://.godot/imported/upgrade.png-571cf36d1a31b62c05b380edbaa1f465.ctex"
+path="res://.godot/imported/upgrade.png-91d9b503dd915abe9e0d892eb398b642.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Rest/upgrade.png"
-dest_files=["res://.godot/imported/upgrade.png-571cf36d1a31b62c05b380edbaa1f465.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Rest/upgrade.png"
+dest_files=["res://.godot/imported/upgrade.png-91d9b503dd915abe9e0d892eb398b642.ctex"]
 
 [params]
 

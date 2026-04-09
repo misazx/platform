@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cbatqmtlsuxjq"
-path="res://.godot/imported/check_round_grey.png-460cd7e55381c1496d12fa15c50a865f.ctex"
+path="res://.godot/imported/check_round_grey.png-02e1a3ce76c572e2d45214b114180b71.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/check_round_grey.png"
-dest_files=["res://.godot/imported/check_round_grey.png-460cd7e55381c1496d12fa15c50a865f.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/check_round_grey.png"
+dest_files=["res://.godot/imported/check_round_grey.png-02e1a3ce76c572e2d45214b114180b71.ctex"]
 
 [params]
 

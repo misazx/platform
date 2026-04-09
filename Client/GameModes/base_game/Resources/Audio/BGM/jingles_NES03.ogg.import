@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://50q42javpeb5"
-path="res://.godot/imported/jingles_NES03.ogg-1d7a9f3f265777f4d2c7c98895af1f1f.oggvorbisstr"
+path="res://.godot/imported/jingles_NES03.ogg-654e62f9e15e939e8d0164d069d09f89.oggvorbisstr"
 
 [deps]
 
-source_file="res://Audio/BGM/jingles_NES03.ogg"
-dest_files=["res://.godot/imported/jingles_NES03.ogg-1d7a9f3f265777f4d2c7c98895af1f1f.oggvorbisstr"]
+source_file="res://GameModes/base_game/Resources/Audio/BGM/jingles_NES03.ogg"
+dest_files=["res://.godot/imported/jingles_NES03.ogg-654e62f9e15e939e8d0164d069d09f89.oggvorbisstr"]
 
 [params]
 

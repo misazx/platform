@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://b5u4hi1dge1fp"
-path="res://.godot/imported/card_play.wav-1e5ac9bbbb0a534ea661b717f7c230e1.sample"
+path="res://.godot/imported/card_play.wav-260ff57816db2c2d986cc95378a779db.sample"
 
 [deps]
 
-source_file="res://Audio/SFX/card_play.wav"
-dest_files=["res://.godot/imported/card_play.wav-1e5ac9bbbb0a534ea661b717f7c230e1.sample"]
+source_file="res://GameModes/base_game/Resources/Audio/SFX/card_play.wav"
+dest_files=["res://.godot/imported/card_play.wav-260ff57816db2c2d986cc95378a779db.sample"]
 
 [params]
 

@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://cgmommnneqcrd"
-path="res://.godot/imported/error_006.ogg-b3d5f999cebbb8849b70f9f18630a3fb.oggvorbisstr"
+path="res://.godot/imported/error_006.ogg-2f8d8fc0d042d09db7c92902789e5aeb.oggvorbisstr"
 
 [deps]
 
-source_file="res://Audio/SFX/error_006.ogg"
-dest_files=["res://.godot/imported/error_006.ogg-b3d5f999cebbb8849b70f9f18630a3fb.oggvorbisstr"]
+source_file="res://GameModes/base_game/Resources/Audio/SFX/error_006.ogg"
+dest_files=["res://.godot/imported/error_006.ogg-2f8d8fc0d042d09db7c92902789e5aeb.oggvorbisstr"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ceq14pl5on2bt"
-path="res://.godot/imported/smith.png-845bead454be5c7cdb9952f479394280.ctex"
+path="res://.godot/imported/smith.png-91156d0b5236d43c6bf38f250581e18e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Rest/smith.png"
-dest_files=["res://.godot/imported/smith.png-845bead454be5c7cdb9952f479394280.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Rest/smith.png"
+dest_files=["res://.godot/imported/smith.png-91156d0b5236d43c6bf38f250581e18e.ctex"]
 
 [params]
 

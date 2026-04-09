@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cu18x4utpf0ua"
-path="res://.godot/imported/heal.wav-11253f0035f0f383b1573eabb3ee1e5a.sample"
+path="res://.godot/imported/heal.wav-f04d19d7edf61aaddc970bf8da017952.sample"
 
 [deps]
 
-source_file="res://Audio/SFX/heal.wav"
-dest_files=["res://.godot/imported/heal.wav-11253f0035f0f383b1573eabb3ee1e5a.sample"]
+source_file="res://GameModes/base_game/Resources/Audio/SFX/heal.wav"
+dest_files=["res://.godot/imported/heal.wav-f04d19d7edf61aaddc970bf8da017952.sample"]
 
 [params]
 

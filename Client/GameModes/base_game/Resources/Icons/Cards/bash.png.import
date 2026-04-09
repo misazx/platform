@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://j3quetf01a4m"
-path="res://.godot/imported/bash.png-049d25dbdbb676bf7895169ec952d667.ctex"
+path="res://.godot/imported/bash.png-2b8e0b03c978448a263cc259c7243060.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Cards/bash.png"
-dest_files=["res://.godot/imported/bash.png-049d25dbdbb676bf7895169ec952d667.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Cards/bash.png"
+dest_files=["res://.godot/imported/bash.png-2b8e0b03c978448a263cc259c7243060.ctex"]
 
 [params]
 

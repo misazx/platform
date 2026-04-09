@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://imqos8i5t304"
-path="res://.godot/imported/BurningBlood.png-b54913a3f61a05fcc562f5c4c7627f76.ctex"
+path="res://.godot/imported/BurningBlood.png-113eadf95e5d14d6e3bd2802bee58661.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Relics/BurningBlood.png"
-dest_files=["res://.godot/imported/BurningBlood.png-b54913a3f61a05fcc562f5c4c7627f76.ctex"]
+source_file="res://GameModes/base_game/Resources/Images/Relics/BurningBlood.png"
+dest_files=["res://.godot/imported/BurningBlood.png-113eadf95e5d14d6e3bd2802bee58661.ctex"]
 
 [params]
 

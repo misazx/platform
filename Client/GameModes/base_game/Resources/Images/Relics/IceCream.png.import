@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://oky5fal61nat"
-path="res://.godot/imported/IceCream.png-cc0f692bf8355a75764201a3dd8a6243.ctex"
+path="res://.godot/imported/IceCream.png-677a7f9ca896c2292ea486c407d3d84a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Relics/IceCream.png"
-dest_files=["res://.godot/imported/IceCream.png-cc0f692bf8355a75764201a3dd8a6243.ctex"]
+source_file="res://GameModes/base_game/Resources/Images/Relics/IceCream.png"
+dest_files=["res://.godot/imported/IceCream.png-677a7f9ca896c2292ea486c407d3d84a.ctex"]
 
 [params]
 

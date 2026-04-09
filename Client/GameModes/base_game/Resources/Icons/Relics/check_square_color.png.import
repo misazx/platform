@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dian8smvnd7yt"
-path="res://.godot/imported/check_square_color.png-c1fd6fc3ef3d4ecd1e4bce6afbf9caea.ctex"
+path="res://.godot/imported/check_square_color.png-49550936a51a9daa4598597eb736a106.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/check_square_color.png"
-dest_files=["res://.godot/imported/check_square_color.png-c1fd6fc3ef3d4ecd1e4bce6afbf9caea.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/check_square_color.png"
+dest_files=["res://.godot/imported/check_square_color.png-49550936a51a9daa4598597eb736a106.ctex"]
 
 [params]
 

@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://djnbymbw2iti1"
-path="res://.godot/imported/attack.wav-a50e17f686d66f7699779b1c1b976aa4.sample"
+path="res://.godot/imported/attack.wav-81c9a2b5379165c8b80380038b6aa912.sample"
 
 [deps]
 
-source_file="res://Audio/SFX/attack.wav"
-dest_files=["res://.godot/imported/attack.wav-a50e17f686d66f7699779b1c1b976aa4.sample"]
+source_file="res://GameModes/base_game/Resources/Audio/SFX/attack.wav"
+dest_files=["res://.godot/imported/attack.wav-81c9a2b5379165c8b80380038b6aa912.sample"]
 
 [params]
 

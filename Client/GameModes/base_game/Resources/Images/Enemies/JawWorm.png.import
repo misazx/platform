@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://do0wd6ojawg3r"
-path="res://.godot/imported/JawWorm.png-5f15a456761db6587afda3ce9edc0bc0.ctex"
+path="res://.godot/imported/JawWorm.png-3ecb0df863b3d9a59a0fcf8c2be8ff05.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Enemies/JawWorm.png"
-dest_files=["res://.godot/imported/JawWorm.png-5f15a456761db6587afda3ce9edc0bc0.ctex"]
+source_file="res://GameModes/base_game/Resources/Images/Enemies/JawWorm.png"
+dest_files=["res://.godot/imported/JawWorm.png-3ecb0df863b3d9a59a0fcf8c2be8ff05.ctex"]
 
 [params]
 

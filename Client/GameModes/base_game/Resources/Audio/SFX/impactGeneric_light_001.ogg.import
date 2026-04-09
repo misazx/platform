@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://tx1ft217eohf"
-path="res://.godot/imported/impactGeneric_light_001.ogg-65846d6917fa08f22da7477c953e6358.oggvorbisstr"
+path="res://.godot/imported/impactGeneric_light_001.ogg-15314e899c5735d31c288d262a77c03b.oggvorbisstr"
 
 [deps]
 
-source_file="res://Audio/SFX/impactGeneric_light_001.ogg"
-dest_files=["res://.godot/imported/impactGeneric_light_001.ogg-65846d6917fa08f22da7477c953e6358.oggvorbisstr"]
+source_file="res://GameModes/base_game/Resources/Audio/SFX/impactGeneric_light_001.ogg"
+dest_files=["res://.godot/imported/impactGeneric_light_001.ogg-15314e899c5735d31c288d262a77c03b.oggvorbisstr"]
 
 [params]
 

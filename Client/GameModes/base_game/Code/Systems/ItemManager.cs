@@ -136,7 +136,7 @@ namespace RoguelikeGame.Systems
                     { "heal_amount", 25f }
                 },
                 IconPath = "res://GameModes/base_game/Resources/Icons/Items/health_potion_small.png",
-                ScenePath = "res://Scenes/Items/HealthPotion.tscn"
+                ScenePath = "res://GameModes/base_game/Scenes/Items/HealthPotion.tscn"
             });
 
             RegisterItem(new ItemData

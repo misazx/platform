@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://doivwd8ypw7nh"
-path="res://.godot/imported/victory.wav-b2f15954de7282bde63868c3eda38624.sample"
+path="res://.godot/imported/victory.wav-550ed8826d77aa377308b59938d2a94e.sample"
 
 [deps]
 
-source_file="res://Audio/BGM/victory.wav"
-dest_files=["res://.godot/imported/victory.wav-b2f15954de7282bde63868c3eda38624.sample"]
+source_file="res://GameModes/base_game/Resources/Audio/BGM/victory.wav"
+dest_files=["res://.godot/imported/victory.wav-550ed8826d77aa377308b59938d2a94e.sample"]
 
 [params]
 

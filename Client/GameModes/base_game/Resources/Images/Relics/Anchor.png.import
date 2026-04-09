@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dgatja7exl5g4"
-path="res://.godot/imported/Anchor.png-71df0eb86b552b5f623b493550164f92.ctex"
+path="res://.godot/imported/Anchor.png-48e2cd1898ca767086f2785e01836d5e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Relics/Anchor.png"
-dest_files=["res://.godot/imported/Anchor.png-71df0eb86b552b5f623b493550164f92.ctex"]
+source_file="res://GameModes/base_game/Resources/Images/Relics/Anchor.png"
+dest_files=["res://.godot/imported/Anchor.png-48e2cd1898ca767086f2785e01836d5e.ctex"]
 
 [params]
 

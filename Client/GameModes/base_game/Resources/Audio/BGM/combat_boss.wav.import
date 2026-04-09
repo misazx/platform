@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://6syht6t1oi42"
-path="res://.godot/imported/combat_boss.wav-e99e136fdbcbdad43fa60af46d49721e.sample"
+path="res://.godot/imported/combat_boss.wav-41d266da5b7b02e4edf680322ebd9cdf.sample"
 
 [deps]
 
-source_file="res://Audio/BGM/combat_boss.wav"
-dest_files=["res://.godot/imported/combat_boss.wav-e99e136fdbcbdad43fa60af46d49721e.sample"]
+source_file="res://GameModes/base_game/Resources/Audio/BGM/combat_boss.wav"
+dest_files=["res://.godot/imported/combat_boss.wav-41d266da5b7b02e4edf680322ebd9cdf.sample"]
 
 [params]
 

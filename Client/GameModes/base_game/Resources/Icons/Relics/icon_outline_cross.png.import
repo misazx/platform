@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c6558gf58hapt"
-path="res://.godot/imported/icon_outline_cross.png-d4ca2353325ba960ce9b3750a1426244.ctex"
+path="res://.godot/imported/icon_outline_cross.png-4947d8866fd62c4edd064110f9e70905.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/icon_outline_cross.png"
-dest_files=["res://.godot/imported/icon_outline_cross.png-d4ca2353325ba960ce9b3750a1426244.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/icon_outline_cross.png"
+dest_files=["res://.godot/imported/icon_outline_cross.png-4947d8866fd62c4edd064110f9e70905.ctex"]
 
 [params]
 

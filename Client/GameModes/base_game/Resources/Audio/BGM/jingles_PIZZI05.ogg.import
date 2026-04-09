@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://bu1s5mhaugsiw"
-path="res://.godot/imported/jingles_PIZZI05.ogg-918519b328da563d1c37b5508ec64f8d.oggvorbisstr"
+path="res://.godot/imported/jingles_PIZZI05.ogg-24039b739a5dce2f743ee59eada12c3e.oggvorbisstr"
 
 [deps]
 
-source_file="res://Audio/BGM/jingles_PIZZI05.ogg"
-dest_files=["res://.godot/imported/jingles_PIZZI05.ogg-918519b328da563d1c37b5508ec64f8d.oggvorbisstr"]
+source_file="res://GameModes/base_game/Resources/Audio/BGM/jingles_PIZZI05.ogg"
+dest_files=["res://.godot/imported/jingles_PIZZI05.ogg-24039b739a5dce2f743ee59eada12c3e.oggvorbisstr"]
 
 [params]
 

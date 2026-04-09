@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://sbg5m2eavdp1"
-path="res://.godot/imported/Lantern.png-70c309f86cc498bfe33059cb772d9fb4.ctex"
+path="res://.godot/imported/Lantern.png-4108df84f162139bd72028584228fe23.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/Relics/Lantern.png"
-dest_files=["res://.godot/imported/Lantern.png-70c309f86cc498bfe33059cb772d9fb4.ctex"]
+source_file="res://GameModes/base_game/Resources/Images/Relics/Lantern.png"
+dest_files=["res://.godot/imported/Lantern.png-4108df84f162139bd72028584228fe23.ctex"]
 
 [params]
 

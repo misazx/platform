@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://qmtedeydepvr"
-path="res://.godot/imported/button_square_depth_gradient.png-df2aaea358d334303798d395c4704d85.ctex"
+path="res://.godot/imported/button_square_depth_gradient.png-f42a707ec67b53d10e7d54c6953531b3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/button_square_depth_gradient.png"
-dest_files=["res://.godot/imported/button_square_depth_gradient.png-df2aaea358d334303798d395c4704d85.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/button_square_depth_gradient.png"
+dest_files=["res://.godot/imported/button_square_depth_gradient.png-f42a707ec67b53d10e7d54c6953531b3.ctex"]
 
 [params]
 

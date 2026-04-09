@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dak4w3dcep18m"
-path="res://.godot/imported/button_rectangle_depth_gradient.png-cb0045598d9031dbf3397369a27290c4.ctex"
+path="res://.godot/imported/button_rectangle_depth_gradient.png-5389b4dfc59bbb5d863178a07de3ef08.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/button_rectangle_depth_gradient.png"
-dest_files=["res://.godot/imported/button_rectangle_depth_gradient.png-cb0045598d9031dbf3397369a27290c4.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/button_rectangle_depth_gradient.png"
+dest_files=["res://.godot/imported/button_rectangle_depth_gradient.png-5389b4dfc59bbb5d863178a07de3ef08.ctex"]
 
 [params]
 

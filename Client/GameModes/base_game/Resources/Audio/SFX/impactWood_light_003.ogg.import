@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://mvguxv7isjby"
-path="res://.godot/imported/impactWood_light_003.ogg-95aa0e3cee46435b7e89e22ed6b53cfb.oggvorbisstr"
+path="res://.godot/imported/impactWood_light_003.ogg-622d2162807ebafcda7e421787ce90a0.oggvorbisstr"
 
 [deps]
 
-source_file="res://Audio/SFX/impactWood_light_003.ogg"
-dest_files=["res://.godot/imported/impactWood_light_003.ogg-95aa0e3cee46435b7e89e22ed6b53cfb.oggvorbisstr"]
+source_file="res://GameModes/base_game/Resources/Audio/SFX/impactWood_light_003.ogg"
+dest_files=["res://.godot/imported/impactWood_light_003.ogg-622d2162807ebafcda7e421787ce90a0.oggvorbisstr"]
 
 [params]
 

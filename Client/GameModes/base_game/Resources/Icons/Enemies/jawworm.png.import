@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dq27a7n0pjaeo"
-path="res://.godot/imported/jawworm.png-ee9c05f09bd674bedb0b4d140527b18e.ctex"
+path="res://.godot/imported/jawworm.png-2acda7fcf7dce6bb84a9f6c93a0c6ca6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Enemies/jawworm.png"
-dest_files=["res://.godot/imported/jawworm.png-ee9c05f09bd674bedb0b4d140527b18e.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Enemies/jawworm.png"
+dest_files=["res://.godot/imported/jawworm.png-2acda7fcf7dce6bb84a9f6c93a0c6ca6.ctex"]
 
 [params]
 

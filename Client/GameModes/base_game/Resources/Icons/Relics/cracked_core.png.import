@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvfkco4v38fdb"
-path="res://.godot/imported/cracked_core.png-555c9554974053e62e4d64a8ea98c4c5.ctex"
+path="res://.godot/imported/cracked_core.png-f1fdce41ceaadff51cd063ba102636a0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/cracked_core.png"
-dest_files=["res://.godot/imported/cracked_core.png-555c9554974053e62e4d64a8ea98c4c5.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/cracked_core.png"
+dest_files=["res://.godot/imported/cracked_core.png-f1fdce41ceaadff51cd063ba102636a0.ctex"]
 
 [params]
 

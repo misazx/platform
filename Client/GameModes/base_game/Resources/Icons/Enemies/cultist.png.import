@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cwfrye3d0vhd7"
-path="res://.godot/imported/cultist.png-59c66708144c8d3d12a54c247f0268a5.ctex"
+path="res://.godot/imported/cultist.png-2ab3c7a50233589f3b09e8c9dc2c21d6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Enemies/cultist.png"
-dest_files=["res://.godot/imported/cultist.png-59c66708144c8d3d12a54c247f0268a5.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Enemies/cultist.png"
+dest_files=["res://.godot/imported/cultist.png-2ab3c7a50233589f3b09e8c9dc2c21d6.ctex"]
 
 [params]
 

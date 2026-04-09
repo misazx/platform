@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmd0h2bv8m4ar"
-path="res://.godot/imported/arrow_basic_n.png-33e91fa82102090d3bc9950b4628e915.ctex"
+path="res://.godot/imported/arrow_basic_n.png-babcd7e262e6ee160353689774e72d84.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Relics/arrow_basic_n.png"
-dest_files=["res://.godot/imported/arrow_basic_n.png-33e91fa82102090d3bc9950b4628e915.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Relics/arrow_basic_n.png"
+dest_files=["res://.godot/imported/arrow_basic_n.png-babcd7e262e6ee160353689774e72d84.ctex"]
 
 [params]
 

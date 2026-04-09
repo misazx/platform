@@ -194,7 +194,7 @@ namespace RoguelikeGame
             GD.Print("[Main] Loading CharacterSelect...");
             ClearCurrentScene();
 
-            var charSelect = LoadScene("res://Scenes/CharacterSelect.tscn");
+            var charSelect = LoadScene("res://GameModes/base_game/Scenes/CharacterSelect.tscn");
             if (charSelect is CharacterSelect cs)
             {
                 _currentScene = charSelect;
@@ -230,7 +230,7 @@ namespace RoguelikeGame
             ClearCurrentScene();
 
             GD.Print("[Main] Loading MapScene.tscn...");
-            var mapScene = LoadScene("res://Scenes/MapScene.tscn");
+            var mapScene = LoadScene("res://GameModes/base_game/Scenes/MapScene.tscn");
 
             if (mapScene == null)
             {
@@ -253,7 +253,7 @@ namespace RoguelikeGame
             ClearCurrentScene();
             _combatActive = true;
 
-            var combatScene = LoadScene("res://Scenes/CombatScene.tscn");
+            var combatScene = LoadScene("res://GameModes/base_game/Scenes/CombatScene.tscn");
             if (combatScene != null)
             {
                 _currentScene = combatScene;

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://gioa8q5jgsqj"
-path="res://.godot/imported/card_23.png-ef2f6e32bd1932e4b4fba1d5ae621b25.ctex"
+path="res://.godot/imported/card_23.png-a1450efa943f222932ad5074a34a0a5d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/Cards/card_23.png"
-dest_files=["res://.godot/imported/card_23.png-ef2f6e32bd1932e4b4fba1d5ae621b25.ctex"]
+source_file="res://GameModes/base_game/Resources/Icons/Cards/card_23.png"
+dest_files=["res://.godot/imported/card_23.png-a1450efa943f222932ad5074a34a0a5d.ctex"]
 
 [params]
 
