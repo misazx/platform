@@ -60,6 +60,9 @@ namespace RoguelikeGame.Network
 		[Signal]
 		public delegate void GameEndedEventHandler(bool victory);
 
+		[Signal]
+		public delegate void ConnectionLostEventHandler(string reason);
+
 		public override void _Ready()
 		{
 			base._Ready();
@@ -181,7 +184,7 @@ namespace RoguelikeGame.Network
 			}
 		}
 
-		private void UpdateState(NetworkState newState)
+		public void UpdateState(NetworkState newState)
 		{
 			var oldState = _state;
 			_state = newState;
@@ -208,7 +211,7 @@ namespace RoguelikeGame.Network
 			if (_state != NetworkState.Disconnected)
 			{
 				UpdateState(NetworkState.Disconnected);
-				EmitSignal(SignalName.ConnectionLost, "连接意外断开");
+				EmitSignal("connection_lost", "连接意外断开");
 			}
 		}
 

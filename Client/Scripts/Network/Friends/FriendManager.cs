@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Godot;
+using RoguelikeGame.Network.Auth;
 
 namespace RoguelikeGame.Network.Friends
 {
@@ -57,7 +58,7 @@ namespace RoguelikeGame.Network.Friends
 
 		private void InitializeHttpClient()
 		{
-			_httpClient = new HttpClient
+			_httpClient = new System.Net.Http.HttpClient
 			{
 				BaseAddress = new Uri("http://127.0.0.1:5000"),
 				Timeout = TimeSpan.FromSeconds(15)
@@ -90,7 +91,7 @@ namespace RoguelikeGame.Network.Friends
 						});
 					}
 
-					EmitSignal(SignalName.FriendsListUpdated, _friends);
+					EmitSignal(SignalName.FriendsListUpdated);
 				}
 
 				return _friends;

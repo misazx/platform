@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
+using RoguelikeGame.Core;
 
 namespace RoguelikeGame.Network.Core
 {
@@ -41,10 +42,10 @@ namespace RoguelikeGame.Network.Core
 
 		private void InitializeAdapters()
 		{
-			_adapters = new Dictionary<ConnectionMode, IConnectionMode>
+			_adapters = new Dictionary<ConnectionMode, IConnectionAdapter>
 			{
 				{ ConnectionMode.LAN, new ENetConnectionAdapter() },
-				{ ConnectionMode.Online, new ENetConnectionAdapter() }
+				{ ConnectionMode.Online, new WebRTCConnectionAdapter() }
 			};
 
 			GD.Print("[ConnectionManager] 初始化完成，可用协议:");

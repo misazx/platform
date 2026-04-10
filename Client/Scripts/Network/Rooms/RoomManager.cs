@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Godot;
+using RoguelikeGame.Network.Auth;
 
 namespace RoguelikeGame.Network.Rooms
 {
@@ -117,7 +118,7 @@ namespace RoguelikeGame.Network.Rooms
 
 		private void InitializeHttpClient()
 		{
-			_httpClient = new HttpClient
+			_httpClient = new System.Net.Http.HttpClient
 			{
 				BaseAddress = new Uri(_baseUrl),
 				Timeout = TimeSpan.FromSeconds(30)
@@ -202,7 +203,7 @@ namespace RoguelikeGame.Network.Rooms
 
 					GD.Print($"[RoomManager] ✓ 房间已创建: {_currentRoom}");
 
-					EmitSignal(SignalName.RoomCreated, _currentRoom);
+					EmitSignal(SignalName.RoomCreated, _currentRoom?.Id ?? "", _currentRoom?.Name ?? "");
 
 					return new RoomResult
 					{
@@ -254,7 +255,7 @@ namespace RoguelikeGame.Network.Rooms
 
 					GD.Print($"[RoomManager] ✓ 已加入房间: {_currentRoom}");
 
-					EmitSignal(SignalName.RoomJoined, _currentRoom);
+					EmitSignal(SignalName.RoomJoined, _currentRoom?.Id ?? "", _currentRoom?.Name ?? "");
 
 					return new RoomResult
 					{
@@ -380,7 +381,7 @@ namespace RoguelikeGame.Network.Rooms
 					if (_currentRoom?.Id == roomId)
 					{
 						_currentRoom = room;
-						EmitSignal(SignalName.RoomUpdated, room);
+						EmitSignal(SignalName.RoomUpdated, room?.Id ?? "");
 					}
 
 					return new RoomResult { Success = true, Room = room };

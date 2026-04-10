@@ -9,18 +9,16 @@
 	<key>CFBundleName</key>
 	<string>BuildTool</string>
 	<key>CFBundleDisplayName</key>
-	<string>杀戮尖塔2 打包工具</string>
+	<string>Godot Build Tool</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
-	<key>CFBundleMinimumSystemVersion</key>
+	<string>5.0</string>
+	<key>LSMinimumSystemVersion</key>
 	<string>10.13</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
-	<key>LSUIElement</key>
-	<false/>
 </dict>
 </plist>

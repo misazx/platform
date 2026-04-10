@@ -74,7 +74,7 @@ namespace RoguelikeGame.Network.Auth
 
 		private void InitializeHttpClient()
 		{
-			_httpClient = new HttpClient
+			_httpClient = new System.Net.Http.HttpClient
 			{
 				BaseAddress = new Uri(_baseUrl),
 				Timeout = TimeSpan.FromSeconds(30)

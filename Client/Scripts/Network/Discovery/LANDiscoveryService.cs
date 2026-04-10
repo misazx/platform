@@ -79,7 +79,7 @@ namespace RoguelikeGame.Network.Discovery
 
 		private void InitializeTimers()
 		{
-			_broadcastTimer = new Timer
+			_broadcastTimer = new Godot.Timer
 			{
 				WaitTime = BROADCAST_INTERVAL_MS / 1000.0,
 				OneShot = false,
@@ -88,7 +88,7 @@ namespace RoguelikeGame.Network.Discovery
 			_broadcastTimer.Connect("timeout", new Callable(this, nameof(OnBroadcastTick)));
 			AddChild(_broadcastTimer);
 
-			_cleanupTimer = new Timer
+			_cleanupTimer = new Godot.Timer
 			{
 				WaitTime = 5.0,
 				OneShot = false,
@@ -267,7 +267,7 @@ namespace RoguelikeGame.Network.Discovery
 					if (isNew)
 					{
 						GD.Print($"[LANDiscovery] 发现新主机: {hostInfo}");
-						EmitSignal(SignalName.HostDiscovered, hostInfo);
+						EmitSignal(SignalName.HostDiscovered, hostId, hostInfo.HostName, hostInfo.Address.ToString(), hostInfo.Port);
 					}
 				}
 			}
@@ -283,10 +283,11 @@ namespace RoguelikeGame.Network.Discovery
 
 			try
 			{
-				var gameManager = GameManager.Instance;
-				var currentPlayers = gameManager?.CurrentRun != null ? 1 : 0;
+				var currentPlayers = 1;
+				var username = "Player";
+				var port = 5000;
 
-				var broadcastMessage = $"HOST_INFO:{OS.GetSystemUsername("Player")}|{NetworkManager.Instance?._serverPort ?? 5000}|{currentPlayers}|4|PvP";
+				var broadcastMessage = $"HOST_INFO:{username}|{port}|{currentPlayers}|4|PvP";
 				var data = System.Text.Encoding.UTF8.GetBytes(broadcastMessage);
 				var endpoint = new IPEndPoint(IPAddress.Broadcast, BROADCAST_PORT);
 
@@ -332,10 +333,11 @@ namespace RoguelikeGame.Network.Discovery
 
 			try
 			{
-				var gameManager = GameManager.Instance;
-				var currentPlayers = gameManager?.CurrentRun != null ? 1 : 0;
+				var currentPlayers = 1;
+				var username = "Player";
+				var port = 5000;
 
-				var response = $"HOST_INFO:{OS.GetSystemUsername("Player")}|{NetworkManager.Instance?._serverPort ?? 5000}|{currentPlayers}|4|PvP";
+				var response = $"HOST_INFO:{username}|{port}|{currentPlayers}|4|PvP";
 				var data = System.Text.Encoding.UTF8.GetBytes(response);
 
 				await _udpClient.SendAsync(data, data.Length, targetEndpoint);

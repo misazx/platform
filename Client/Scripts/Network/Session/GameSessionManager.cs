@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Godot;
 using RoguelikeGame.Core;
+using RoguelikeGame.Network.Auth;
 using RoguelikeGame.Network.Rooms;
+using RoguelikeGame.Network.Core;
 
 namespace RoguelikeGame.Network.Session
 {
@@ -14,7 +17,6 @@ namespace RoguelikeGame.Network.Session
 		public int CurrentTurn { get; set; } = 0;
 		public string CurrentPhase { get; set; } = "";
 		public Dictionary<string, PlayerState> Players { get; set; } = new();
-		public List<CardAction> PendingActions { get; set; } = new();
 		public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 	}
 
@@ -36,17 +38,6 @@ namespace RoguelikeGame.Network.Session
 		public Dictionary<string, int> Debuffs { get; set; } = new();
 	}
 
-	public class CardAction
-	{
-		public string ActionId { get; set; } = Guid.NewGuid().ToString();
-		public string PlayerId { get; set; } = "";
-		public string CardId { get; set; } = "";
-		public string Action { get; set; } = ""; // play, end_turn, etc.
-		public object? Target { get; set; }
-		public long Timestamp { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-		public bool IsValidated { get; set; } = false;
-	}
-
 	public partial class GameSessionManager : Node
 	{
 		private static GameSessionManager _instance;
@@ -54,7 +45,6 @@ namespace RoguelikeGame.Network.Session
 		public static GameSessionManager Instance => _instance;
 
 		private GameState _gameState;
-		private Queue<CardAction> _actionQueue;
 		private Timer _syncTimer;
 		private bool _isHost;
 		private int _syncIntervalMs = 100;
@@ -65,12 +55,16 @@ namespace RoguelikeGame.Network.Session
 
 		[Signal]
 		public delegate void GameStartedEventHandler(uint syncSeed);
+
 		[Signal]
 		public delegate void GameEndedEventHandler(bool victory);
+
 		[Signal]
 		public delegate void StateSyncedEventHandler(string roomId, int currentTurn);
+
 		[Signal]
 		public delegate void TurnChangedEventHandler(int newTurn);
+
 		[Signal]
 		public delegate void PlayerActionReceivedEventHandler(string playerId, string actionType);
 
@@ -93,7 +87,6 @@ namespace RoguelikeGame.Network.Session
 		private void InitializeComponents()
 		{
 			_gameState = new GameState();
-			_actionQueue = new Queue<CardAction>();
 
 			_syncTimer = new Timer
 			{
@@ -122,8 +115,7 @@ namespace RoguelikeGame.Network.Session
 				_gameState = new GameState
 				{
 					RoomId = room.Id,
-					SyncSeed = uint.Parse(room.Seed.Replace("-", "").Substring(0, 8),
-						System.Globalization.NumberStyles.HexNumber),
+					SyncSeed = (uint)DateTime.UtcNow.Ticks,
 					CurrentTurn = 0,
 					CurrentPhase = "setup"
 				};
@@ -153,11 +145,6 @@ namespace RoguelikeGame.Network.Session
 					GD.Print($"[GameSessionManager] ✓ 游戏会话已启动 (种子: {_gameState.SyncSeed})");
 
 					EmitSignal(SignalName.GameStarted, _gameState.SyncSeed);
-
-					if (_isHost)
-					{
-						await BroadcastInitialGameState();
-					}
 				}
 				else
 				{
@@ -178,17 +165,21 @@ namespace RoguelikeGame.Network.Session
 
 				_syncTimer.Stop();
 
-				var endPacket = PacketSerializer.SerializePacket(PacketType.GameEnd, new
+				var endData = JsonSerializer.Serialize(new
 				{
+					type = "game_end",
 					roomId = _gameState.RoomId,
 					victory,
 					finalTurn = _gameState.CurrentTurn,
 					timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
 				});
 
-				await ConnectionManager.Instance.SendAsync(endPacket);
-
-				NetworkManager.Instance.UpdateState(NetworkState.InLobby);
+				var bytes = System.Text.Encoding.UTF8.GetBytes(endData);
+				if (NetworkManager.Instance != null)
+				{
+					var connMgr = NetworkManager.Instance.GetChild(0) as ConnectionManager;
+					if (connMgr != null) await connMgr.SendAsync(bytes);
+				}
 
 				EmitSignal(SignalName.GameEnded, victory);
 
@@ -206,23 +197,31 @@ namespace RoguelikeGame.Network.Session
 		{
 			if (!IsInGame) return;
 
-			var playerAction = new CardAction
+			var playerAction = new
 			{
-				PlayerId = AuthSystem.Instance?.CurrentUser?.Id ?? "",
-				CardId = cardId,
-				Action = actionType,
-				Target = target
+				playerId = AuthSystem.Instance?.CurrentUser?.Id ?? "",
+				cardId,
+				action = actionType,
+				target,
+				timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
 			};
 
-			_actionQueue.Enqueue(playerAction);
+			var jsonData = JsonSerializer.Serialize(new
+			{
+				type = "game_input",
+				action = playerAction
+			});
 
-			var actionPacket = PacketSerializer.SerializePacket(PacketType.GameInput, playerAction);
-
-			await ConnectionManager.Instance.SendAsync(actionPacket);
+			var bytes = System.Text.Encoding.UTF8.GetBytes(jsonData);
+			if (NetworkManager.Instance != null)
+			{
+				var connMgr = NetworkManager.Instance.GetChild(0) as ConnectionManager;
+				if (connMgr != null) await connMgr.SendAsync(bytes);
+			}
 
 			GD.Print($"[GameSessionManager] 发送玩家操作: {actionType} - {cardId}");
 
-			EmitSignal(SignalName.PlayerActionReceived, playerAction);
+			EmitSignal(SignalName.PlayerActionReceived, playerAction.playerId, actionType);
 		}
 
 		public async Task SendEndTurnAsync()
@@ -234,86 +233,7 @@ namespace RoguelikeGame.Network.Session
 		{
 			if (!IsInGame) return;
 
-			if (_isHost && _actionQueue.Count > 0)
-			{
-				await ProcessAndBroadcastActions();
-			}
-
 			_gameState.LastUpdated = DateTime.UtcNow;
-		}
-
-		private async Task ProcessAndBroadcastActions()
-		{
-			while (_actionQueue.Count > 0)
-			{
-				var action = _actionQueue.Dequeue();
-
-				action.IsValidated = ValidateAction(action);
-
-				ApplyActionToState(action);
-
-				var stateUpdate = PacketSerializer.SerializePacket(
-					PacketType.GameStateSync,
-					new
-					{
-						state = _gameState,
-						lastAction = action
-					}
-				);
-
-				await ConnectionManager.Instance.SendAsync(stateUpdate);
-			}
-		}
-
-		private bool ValidateAction(CardAction action)
-		{
-			if (!_gameState.Players.ContainsKey(action.PlayerId))
-			{
-				GD.PrintErr($"[GameSessionManager] 无效操作: 玩家不存在 - {action.PlayerId}");
-				return false;
-			}
-
-			var player = _gameState.Players[action.PlayerId];
-
-			switch (action.Action.ToLower())
-			{
-				case "play":
-					if (!player.IsAlive) return false;
-					if (player.HandCards.Count <= 0) return false;
-					if (player.CurrentEnergy < 1) return false;
-					break;
-
-				case "end_turn":
-					if (!_isHost) return false;
-					break;
-
-				default:
-					GD.PrintWarn($"[GameSessionManager] 未知操作类型: {action.Action}");
-					return false;
-			}
-
-			return true;
-		}
-
-		private void ApplyActionToState(CardAction action)
-		{
-			if (!_gameState.Players.ContainsKey(action.PlayerId)) return;
-
-			var player = _gameState.Players[action.PlayerId];
-
-			switch (action.Action.ToLower())
-			{
-				case "play":
-					player.HandCards.Remove(action.CardId);
-					player.DiscardPile.Add(action.CardId);
-					player.CurrentEnergy--;
-					break;
-
-				case "end_turn":
-					_gameState.CurrentTurn++;
-					EmitSignal(SignalName.TurnChanged, _gameState.CurrentTurn);
-					break;
-			}
 		}
 
 		public void ApplyRemoteState(object stateData)
@@ -334,7 +254,7 @@ namespace RoguelikeGame.Network.Session
 
 					if (stateDict.ContainsKey("players"))
 					{
-						var playersDict = stateDict["players"].AsGodotDictionary();
+						var playersDict = (Godot.Collections.Dictionary)stateDict["players"];
 						foreach (var playerId in playersDict.Keys)
 						{
 							string key = playerId.AsString();
@@ -347,7 +267,7 @@ namespace RoguelikeGame.Network.Session
 
 					_gameState.LastUpdated = DateTime.UtcNow;
 
-					EmitSignal(SignalName.StateSynced, _gameState);
+					EmitSignal(SignalName.StateSynced, _gameState.RoomId, _gameState.CurrentTurn);
 
 					GD.Print("[GameSessionManager] 远程状态已同步");
 				}
@@ -369,23 +289,6 @@ namespace RoguelikeGame.Network.Session
 				if (dict.ContainsKey("block")) playerState.Block = dict["block"].AsInt32();
 				if (dict.ContainsKey("isAlive")) playerState.IsAlive = dict["isAlive"].AsBool();
 			}
-		}
-
-		private async Task BroadcastInitialGameState()
-		{
-			var initialPacket = PacketSerializer.SerializePacket(
-				PacketType.GameStart,
-				new
-				{
-					seed = _gameState.SyncSeed,
-					initialState = _gameState,
-					message = "游戏已开始，请同步初始状态"
-				}
-			);
-
-			await ConnectionManager.Instance.SendAsync(initialPacket);
-
-			GD.Print("[GameSessionManager] 已广播初始游戏状态");
 		}
 
 		public PlayerState? GetLocalPlayerState()
@@ -443,7 +346,6 @@ namespace RoguelikeGame.Network.Session
 		private void CleanupSession()
 		{
 			_gameState = new GameState();
-			_actionQueue.Clear();
 			_isHost = false;
 		}
 

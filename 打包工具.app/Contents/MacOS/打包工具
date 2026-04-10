@@ -1,10 +1,2 @@
 #!/bin/bash
-# 打包工具 .app 启动器 (v5.0 - 指向 Client/Tools)
-
-# 获取 .app 路径 -> 项目根目录
-APP_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-PROJECT_ROOT="$(dirname "$APP_DIR")"
-
-cd "$PROJECT_ROOT" || exit 1
-
-exec /usr/bin/python3 "Client/Tools/build_gui.py" "$@"
+exec /usr/bin/python3 "/Users/zhuyong/trae-game/Client/Tools/build_gui.py" "$@"

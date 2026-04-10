@@ -148,7 +148,7 @@ namespace RoguelikeGame.Network
 
 			try
 			{
-				var wsAdapter = new WebSocketConnectionAdapter();
+				var wsAdapter = new WebRTCConnectionAdapter();
 				AddChild(wsAdapter);
 
 				bool success = await wsAdapter.ConnectAsync(address, port);
@@ -262,9 +262,10 @@ namespace RoguelikeGame.Network
 			return ConnectionMode.Online;
 		}
 
-		private void OnHostDiscoveredHandler(LANHostInfo hostInfo)
+		private void OnHostDiscoveredHandler(string hostId, string hostName, string address, int port)
 		{
-			GD.Print($"[MultiProtocolManager] 发现主机: {hostInfo}");
+			GD.Print($"[MultiProtocolManager] 发现主机: {hostName} @ {address}:{port}");
+			var hostInfo = new LANHostInfo { HostName = hostName, Port = port };
 			OnHostDiscovered?.Invoke(hostInfo);
 		}
 
