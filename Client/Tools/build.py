@@ -197,12 +197,26 @@ class BuildTool:
             print(f"   {' '.join(cmd)}\n")
 
             # 使用列表形式执行，避免 shell=True 的潜在问题
+            # 设置 DOTNET_ROOT 环境变量，确保 Godot 能找到 .NET
+            build_env = dict(os.environ)
+            dotnet_paths = [
+                '/usr/local/share/dotnet',
+                '/opt/homebrew/share/dotnet',
+            ]
+            for dp in dotnet_paths:
+                if os.path.exists(dp):
+                    build_env['DOTNET_ROOT'] = dp
+                    build_env['DOTNET_ROOT_ARM64'] = dp
+                    print(f"   DOTNET_ROOT={dp}")
+                    break
+
             result = subprocess.run(
                 cmd,
                 cwd=str(self.project_root),
                 capture_output=True,
                 text=True,
-                timeout=600  # 添加超时
+                timeout=600,
+                env=build_env
             )
 
             if result.returncode == 0:

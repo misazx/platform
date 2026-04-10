@@ -385,6 +385,35 @@ class BuildTool:
             self.status_btn.config(text=f"PARTIAL: {ok_count}/{total}")
             messagebox.showwarning("Done", f"Success: {ok_count}/{total}")
 
+    def _get_build_env(self):
+        """构建包含 .NET 环境变量的环境"""
+        env = dict(os.environ)
+
+        # 自动检测 DOTNET_ROOT
+        dotnet_paths = [
+            '/usr/local/share/dotnet',      # macOS Intel + Apple Silicon (Rosetta)
+            '/opt/homebrew/share/dotnet',    # Apple Silicon native
+        ]
+        for dp in dotnet_paths:
+            if os.path.exists(dp):
+                env['DOTNET_ROOT'] = dp
+                env['DOTNET_ROOT_ARM64'] = dp
+                self._log_safe(f"[ENV] DOTNET_ROOT={dp}", 'info')
+                break
+
+        # 如果 PATH 中没有 dotnet，添加它
+        dotnet_exe = shutil.which("dotnet")
+        if not dotnet_exe:
+            for dp in dotnet_paths:
+                bin_path = os.path.join(dp, 'dotnet')
+                if os.path.exists(bin_path):
+                    env['PATH'] = f"{dp}:{env.get('PATH', '')}"
+                    self._log_safe(f"[ENV] Added to PATH: {dp}", 'info')
+                    break
+
+        env['GODOT_DISABLE_CONSOLE'] = '1'
+        return env
+
     def _exec(self, cmd):
         """执行构建命令（线程安全版本）"""
         try:
@@ -398,9 +427,12 @@ class BuildTool:
                 self._log_safe(f"   ERROR: Executable not found: {exe}", 'err')
                 return False
 
+            # 获取包含 .NET 环境变量的环境
+            build_env = self._get_build_env()
+
             r = subprocess.run(cmd, cwd=str(self.project_root),
                              capture_output=True, text=True, timeout=600,
-                             env={**os.environ, 'GODOT_DISABLE_CONSOLE': '1'})
+                             env=build_env)
 
             # 显示返回码
             self._log_safe(f"[RET] Return code: {r.returncode}", 'info' if r.returncode == 0 else 'err')
