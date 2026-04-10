@@ -13,6 +13,7 @@ from pathlib import Path
 from datetime import datetime
 
 PROJECT_ROOT = Path(__file__).parent.parent
+GAME_MODES = PROJECT_ROOT / "GameModes" / "base_game"
 OUTPUT_DIR = PROJECT_ROOT / "test_cdn" / "packages"
 
 # 包定义：指定每个包包含的文件和目录
@@ -23,55 +24,52 @@ PACKAGE_DEFINITIONS = {
         "description": "经典Roguelike卡牌游戏体验",
         "include_patterns": [
             # 配置文件
-            ("Config/Data/cards.json", "config/"),
-            ("Config/Data/characters.json", "config/"),
-            ("Config/Data/enemies.json", "config/"),
-            ("Config/Data/events.json", "config/"),
-            ("Config/Data/relics.json", "config/"),
-            ("Config/Data/potions.json", "config/"),
-            ("Config/Data/effects.json", "config/"),
-            ("Config/Data/audio.json", "config/"),
-            
-            # 包配置文件
-            ("Packages/base_game/base_game_config.json", ""),
-            
+            ("GameModes/base_game/Config/Data/cards.json", "config/"),
+            ("GameModes/base_game/Config/Data/characters.json", "config/"),
+            ("GameModes/base_game/Config/Data/enemies.json", "config/"),
+            ("GameModes/base_game/Config/Data/events.json", "config/"),
+            ("GameModes/base_game/Config/Data/relics.json", "config/"),
+            ("GameModes/base_game/Config/Data/potions.json", "config/"),
+            ("GameModes/base_game/Config/Data/effects.json", "config/"),
+            ("GameModes/base_game/Config/Data/audio.json", "config/"),
+
             # 场景文件
-            ("Scenes/CombatScene.tscn", "scenes/"),
-            ("Scenes/CharacterSelect.tscn", "scenes/"),
-            ("Scenes/MainMenu.tscn", "scenes/"),
-            ("Scenes/MapScene.tscn", "scenes/"),
-            
+            ("GameModes/base_game/Scenes/CombatScene.tscn", "scenes/"),
+            ("GameModes/base_game/Scenes/CharacterSelect.tscn", "scenes/"),
+            ("GameModes/base_game/Scenes/MainMenu.tscn", "scenes/"),
+            ("GameModes/base_game/Scenes/MapScene.tscn", "scenes/"),
+
             # 图片资源 - 背景
-            ("Images/Backgrounds/", "images/backgrounds/"),
-            
+            ("GameModes/base_game/Resources/Images/Backgrounds/", "images/backgrounds/"),
+
             # 图片资源 - 角色
-            ("Images/Characters/", "images/characters/"),
-            
+            ("GameModes/base_game/Resources/Images/Characters/", "images/characters/"),
+
             # 图片资源 - 敌人
-            ("Images/Enemies/", "images/enemies/"),
-            
+            ("GameModes/base_game/Resources/Images/Enemies/", "images/enemies/"),
+
             # 图片资源 - 药水
-            ("Images/Potions/", "images/potions/"),
-            
+            ("GameModes/base_game/Resources/Images/Potions/", "images/potions/"),
+
             # 图片资源 - 圣物
-            ("Images/Relics/", "images/relics/"),
-            
+            ("GameModes/base_game/Resources/Images/Relics/", "images/relics/"),
+
             # 图片资源 - 事件
-            ("Images/Events/", "images/events/"),
-            
+            ("GameModes/base_game/Resources/Images/Events/", "images/events/"),
+
             # 图标资源
-            ("Icons/Cards/", "icons/cards/"),
-            ("Icons/Enemies/", "icons/enemies/"),
-            ("Icons/Items/", "icons/items/"),
-            ("Icons/Relics/", "icons/relics/"),
-            ("Icons/Skills/", "icons/skills/"),
-            ("Icons/Achievements/", "icons/achievements/"),
-            ("Icons/Rest/", "icons/rest/"),
-            ("Icons/Services/", "icons/services/"),
-            
+            ("GameModes/base_game/Resources/Icons/Cards/", "icons/cards/"),
+            ("GameModes/base_game/Resources/Icons/Enemies/", "icons/enemies/"),
+            ("GameModes/base_game/Resources/Icons/Items/", "icons/items/"),
+            ("GameModes/base_game/Resources/Icons/Relics/", "icons/relics/"),
+            ("GameModes/base_game/Resources/Icons/Skills/", "icons/skills/"),
+            ("GameModes/base_game/Resources/Icons/Achievements/", "icons/achievements/"),
+            ("GameModes/base_game/Resources/Icons/Rest/", "icons/rest/"),
+            ("GameModes/base_game/Resources/Icons/Services/", "icons/services/"),
+
             # 音频资源
-            ("Audio/BGM/", "audio/bgm/"),
-            ("Audio/SFX/", "audio/sfx/"),
+            ("GameModes/base_game/Resources/Audio/BGM/", "audio/bgm/"),
+            ("GameModes/base_game/Resources/Audio/SFX/", "audio/sfx/"),
         ],
         "exclude_patterns": [
             "*.cs",
@@ -273,7 +271,7 @@ def main():
         print(f"💾 Total Size: {total_size / 1024 / 1024:.2f} MB")
         
         print(f"\n🚀 Next Steps:")
-        print(f"   1. Start CDN server: python3 Tools/local_cdn_server.py")
+        print(f"   1. Start CDN server: python3 Client/Tools/local_cdn_server.py")
         print(f"   2. Open game and test package download")
         print(f"   3. Access: http://localhost:8080/registry.json")
         print()

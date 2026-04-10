@@ -3,8 +3,8 @@
 from PIL import Image
 from pathlib import Path
 
-DL = Path("Assets_Library/_downloads")
-P = Path(".")
+DL = Path("../../../Assets_Library/_downloads")
+P = Path("../GameModes/base_game/Resources")
 
 mappings = {
     "Icons/Cards/strike.png": DL / "ui-pack/PNG/Red/Default/icon_cross.png",

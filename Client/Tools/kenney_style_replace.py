@@ -30,7 +30,7 @@ except ImportError:
     HAS_PIL = True
 
 
-PROJECT_ROOT = Path(__file__).parent
+PROJECT_ROOT = Path(__file__).parent.parent / "GameModes" / "base_game" / "Resources"
 
 DIRS = {
     "cards": PROJECT_ROOT / "Icons" / "Cards",

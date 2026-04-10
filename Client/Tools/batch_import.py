@@ -26,7 +26,7 @@ from datetime import datetime
 from typing import Dict, List, Optional
 
 
-PROJECT_ROOT = Path(__file__).parent
+PROJECT_ROOT = Path(__file__).parent.parent / "GameModes" / "base_game" / "Resources"
 TARGET_DIRS = {
     "cards": PROJECT_ROOT / "Icons" / "Cards",
     "enemies_icon": PROJECT_ROOT / "Icons" / "Enemies",

@@ -18,12 +18,12 @@ from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
 
-PROJECT_ROOT = Path(__file__).parent
+PROJECT_ROOT = Path(__file__).parent.parent / "GameModes" / "base_game"
 CONFIG_DIR = PROJECT_ROOT / "Config" / "Data"
 ASSETS_DIR = PROJECT_ROOT / "Assets_Library"
-ICONS_DIR = PROJECT_ROOT / "Icons"
-IMAGES_DIR = PROJECT_ROOT / "Images"
-AUDIO_DIR = PROJECT_ROOT / "Audio"
+ICONS_DIR = PROJECT_ROOT / "Resources" / "Icons"
+IMAGES_DIR = PROJECT_ROOT / "Resources" / "Images"
+AUDIO_DIR = PROJECT_ROOT / "Resources" / "Audio"
 
 
 def find_available_assets(category: str) -> List[str]:

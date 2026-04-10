@@ -34,7 +34,7 @@ from urllib.error import URLError
 
 # ==================== 配置 ====================
 
-PROJECT_ROOT = Path(__file__).parent
+PROJECT_ROOT = Path(__file__).parent.parent / "GameModes" / "base_game" / "Resources"
 ASSETS_DIR = PROJECT_ROOT / "Assets_Library"
 DOWNLOAD_CACHE = ASSETS_DIR / "_downloads"
 LOG_FILE = ASSETS_DIR / "download_log.json"

@@ -23,8 +23,8 @@ import shutil
 from pathlib import Path
 from PIL import Image
 
-PROJECT_ROOT = Path(__file__).parent
-DL = PROJECT_ROOT / "Assets_Library" / "_downloads"
+PROJECT_ROOT = Path(__file__).parent.parent / "GameModes" / "base_game" / "Resources"
+DL = PROJECT_ROOT.parent.parent.parent / "Assets_Library" / "_downloads"
 
 def copy_and_resize(src, dst, size=None):
     """复制并调整大小"""

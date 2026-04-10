@@ -19,7 +19,7 @@ from pathlib import Path
 from datetime import datetime
 
 
-PROJECT_ROOT = Path(__file__).parent
+PROJECT_ROOT = Path(__file__).parent.parent / "GameModes" / "base_game" / "Resources"
 
 # 目录定义
 DIRS = {

@@ -29,7 +29,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Tuple
 
-PROJECT_ROOT = Path(__file__).parent
+PROJECT_ROOT = Path(__file__).parent.parent / "GameModes" / "base_game" / "Resources"
 ASSETS_DIR = PROJECT_ROOT / "Assets_Library"
 TARGET_DIRS = {
     "cards": PROJECT_ROOT / "Icons" / "Cards",

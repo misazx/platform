@@ -31,7 +31,7 @@ except ImportError:
     HAS_PIL = True
 
 
-PROJECT_ROOT = Path(__file__).parent
+PROJECT_ROOT = Path(__file__).parent.parent / "GameModes" / "base_game" / "Resources"
 
 def clean_all_import_caches():
     """递归删除所有 .import 缓存文件"""

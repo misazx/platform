@@ -35,7 +35,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 # ==================== 配置 ====================
 
-PROJECT_ROOT = Path(__file__).parent
+PROJECT_ROOT = Path(__file__).parent.parent / "GameModes" / "base_game" / "Resources"
 ASSETS_DIR = PROJECT_ROOT / "Assets_Library"
 DOWNLOAD_CACHE = ASSETS_DIR / "_downloads"
 TEMP_EXTRACT = ASSETS_DIR / "_temp_extract"

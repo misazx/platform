@@ -37,7 +37,7 @@ try:
 except ImportError:
     HAS_PIL = False
 
-PROJECT_ROOT = Path(__file__).parent
+PROJECT_ROOT = Path(__file__).parent.parent / "GameModes" / "base_game" / "Resources"
 CONFIG_PATH = PROJECT_ROOT / "asset_download_config.json"
 DL_DIR = PROJECT_ROOT / "Assets_Library" / "_downloads"
 
