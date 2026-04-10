@@ -15,6 +15,5 @@
     <Compile Remove="Scripts\UI\Panels\LobbyPanel.cs" />
     <Compile Remove="Scripts\UI\Panels\LoginPanel.cs" />
     <Compile Remove="Scripts\UI\Panels\MultiplayerPanel.cs" />
-    <Compile Remove="Scripts\UI\EnhancedMainMenu.cs" />
   </ItemGroup>
 </Project>

@@ -60,9 +60,6 @@ namespace RoguelikeGame.Network
 		[Signal]
 		public delegate void GameEndedEventHandler(bool victory);
 
-		[Signal]
-		public delegate void ConnectionLostEventHandler(string reason);
-
 		public override void _Ready()
 		{
 			base._Ready();
