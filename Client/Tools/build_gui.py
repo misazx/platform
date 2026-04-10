@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-v7.2 - 日志增强版
-修复构建无日志问题 + 线程安全日志 + 完整错误捕获
+v7.3 - UI优化+日志增强版
+修复UI重复问题 + 改进Godot查找 + 完整错误诊断
 """
 
 import os
@@ -20,8 +20,8 @@ from tkinter import ttk, messagebox, filedialog
 class BuildTool:
     def __init__(self):
         self.root = Tk()
-        self.root.title("Godot Build Tool v7.2")
-        self.root.geometry("950x700")
+        self.root.title("Godot Build Tool v7.3")
+        self.root.geometry("1000x680")
 
         self.script_dir = Path(__file__).parent.resolve()
         self.project_root = self.script_dir.parent.parent
@@ -55,114 +55,116 @@ class BuildTool:
     def _build(self):
         R = self.root
 
-        # ===== 标题 (Label 可能不可见，用 Message 或跳过) =====
-        title_btn = Button(R, text="=== Godot Build Tool ===\nClick platforms below, then START",
-                             font=('Helvetica', 14), height=2,
-                             relief=GROOVE, bd=2)
-        title_btn.pack(fill=X, padx=10, pady=8)
-
         # ===== 主区域 =====
         main = Frame(R)
-        main.pack(fill=BOTH, expand=True, padx=10)
+        main.pack(fill=BOTH, expand=True, padx=10, pady=5)
 
         # === LEFT: 平台按钮 ===
         left = Frame(main)
         left.pack(side=LEFT, fill=Y, padx=(0, 10))
 
+        Label(left, text="Platforms", font=('Helvetica', 12, 'bold')).pack(anchor='w', pady=(0, 5))
+
         for pid, name in self.platforms:
             var = self.platform_vars[pid]
             btn = Button(left, text=f"  [ ] {name}  ",
-                         font=('Helvetica', 12),
-                         height=2, cursor='hand2',
+                         font=('Helvetica', 11),
+                         height=1, cursor='hand2',
                          command=lambda p=pid: self._toggle(p))
-            btn.pack(fill=X, pady=3)
+            btn.pack(fill=X, pady=2)
             self.platform_buttons[pid] = {'btn': btn, 'var': var, 'name': name}
 
         fb = Frame(left)
-        fb.pack(fill=X, pady=6)
+        fb.pack(fill=X, pady=(8, 0))
         Button(fb, text="Select All", command=lambda: self._set_all(1),
-               font=('', 10)).pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9)).pack(side=LEFT, fill=X, expand=True, padx=2)
         Button(fb, text="Clear All", command=lambda: self._set_all(0),
-               font=('', 10)).pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9)).pack(side=LEFT, fill=X, expand=True, padx=2)
 
         # === MIDDLE: 配置 ===
         mid = Frame(main)
         mid.pack(side=LEFT, fill=Y, padx=(0, 10))
 
-        # Godot 路径 - 用 Button 显示和操作
-        Button(mid, text="[Godot Path - Click to Set]",
-               font=('Helvetica', 11), height=2,
-               relief=GROOVE, bd=2, anchor='w',
-               command=self._browse_godot).pack(fill=X, pady=4)
+        Label(mid, text="Configuration", font=('Helvetica', 12, 'bold')).pack(anchor='w', pady=(0, 5))
 
-        bf = Frame(mid)
-        bf.pack(fill=X, pady=4)
+        # Godot 路径区域
+        path_frame = Frame(mid)
+        path_frame.pack(fill=X, pady=5)
+
+        Label(path_frame, text="Godot Path:", font=('Helvetica', 10)).pack(anchor='w')
+
+        bf = Frame(path_frame)
+        bf.pack(fill=X, pady=3)
         Button(bf, text="Auto-Find", command=self._find_godot,
-               font=('', 10), bg='#FF9800').pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9), bg='#FF9800', width=10).pack(side=LEFT, padx=2)
         Button(bf, text="Browse .app", command=self._browse_godot,
-               font=('', 10), bg='#4A9EFF').pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9), bg='#4A9EFF', width=10).pack(side=LEFT, padx=2)
 
-        # 当前路径显示按钮
-        self.btn_path_display = Button(mid, text="(no path set)",
-                                        font=('Courier', 10), height=3,
+        # 当前路径显示
+        self.btn_path_display = Button(path_frame, text="(click Auto-Find or Browse)",
+                                        font=('Courier', 9), height=2,
                                         relief=SUNKEN, anchor='w')
-        self.btn_path_display.pack(fill=X, pady=4)
+        self.btn_path_display.pack(fill=X, pady=3)
 
-        Checkbutton(mid, text="Debug Mode", variable=self.debug_mode,
-                   font=('', 11)).pack(anchor='w', pady=4)
-        Checkbutton(mid, text="Clean Build", variable=self.clean_build,
-                   font=('', 11)).pack(anchor='w', pady=4)
+        # 选项
+        opts = Frame(mid)
+        opts.pack(fill=X, pady=8)
+        Checkbutton(opts, text="Debug Mode", variable=self.debug_mode,
+                   font=('', 10)).pack(anchor='w')
+        Checkbutton(opts, text="Clean Build", variable=self.clean_build,
+                   font=('', 10)).pack(anchor='w')
 
         # 操作按钮
+        Label(mid, text="Actions", font=('Helvetica', 12, 'bold')).pack(anchor='w', pady=(10, 5))
+
         self.btn_start = Button(mid, text=">>> START BUILD <<<",
                                  command=self._start_build,
-                                 font=('Helvetica', 14, 'bold'),
+                                 font=('Helvetica', 12, 'bold'),
                                  bg='#4CAF50', fg='white', height=2)
-        self.btn_start.pack(fill=X, pady=8)
+        self.btn_start.pack(fill=X, pady=5)
 
         self.btn_stop = Button(mid, text="[ STOP ]",
                                command=self._stop_build,
-                               font=('', 11), bg='#F44336', fg='white',
-                               state='disabled')
-        self.btn_stop.pack(fill=X, pady=4)
+                               font=('', 10), bg='#F44336', fg='white',
+                               state='disabled', height=1)
+        self.btn_stop.pack(fill=X, pady=3)
 
         fa = Frame(mid)
-        fa.pack(fill=X, pady=8)
+        fa.pack(fill=X, pady=5)
         Button(fa, text="Clean Dir", command=self._clean_dir,
-               font=('', 10), bg='#607D8B', fg='white').pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9), bg='#607D8B', fg='white').pack(side=LEFT, fill=X, expand=True, padx=2)
         Button(fa, text="Open Output", command=self._open_output,
-               font=('', 10), bg='#795548', fg='white').pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9), bg='#795548', fg='white').pack(side=LEFT, fill=X, expand=True, padx=2)
 
-        # === RIGHT: 日志 (用 Button 模拟文本区) ===
+        # === RIGHT: 日志 ===
         right = Frame(main)
         right.pack(side=LEFT, fill=BOTH, expand=True)
 
-        Button(right, text="=== Build Log (see terminal for details) ===",
-               font=('Helvetica', 11), anchor='w').pack(fill=X)
+        Label(right, text="Build Log", font=('Helvetica', 12, 'bold')).pack(anchor='w', pady=(0, 5))
 
-        self.log_display = Listbox(right, font=('Courier', 10), height=20,
-                                   selectmode=SINGLE, bg='#111', fg='#DDD')
+        self.log_display = Listbox(right, font=('Courier', 9), height=25,
+                                   selectmode=SINGLE, bg='#1a1a1a', fg='#00FF00')
         self.log_display.pack(fill=BOTH, expand=True)
 
         lc = Frame(right)
-        lc.pack(fill=X, pady=4)
+        lc.pack(fill=X, pady=5)
         Button(lc, text="Clear Log", command=self._clear_log,
-               font=('', 9)).pack(side=LEFT, padx=2)
+               font=('', 9), width=10).pack(side=LEFT, padx=2)
         Button(lc, text="Save Log", command=self._save_log,
-               font=('', 9)).pack(side=LEFT, padx=2)
+               font=('', 9), width=10).pack(side=LEFT, padx=2)
 
         pg = Frame(right)
-        pg.pack(fill=X, pady=4)
-        Label(pg, text="Progress:", font=('', 11)).pack(side=LEFT)
+        pg.pack(fill=X, pady=5)
+        Label(pg, text="Progress:", font=('', 10)).pack(side=LEFT)
         ttk.Progressbar(pg, variable=self.progress_var, maximum=100,
-                        length=200).pack(side=LEFT, padx=8)
-        self.lbl_pct = Label(pg, text="0%", font=('', 11, 'bold'), width=5)
+                        length=180).pack(side=LEFT, padx=8)
+        self.lbl_pct = Label(pg, text="0%", font=('', 10, 'bold'), width=4)
         self.lbl_pct.pack(side=RIGHT)
 
         # === 状态栏 ===
         self.status_btn = Button(R, text="Ready - Set Godot path, select platform, click START",
-                                   font=('Helvetica', 11))
-        self.status_btn.pack(fill=X, padx=10, pady=8)
+                                   font=('Helvetica', 10))
+        self.status_btn.pack(fill=X, padx=10, pady=5)
 
     def _toggle(self, pid):
         info = self.platform_buttons[pid]
@@ -192,21 +194,58 @@ class BuildTool:
             self.status_btn.config(text="Ready - Select at least 1 platform")
 
     def _find_godot(self):
+        """手动触发查找 Godot"""
+        self._log("[FIND] Starting manual search...", 'info')
+        result = self._do_find_godot()
+        if result:
+            self.godot_path = result
+            self.btn_path_display.config(text=f"{result}")
+            self._log(f"[FIND] ✓ Found: {result}", 'ok')
+            self._update_status()
+        else:
+            self._log("[WARN] Auto-find failed. Use Browse .app button.", 'warn')
+
+    def _do_find_godot(self):
+        """执行实际的 Godot 查找逻辑"""
         import glob, shutil
+
         home = Path.home()
         candidates = []
-        for pat in ['/Applications/Godot*', '/Applications/*Godot*',
-                    str(home/'Applications'/'Godot*'), str(home/'Downloads'/'Godot*')]:
-            candidates.extend(glob.glob(pat))
+
+        # 搜索路径列表（按优先级排序）
+        search_patterns = [
+            '/Applications/Godot.app',
+            '/Applications/Godot*.app',
+            str(home / 'Downloads' / 'Godot*.app'),
+            str(home / 'Downloads' / 'Godot_mono.app'),  # 用户的具体路径
+            str(home / 'Applications' / 'Godot*.app'),
+        ]
+
+        self._log(f"[FIND] Searching in: {len(search_patterns)} locations", 'info')
+
+        for pat in search_patterns:
+            matches = glob.glob(pat)
+            if matches:
+                for m in matches:
+                    candidates.append(m)
+                    self._log(f"[FIND]   Found: {m}", 'info')
+
+        # 检查 PATH 中的 godot 命令
         cmd = shutil.which("godot")
         if cmd:
             candidates.append(cmd)
+            self._log(f"[FIND]   Found in PATH: {cmd}", 'info')
+
+        # 去重并验证存在性
         seen = set()
         valid = []
         for c in candidates:
             if c not in seen and os.path.exists(c):
                 seen.add(c)
                 valid.append(c)
+
+        self._log(f"[FIND] Valid candidates: {len(valid)}", 'info')
+
         if valid:
             app = valid[0]
             if app.endswith(".app"):
@@ -214,62 +253,21 @@ class BuildTool:
                 final = exe if os.path.exists(exe) else app
             else:
                 final = app
-            self.godot_path = final
-            self.btn_path_display.config(text=f"{final}")
-            self._log(f"[FIND] Found: {final}", 'ok')
-            self._update_status()
-        else:
-            self._log("[WARN] Not found. Use Browse.", 'warn')
-            messagebox.showinfo("Not Found",
-                "Could not auto-find.\n\n"
-                "Use 'Browse' and pick:\n"
-                "/Users/zhuyong/Downloads/Godot_mono.app")
+            return final
+
+        return None
 
     def _auto_find_on_startup(self):
-        """启动时自动查找 Godot，不弹出提示"""
-        import glob, shutil
+        """启动时自动查找 Godot"""
         try:
-            home = Path.home()
-            candidates = []
-            # 常见安装位置
-            search_paths = [
-                '/Applications/Godot*',
-                '/Applications/*Godot*',
-                str(home/'Applications'/'Godot*'),
-                str(home/'Downloads'/'Godot*'),
-                '/usr/local/bin/godot*',
-            ]
-            for pat in search_paths:
-                candidates.extend(glob.glob(pat))
-
-            # 检查 PATH 中的 godot 命令
-            cmd = shutil.which("godot")
-            if cmd:
-                candidates.append(cmd)
-
-            # 去重并验证
-            seen = set()
-            valid = []
-            for c in candidates:
-                if c not in seen and os.path.exists(c):
-                    seen.add(c)
-                    valid.append(c)
-
-            if valid:
-                app = valid[0]
-                if app.endswith(".app"):
-                    exe = os.path.join(app, "Contents", "MacOS", "Godot")
-                    final = exe if os.path.exists(exe) else app
-                else:
-                    final = app
-
-                self.godot_path = final
-                # 更新显示（使用 after 确保线程安全）
-                self.root.after(0, lambda: self.btn_path_display.config(text=f"{final}"))
-                self.root.after(0, lambda: self._log(f"[AUTO] Found Godot: {final}", 'ok'))
+            result = self._do_find_godot()
+            if result:
+                self.godot_path = result
+                self.root.after(0, lambda: self.btn_path_display.config(text=f"{result}"))
+                self.root.after(0, lambda: self._log(f"[AUTO] ✓ Found Godot: {result}", 'ok'))
                 self.root.after(0, lambda: self._update_status())
             else:
-                self.root.after(0, lambda: self._log("[INFO] Auto-find: No Godot found. Please set manually.", 'info'))
+                self.root.after(0, lambda: self._log("[AUTO] No Godot found. Please set path manually.", 'warn'))
         except Exception as e:
             self.root.after(0, lambda: self._log(f"[WARN] Auto-find error: {e}", 'warn'))
 
@@ -394,38 +392,50 @@ class BuildTool:
             cmd_str = ' '.join(cmd)
             self._log_safe(f"[CMD] {cmd_str}", 'info')
 
+            # 验证可执行文件存在
+            exe = cmd[0] if cmd else None
+            if exe and not os.path.exists(exe):
+                self._log_safe(f"   ERROR: Executable not found: {exe}", 'err')
+                return False
+
             r = subprocess.run(cmd, cwd=str(self.project_root),
-                             capture_output=True, text=True, timeout=600)
+                             capture_output=True, text=True, timeout=600,
+                             env={**os.environ, 'GODOT_DISABLE_CONSOLE': '1'})
 
             # 显示返回码
             self._log_safe(f"[RET] Return code: {r.returncode}", 'info' if r.returncode == 0 else 'err')
 
             # 显示标准输出
             if r.stdout:
+                self._log_safe(f"[OUT] Output ({len(r.stdout)} bytes):", 'info')
                 for ln in r.stdout.strip().split('\n'):
                     if ln.strip():
-                        self._log_safe(f"   OUT: {ln}", 'info')
+                        self._log_safe(f"   {ln}", 'info')
 
             # 显示标准错误（无论是否失败都显示）
             if r.stderr:
+                self._log_safe(f"[ERR] Errors ({len(r.stderr)} bytes):", 'err')
                 for ln in r.stderr.strip().split('\n'):
                     if ln.strip():
-                        self._log_safe(f"   ERR: {ln}", 'err')
+                        self._log_safe(f"   {ln}", 'err')
 
             # 如果没有输出但失败了，显示提示
             if not r.stdout and not r.stderr and r.returncode != 0:
                 self._log_safe(f"   ! Command failed with no output (code={r.returncode})", 'warn')
-                self._log_safe(f"   ! Check if build.py exists and has correct permissions", 'warn')
+                self._log_safe(f"   ! Possible causes:", 'warn')
+                self._log_safe(f"   !   - .NET SDK not installed (need 8.0+)", 'warn')
+                self._log_safe(f"   !   - Godot project has export errors", 'warn')
+                self._log_safe(f"   !   - Export preset not configured", 'warn')
 
             return r.returncode == 0
 
         except FileNotFoundError as e:
             self._log_safe(f"   ERROR: File not found - {e}", 'err')
-            self._log_safe(f"   ! Check: Does build.py exist at {self.script_dir}?", 'warn')
+            self._log_safe(f"   ! Check: Does the executable exist?", 'warn')
             return False
         except PermissionError as e:
             self._log_safe(f"   ERROR: Permission denied - {e}", 'err')
-            self._log_safe(f"   ! Try: chmod +x build.py", 'warn')
+            self._log_safe(f"   ! Try: chmod +x <executable>", 'warn')
             return False
         except subprocess.TimeoutExpired:
             self._log_safe(f"   ERROR: Timeout (600s exceeded)", 'err')
