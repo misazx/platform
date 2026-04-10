@@ -1,0 +1,67 @@
+2026-04-11 02:26:58.963 +08:00 [INF] Starting Roguelike Game Server...
+2026-04-11 02:26:59.840 +08:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+PRAGMA journal_mode = 'wal';
+2026-04-11 02:26:59.890 +08:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE "Users" (
+    "Id" TEXT NOT NULL CONSTRAINT "PK_Users" PRIMARY KEY,
+    "Username" TEXT NOT NULL,
+    "PasswordHash" TEXT NOT NULL,
+    "Email" TEXT NULL,
+    "Level" INTEGER NOT NULL,
+    "Experience" INTEGER NOT NULL,
+    "TotalGamesPlayed" INTEGER NOT NULL,
+    "GamesWon" INTEGER NOT NULL,
+    "CreatedAt" TEXT NOT NULL,
+    "LastLoginAt" TEXT NOT NULL,
+    "IsOnline" INTEGER NOT NULL,
+    "ConnectionId" TEXT NULL
+);
+2026-04-11 02:26:59.890 +08:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE "Rooms" (
+    "Id" TEXT NOT NULL CONSTRAINT "PK_Rooms" PRIMARY KEY,
+    "Name" TEXT NOT NULL,
+    "HostId" TEXT NOT NULL,
+    "Status" INTEGER NOT NULL,
+    "Mode" INTEGER NOT NULL,
+    "MaxPlayers" INTEGER NOT NULL,
+    "CurrentPlayers" INTEGER NOT NULL,
+    "HasPassword" INTEGER NOT NULL,
+    "PasswordHash" TEXT NULL,
+    "Seed" TEXT NULL,
+    "CreatedAt" TEXT NOT NULL,
+    "StartedAt" TEXT NULL,
+    "FinishedAt" TEXT NULL,
+    CONSTRAINT "FK_Rooms_Users_HostId" FOREIGN KEY ("HostId") REFERENCES "Users" ("Id") ON DELETE RESTRICT
+);
+2026-04-11 02:26:59.891 +08:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE "RoomPlayers" (
+    "Id" TEXT NOT NULL CONSTRAINT "PK_RoomPlayers" PRIMARY KEY,
+    "RoomId" TEXT NOT NULL,
+    "UserId" TEXT NOT NULL,
+    "IsReady" INTEGER NOT NULL,
+    "CharacterId" TEXT NULL,
+    "Score" INTEGER NOT NULL,
+    "JoinedAt" TEXT NOT NULL,
+    CONSTRAINT "FK_RoomPlayers_Rooms_RoomId" FOREIGN KEY ("RoomId") REFERENCES "Rooms" ("Id") ON DELETE CASCADE,
+    CONSTRAINT "FK_RoomPlayers_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "Users" ("Id") ON DELETE CASCADE
+);
+2026-04-11 02:26:59.891 +08:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX "IX_RoomPlayers_RoomId_UserId" ON "RoomPlayers" ("RoomId", "UserId");
+2026-04-11 02:26:59.891 +08:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_RoomPlayers_UserId" ON "RoomPlayers" ("UserId");
+2026-04-11 02:26:59.891 +08:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX "IX_Rooms_HostId" ON "Rooms" ("HostId");
+2026-04-11 02:26:59.891 +08:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX "IX_Users_Email" ON "Users" ("Email");
+2026-04-11 02:26:59.891 +08:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX "IX_Users_Username" ON "Users" ("Username");
+2026-04-11 02:26:59.893 +08:00 [INF] Server started successfully on port 5000
+2026-04-11 02:26:59.900 +08:00 [INF] User profile is available. Using '/Users/zhuyong/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-04-11 02:26:59.904 +08:00 [INF] Creating key {ecaf9ba6-420a-4d42-9f87-d74c486a71d0} with creation date 2026-04-10 18:26:59Z, activation date 2026-04-10 18:26:59Z, and expiration date 2026-07-09 18:26:59Z.
+2026-04-11 02:26:59.908 +08:00 [WRN] No XML encryptor configured. Key {ecaf9ba6-420a-4d42-9f87-d74c486a71d0} may be persisted to storage in unencrypted form.
+2026-04-11 02:26:59.910 +08:00 [INF] Writing data to file '/Users/zhuyong/.aspnet/DataProtection-Keys/key-ecaf9ba6-420a-4d42-9f87-d74c486a71d0.xml'.
+2026-04-11 02:26:59.925 +08:00 [INF] Now listening on: http://localhost:5000
+2026-04-11 02:26:59.926 +08:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-04-11 02:26:59.926 +08:00 [INF] Hosting environment: Production
+2026-04-11 02:26:59.926 +08:00 [INF] Content root path: /Users/zhuyong/trae-game/Server/RoguelikeGame.Server
+2026-04-11 02:27:17.085 +08:00 [INF] Application is shutting down...

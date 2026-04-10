@@ -1,21 +1,26 @@
 #!/bin/bash
-# 可视化打包工具启动脚本
-# 双击运行或执行: ./start_gui.sh
+# 杀戮尖塔2 - 可视化打包工具启动脚本
+# 自动设置 .NET 环境变量
 
-echo "🎮 启动杀戮尖塔2 - 可视化打包工具..."
+# 设置 DOTNET_ROOT - 修复 Godot Mono .NET 加载问题
+if [ -d "/usr/local/share/dotnet" ]; then
+    export DOTNET_ROOT="/usr/local/share/dotnet"
+    export DOTNET_ROOT_ARM64="/usr/local/share/dotnet"
+elif [ -d "/opt/homebrew/share/dotnet" ]; then
+    export DOTNET_ROOT="/opt/homebrew/share/dotnet"
+    export DOTNET_ROOT_ARM64="/opt/homebrew/share/dotnet"
+fi
+
+echo "==========================================="
+echo "🎮 杀戮尖塔2 - Godot Build Tool"
+echo "==========================================="
+echo ""
+echo "环境检查:"
+echo "  DOTNET_ROOT: ${DOTNET_ROOT:-未设置}"
+echo "  Godot Path: /Users/zhuyong/Downloads/Godot_mono.app"
 echo ""
 
-# 检查 Python
-if command -v python3 &> /dev/null; then
-    PYTHON_CMD="python3"
-elif command -v python &> /dev/null; then
-    PYTHON_CMD="python"
-else
-    echo "❌ 错误: 未找到 Python！"
-    echo "   请安装 Python 3.7+ 并添加到 PATH"
-    read -p "按回车键退出..."
-    exit 1
-fi
+PYTHON_CMD="/usr/bin/python3"
 
 echo "✅ 使用 Python: $($PYTHON_CMD --version)"
 echo ""
@@ -33,15 +38,7 @@ if [ $? -ne 0 ]; then
     echo "   可能的原因:"
     echo "   1. 缺少 tkinter 库（Python GUI 组件）"
     echo "   2. Python 版本过低（需要 3.7+）"
+    echo "   3. .NET SDK 未安装或路径错误"
     echo ""
-    echo "   解决方案:"
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "   macOS: brew install python-tk@3.10"
-        echo "   或使用系统自带的 Python: /usr/bin/python3 build_gui.py"
-    elif [[ "$OSTYPE" == "linux"* ]]; then
-        echo "   Ubuntu/Debian: sudo apt-get install python3-tk"
-        echo "   Fedora: sudo dnf install python3-tkinter"
-    fi
-    echo ""
-    read -p "按回车键退出..."
+    echo "请检查日志输出"
 fi
