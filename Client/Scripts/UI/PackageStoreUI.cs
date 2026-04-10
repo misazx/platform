@@ -28,7 +28,20 @@ namespace RoguelikeGame.UI
 		{
 			SetupUI();
 			ConnectSignals();
-			RefreshPackageList();
+
+			CallDeferred(nameof(DeferredRefresh));
+		}
+
+		private void DeferredRefresh()
+		{
+			if (PackageManager.Instance != null)
+			{
+				RefreshPackageList();
+			}
+			else
+			{
+				GD.Print("[PackageStoreUI] PackageManager not ready, will retry on signal");
+			}
 		}
 
 		private void SetupUI()
@@ -86,7 +99,7 @@ namespace RoguelikeGame.UI
 
 			_categoryTabs = new GridContainer
 			{
-				Columns = -1
+				Columns = 4
 			};
 			_categoryTabs.AddThemeConstantOverride("h_separation", 10);
 			searchHBox.AddChild(_categoryTabs);
@@ -181,9 +194,14 @@ namespace RoguelikeGame.UI
 				return;
 			}
 
-			foreach (var child in _packageList.GetChildren())
+			var children = _packageList.GetChildren();
+			foreach (var child in children)
 			{
-				child.QueueFree();
+				if (IsInstanceValid(child) && child.GetParent() == _packageList)
+				{
+					_packageList.RemoveChild(child);
+					child.Free();
+				}
 			}
 
 			List<PackageData> packagesToShow;
@@ -383,9 +401,14 @@ namespace RoguelikeGame.UI
 		{
 			_selectedPackage = package;
 
-			foreach (var child in _detailPanel.GetChildren())
+			var detailChildren = _detailPanel.GetChildren();
+			foreach (var child in detailChildren)
 			{
-				child.QueueFree();
+				if (IsInstanceValid(child) && child.GetParent() == _detailPanel)
+				{
+					_detailPanel.RemoveChild(child);
+					child.Free();
+				}
 			}
 
 			var vbox = new VBoxContainer
