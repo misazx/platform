@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-v7.1 - 增强稳定版
-修复语法错误 + 启动时自动检测 + 改进的错误处理
+v7.2 - 日志增强版
+修复构建无日志问题 + 线程安全日志 + 完整错误捕获
 """
 
 import os
@@ -20,7 +20,7 @@ from tkinter import ttk, messagebox, filedialog
 class BuildTool:
     def __init__(self):
         self.root = Tk()
-        self.root.title("Godot Build Tool v7.1")
+        self.root.title("Godot Build Tool v7.2")
         self.root.geometry("950x700")
 
         self.script_dir = Path(__file__).parent.resolve()
@@ -325,6 +325,8 @@ class BuildTool:
         self.progress_var.set(0)
         self._log("=" * 55, 'hdr')
         self._log(f"START | Platforms: {len(sel)} | Godot: {self.godot_path}", 'hdr')
+        self._log(f"Project Root: {self.project_root}", 'info')
+        self._log(f"Build Script: {self.script_dir / 'build.py'}", 'info')
         self.status_btn.config(text="BUILDING...", bg='#FF9800')
 
         threading.Thread(target=self._run_build, args=(sel,), daemon=True).start()
@@ -335,6 +337,12 @@ class BuildTool:
         t0 = datetime.now()
         build_script = self.script_dir / "build.py"
 
+        # 验证 build.py 是否存在
+        if not build_script.exists():
+            self._log_safe(f"[ERROR] build.py not found: {build_script}", 'err')
+            self._log_safe(f"[ERROR] Please ensure build.py exists in: {self.script_dir}", 'err')
+            return
+
         if self.clean_build.get():
             self._exec([sys.executable, str(build_script), '--clean'])
 
@@ -344,7 +352,7 @@ class BuildTool:
             name = dict(self.platforms)[plat]
             pct = (i - 1) / total * 100
             self.root.after(0, lambda p=pct: self.progress_var.set(p))
-            self._log(f"\n[{i}/{total}] Building: {name} ...", 'info')
+            self._log_safe(f"\n[{i}/{total}] Building: {name} ...", 'info')
 
             cmd = [sys.executable, str(build_script), '--platform', plat]
             if self.debug_mode.get():
@@ -353,9 +361,9 @@ class BuildTool:
 
             if self._exec(cmd):
                 ok_count += 1
-                self._log(f"   >>> OK! <<<", 'ok')
+                self._log_safe(f"   >>> OK! <<<", 'ok')
             else:
-                self._log(f"   >>> FAILED! <<<", 'err')
+                self._log_safe(f"   >>> FAILED! <<<", 'err')
 
             pct = i / total * 100
             self.root.after(0, lambda p=pct: self.progress_var.set(p))
@@ -369,8 +377,8 @@ class BuildTool:
         self.btn_stop.config(state='disabled')
         self.progress_var.set(100)
         self.lbl_pct.config(text="100%")
-        self._log(f"\n{'='*55}", 'hdr')
-        self._log(f"DONE! Success: {ok_count}/{total} | Time: {m}m{s}s", 'hdr')
+        self._log_safe(f"\n{'='*55}", 'hdr')
+        self._log_safe(f"DONE! Success: {ok_count}/{total} | Time: {m}m{s}s", 'hdr')
 
         if ok_count == total:
             self.status_btn.config(text=f"SUCCESS! ({m}m{s}s)")
@@ -380,21 +388,64 @@ class BuildTool:
             messagebox.showwarning("Done", f"Success: {ok_count}/{total}")
 
     def _exec(self, cmd):
+        """执行构建命令（线程安全版本）"""
         try:
+            # 显示要执行的命令
+            cmd_str = ' '.join(cmd)
+            self._log_safe(f"[CMD] {cmd_str}", 'info')
+
             r = subprocess.run(cmd, cwd=str(self.project_root),
                              capture_output=True, text=True, timeout=600)
+
+            # 显示返回码
+            self._log_safe(f"[RET] Return code: {r.returncode}", 'info' if r.returncode == 0 else 'err')
+
+            # 显示标准输出
             if r.stdout:
                 for ln in r.stdout.strip().split('\n'):
                     if ln.strip():
-                        self._log(f"   {ln}", 'info')
-            if r.stderr and r.returncode != 0:
+                        self._log_safe(f"   OUT: {ln}", 'info')
+
+            # 显示标准错误（无论是否失败都显示）
+            if r.stderr:
                 for ln in r.stderr.strip().split('\n'):
                     if ln.strip():
-                        self._log(f"   ! {ln}", 'err')
+                        self._log_safe(f"   ERR: {ln}", 'err')
+
+            # 如果没有输出但失败了，显示提示
+            if not r.stdout and not r.stderr and r.returncode != 0:
+                self._log_safe(f"   ! Command failed with no output (code={r.returncode})", 'warn')
+                self._log_safe(f"   ! Check if build.py exists and has correct permissions", 'warn')
+
             return r.returncode == 0
-        except Exception as e:
-            self._log(f"   ERROR: {e}", 'err')
+
+        except FileNotFoundError as e:
+            self._log_safe(f"   ERROR: File not found - {e}", 'err')
+            self._log_safe(f"   ! Check: Does build.py exist at {self.script_dir}?", 'warn')
             return False
+        except PermissionError as e:
+            self._log_safe(f"   ERROR: Permission denied - {e}", 'err')
+            self._log_safe(f"   ! Try: chmod +x build.py", 'warn')
+            return False
+        except subprocess.TimeoutExpired:
+            self._log_safe(f"   ERROR: Timeout (600s exceeded)", 'err')
+            return False
+        except Exception as e:
+            self._log_safe(f"   ERROR: {type(e).__name__} - {e}", 'err')
+            import traceback
+            self._log_safe(f"   TRACE: {traceback.format_exc()}", 'err')
+            return False
+
+    def _log_safe(self, msg, lvl='info'):
+        """线程安全的日志方法 - 使用 root.after() 在主线程更新GUI"""
+        def _do_log():
+            ts = datetime.now().strftime("[%H:%M:%S]")
+            line = f"{ts} {msg}"
+            self.log_lines.append(line)
+            if hasattr(self, 'log_display'):
+                self.log_display.insert(END, line)
+                self.log_display.see(END)
+        self.root.after(0, _do_log)
 
     def _stop_build(self):
         if messagebox.askyesno("Confirm", "Stop?"):

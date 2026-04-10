@@ -29,7 +29,8 @@ class BuildTool:
         self.script_dir = Path(__file__).parent.resolve()
         self.project_root = self.script_dir.parent
         self.build_dir = self.project_root / "build"
-        self.godot_executable = self._find_godot_executable()
+        # 延迟初始化 godot_executable，避免启动时立即失败
+        self.godot_executable = None
         self.platforms = {
             "windows": {
                 "preset": "Windows Desktop",
@@ -179,23 +180,29 @@ class BuildTool:
 
         # 标准 Godot 导出
         try:
+            # 确保 godot_executable 已设置
+            if not self.godot_executable:
+                print("⚠️  未指定 Godot 路径，尝试自动查找...")
+                self.godot_executable = self._find_godot_executable()
+
             cmd = [
                 self.godot_executable,
                 "--headless",
                 "--path", str(self.project_root),
                 "--export-release" if not debug else "--export-debug",
-                f'"{preset_name}"'
+                preset_name  # 移除多余的引号
             ]
 
             print(f"📦 执行命令:")
             print(f"   {' '.join(cmd)}\n")
 
+            # 使用列表形式执行，避免 shell=True 的潜在问题
             result = subprocess.run(
-                " ".join(cmd),
-                shell=True,
+                cmd,
                 cwd=str(self.project_root),
                 capture_output=True,
-                text=True
+                text=True,
+                timeout=600  # 添加超时
             )
 
             if result.returncode == 0:
@@ -209,9 +216,22 @@ class BuildTool:
             else:
                 print(f"\n❌ 打包失败!")
                 print(f"   错误代码: {result.returncode}")
+                if result.stdout:
+                    print(f"   标准输出:\n{result.stdout}")
                 if result.stderr:
-                    print(f"   错误信息:\n{result.stderr}")
+                    print(f"   标准错误:\n{result.stderr}")
+                if not result.stdout and not result.stderr:
+                    print(f"   ⚠️  无错误输出，可能 Godot 命令执行失败")
+                    print(f"   请检查 Godot 路径是否正确: {self.godot_executable}")
                 return False
+
+        except subprocess.TimeoutExpired:
+            print(f"❌ 执行超时 (600秒)")
+            return False
+        except FileNotFoundError as e:
+            print(f"❌ 找不到文件: {e}")
+            print(f"   请检查 Godot 可执行文件是否存在: {self.godot_executable}")
+            return False
 
         except Exception as e:
             print(f"❌ 执行错误: {e}")
