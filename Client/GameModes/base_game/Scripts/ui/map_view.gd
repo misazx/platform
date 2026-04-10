@@ -1,4 +1,4 @@
-class_name MapView extends Control
+class MapView extends Control
 
 var _node_layer: Control
 var _connection_layer: Node2D
@@ -357,7 +357,7 @@ func on_hide() -> void:
 	visible = false
 
 
-class_name MapNodeUI extends Control
+class MapNodeUI extends Control
 
 signal node_clicked(node_ui)
 

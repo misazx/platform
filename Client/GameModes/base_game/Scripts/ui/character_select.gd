@@ -1,4 +1,4 @@
-class_name CharacterSelect extends Control
+class CharacterSelect extends Control
 
 signal character_selected(character_id: String)
 
@@ -118,7 +118,7 @@ func _get_class_display_name(char_class: int) -> String:
 		_: return "未知"
 
 
-class_name CharacterCardControl extends PanelContainer
+class CharacterCardControl extends PanelContainer
 
 signal card_clicked(index: int)
 

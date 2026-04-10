@@ -117,7 +117,7 @@ static func create_runic_cube() -> RelicData:
 	return relic
 
 
-class_name RelicManager extends Node
+class RelicManager extends Node:
 
 signal relic_added(relic_id: String)
 signal relic_removed(relic_id: String)

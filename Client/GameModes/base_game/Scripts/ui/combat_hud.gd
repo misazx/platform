@@ -1,4 +1,4 @@
-class_name CombatHUD extends Control
+class CombatHUD extends Control
 
 signal card_played(card_id: String)
 signal end_turn()
@@ -497,7 +497,7 @@ func _highlight_enemies(highlight: bool) -> void:
 		enemy.set_selectable(highlight)
 
 
-class_name BattleCharacterSprite extends Control
+class BattleCharacterSprite extends Control
 
 var _character_id: String = ""
 var _is_player: bool = false
@@ -592,7 +592,7 @@ func play_death_animation() -> void:
 	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.5).set_ease(Tween.EASE_IN)
 
 
-class_name EnemyUnitUI extends Control
+class EnemyUnitUI extends Control
 
 signal enemy_clicked(index: int)
 
@@ -714,7 +714,7 @@ func update_intent(text: String, icon: String = "") -> void:
 	_intent_label.text = ("%s %s" % [icon, text]) if icon != "" else text
 
 
-class_name CardUI extends Control
+class CardUI extends Control
 
 signal card_pressed(card_ui)
 
@@ -866,7 +866,7 @@ static func show_status(parent: Control, text: String, pos: Vector2) -> void:
 	parent.add_child(FloatingTextLabel.new(text, pos, Color(0.9, 0.7, 0.3)))
 
 
-class_name FloatingTextLabel extends Control
+class FloatingTextLabel extends Control
 
 var _label: Label
 var _start_pos: Vector2

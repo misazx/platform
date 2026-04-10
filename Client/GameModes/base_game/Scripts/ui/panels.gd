@@ -1,4 +1,4 @@
-class_name VictoryScreen extends Control
+class VictoryScreen extends Control
 
 signal closed
 
@@ -85,7 +85,7 @@ func _ready() -> void:
 	vbox.add_child(menu_btn)
 
 
-class_name PileViewPanel extends Control
+class PileViewPanel extends Control
 
 signal closed
 
@@ -233,7 +233,7 @@ func _create_card_panel(card) -> PanelContainer:
 	return card_panel
 
 
-class_name TutorialOverlay extends Control
+class TutorialOverlay extends Control
 
 var _content_label: RichTextLabel
 var _next_button: Button
@@ -280,7 +280,7 @@ func _on_next_pressed() -> void:
 		show_page(_current_page)
 
 
-class_name AchievementPanel extends Control
+class AchievementPanel extends Control
 
 signal closed
 
@@ -383,7 +383,7 @@ func _create_category_section(category_name: String) -> VBoxContainer:
 	return section
 
 
-class_name RestSitePanel extends Control
+class RestSitePanel extends Control
 
 signal rest_selected(option: int)
 signal skipped
@@ -456,7 +456,7 @@ func _create_ui() -> void:
 	_main_container.add_child(skip_btn)
 
 
-class_name RewardPanel extends Control
+class RewardPanel extends Control
 
 signal card_chosen(card_data)
 signal relic_chosen(relic_data)
@@ -523,7 +523,7 @@ func setup_rewards(cards: Array, relics: Array) -> void:
 	_container.add_child(skip_btn)
 
 
-class_name SaveSlotPanel extends Control
+class SaveSlotPanel extends Control
 
 signal slot_selected(slot_id: int)
 signal cancelled
@@ -584,7 +584,7 @@ func _get_slot_data(slot_idx: int) -> String:
 		_: return "未知"
 
 
-class_name ShopPanel extends Control
+class ShopPanel extends Control
 
 signal item_purchased(item_data, price: int)
 signal shop_exit
@@ -660,7 +660,7 @@ func setup_shop(player_gold: int, items: Array) -> void:
 	_container.add_child(exit_btn)
 
 
-class_name TreasurePanel extends Control
+class TreasurePanel extends Control
 
 signal treasure_taken(treasure_id: String)
 signal treasure_skipped
@@ -717,7 +717,7 @@ func setup_treasures(treasures: Array) -> void:
 	_container.add_child(skip_btn)
 
 
-class_name GameOverScreen extends Control
+class GameOverScreen extends Control
 
 signal retry_pressed
 signal menu_pressed
@@ -798,7 +798,7 @@ func setup_game_over(is_victory: bool, score: int = 0) -> void:
 	_container.add_child(menu_btn)
 
 
-class_name EventPanel extends Control
+class EventPanel extends Control
 
 signal option_selected(option_index: int)
 signal event_closed
@@ -861,7 +861,7 @@ func show_event(event_data: Dictionary) -> void:
 		_container.add_child(btn)
 
 
-class_name AchievementPopup extends Control
+class AchievementPopup extends Control
 
 var _label: Label
 var _timer: float = 0.0
