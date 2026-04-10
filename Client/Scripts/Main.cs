@@ -126,6 +126,7 @@ namespace RoguelikeGame
                 if (quitBtn != null)
                 {
                     int quitIndex = quitBtn.GetIndex();
+                    vboxContainer.AddChild(packageBtn);
                     vboxContainer.MoveChild(packageBtn, quitIndex);
                 }
                 else
