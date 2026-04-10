@@ -85,60 +85,13 @@ namespace RoguelikeGame
                 menuScene.StartGameRequested += OnStartGameRequested;
                 menuScene.SettingsRequested += OnSettingsRequested;
                 menuScene.QuitRequested += OnQuitRequested;
+                menuScene.PackageStoreRequested += OpenPackageStore;
                 
-                InjectPackageButton(menuScene);
-                
-                GD.Print("[Main] MainMenu loaded with Package Store integration");
+                GD.Print("[Main] MainMenu loaded with Package Store button (built-in)");
             }
             else
             {
                 GD.PushError("[Main] Failed to load MainMenu!");
-            }
-        }
-
-        private void InjectPackageButton(MainMenuScene menuScene)
-        {
-            try
-            {
-                var vboxContainer = menuScene.GetNodeOrNull<VBoxContainer>("VBoxContainer");
-                if (vboxContainer == null)
-                {
-                    GD.PushWarning("[Main] VBoxContainer not found in MainMenu, skipping package button");
-                    return;
-                }
-
-                var packageBtn = new Button
-                {
-                    Text = "📦 游戏包商店",
-                    CustomMinimumSize = new Vector2(220, 50),
-                    Modulate = new Color(0.9f, 0.85f, 1f)
-                };
-                
-                packageBtn.AddThemeFontSizeOverride("font_size", 18);
-                packageBtn.Pressed += () => 
-                {
-                    GD.Print("[Main] Opening Package Store...");
-                    AudioManager.Instance?.PlayButtonClick();
-                    OpenPackageStore();
-                };
-
-                var quitBtn = vboxContainer.GetNodeOrNull<Button>("QuitButton");
-                if (quitBtn != null)
-                {
-                    int quitIndex = quitBtn.GetIndex();
-                    vboxContainer.AddChild(packageBtn);
-                    vboxContainer.MoveChild(packageBtn, quitIndex);
-                }
-                else
-                {
-                    vboxContainer.AddChild(packageBtn);
-                }
-
-                GD.Print("[Main] ✅ Package Store button injected into MainMenu");
-            }
-            catch (Exception ex)
-            {
-                GD.PrintErr($"[Main] Failed to inject package button: {ex.Message}");
             }
         }
 

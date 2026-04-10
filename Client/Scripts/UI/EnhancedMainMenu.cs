@@ -3,6 +3,8 @@ using System;
 using System.Threading.Tasks;
 using RoguelikeGame.Core;
 using RoguelikeGame.Packages;
+using RoguelikeGame.Network;
+using RoguelikeGame.UI.Panels;
 
 namespace RoguelikeGame.UI
 {
@@ -11,10 +13,12 @@ namespace RoguelikeGame.UI
 		private Button _newGameButton;
 		private Button _continueButton;
 		private Button _packageStoreButton;
+		private Button _multiplayerButton;
 		private Button _quitButton;
 		private Label _titleLabel;
 		private Label _versionLabel;
 		private PackageStoreUI _packageStoreUI;
+		private MultiplayerPanel _multiplayerPanel;
 
 		[Export]
 		public string GameTitle { get; set; } = "Roguelike Game";
@@ -87,10 +91,14 @@ namespace RoguelikeGame.UI
 			vbox.AddChild(_newGameButton);
 
 			_packageStoreButton = CreateStyledButton("📦 游戏包商店");
-			_packageStoreButton.Modulate = new Color(0.9f, 0.85f, 1f);
-			vbox.AddChild(_packageStoreButton);
+		_packageStoreButton.Modulate = new Color(0.9f, 0.85f, 1f);
+		vbox.AddChild(_packageStoreButton);
 
-			_continueButton = CreateStyledButton("📂 继续游戏");
+		_multiplayerButton = CreateStyledButton("🌐 多人游戏");
+		_multiplayerButton.Modulate = new Color(0.7f, 0.85f, 1f);
+		vbox.AddChild(_multiplayerButton);
+
+		_continueButton = CreateStyledButton("📂 继续游戏");
 			_continueButton.Disabled = true;
 			vbox.AddChild(_continueButton);
 
@@ -164,12 +172,20 @@ namespace RoguelikeGame.UI
 			_packageStoreUI.Visible = false;
 			_packageStoreUI.PackageLaunchRequested += OnPackageLaunchedFromStore;
 			AddChild(_packageStoreUI);
+
+			_multiplayerPanel = new MultiplayerPanel();
+			_multiplayerPanel.Visible = false;
+			_multiplayerPanel.OnLANSelected += OnMultiplayerLANSelected;
+			_multiplayerPanel.OnOnlineSelected += OnMultiplayerOnlineSelected;
+			_multiplayerPanel.OnBack += OnMultiplayerBack;
+			AddChild(_multiplayerPanel);
 		}
 
 		private void ConnectSignals()
 		{
 			_newGameButton.Pressed += OnNewGamePressed;
 			_packageStoreButton.Pressed += OnPackageStorePressed;
+			_multiplayerButton.Pressed += OnMultiplayerPressed;
 			_continueButton.Pressed += OnContinuePressed;
 			_quitButton.Pressed += OnQuitPressed;
 
@@ -246,6 +262,82 @@ namespace RoguelikeGame.UI
 			GD.Print($"[EnhancedMainMenu] Launching package: {package.Name}");
 			_packageStoreUI.Visible = false;
 			Hide();
+		}
+
+		private void OnMultiplayerPressed()
+		{
+			GD.Print("[EnhancedMainMenu] Opening multiplayer panel");
+			_multiplayerPanel.Visible = true;
+		}
+
+		private async void OnMultiplayerLANSelected(string address, int port)
+		{
+			GD.Print($"[EnhancedMainMenu] LAN mode selected: {address}:{port}");
+
+			if (NetworkManager.Instance == null) return;
+
+			bool connected = await NetworkManager.Instance.ConnectToLANAsync(address, port);
+			if (connected)
+			{
+				GD.Print("[EnhancedMainMenu] LAN connected, showing login");
+				ShowLoginPanel();
+			}
+		}
+
+		private async void OnMultiplayerOnlineSelected(string address, int port)
+		{
+			GD.Print($"[EnhancedMainMenu] Online mode selected: {address}:{port}");
+
+			if (NetworkManager.Instance == null || AuthSystem.Instance == null) return;
+
+			AuthSystem.Instance.SetBaseUrl($"http://{address}:{port}");
+
+			bool connected = await NetworkManager.Instance.ConnectToOnlineAsync(address, port);
+			if (connected)
+			{
+				GD.Print("[EnhancedMainMenu] Online connected, showing login");
+				ShowLoginPanel();
+			}
+		}
+
+		private void OnMultiplayerBack()
+		{
+			GD.Print("[EnhancedMainMenu] Back from multiplayer panel");
+			_multiplayerPanel.Visible = false;
+		}
+
+		private void ShowLoginPanel()
+		{
+			var loginPanel = new LoginPanel();
+			loginPanel.OnLoginSuccess += OnLoginSuccess;
+			loginPanel.OnCancel += () => loginPanel.QueueFree();
+			AddChild(loginPanel);
+		}
+
+		private void OnLoginSuccess()
+		{
+			GD.Print("[EnhancedMainMenu] Login successful, entering lobby");
+			EnterLobby();
+		}
+
+		private void EnterLobby()
+		{
+			var lobbyPanel = new LobbyPanel();
+			lobbyPanel.OnStartGame += OnStartNetworkedGame;
+			lobbyPanel.OnLeave += OnLeaveLobby;
+			AddChild(lobbyPanel);
+		}
+
+		private void OnStartNetworkedGame()
+		{
+			GD.Print("[EnhancedMainMenu] Starting networked game");
+			_multiplayerPanel.Visible = false;
+			Hide();
+		}
+
+		private void OnLeaveLobby()
+		{
+			GD.Print("[EnhancedMainMenu] Leaving lobby");
 		}
 
 		private Texture2D TryLoadBackground()

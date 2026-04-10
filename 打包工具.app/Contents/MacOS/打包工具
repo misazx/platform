@@ -1,12 +1,10 @@
 #!/bin/bash
-# 杀戮尖塔2 打包工具启动器
+# 打包工具 .app 启动器 (v5.0 - 指向 Client/Tools)
 
-# 获取脚本所在目录
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-
-# 项目根目录
-PROJECT_ROOT="/Users/zhuyong/trae-game"
+# 获取 .app 路径 -> 项目根目录
+APP_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+PROJECT_ROOT="$(dirname "$APP_DIR")"
 
 cd "$PROJECT_ROOT" || exit 1
 
-exec /usr/bin/python3 "$PROJECT_ROOT/build_gui.py" "$@"
+exec /usr/bin/python3 "Client/Tools/build_gui.py" "$@"

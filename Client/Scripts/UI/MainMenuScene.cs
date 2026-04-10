@@ -2,65 +2,115 @@ using Godot;
 using RoguelikeGame.Core;
 using RoguelikeGame.Audio;
 using RoguelikeGame.UI.Panels;
+using RoguelikeGame.Packages;
+using System;
 
 namespace RoguelikeGame.UI
 {
-    public partial class MainMenuScene : Control
-    {
-        [Signal]
-        public delegate void StartGameRequestedEventHandler();
+	public partial class MainMenuScene : Control
+	{
+		[Signal]
+		public delegate void StartGameRequestedEventHandler();
 
-        [Signal]
-        public delegate void SettingsRequestedEventHandler();
+		[Signal]
+		public delegate void SettingsRequestedEventHandler();
 
-        [Signal]
-        public delegate void QuitRequestedEventHandler();
+		[Signal]
+		public delegate void QuitRequestedEventHandler();
 
-        private SaveSlotPanel _saveSlotPanel;
-        private AchievementPanel _achievementPanel;
+		[Signal]
+		public delegate void PackageStoreRequestedEventHandler();
 
-        public override void _Ready()
-        {
-            SetupButtons();
-            GD.Print("[MainMenuScene] Ready");
-        }
+		private SaveSlotPanel _saveSlotPanel;
+		private AchievementPanel _achievementPanel;
+		private Button _packageStoreBtn;
 
-        private void SetupButtons()
-        {
-            var startBtn = GetNodeOrNull<Button>("VBoxContainer/StartButton");
-            var settingsBtn = GetNodeOrNull<Button>("VBoxContainer/SettingsButton");
-            var quitBtn = GetNodeOrNull<Button>("VBoxContainer/QuitButton");
-            var achievementBtn = GetNodeOrNull<Button>("VBoxContainer/AchievementButton");
-            var continueBtn = GetNodeOrNull<Button>("VBoxContainer/ContinueButton");
+		public override void _Ready()
+		{
+			SetupButtons();
+			GD.Print("[MainMenuScene] Ready");
+		}
 
-            if (startBtn != null)
-            {
-                startBtn.Pressed += OnStartPressed;
-                GD.Print("[MainMenuScene] StartButton connected");
-            }
-            else
-            {
-                GD.PushWarning("[MainMenuScene] StartButton not found");
-            }
+		private void SetupButtons()
+		{
+			var vbox = GetNodeOrNull<VBoxContainer>("VBoxContainer");
+			if (vbox == null)
+			{
+				GD.PushError("[MainMenuScene] VBoxContainer not found!");
+				return;
+			}
 
-            if (settingsBtn != null)
-                settingsBtn.Pressed += OnSettingsPressed;
+			var startBtn = vbox.GetNodeOrNull<Button>("StartButton");
+			var settingsBtn = vbox.GetNodeOrNull<Button>("SettingsButton");
+			var quitBtn = vbox.GetNodeOrNull<Button>("QuitButton");
+			var achievementBtn = vbox.GetNodeOrNull<Button>("AchievementButton");
+			var continueBtn = vbox.GetNodeOrNull<Button>("ContinueButton");
 
-            if (quitBtn != null)
-                quitBtn.Pressed += OnQuitPressed;
+			if (startBtn != null)
+			{
+				startBtn.Pressed += OnStartPressed;
+				GD.Print("[MainMenuScene] StartButton connected");
+			}
 
-            if (achievementBtn != null)
-            {
-                achievementBtn.Pressed += OnAchievementPressed;
-                GD.Print("[MainMenuScene] AchievementButton connected");
-            }
+			if (settingsBtn != null)
+				settingsBtn.Pressed += OnSettingsPressed;
 
-            if (continueBtn != null)
-            {
-                continueBtn.Pressed += OnContinuePressed;
-                GD.Print("[MainMenuScene] ContinueButton connected");
-            }
-        }
+			if (quitBtn != null)
+				quitBtn.Pressed += OnQuitPressed;
+
+			if (achievementBtn != null)
+			{
+				achievementBtn.Pressed += OnAchievementPressed;
+				GD.Print("[MainMenuScene] AchievementButton connected");
+			}
+
+			if (continueBtn != null)
+			{
+				continueBtn.Pressed += OnContinuePressed;
+				GD.Print("[MainMenuScene] ContinueButton connected");
+			}
+
+			AddPackageStoreButton(vbox, quitBtn);
+		}
+
+		private void AddPackageStoreButton(VBoxContainer vbox, Button quitBtn)
+		{
+			try
+			{
+				_packageStoreBtn = new Button
+				{
+					Text = "📦 游戏包商店",
+					CustomMinimumSize = new Vector2(240, 52),
+					Modulate = new Color(0.9f, 0.85f, 1f)
+				};
+				_packageStoreBtn.AddThemeFontSizeOverride("font_size", 18);
+				_packageStoreBtn.Pressed += OnPackageStorePressed;
+
+				if (quitBtn != null)
+				{
+					int quitIndex = quitBtn.GetIndex();
+					vbox.AddChild(_packageStoreBtn);
+					vbox.MoveChild(_packageStoreBtn, quitIndex);
+				}
+				else
+				{
+					vbox.AddChild(_packageStoreBtn);
+				}
+
+				GD.Print("[MainMenuScene] ✅ Package Store button added");
+			}
+			catch (Exception ex)
+			{
+				GD.PrintErr($"[MainMenuScene] Failed to add package button: {ex.Message}");
+			}
+		}
+
+		private void OnPackageStorePressed()
+		{
+			GD.Print("[MainMenuScene] Package Store button pressed");
+			AudioManager.Instance?.PlayButtonClick();
+			EmitSignal(SignalName.PackageStoreRequested);
+		}
 
         private void OnStartPressed()
         {

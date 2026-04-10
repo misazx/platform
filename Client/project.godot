@@ -47,6 +47,8 @@ AchievementManager="*res://GameModes/base_game/Code/Systems/AchievementManager.c
 ResourceGenerator="*res://Scripts/Core/ResourceGenerator.cs"
 AudioGenerator="*res://GameModes/base_game/Code/Audio/AudioGenerator.cs"
 ResourceInitializer="*res://Scripts/Core/ResourceInitializer.cs"
+NetworkManager="*res://Scripts/Network/NetworkManager.cs"
+AuthSystem="*res://Scripts/Network/Auth/AuthSystem.cs"
 
 [display]
 

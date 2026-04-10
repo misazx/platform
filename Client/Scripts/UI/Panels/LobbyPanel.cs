@@ -31,6 +31,8 @@ namespace RoguelikeGame.UI.Panels
 		public event Action OnLogout;
 		public event Action OnBackToMenu;
 		public event Action<string, string> OnChatMessage;
+		public event Action OnStartGame;
+		public event Action OnLeave;
 
 		public override void _Ready()
 		{
