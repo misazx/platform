@@ -294,7 +294,7 @@ class BuildTool:
         t0 = datetime.now()
 
         if self.clean_build.get():
-            self._exec(['python3', 'build.py', '--clean'])
+            self._exec(['python3', 'Tools/build.py', '--clean'])
 
         for i, plat in enumerate(platforms, 1):
             if not self.is_building:
@@ -304,7 +304,7 @@ class BuildTool:
             self.root.after(0, lambda p=pct: self.progress_var.set(p))
             self._log(f"\n[{i}/{total}] {name} ...", 'info')
 
-            cmd = ['python3', 'build.py', '--platform', plat]
+            cmd = ['python3', 'Tools/build.py', '--platform', plat]
             if self.debug_mode.get():
                 cmd.append('--debug')
             cmd += ['--godot-path', godot]
