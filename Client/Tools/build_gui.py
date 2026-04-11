@@ -768,7 +768,7 @@ class BuildTool:
         """显示平台打包流程窗口"""
         wf_win = Toplevel(self.root)
         wf_win.title("Platform Build Workflows")
-        wf_win.geometry("800x600")
+        wf_win.geometry("850x620")
         wf_win.transient(self.root)
         wf_win.grab_set()
 
@@ -787,7 +787,7 @@ class BuildTool:
                             font=('Helvetica', 10))
             rb.pack(side=LEFT, padx=5)
 
-        # 内容区域 - 使用 Frame + pack (兼容 Python 3.9)
+        # 内容区域
         content = Frame(wf_win)
         content.pack(fill=BOTH, expand=True, padx=10, pady=5)
 
@@ -799,14 +799,20 @@ class BuildTool:
                                         selectmode=SINGLE, bg='#f5f5f5')
         self.wf_steps_list.pack(fill=BOTH, expand=True)
 
-        # 右侧: 详细说明
+        # 右侧: 详细说明 (用 Label 替代 Text 避免兼容问题)
         right_p = Frame(content)
         right_p.pack(side=LEFT, fill=BOTH, expand=True, padx=(5, 0))
         Label(right_p, text="Details", font=('Helvetica', 11, 'bold')).pack(anchor='w')
-        self.wf_detail = Text(right_p, font=('Helvetica', 10), height=25,
-                                wrap=WORD, bg='#fafafa', relief=GROOVE,
-                                state='normal')
-        self.wf_detail.pack(fill=BOTH, expand=True)
+
+        detail_frame = Frame(right_p)
+        detail_frame.pack(fill=BOTH, expand=True)
+
+        self.wf_detail_text = ""
+        self.wf_detail_label = Label(detail_frame, text="",
+                                       font=('Courier', 9), justify=LEFT,
+                                       anchor='nw', bg='#fafafa',
+                                       wraplength=480)
+        self.wf_detail_label.pack(fill=BOTH, expand=True, padx=2, pady=2)
 
         # 底部备注
         self.wf_notes = Label(wf_win, text="", font=('Helvetica', 9),
@@ -817,8 +823,8 @@ class BuildTool:
         Button(wf_win, text="Close", command=wf_win.destroy,
                font=('', 10), bg='#607D8B', fg='white').pack(pady=5)
 
-        # 初始显示
-        self._update_workflow_display()
+        # 延迟初始化显示，确保窗口完全渲染
+        wf_win.after(100, self._update_workflow_display)
 
     def _update_workflow_display(self):
         """更新流程显示"""
@@ -831,23 +837,21 @@ class BuildTool:
             for step_title, items in wf['steps']:
                 self.wf_steps_list.insert(END, f"  {step_title}")
 
-        # 更新详情
-        self.wf_detail.config(state='normal')
-        self.wf_detail.delete('1.0', END)
+        # 更新详情 (使用 Label)
         icon = wf.get('icon', '')
         name = wf.get('name', pid)
         notes = wf.get('notes', '')
 
-        content = f"{icon} {name}\n{'='*50}\n\n"
+        lines = [f"{icon}  {name}", "=" * 50, ""]
         if 'steps' in wf:
             for step_title, items in wf['steps']:
-                content += f"▶ {step_title}\n"
+                lines.append(f"▶ {step_title}")
                 for item in items:
-                    content += f"   • {item}\n"
-                content += "\n"
+                    lines.append(f"   • {item}")
+                lines.append("")
 
-        self.wf_detail.insert('1.0', content)
-        self.wf_detail.config(state='disabled')
+        self.wf_detail_text = "\n".join(lines)
+        self.wf_detail_label.config(text=self.wf_detail_text)
 
         # 更新备注
         self.wf_notes.config(text=f"📝 {notes}" if notes else "")
