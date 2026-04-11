@@ -57,10 +57,8 @@ namespace RoguelikeGame.Generation
         public int Height { get; set; }
     }
 
-    public partial class MapGenerator : Node
+    public partial class MapGenerator : SingletonBase<MapGenerator>
     {
-        public static MapGenerator Instance { get; private set; }
-
         private readonly Dictionary<string, FloorMap> _floorMaps = new();
         private readonly List<FloorMap> _mapHistory = new();
         private RandomGenerator _rng;
@@ -95,14 +93,8 @@ namespace RoguelikeGame.Generation
         [Signal]
         public delegate void FloorCompletedEventHandler(int floor);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
         }
 
         public void Initialize(uint seed)

@@ -26,10 +26,8 @@ namespace RoguelikeGame.Systems
         public Dictionary<string, object> CustomData { get; set; } = new();
     }
 
-    public partial class UnitManager : Node
+    public partial class UnitManager : SingletonBase<UnitManager>
     {
-        public static UnitManager Instance { get; private set; }
-
         private readonly Dictionary<string, PackedScene> _unitScenes = new();
         private readonly Dictionary<string, UnitData> _unitDefinitions = new();
         private readonly List<Node> _activeUnits = new();
@@ -52,15 +50,8 @@ namespace RoguelikeGame.Systems
 
         public int ActiveUnitCount => _activeUnits.Count;
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             LoadUnitDefinitions();
         }
 

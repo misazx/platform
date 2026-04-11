@@ -4,10 +4,8 @@ using System.Collections.Generic;
 
 namespace RoguelikeGame.Core
 {
-    public partial class EventBus : Node
+    public partial class EventBus : SingletonBase<EventBus>
     {
-        public static EventBus Instance { get; private set; }
-
         private readonly Dictionary<string, List<Delegate>> _eventHandlers = new();
 
         [Signal]
@@ -25,14 +23,8 @@ namespace RoguelikeGame.Core
         [Signal]
         public delegate void GameStateUpdatedEventHandler(Variant state);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
         }
 
         public void Subscribe<T>(string eventName, Action<T> handler)

@@ -6,16 +6,13 @@ using RoguelikeGame.Audio;
 
 namespace RoguelikeGame.Core
 {
-	public partial class ResourceInitializer : Node
+	public partial class ResourceInitializer : SingletonBase<ResourceInitializer>
 	{
-		public static ResourceInitializer Instance { get; private set; }
-
 		private const string RESOURCES_VERSION = "1.0.0";
 		private const string RESOURCES_FLAG_FILE = "user://resources_generated.flag";
 
-		public override void _Ready()
+		protected override void OnInitialize()
 		{
-			Instance = this;
 			CheckAndGenerateResources();
 		}
 

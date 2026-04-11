@@ -46,25 +46,16 @@ namespace RoguelikeGame.Database
         public string EncounterLocation { get; set; }
     }
 
-    public partial class EnemyDatabase : Node
+    public partial class EnemyDatabase : SingletonBase<EnemyDatabase>
     {
-        public static EnemyDatabase Instance { get; private set; }
-
         private readonly Dictionary<string, EnemyData> _enemies = new();
         private readonly Dictionary<EnemyType, List<EnemyData>> _typeEnemies = new();
 
         [Signal]
         public delegate void EnemyRegisteredEventHandler(string enemyId);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             LoadEnemiesFromConfig();
         }
 

@@ -32,10 +32,8 @@ namespace RoguelikeGame.Systems
         public string IconPath { get; set; }
     }
 
-    public partial class ShopManager : Node
+    public partial class ShopManager : SingletonBase<ShopManager>
     {
-        public static ShopManager Instance { get; private set; }
-
         private readonly List<ShopItem> _currentItems = new();
         private RandomNumberGenerator _rng;
         
@@ -60,14 +58,8 @@ namespace RoguelikeGame.Systems
         [Signal]
         public delegate void ShopEnteredEventHandler();
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
         }
 
         public void Initialize(uint seed)

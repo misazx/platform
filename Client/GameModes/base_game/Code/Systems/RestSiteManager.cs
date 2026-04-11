@@ -14,21 +14,13 @@ namespace RoguelikeGame.Systems
         Recall
     }
 
-    public partial class RestSiteManager : Node
+    public partial class RestSiteManager : SingletonBase<RestSiteManager>
     {
-        public static RestSiteManager Instance { get; private set; }
-
         [Signal]
         public delegate void RestCompletedEventHandler(RestOption option);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
         }
 
         public List<RestOption> GetAvailableOptions(Node player)

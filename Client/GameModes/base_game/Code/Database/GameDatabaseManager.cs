@@ -4,22 +4,13 @@ using System.Collections.Generic;
 
 namespace RoguelikeGame.Database
 {
-    public partial class GameDatabaseManager : Node
+    public partial class GameDatabaseManager : SingletonBase<GameDatabaseManager>
     {
-        public static GameDatabaseManager Instance { get; private set; }
-
         [Signal]
         public delegate void DatabaseInitializedEventHandler();
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             InitializeAllDatabases();
         }
 

@@ -92,10 +92,8 @@ namespace RoguelikeGame.Systems
         }
     }
 
-    public partial class ItemManager : Node
+    public partial class ItemManager : SingletonBase<ItemManager>
     {
-        public static ItemManager Instance { get; private set; }
-
         private readonly Dictionary<string, ItemData> _itemDefinitions = new();
         private readonly Dictionary<string, PackedScene> _itemScenes = new();
         private readonly List<Node> _droppedItems = new();
@@ -109,15 +107,8 @@ namespace RoguelikeGame.Systems
         [Signal]
         public delegate void ItemDroppedEventHandler(Node item, Vector2 position);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             LoadItemDefinitions();
         }
 

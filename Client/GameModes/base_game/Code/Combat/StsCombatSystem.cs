@@ -1,4 +1,5 @@
 using Godot;
+using RoguelikeGame.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -333,10 +334,8 @@ namespace RoguelikeGame.Core
 		public bool IsDead => CurrentHp <= 0;
 	}
 
-	public partial class StsCombatEngine : Node
+	public partial class StsCombatEngine : SingletonBase<StsCombatEngine>
 	{
-		public static StsCombatEngine Instance { get; private set; }
-
 		private StsPlayerState _player;
 		private List<StsEnemyData> _enemies = new();
 		private RandomNumberGenerator _rng = new();
@@ -357,14 +356,8 @@ namespace RoguelikeGame.Core
 		public bool IsCombatOver { get; private set; } = false;
 		public StsRelicManager RelicManager => _relicManager;
 
-		public override void _Ready()
+		protected override void OnInitialize()
 		{
-			if (Instance != null && Instance != this)
-			{
-				QueueFree();
-				return;
-			}
-			Instance = this;
 		}
 
 		public void InitializeCombat(List<StsEnemyData> enemies, uint seed)

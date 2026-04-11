@@ -45,25 +45,16 @@ namespace RoguelikeGame.Database
         public string CounterpartId { get; set; }
     }
 
-    public partial class RelicDatabase : Node
+    public partial class RelicDatabase : SingletonBase<RelicDatabase>
     {
-        public static RelicDatabase Instance { get; private set; }
-
         private readonly Dictionary<string, RelicData> _relics = new();
         private readonly Dictionary<RelicTier, List<RelicData>> _tierRelics = new();
 
         [Signal]
         public delegate void RelicCollectedEventHandler(string relicId);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             LoadRelicsFromConfig();
         }
 

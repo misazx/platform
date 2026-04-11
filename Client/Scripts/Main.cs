@@ -13,10 +13,8 @@ using RoguelikeGame.Packages;
 
 namespace RoguelikeGame
 {
-    public partial class Main : Node
+    public partial class Main : SingletonBase<Main>
     {
-        public static Main Instance { get; private set; }
-
         private Control _currentSceneContainer;
         private Node _currentScene;
         private Control _settingsPanel;
@@ -28,15 +26,8 @@ namespace RoguelikeGame
         public Generation.NodeType GetLastClickedNodeType() => _lastClickedNodeType;
         private PackageStoreUI _packageStoreUI;
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             GetWindow().Size = new Vector2I(1280, 720);
             GetViewport().TransparentBg = false;
 

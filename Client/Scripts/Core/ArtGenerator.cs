@@ -11,36 +11,6 @@ namespace RoguelikeGame.Core
         private readonly Dictionary<string, ImageTexture> _cache = new();
         private readonly RandomNumberGenerator _rng = new();
 
-        public static readonly Color AttackColor = new("#CC3333");
-        public static readonly Color SkillColor = new("#3366CC");
-        public static readonly Color PowerColor = new("#CCAA33");
-        public static readonly Color StatusColor = new("#888888");
-        public static readonly Color CurseColor = new("#663366");
-
-        public static readonly Color BasicBorder = new("#888888");
-        public static readonly Color CommonBorder = new("#66AA66");
-        public static readonly Color UncommonBorder = new("#4488CC");
-        public static readonly Color RareBorder = new("#AA66CC");
-        public static readonly Color SpecialBorder = new("#FFAA00");
-
-        private static readonly Dictionary<CardType, Color> TypeColors = new()
-        {
-            { CardType.Attack, AttackColor },
-            { CardType.Skill, SkillColor },
-            { CardType.Power, PowerColor },
-            { CardType.Status, StatusColor },
-            { CardType.Curse, CurseColor }
-        };
-
-        private static readonly Dictionary<CardRarity, Color> RarityBorders = new()
-        {
-            { CardRarity.Basic, BasicBorder },
-            { CardRarity.Common, CommonBorder },
-            { CardRarity.Uncommon, UncommonBorder },
-            { CardRarity.Rare, RareBorder },
-            { CardRarity.Special, SpecialBorder }
-        };
-
         protected override void OnInitialize()
         {
             _rng.Randomize();
@@ -69,8 +39,8 @@ namespace RoguelikeGame.Core
 
         private void DrawCardBackground(Image img, int w, int h, CardType type, CardRarity rarity)
         {
-            var bgColor = TypeColors.TryGetValue(type, out var tc) ? tc : new Color(0.3f, 0.3f, 0.3f);
-            var borderColor = RarityBorders.TryGetValue(rarity, out var rc) ? rc : BasicBorder;
+            var bgColor = CardStyleConfig.GetTypeColor(type);
+            var borderColor = CardStyleConfig.GetRarityBorder(rarity);
 
             for (int y = 4; y < h - 4; y++)
             {
@@ -158,7 +128,7 @@ namespace RoguelikeGame.Core
 
         private void DrawCardGlow(Image img, int w, int h, CardType type)
         {
-            var glowColor = TypeColors.TryGetValue(type, out var c) ? c : Colors.White;
+            var glowColor = CardStyleConfig.GetTypeColor(type);
             glowColor.A = 0.08f;
 
             int cx = w / 2;

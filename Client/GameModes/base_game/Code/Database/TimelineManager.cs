@@ -33,24 +33,16 @@ namespace RoguelikeGame.Database
         public int Room { get; set; }
     }
 
-    public partial class TimelineManager : Node
+    public partial class TimelineManager : SingletonBase<TimelineManager>
     {
-        public static TimelineManager Instance { get; private set; }
-
         private readonly List<TimelineEntry> _timeline = new();
         private readonly Dictionary<TimelineEventType, List<TimelineEntry>> _typedEntries = new();
 
         [Signal]
         public delegate void TimelineEntryAddedEventHandler(string entryJson);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
         }
 
         public TimelineEntry AddEntry(

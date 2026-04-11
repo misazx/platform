@@ -5,17 +5,14 @@ using System.IO;
 
 namespace RoguelikeGame.Core
 {
-    public partial class ResourceGenerator : Node
+    public partial class ResourceGenerator : SingletonBase<ResourceGenerator>
     {
-        public static ResourceGenerator Instance { get; private set; }
-
         private readonly RandomNumberGenerator _rng = new();
         private const string IMAGES_PATH = "res://GameModes/base_game/Resources/Images/";
         private const string ICONS_PATH = "res://GameModes/base_game/Resources/Icons/";
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            Instance = this;
             _rng.Randomize();
         }
 

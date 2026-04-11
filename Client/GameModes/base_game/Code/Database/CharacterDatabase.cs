@@ -49,25 +49,16 @@ namespace RoguelikeGame.Database
         public string DifficultyDescription { get; set; }
     }
 
-    public partial class CharacterDatabase : Node
+    public partial class CharacterDatabase : SingletonBase<CharacterDatabase>
     {
-        public static CharacterDatabase Instance { get; private set; }
-
         private readonly Dictionary<string, CharacterData> _characters = new();
         private readonly List<CharacterData> _playableCharacters = new();
 
         [Signal]
         public delegate void CharacterSelectedEventHandler(string characterId);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             LoadCharactersFromConfig();
         }
 

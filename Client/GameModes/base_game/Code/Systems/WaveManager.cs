@@ -20,10 +20,8 @@ namespace RoguelikeGame.Systems
         public float SpawnWeight { get; set; } = 1.0f;
     }
 
-    public partial class WaveManager : Node
+    public partial class WaveManager : SingletonBase<WaveManager>
     {
-        public static WaveManager Instance { get; private set; }
-
         private int _currentWave = 0;
         private int _enemiesRemaining = 0;
         private bool _waveInProgress = false;
@@ -54,14 +52,8 @@ namespace RoguelikeGame.Systems
         public int EnemiesRemaining => _enemiesRemaining;
         public bool IsWaveInProgress => _waveInProgress;
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
         }
 
         public void Initialize(uint seed)

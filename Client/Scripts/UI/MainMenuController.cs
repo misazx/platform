@@ -4,10 +4,8 @@ using RoguelikeGame.Audio;
 
 namespace RoguelikeGame.UI
 {
-    public partial class MainMenuController : Node, IUIScreenController
+    public partial class MainMenuController : SingletonBase<MainMenuController>, IUIScreenController
     {
-        public static MainMenuController Instance { get; private set; }
-
         [Signal]
         public delegate void StartGamePressedEventHandler();
 
@@ -17,15 +15,8 @@ namespace RoguelikeGame.UI
         [Signal]
         public delegate void QuitPressedEventHandler();
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-            
             GD.Print("[MainMenuController] Initialized");
         }
 

@@ -45,10 +45,8 @@ namespace RoguelikeGame.Core
 		public bool CanPlayCards => CurrentEnergy > 0 && Hand.Count > 0;
 	}
 
-	public partial class CombatManager : Node
+	public partial class CombatManager : SingletonBase<CombatManager>
 	{
-		public static CombatManager Instance { get; private set; }
-
 		private CombatState _state;
 		private CombatPhase _currentPhase = CombatPhase.PlayerTurn;
 		private Node _player;
@@ -78,15 +76,8 @@ namespace RoguelikeGame.Core
 		public CombatPhase CurrentPhase => _currentPhase;
 		public bool IsInCombat => _state != null && _player != null;
 
-		public override void _Ready()
+		protected override void OnInitialize()
 		{
-			if (Instance != null && Instance != this)
-			{
-				QueueFree();
-				return;
-			}
-			Instance = this;
-			
 			GD.Print("[CombatManager] Initialized");
 		}
 

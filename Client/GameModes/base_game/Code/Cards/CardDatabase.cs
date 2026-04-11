@@ -59,10 +59,8 @@ namespace RoguelikeGame.Database
         public bool IsInnate { get; set; }
     }
 
-    public partial class CardDatabase : Node
+    public partial class CardDatabase : SingletonBase<CardDatabase>
     {
-        public static CardDatabase Instance { get; private set; }
-
         private readonly Dictionary<string, CardData> _cards = new();
         private readonly Dictionary<string, List<CardData>> _characterCards = new();
         private readonly Dictionary<CardType, List<CardData>> _typeCards = new();
@@ -70,15 +68,8 @@ namespace RoguelikeGame.Database
         [Signal]
         public delegate void CardRegisteredEventHandler(string cardId);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             LoadCardsFromConfig();
         }
 

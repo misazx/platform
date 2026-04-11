@@ -31,10 +31,8 @@ namespace RoguelikeGame.Systems
         public Dictionary<string, object> CustomData { get; set; } = new();
     }
 
-    public partial class SaveSystem : Node
+    public partial class SaveSystem : SingletonBase<SaveSystem>
     {
-        public static SaveSystem Instance { get; private set; }
-
         private readonly string _savePath = "user://saves/";
         private readonly int _maxSaveSlots = 3;
 
@@ -53,15 +51,8 @@ namespace RoguelikeGame.Systems
         [Signal]
         public delegate void GameLoadedEventHandler(int slot);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             EnsureSaveDirectory();
         }
 

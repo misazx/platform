@@ -50,10 +50,8 @@ namespace RoguelikeGame.Core
 		public int TotalCardsPlayed { get; set; }
 	}
 
-	public partial class GameManager : Node
+	public partial class GameManager : SingletonBase<GameManager>
 	{
-		public static GameManager Instance { get; private set; }
-
 		private RunData _currentRun;
 		private FloorMap _currentMap;
 		private MapNode _currentNode;
@@ -77,17 +75,8 @@ namespace RoguelikeGame.Core
 		public FloorMap CurrentMap => _currentMap;
 		public MapNode CurrentNode => _currentNode;
 
-		public override void _Ready()
+		protected override void OnInitialize()
 		{
-			if (Instance != null && Instance != this)
-			{
-				QueueFree();
-				return;
-			}
-			Instance = this;
-
-			ProcessMode = ProcessModeEnum.Always;
-
 			InitializeSystems();
 		}
 

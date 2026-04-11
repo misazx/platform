@@ -9,10 +9,8 @@ using RoguelikeGame.Core;
 
 namespace RoguelikeGame.Packages
 {
-	public partial class PackageManager : Node
+	public partial class PackageManager : SingletonBase<PackageManager>
 	{
-		public static PackageManager Instance { get; private set; }
-
 		private const string REGISTRY_URL = "http://localhost:8080/registry.json";
 		private const string PACKAGES_DIR = "user://packages/";
 		private const string REGISTRY_FILE = "user://package_registry.json";
@@ -53,15 +51,8 @@ namespace RoguelikeGame.Packages
 		public IReadOnlyDictionary<string, PackageConfig> PackageConfigs => _packageConfigs;
 		public PackageRegistry Registry => _registry;
 
-		public override void _Ready()
+		protected override void OnInitialize()
 		{
-			if (Instance != null && Instance != this)
-			{
-				QueueFree();
-				return;
-			}
-			Instance = this;
-
 			_httpClient = new System.Net.Http.HttpClient();
 			_httpClient.Timeout = TimeSpan.FromMinutes(30);
 

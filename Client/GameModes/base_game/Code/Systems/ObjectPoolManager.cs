@@ -1,4 +1,5 @@
 using Godot;
+using RoguelikeGame.Core;
 using System;
 using System.Collections.Generic;
 
@@ -109,10 +110,8 @@ namespace RoguelikeGame.Systems
         }
     }
 
-    public partial class ObjectPoolManager : Node
+    public partial class ObjectPoolManager : SingletonBase<ObjectPoolManager>
     {
-        public static ObjectPoolManager Instance { get; private set; }
-
         private readonly Dictionary<string, object> _pools = new();
         private readonly Dictionary<string, List<Node>> _activeObjects = new();
 
@@ -122,15 +121,8 @@ namespace RoguelikeGame.Systems
         [Signal]
         public delegate void ObjectReturnedEventHandler(string poolName, Node obj);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             InitializeDefaultPools();
         }
 

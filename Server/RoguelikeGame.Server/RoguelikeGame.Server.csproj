@@ -22,4 +22,8 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RoguelikeGame.Shared\RoguelikeGame.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

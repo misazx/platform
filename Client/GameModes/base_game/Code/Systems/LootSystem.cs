@@ -33,10 +33,8 @@ namespace RoguelikeGame.Systems
         public ItemRarity Rarity { get; set; }
     }
 
-    public partial class LootSystem : Node
+    public partial class LootSystem : SingletonBase<LootSystem>
     {
-        public static LootSystem Instance { get; private set; }
-
         private readonly Dictionary<string, LootTable> _lootTables = new();
         private RandomGenerator _rng;
 
@@ -49,15 +47,8 @@ namespace RoguelikeGame.Systems
         [Signal]
         public delegate void LootDroppedEventHandler(Vector2 position, string[] itemIds);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             LoadLootTables();
         }
 

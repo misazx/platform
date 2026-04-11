@@ -55,10 +55,8 @@ namespace RoguelikeGame.Database
         public List<string> DeckComposition { get; set; } = new();
     }
 
-    public partial class AchievementSystem : Node
+    public partial class AchievementSystem : SingletonBase<AchievementSystem>
     {
-        public static AchievementSystem Instance { get; private set; }
-
         private readonly Dictionary<string, AchievementData> _achievements = new();
         private readonly List<RunStatistics> _runHistory = new();
         private readonly Dictionary<AchievementType, List<AchievementData>> _typeAchievements = new();
@@ -72,15 +70,8 @@ namespace RoguelikeGame.Database
         [Signal]
         public delegate void RunCompletedEventHandler(string statsJson);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             InitializeAchievements();
         }
 

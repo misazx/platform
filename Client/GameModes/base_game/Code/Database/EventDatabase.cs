@@ -48,25 +48,16 @@ namespace RoguelikeGame.Database
         public bool HasSeen { get; set; }
     }
 
-    public partial class EventDatabase : Node
+    public partial class EventDatabase : SingletonBase<EventDatabase>
     {
-        public static EventDatabase Instance { get; private set; }
-
         private readonly Dictionary<string, EventData> _events = new();
         private readonly Dictionary<EventType, List<EventData>> _typeEvents = new();
 
         [Signal]
         public delegate void EventTriggeredEventHandler(string eventId);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             LoadEventsFromConfig();
         }
 

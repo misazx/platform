@@ -1,4 +1,5 @@
 using Godot;
+using RoguelikeGame.Core;
 using System.Collections.Generic;
 using RoguelikeGame.Audio;
 
@@ -29,7 +30,13 @@ namespace RoguelikeGame.UI
 
         public override void _Ready()
         {
+            if (Instance != null && Instance != this)
+            {
+                QueueFree();
+                return;
+            }
             Instance = this;
+
             InitializeLayers();
             LoadAllScreens();
             ShowScreen("MainMenu");

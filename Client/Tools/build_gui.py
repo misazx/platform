@@ -308,6 +308,46 @@ class BuildTool:
                 f.write('\n'.join(self.log_lines))
             self._log(f"[SAVED] -> {p}", 'ok')
 
+    def _check_export_templates(self):
+        """检查 Godot 导出模板是否已安装"""
+        # 获取 Godot 版本
+        try:
+            env = self._get_build_env()
+            r = subprocess.run([self.godot_path, '--headless', '--version'],
+                             capture_output=True, text=True, timeout=10, env=env)
+            version = r.stdout.strip() if r.stdout else "unknown"
+            self._log(f"[CHECK] Godot version: {version}", 'info')
+        except Exception:
+            version = "unknown"
+
+        # 检查模板目录
+        template_base = Path.home() / "Library" / "Application Support" / "Godot" / "export_templates"
+        version_dirs = list(template_base.glob("*")) if template_base.exists() else []
+
+        if not version_dirs:
+            self._log("[ERROR] Export templates NOT installed!", 'err')
+            self._log("[ERROR] Run: Godot Editor -> Editor -> Manage Export Templates -> Install", 'err')
+            messagebox.showerror("Export Templates Missing",
+                "Godot export templates are not installed!\n\n"
+                "How to install:\n"
+                "1. Open Godot Editor\n"
+                "2. Editor -> Manage Export Templates\n"
+                "3. Click 'Download and Install'\n\n"
+                f"Or download manually:\n"
+                f"https://github.com/godotengine/godot/releases")
+            return False
+
+        # 检查模板文件
+        for vd in version_dirs:
+            macos_template = vd / "macos.zip"
+            if macos_template.exists():
+                self._log(f"[CHECK] ✓ Export templates found: {vd.name}", 'ok')
+                return True
+
+        self._log("[WARN] Export templates directory exists but macos.zip not found", 'warn')
+        self._log(f"[WARN] Checked: {version_dirs}", 'warn')
+        return True
+
     def _start_build(self):
         sel = [p for p, v in self.platform_vars.items() if v.get()]
         if not sel:
@@ -315,6 +355,10 @@ class BuildTool:
             return
         if not self.godot_path or not os.path.exists(self.godot_path):
             messagebox.showerror("Error", "Set Godot path first!\n\nClick Auto-Find or Browse .app")
+            return
+
+        # 检查导出模板
+        if not self._check_export_templates():
             return
 
         self.is_building = True

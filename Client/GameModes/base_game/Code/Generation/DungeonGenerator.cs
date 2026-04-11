@@ -25,10 +25,8 @@ namespace RoguelikeGame.Generation
         public DungeonLayout Layout { get; set; }
     }
 
-    public partial class DungeonGenerator : Node
+    public partial class DungeonGenerator : SingletonBase<DungeonGenerator>
     {
-        public static DungeonGenerator Instance { get; private set; }
-
         private RandomGenerator _rng;
         private RoomGenerator _roomGenerator;
         private DungeonData _currentDungeon;
@@ -53,14 +51,8 @@ namespace RoguelikeGame.Generation
 
         public DungeonData CurrentDungeon => _currentDungeon;
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
         }
 
         public DungeonData GenerateDungeon(int floor, uint seed)

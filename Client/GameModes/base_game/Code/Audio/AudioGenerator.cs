@@ -1,13 +1,12 @@
 using Godot;
+using RoguelikeGame.Core;
 using System;
 using System.Collections.Generic;
 
 namespace RoguelikeGame.Audio
 {
-    public partial class AudioGenerator : Node
+    public partial class AudioGenerator : SingletonBase<AudioGenerator>
     {
-        public static AudioGenerator Instance { get; private set; }
-
         private const string BGM_PATH = "res://GameModes/base_game/Resources/Audio/BGM/";
         private const string SFX_PATH = "res://GameModes/base_game/Resources/Audio/SFX/";
 
@@ -15,10 +14,8 @@ namespace RoguelikeGame.Audio
         private AudioStreamGenerator _generator;
         private AudioStreamGeneratorPlayback _playback;
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            Instance = this;
-
             _previewPlayer = new AudioStreamPlayer
             {
                 Bus = "Master"

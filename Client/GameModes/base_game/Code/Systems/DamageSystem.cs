@@ -45,10 +45,8 @@ namespace RoguelikeGame.Systems
         public Dictionary<string, object> Modifiers { get; set; } = new();
     }
 
-    public partial class DamageSystem : Node
+    public partial class DamageSystem : SingletonBase<DamageSystem>
     {
-        public static DamageSystem Instance { get; private set; }
-
         [Export]
         public float CriticalMultiplier { get; set; } = 2.0f;
 
@@ -70,14 +68,8 @@ namespace RoguelikeGame.Systems
         [Signal]
         public delegate void CriticalHitEventHandler(Node source, Node target, int amount);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
         }
 
         public DamageResult CalculateDamage(DamageInfo info)

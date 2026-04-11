@@ -55,10 +55,8 @@ namespace RoguelikeGame.Systems
         public abstract void OnForget(Node owner, SkillData skill, int level);
     }
 
-    public partial class SkillManager : Node
+    public partial class SkillManager : SingletonBase<SkillManager>
     {
-        public static SkillManager Instance { get; private set; }
-
         private readonly Dictionary<string, SkillData> _skillDefinitions = new();
         private readonly Dictionary<string, SkillInstance> _learnedSkills = new();
         private readonly Dictionary<string, SkillEffect> _skillEffects = new();
@@ -75,15 +73,8 @@ namespace RoguelikeGame.Systems
         [Signal]
         public delegate void SkillCooldownStartedEventHandler(string skillId, float duration);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             LoadSkillDefinitions();
         }
 

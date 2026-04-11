@@ -35,25 +35,16 @@ namespace RoguelikeGame.Database
         public int MaxStack { get; set; } = 3;
     }
 
-    public partial class PotionDatabase : Node
+    public partial class PotionDatabase : SingletonBase<PotionDatabase>
     {
-        public static PotionDatabase Instance { get; private set; }
-
         private readonly Dictionary<string, PotionData> _potions = new();
         private readonly Dictionary<PotionType, List<PotionData>> _typePotions = new();
 
         [Signal]
         public delegate void PotionUsedEventHandler(string potionId);
 
-        public override void _Ready()
+        protected override void OnInitialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                QueueFree();
-                return;
-            }
-            Instance = this;
-
             LoadPotionsFromConfig();
         }
 
