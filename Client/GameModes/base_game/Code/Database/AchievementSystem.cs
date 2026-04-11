@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using RoguelikeGame.Core;
 
 namespace RoguelikeGame.Database
 {

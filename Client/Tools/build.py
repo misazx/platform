@@ -137,6 +137,9 @@ class BuildTool:
         """准备构建输出目录"""
         full_path = self.build_dir / output_dir
         full_path.mkdir(parents=True, exist_ok=True)
+        # export_presets.cfg 中使用 ../build/ 相对路径，需要同时创建
+        alt_path = self.project_root.parent / "build" / output_dir
+        alt_path.mkdir(parents=True, exist_ok=True)
         return full_path
 
     def export_platform(self, platform_name, debug=False):
