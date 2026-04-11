@@ -787,21 +787,22 @@ class BuildTool:
                             font=('Helvetica', 10))
             rb.pack(side=LEFT, padx=5)
 
-        # 内容区域 - 使用 PanedWindow 分割
-        paned = PanedWindow(wf_win, orient=HORIZONTAL)
-        paned.pack(fill=BOTH, expand=True, padx=10, pady=5)
+        # 内容区域 - 使用 Frame + pack (兼容 Python 3.9)
+        content = Frame(wf_win)
+        content.pack(fill=BOTH, expand=True, padx=10, pady=5)
 
         # 左侧: 步骤列表
-        left_p = Frame(paned)
-        paned.add(left_p, weight=1)
-        self.wf_steps_list = Listbox(left_p, font=('Helvetica', 11), height=25,
+        left_p = Frame(content)
+        left_p.pack(side=LEFT, fill=BOTH, expand=True, padx=(0, 5))
+        Label(left_p, text="Steps", font=('Helvetica', 11, 'bold')).pack(anchor='w')
+        self.wf_steps_list = Listbox(left_p, font=('Helvetica', 10), height=25,
                                         selectmode=SINGLE, bg='#f5f5f5')
         self.wf_steps_list.pack(fill=BOTH, expand=True)
 
         # 右侧: 详细说明
-        right_p = Frame(paned)
-        paned.add(right_p, weight=2)
-        Label(right_p, text="Details", font=('Helvetica', 12, 'bold')).pack(anchor='w')
+        right_p = Frame(content)
+        right_p.pack(side=LEFT, fill=BOTH, expand=True, padx=(5, 0))
+        Label(right_p, text="Details", font=('Helvetica', 11, 'bold')).pack(anchor='w')
         self.wf_detail = Text(right_p, font=('Helvetica', 10), height=25,
                                 wrap=WORD, bg='#fafafa', relief=GROOVE,
                                 state='normal')
