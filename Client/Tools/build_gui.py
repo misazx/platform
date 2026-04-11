@@ -83,13 +83,15 @@ class BuildTool:
         left = Frame(main)
         left.pack(side=LEFT, fill=Y, padx=(0, 10))
 
-        Label(left, text="Platforms", font=('Helvetica', 12, 'bold')).pack(anchor='w', pady=(0, 5))
+        Label(left, text="Platforms", font=('Helvetica', 12, 'bold'), fg='#333').pack(anchor='w', pady=(0, 5))
 
         for pid, name in self.platforms:
             var = self.platform_vars[pid]
             btn = Button(left, text=f"  [ ] {name}  ",
                          font=('Helvetica', 11), fg='black',
-                         height=1, cursor='hand2',
+                         bg='#e8e8e8', activebackground='#d0d0d0',
+                         activeforeground='black', highlightthickness=1,
+                         highlightbackground='#ccc', height=1, cursor='hand2',
                          command=lambda p=pid: self._toggle(p))
             btn.pack(fill=X, pady=2)
             self.platform_buttons[pid] = {'btn': btn, 'var': var, 'name': name}
@@ -97,76 +99,95 @@ class BuildTool:
         fb = Frame(left)
         fb.pack(fill=X, pady=(8, 0))
         Button(fb, text="Select All", command=lambda: self._set_all(1),
-               font=('', 9), fg='black').pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9), fg='black', bg='#ddd',
+               activebackground='#bbb', activeforeground='black').pack(side=LEFT, fill=X, expand=True, padx=2)
         Button(fb, text="Clear All", command=lambda: self._set_all(0),
-               font=('', 9), fg='black').pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9), fg='black', bg='#ddd',
+               activebackground='#bbb', activeforeground='black').pack(side=LEFT, fill=X, expand=True, padx=2)
 
         # 平台流程按钮
         Button(left, text="📋 Platform Workflows",
                command=self._show_workflows,
                font=('Helvetica', 10), bg='#9C27B0', fg='white',
+               activebackground='#7B1FA2', activeforeground='white',
+               highlightthickness=1, highlightbackground='#7B1FA2',
                height=1, cursor='hand2').pack(fill=X, pady=(10, 2))
 
         # === MIDDLE: 配置 ===
         mid = Frame(main)
         mid.pack(side=LEFT, fill=Y, padx=(0, 10))
 
-        Label(mid, text="Configuration", font=('Helvetica', 12, 'bold')).pack(anchor='w', pady=(0, 5))
+        Label(mid, text="Configuration", font=('Helvetica', 12, 'bold'), fg='#333').pack(anchor='w', pady=(0, 5))
 
         # Godot 路径区域
         path_frame = Frame(mid)
         path_frame.pack(fill=X, pady=5)
 
-        Label(path_frame, text="Godot Path:", font=('Helvetica', 10)).pack(anchor='w')
+        Label(path_frame, text="Godot Path:", font=('Helvetica', 10), fg='#333').pack(anchor='w')
 
         bf = Frame(path_frame)
         bf.pack(fill=X, pady=3)
         Button(bf, text="Auto-Find", command=self._find_godot,
-               font=('', 9), bg='#FF9800', fg='black', width=10).pack(side=LEFT, padx=2)
+               font=('', 9), bg='#FFB74D', fg='black',
+               activebackground='#F57C00', activeforeground='white',
+               width=10).pack(side=LEFT, padx=2)
         Button(bf, text="Browse .app", command=self._browse_godot,
-               font=('', 9), bg='#4A9EFF', fg='black', width=10).pack(side=LEFT, padx=2)
+               font=('', 9), bg='#64B5F6', fg='black',
+               activebackground='#1976D2', activeforeground='white',
+               width=10).pack(side=LEFT, padx=2)
 
         # 当前路径显示
         self.btn_path_display = Button(path_frame, text="(click Auto-Find or Browse)",
-                                        font=('Courier', 9), fg='black', height=2,
-                                        relief=SUNKEN, anchor='w')
+                                        font=('Courier', 9), fg='black', bg='#eee',
+                                        activebackground='#ddd', activeforeground='black',
+                                        relief=SUNKEN, anchor='w', height=2,
+                                        justify=LEFT)
         self.btn_path_display.pack(fill=X, pady=3)
 
         # 选项
         opts = Frame(mid)
         opts.pack(fill=X, pady=8)
         Checkbutton(opts, text="Debug Mode", variable=self.debug_mode,
-                   font=('', 10)).pack(anchor='w')
+                   font=('', 10), fg='#333', activebackground=R.cget('bg'),
+                   selectcolor='#ccc').pack(anchor='w')
         Checkbutton(opts, text="Clean Build", variable=self.clean_build,
-                   font=('', 10)).pack(anchor='w')
+                   font=('', 10), fg='#333', activebackground=R.cget('bg'),
+                   selectcolor='#ccc').pack(anchor='w')
 
         # 操作按钮
-        Label(mid, text="Actions", font=('Helvetica', 12, 'bold')).pack(anchor='w', pady=(10, 5))
+        Label(mid, text="Actions", font=('Helvetica', 12, 'bold'), fg='#333').pack(anchor='w', pady=(10, 5))
 
         self.btn_start = Button(mid, text=">>> START BUILD <<<",
                                  command=self._start_build,
                                  font=('Helvetica', 12, 'bold'),
-                                 bg='#4CAF50', fg='white', height=2)
+                                 bg='#4CAF50', fg='white',
+                                 activebackground='#388E3C', activeforeground='white',
+                                 highlightthickness=1, highlightbackground='#388E3C',
+                                 height=2)
         self.btn_start.pack(fill=X, pady=5)
 
         self.btn_stop = Button(mid, text="[ STOP ]",
                                command=self._stop_build,
-                               font=('', 10), bg='#F44336', fg='white',
+                               font=('', 10), bg='#EF5350', fg='white',
+                               activebackground='#D32F2F', activeforeground='white',
+                               highlightthickness=1, highlightbackground='#D32F2F',
                                state='disabled', height=1)
         self.btn_stop.pack(fill=X, pady=3)
 
         fa = Frame(mid)
         fa.pack(fill=X, pady=5)
         Button(fa, text="Clean Dir", command=self._clean_dir,
-               font=('', 9), bg='#607D8B', fg='white').pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9), bg='#78909C', fg='white',
+               activebackground='#546E7A', activeforeground='white').pack(side=LEFT, fill=X, expand=True, padx=2)
         Button(fa, text="Open Output", command=self._open_output,
-               font=('', 9), bg='#795548', fg='white').pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9), bg='#8D6E63', fg='white',
+               activebackground='#6D4C41', activeforeground='white').pack(side=LEFT, fill=X, expand=True, padx=2)
 
         # === RIGHT: 日志 ===
         right = Frame(main)
         right.pack(side=LEFT, fill=BOTH, expand=True)
 
-        Label(right, text="Build Log", font=('Helvetica', 12, 'bold')).pack(anchor='w', pady=(0, 5))
+        Label(right, text="Build Log", font=('Helvetica', 12, 'bold'), fg='#333').pack(anchor='w', pady=(0, 5))
 
         self.log_display = Listbox(right, font=('Courier', 9), height=25,
                                    selectmode=SINGLE, bg='#1a1a1a', fg='#00FF00')
@@ -175,21 +196,24 @@ class BuildTool:
         lc = Frame(right)
         lc.pack(fill=X, pady=5)
         Button(lc, text="Clear Log", command=self._clear_log,
-               font=('', 9), width=10).pack(side=LEFT, padx=2)
+               font=('', 9), fg='black', bg='#ddd',
+               activebackground='#bbb', width=10).pack(side=LEFT, padx=2)
         Button(lc, text="Save Log", command=self._save_log,
-               font=('', 9), width=10).pack(side=LEFT, padx=2)
+               font=('', 9), fg='black', bg='#ddd',
+               activebackground='#bbb', width=10).pack(side=LEFT, padx=2)
 
         pg = Frame(right)
         pg.pack(fill=X, pady=5)
-        Label(pg, text="Progress:", font=('', 10)).pack(side=LEFT)
+        Label(pg, text="Progress:", font=('', 10), fg='#333').pack(side=LEFT)
         ttk.Progressbar(pg, variable=self.progress_var, maximum=100,
                         length=180).pack(side=LEFT, padx=8)
-        self.lbl_pct = Label(pg, text="0%", font=('', 10, 'bold'), width=4)
+        self.lbl_pct = Label(pg, text="0%", font=('', 10, 'bold'), width=4, fg='#333')
         self.lbl_pct.pack(side=RIGHT)
 
         # === 状态栏 ===
         self.status_btn = Button(R, text="Ready - Set Godot path, select platform, click START",
-                                   font=('Helvetica', 10))
+                                   font=('Helvetica', 10), fg='#333', bg='#f5f5f5',
+                                   activebackground='#e0e0e0', activeforeground='black')
         self.status_btn.pack(fill=X, padx=10, pady=5)
 
     def _toggle(self, pid):
@@ -200,9 +224,11 @@ class BuildTool:
         new_val = 1 if val == 0 else 0
         var.set(new_val)
         if new_val == 1:
-            btn.config(text=f"  [✓] {info['name']}  ", bg='#BBDEFB', fg='black')
+            btn.config(text=f"  [✓] {info['name']}  ", bg='#BBDEFB', fg='black',
+                      activebackground='#90CAF9', activeforeground='black')
         else:
-            btn.config(text=f"  [ ] {info['name']}  ")
+            btn.config(text=f"  [ ] {info['name']}  ", bg='#e8e8e8', fg='black',
+                      activebackground='#d0d0d0', activeforeground='black')
         self._update_status()
 
     def _set_all(self, val):
@@ -787,42 +813,46 @@ class BuildTool:
                             font=('Helvetica', 10))
             rb.pack(side=LEFT, padx=5)
 
-        # 内容区域
-        content = Frame(wf_win)
+        # 内容区域 - 深色主题
+        content = Frame(wf_win, bg='#2d2d2d')
         content.pack(fill=BOTH, expand=True, padx=10, pady=5)
 
         # 左侧: 步骤列表
-        left_p = Frame(content)
+        left_p = Frame(content, bg='#2d2d2d')
         left_p.pack(side=LEFT, fill=BOTH, expand=True, padx=(0, 5))
-        Label(left_p, text="Steps", font=('Helvetica', 11, 'bold')).pack(anchor='w')
+        Label(left_p, text="Steps", font=('Helvetica', 11, 'bold'),
+              fg='#aaa', bg='#2d2d2d').pack(anchor='w')
         self.wf_steps_list = Listbox(left_p, font=('Helvetica', 10), height=25,
-                                        selectmode=SINGLE, bg='#ffffff', fg='black',
-                                        selectbackground='#4A9EFF', selectforeground='white')
+                                        selectmode=SINGLE, bg='#1e1e1e', fg='#e0e0e0',
+                                        selectbackground='#4A9EFF', selectforeground='white',
+                                        highlightthickness=1, highlightbackground='#444')
         self.wf_steps_list.pack(fill=BOTH, expand=True)
 
-        # 右侧: 详细说明 (用 Label 替代 Text 避免兼容问题)
-        right_p = Frame(content)
+        # 右侧: 详细说明 (深色背景)
+        right_p = Frame(content, bg='#2d2d2d')
         right_p.pack(side=LEFT, fill=BOTH, expand=True, padx=(5, 0))
-        Label(right_p, text="Details", font=('Helvetica', 11, 'bold')).pack(anchor='w')
+        Label(right_p, text="Details", font=('Helvetica', 11, 'bold'),
+              fg='#aaa', bg='#2d2d2d').pack(anchor='w')
 
-        detail_frame = Frame(right_p)
+        detail_frame = Frame(right_p, bg='#252525')
         detail_frame.pack(fill=BOTH, expand=True)
 
         self.wf_detail_text = ""
         self.wf_detail_label = Label(detail_frame, text="",
                                        font=('Courier', 9), justify=LEFT,
-                                       anchor='nw', bg='#f0f0f0', fg='black',
+                                       anchor='nw', bg='#252525', fg='#c0c0c0',
                                        wraplength=480)
-        self.wf_detail_label.pack(fill=BOTH, expand=True, padx=2, pady=2)
+        self.wf_detail_label.pack(fill=BOTH, expand=True, padx=4, pady=4)
 
         # 底部备注
         self.wf_notes = Label(wf_win, text="", font=('Helvetica', 9),
-                              fg='#666', justify='left', anchor='w')
+                              fg='#888', bg='#2d2d2d', justify='left', anchor='w')
         self.wf_notes.pack(fill=X, padx=10, pady=5)
 
         # 关闭按钮
         Button(wf_win, text="Close", command=wf_win.destroy,
-               font=('', 10), bg='#607D8B', fg='white').pack(pady=5)
+               font=('', 10), bg='#555', fg='white',
+               activebackground='#333', activeforeground='white').pack(pady=5)
 
         # 延迟初始化显示，确保窗口完全渲染
         wf_win.after(100, self._update_workflow_display)
