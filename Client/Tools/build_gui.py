@@ -101,6 +101,12 @@ class BuildTool:
         Button(fb, text="Clear All", command=lambda: self._set_all(0),
                font=('', 9)).pack(side=LEFT, fill=X, expand=True, padx=2)
 
+        # 平台流程按钮
+        Button(left, text="📋 Platform Workflows",
+               command=self._show_workflows,
+               font=('Helvetica', 10), bg='#9C27B0', fg='white',
+               height=1, cursor='hand2').pack(fill=X, pady=(10, 2))
+
         # === MIDDLE: 配置 ===
         mid = Frame(main)
         mid.pack(side=LEFT, fill=Y, padx=(0, 10))
@@ -556,6 +562,294 @@ class BuildTool:
     def _open_output(self):
         self.build_dir.mkdir(parents=True, exist_ok=True)
         subprocess.run(['open', str(self.build_dir)])
+
+    # ===== 平台打包流程数据 =====
+    WORKFLOWS = {
+        'windows': {
+            'name': 'Windows 桌面版',
+            'icon': '🪟',
+            'steps': [
+                ('1️⃣ 准备', [
+                    '确保安装 Godot (Windows 版本)',
+                    '.NET SDK 8.0+ 已安装',
+                    '导出模板已下载: Editor → Manage Export Templates',
+                ]),
+                ('2️⃣ 配置 export_presets.cfg', [
+                    'application/identifier: com.roguelikegame.slaythespire2',
+                    'binary_format/architecture: x86_64',
+                    'codesign/enable: false (桌面版无需签名)',
+                    'texture_format/etc2: true',
+                ]),
+                ('3️⃣ 执行导出命令', [
+                    'Godot --headless --path <project> --export-release Windows',
+                    '输出: build/windows/杀戮尖塔2.exe',
+                ]),
+                ('4️⃣ 打包分发', [
+                    '可使用 Inno Setup 或 NSIS 创建安装包',
+                    '或直接分发 .exe + .pck 文件',
+                    '用户需要安装 Visual C++ Redistributable',
+                ]),
+            ],
+            'notes': 'Windows 导出需要 Windows 上的 Godot 编辑器或使用交叉编译'
+        },
+        'mac': {
+            'name': 'macOS 桌面版',
+            'icon': '🍎',
+            'steps': [
+                ('1️⃣ 准备', [
+                    'Godot 4.6.1 Mono 已安装',
+                    '.NET SDK 8.0+ 已安装 (dotnet --version)',
+                    'DOTNET_ROOT 环境变量已设置',
+                    '导出模板已安装到 ~/Library/Application Support/Godot/export_templates/',
+                ]),
+                ('2️⃣ 配置 export_presets.cfg', [
+                    'application/bundle_identifier: com.roguelikegame.slaythespire2',
+                    'binary_format/architecture: universal (Intel+Apple Silicon)',
+                    'codesign/enable: false (开发阶段)',
+                    'texture_format/bptc: true (macOS 原生格式)',
+                ]),
+                ('3️⃣ 执行导出命令', [
+                    'DOTNET_ROOT=/usr/local/share/dotnet \\',
+                    'Godot --headless --path <project> --export-release macOS',
+                    '输出: build/macOS/杀戮尖塔2.zip (.app bundle)',
+                ]),
+                ('4️⃣ 代码签名 & 公证 (发布时)', [
+                    '生成 Developer ID 证书: Apple Developer 账号',
+                    'codesign --deep --sign "Developer ID ..." 杀戮尖塔2.app',
+                    'xcrun notarytool submit ... (公证)',
+                    'stapler staple ... (钉固票)',
+                ]),
+            ],
+            'notes': '当前配置: universal 架构，支持 Intel 和 Apple Silicon Mac'
+        },
+        'android': {
+            'name': 'Android APK',
+            'icon': '🤖',
+            'steps': [
+                ('1️⃣ 准备', [
+                    '安装 Android SDK (通过 Android Studio)',
+                    '设置 ANDROID_SDK_ROOT 环境变量',
+                    '安装 JDK 17 (Android 构建需要)',
+                    'USB 调试模式已开启 (真机测试)',
+                ]),
+                ('2️⃣ 配置 Godot Editor', [
+                    'Editor → Project Settings → Android',
+                    '设置 SDK Path: /Users/<user>/Library/Android/sdk',
+                    '启用 Custom Build (如需)',
+                    'Debug Keystore: 自动生成或自定义',
+                ]),
+                ('3️⃣ 配置 export_presets.cfg', [
+                    'apk/signed: false (调试) / true (发布)',
+                    'permissions: INTERNET, ACCESS_NETWORK_STATE',
+                    'screen/support_small: true',
+                    'screen/orientations: portrait, landscape',
+                ]),
+                ('4️⃣ 执行导出', [
+                    'Godot --headless --path <project> --export-release Android',
+                    '输出: build/android/杀戮尖塔2.apk',
+                ]),
+                ('5️⃣ 发布到 Google Play', [
+                    '创建 Google Play 开发者账号 ($25一次性)',
+                    '上传 .aab (App Bundle) 格式',
+                    '填写应用信息、隐私政策、内容分级',
+                    '审核通过后上线',
+                ]),
+            ],
+            'notes': 'APK 直接安装测试，AAB 用于商店发布'
+        },
+        'ios': {
+            'name': 'iOS (需要 Mac + Xcode)',
+            'icon': '📱',
+            'steps': [
+                ('1️⃣ 准备 (仅Mac)', [
+                    '安装 Xcode (App Store 免费下载)',
+                    '安装 Xcode Command Line Tools: xcode-select --install',
+                    '注册 Apple Developer 账号 ($99/年)',
+                    '创建 Provisioning Profile',
+                ]),
+                ('2️⃣ 配置 Godot Editor', [
+                    'Editor → Export → iOS',
+                    '选择 Team / Bundle Identifier',
+                    '设置 App Icon (1024x1024 PNG)',
+                    '配置 Info.plist (权限声明)',
+                ]),
+                ('3️⃣ 导出 Xcode 项目', [
+                    'Godot --headless --path <project> --export-debug iOS',
+                    '输出: build/ios/ 目录 (Xcode 项目)',
+                ]),
+                ('4️⃣ 在 Xcode 中构建', [
+                    '打开 build/ios/*.xcworkspace',
+                    '选择目标设备 (模拟器或真机)',
+                    'Product → Run (运行) / Archive (归档)',
+                    '真机测试需要在设备上信任开发者证书',
+                ]),
+                ('5️⃣ 提交 App Store', [
+                    'Xcode → Product → Archive',
+                    'Organizer → Distribute App',
+                    '选择 App Store Connect',
+                    '填写版本信息、截图、描述',
+                    '提交审核',
+                ]),
+            ],
+            'notes': 'iOS 必须在 Mac 上用 Xcode 构建，无法跨平台'
+        },
+        'web': {
+            'name': 'Web (HTML5)',
+            'icon': '🌐',
+            'steps': [
+                ('1️⃣ 准备', [
+                    '无需额外依赖，任何平台均可导出',
+                    'Web 导出使用 Godot 内置的 Emscripten',
+                ]),
+                ('2️⃣ 配置 export_presets.cfg', [
+                    'html/canvas_resize_policy: 2 (适应窗口)',
+                    'html/fullscreen: 可选',
+                    'html/custom_html_head: 自定义 meta 标签',
+                    'html/export_icon: favicon.ico',
+                ]),
+                ('3️⃣ 执行导出', [
+                    'Godot --headless --path <project> --export-release Web',
+                    '输出: build/web/index.html + *.wasm + *.js + *.pck',
+                ]),
+                ('4️⃣ 部署', [
+                    '本地测试: python3 -m http.server 8080',
+                    '静态托管: GitHub Pages / Netlify / Vercel',
+                    'CDN加速: Cloudflare Pages',
+                ]),
+            ],
+            'notes': 'Web 导出文件较大 (~10-50MB)，首次加载较慢。适合演示和轻量游戏。'
+        },
+        'wechat': {
+            'name': '微信小游戏',
+            'icon': '💬',
+            'steps': [
+                ('1️⃣ 准备', [
+                    '先完成 Web 导出（微信基于 Web）',
+                    '注册微信小游戏账号 (mp.weixin.qq.com)',
+                    '下载微信开发者工具',
+                    '获取 AppID (game.json 需要)',
+                ]),
+                ('2️⃣ Web 导出', [
+                    '先执行: Godot --headless --export-release Web',
+                    '输出: build/web/ 目录',
+                ]),
+                ('3️⃣ 转换为微信格式', [
+                    '运行 wechat_converter.py 转换脚本',
+                    '自动转换: index.html → game.js/game.json',
+                    '处理: WASM 加载方式适配微信环境',
+                    '处理: 音频格式转换 (MP3/Ogg → 微信兼容)',
+                ]),
+                ('4️⃣ 配置 game.json', [
+                    '{',
+                    '  "deviceOrientation": "portrait",',
+                    '  "showStatusBar": false,',
+                    '  "networkTimeout": { "request": 5000, "connectSocket": 5000 },',
+                    '  "subpackages": []',
+                    '}',
+                ]),
+                ('5️⃣ 微信开发者工具预览', [
+                    '打开微信开发者工具',
+                    '导入项目目录 (build/wechat/)',
+                    '点击预览，手机扫码测试',
+                    '确认功能正常后上传审核',
+                ]),
+                ('6️⃣ 提交审核', [
+                    '微信开发者工具 → 上传代码',
+                    '登录 mp.weixin.qq.com 提交审核',
+                    '填写游戏信息、类目、隐私协议',
+                    '审核通常 1-3 个工作日',
+                ]),
+            ],
+            'notes': '微信小游戏限制: 包体 ≤ 4MB，首屏加载时间 ≤ 3秒。大资源需分包加载。'
+        },
+    }
+
+    def _show_workflows(self):
+        """显示平台打包流程窗口"""
+        wf_win = Toplevel(self.root)
+        wf_win.title("Platform Build Workflows")
+        wf_win.geometry("800x600")
+        wf_win.transient(self.root)
+        wf_win.grab_set()
+
+        # 平台选择
+        top = Frame(wf_win)
+        top.pack(fill=X, padx=10, pady=5)
+
+        Label(top, text="Select Platform:", font=('Helvetica', 11, 'bold')).pack(side=LEFT)
+        self.wf_platform = StringVar(value='mac')
+        pf = Frame(top)
+        pf.pack(side=LEFT, padx=10)
+
+        for pid, info in self.platforms:
+            rb = Radiobutton(pf, text=f"{info['name']}", variable=self.wf_platform,
+                            value=pid, command=self._update_workflow_display,
+                            font=('Helvetica', 10))
+            rb.pack(side=LEFT, padx=5)
+
+        # 内容区域 - 使用 PanedWindow 分割
+        paned = PanedWindow(wf_win, orient=HORIZONTAL)
+        paned.pack(fill=BOTH, expand=True, padx=10, pady=5)
+
+        # 左侧: 步骤列表
+        left_p = Frame(paned)
+        paned.add(left_p, weight=1)
+        self.wf_steps_list = Listbox(left_p, font=('Helvetica', 11), height=25,
+                                        selectmode=SINGLE, bg='#f5f5f5')
+        self.wf_steps_list.pack(fill=BOTH, expand=True)
+
+        # 右侧: 详细说明
+        right_p = Frame(paned)
+        paned.add(right_p, weight=2)
+        Label(right_p, text="Details", font=('Helvetica', 12, 'bold')).pack(anchor='w')
+        self.wf_detail = Text(right_p, font=('Helvetica', 10), height=25,
+                                wrap=WORD, bg='#fafafa', relief=GROOVE,
+                                state='normal')
+        self.wf_detail.pack(fill=BOTH, expand=True)
+
+        # 底部备注
+        self.wf_notes = Label(wf_win, text="", font=('Helvetica', 9),
+                              fg='#666', justify='left', anchor='w')
+        self.wf_notes.pack(fill=X, padx=10, pady=5)
+
+        # 关闭按钮
+        Button(wf_win, text="Close", command=wf_win.destroy,
+               font=('', 10), bg='#607D8B', fg='white').pack(pady=5)
+
+        # 初始显示
+        self._update_workflow_display()
+
+    def _update_workflow_display(self):
+        """更新流程显示"""
+        pid = self.wf_platform.get()
+        wf = self.WORKFLOWS.get(pid, {})
+
+        # 更新步骤列表
+        self.wf_steps_list.delete(0, END)
+        if 'steps' in wf:
+            for step_title, items in wf['steps']:
+                self.wf_steps_list.insert(END, f"  {step_title}")
+
+        # 更新详情
+        self.wf_detail.config(state='normal')
+        self.wf_detail.delete('1.0', END)
+        icon = wf.get('icon', '')
+        name = wf.get('name', pid)
+        notes = wf.get('notes', '')
+
+        content = f"{icon} {name}\n{'='*50}\n\n"
+        if 'steps' in wf:
+            for step_title, items in wf['steps']:
+                content += f"▶ {step_title}\n"
+                for item in items:
+                    content += f"   • {item}\n"
+                content += "\n"
+
+        self.wf_detail.insert('1.0', content)
+        self.wf_detail.config(state='disabled')
+
+        # 更新备注
+        self.wf_notes.config(text=f"📝 {notes}" if notes else "")
 
     def _on_close(self):
         if self.is_building:

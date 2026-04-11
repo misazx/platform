@@ -1,8 +1,12 @@
 #!/bin/bash
-# 杀戮尖塔2 打包工具
-# 自动设置 .NET 环境变量 - 修复 Godot Mono .NET 加载问题
+# 杀戮尖塔2 打包工具 v2
+# 通过打开Terminal窗口运行，确保继承完整shell环境
 
-# 设置 DOTNET_ROOT
+SCRIPT="/Users/zhuyong/trae-game/Client/Tools/build_gui.py"
+PYTHON="/usr/bin/python3"
+
+# 设置 .NET 环境
+export DOTNET_ROOT=""
 if [ -d "/usr/local/share/dotnet" ]; then
     export DOTNET_ROOT="/usr/local/share/dotnet"
     export DOTNET_ROOT_ARM64="/usr/local/share/dotnet"
@@ -11,5 +15,10 @@ elif [ -d "/opt/homebrew/share/dotnet" ]; then
     export DOTNET_ROOT_ARM64="/opt/homebrew/share/dotnet"
 fi
 
-# 启动 GUI
-exec /usr/bin/python3 "/Users/zhuyong/trae-game/Client/Tools/build_gui.py" "$@"
+# 方案: 使用 osascript 在新 Terminal 窗口中运行
+# 这样能继承完整的 zsh shell 环境
+osascript -e '
+tell application "Terminal"
+    activate
+    set newWindow to do script "cd /Users/zhuyong/trae-game && export DOTNET_ROOT=/usr/local/share/dotnet && export DOTNET_ROOT_ARM64=/usr/local/share/dotnet && /usr/bin/python3 Client/Tools/build_gui.py; echo \"\"; echo \"按任意键退出...\"; read -n 1"
+end tell'
