@@ -88,7 +88,7 @@ class BuildTool:
         for pid, name in self.platforms:
             var = self.platform_vars[pid]
             btn = Button(left, text=f"  [ ] {name}  ",
-                         font=('Helvetica', 11),
+                         font=('Helvetica', 11), fg='black',
                          height=1, cursor='hand2',
                          command=lambda p=pid: self._toggle(p))
             btn.pack(fill=X, pady=2)
@@ -97,9 +97,9 @@ class BuildTool:
         fb = Frame(left)
         fb.pack(fill=X, pady=(8, 0))
         Button(fb, text="Select All", command=lambda: self._set_all(1),
-               font=('', 9)).pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9), fg='black').pack(side=LEFT, fill=X, expand=True, padx=2)
         Button(fb, text="Clear All", command=lambda: self._set_all(0),
-               font=('', 9)).pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9), fg='black').pack(side=LEFT, fill=X, expand=True, padx=2)
 
         # 平台流程按钮
         Button(left, text="📋 Platform Workflows",
@@ -122,13 +122,13 @@ class BuildTool:
         bf = Frame(path_frame)
         bf.pack(fill=X, pady=3)
         Button(bf, text="Auto-Find", command=self._find_godot,
-               font=('', 9), bg='#FF9800', width=10).pack(side=LEFT, padx=2)
+               font=('', 9), bg='#FF9800', fg='black', width=10).pack(side=LEFT, padx=2)
         Button(bf, text="Browse .app", command=self._browse_godot,
-               font=('', 9), bg='#4A9EFF', width=10).pack(side=LEFT, padx=2)
+               font=('', 9), bg='#4A9EFF', fg='black', width=10).pack(side=LEFT, padx=2)
 
         # 当前路径显示
         self.btn_path_display = Button(path_frame, text="(click Auto-Find or Browse)",
-                                        font=('Courier', 9), height=2,
+                                        font=('Courier', 9), fg='black', height=2,
                                         relief=SUNKEN, anchor='w')
         self.btn_path_display.pack(fill=X, pady=3)
 
@@ -796,7 +796,8 @@ class BuildTool:
         left_p.pack(side=LEFT, fill=BOTH, expand=True, padx=(0, 5))
         Label(left_p, text="Steps", font=('Helvetica', 11, 'bold')).pack(anchor='w')
         self.wf_steps_list = Listbox(left_p, font=('Helvetica', 10), height=25,
-                                        selectmode=SINGLE, bg='#f5f5f5')
+                                        selectmode=SINGLE, bg='#ffffff', fg='black',
+                                        selectbackground='#4A9EFF', selectforeground='white')
         self.wf_steps_list.pack(fill=BOTH, expand=True)
 
         # 右侧: 详细说明 (用 Label 替代 Text 避免兼容问题)
@@ -810,7 +811,7 @@ class BuildTool:
         self.wf_detail_text = ""
         self.wf_detail_label = Label(detail_frame, text="",
                                        font=('Courier', 9), justify=LEFT,
-                                       anchor='nw', bg='#fafafa',
+                                       anchor='nw', bg='#f0f0f0', fg='black',
                                        wraplength=480)
         self.wf_detail_label.pack(fill=BOTH, expand=True, padx=2, pady=2)
 
