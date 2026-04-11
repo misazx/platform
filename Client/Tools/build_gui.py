@@ -37,7 +37,7 @@ from tkinter import ttk, messagebox, filedialog
 class BuildTool:
     def __init__(self):
         self.root = Tk()
-        self.root.title("Godot Build Tool v7.4")
+        self.root.title("Godot Build Tool v7.8")
         self.root.geometry("1000x680")
 
         self.script_dir = Path(__file__).parent.resolve()
@@ -160,7 +160,7 @@ class BuildTool:
         self.btn_start = Button(mid, text=">>> START BUILD <<<",
                                  command=self._start_build,
                                  font=('Helvetica', 12, 'bold'),
-                                 bg='#4CAF50', fg='white',
+                                 bg='#66BB6A', fg='#1B5E20',
                                  activebackground='#388E3C', activeforeground='white',
                                  highlightthickness=1, highlightbackground='#388E3C',
                                  height=2)
@@ -177,11 +177,11 @@ class BuildTool:
         fa = Frame(mid)
         fa.pack(fill=X, pady=5)
         Button(fa, text="Clean Dir", command=self._clean_dir,
-               font=('', 9), bg='#78909C', fg='white',
-               activebackground='#546E7A', activeforeground='white').pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9), bg='#B0BEC5', fg='#263238',
+               activebackground='#78909C', activeforeground='white').pack(side=LEFT, fill=X, expand=True, padx=2)
         Button(fa, text="Open Output", command=self._open_output,
-               font=('', 9), bg='#8D6E63', fg='white',
-               activebackground='#6D4C41', activeforeground='white').pack(side=LEFT, fill=X, expand=True, padx=2)
+               font=('', 9), bg='#BCAAA4', fg='#3E2723',
+               activebackground='#8D6E63', activeforeground='white').pack(side=LEFT, fill=X, expand=True, padx=2)
 
         # === RIGHT: 日志 ===
         right = Frame(main)
