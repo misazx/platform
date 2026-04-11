@@ -781,8 +781,8 @@ class BuildTool:
         pf = Frame(top)
         pf.pack(side=LEFT, padx=10)
 
-        for pid, info in self.platforms:
-            rb = Radiobutton(pf, text=f"{info['name']}", variable=self.wf_platform,
+        for pid, name in self.platforms:
+            rb = Radiobutton(pf, text=name, variable=self.wf_platform,
                             value=pid, command=self._update_workflow_display,
                             font=('Helvetica', 10))
             rb.pack(side=LEFT, padx=5)
