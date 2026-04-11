@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-v7.3 - UI优化+日志增强版
-修复UI重复问题 + 改进Godot查找 + 完整错误诊断
+v7.4 - 彻底修复.app沙箱环境问题
+在Python进程启动时就强制注入DOTNET_ROOT到os.environ
+确保.app和.command行为完全一致
 """
 
 import os
@@ -13,6 +14,22 @@ import shutil
 from datetime import datetime
 from pathlib import Path
 
+# ===== 关键: 在导入tkinter之前就设置环境变量 =====
+# .app通过Launch Services启动时环境变量可能丢失
+# 这里强制注入，确保os.environ中始终有DOTNET_ROOT
+_dotnet_paths = [
+    '/usr/local/share/dotnet',
+    '/opt/homebrew/share/dotnet',
+]
+for _dp in _dotnet_paths:
+    if os.path.exists(_dp):
+        os.environ['DOTNET_ROOT'] = _dp
+        os.environ['DOTNET_ROOT_ARM64'] = _dp
+        # 同时确保PATH包含dotnet
+        if _dp not in os.environ.get('PATH', ''):
+            os.environ['PATH'] = f"{_dp}:{os.environ.get('PATH', '')}"
+        break
+
 from tkinter import *
 from tkinter import ttk, messagebox, filedialog
 
@@ -20,7 +37,7 @@ from tkinter import ttk, messagebox, filedialog
 class BuildTool:
     def __init__(self):
         self.root = Tk()
-        self.root.title("Godot Build Tool v7.3")
+        self.root.title("Godot Build Tool v7.4")
         self.root.geometry("1000x680")
 
         self.script_dir = Path(__file__).parent.resolve()
@@ -47,6 +64,9 @@ class BuildTool:
         self.progress_var = DoubleVar(value=0)
 
         self._build()
+        # 启动后显示环境变量状态
+        self._log(f"[BOOT] DOTNET_ROOT={os.environ.get('DOTNET_ROOT', 'NOT SET')}", 'info' if 'DOTNET_ROOT' in os.environ else 'err')
+        self._log(f"[BOOT] PATH has dotnet: {('/usr/local/share/dotnet' in os.environ.get('PATH', '')) or ('/opt/homebrew/share/dotnet' in os.environ.get('PATH', ''))}", 'info')
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
 
         # 启动时自动尝试查找 Godot
@@ -430,29 +450,15 @@ class BuildTool:
             messagebox.showwarning("Done", f"Success: {ok_count}/{total}")
 
     def _get_build_env(self):
-        """构建包含 .NET 环境变量的环境"""
+        """构建包含 .NET 环境变量的环境 - 基于已注入的 os.environ"""
         env = dict(os.environ)
 
-        # 自动检测 DOTNET_ROOT
-        dotnet_paths = [
-            '/usr/local/share/dotnet',      # macOS Intel + Apple Silicon (Rosetta)
-            '/opt/homebrew/share/dotnet',    # Apple Silicon native
-        ]
-        for dp in dotnet_paths:
-            if os.path.exists(dp):
-                env['DOTNET_ROOT'] = dp
-                env['DOTNET_ROOT_ARM64'] = dp
-                self._log_safe(f"[ENV] DOTNET_ROOT={dp}", 'info')
-                break
-
-        # 如果 PATH 中没有 dotnet，添加它
-        dotnet_exe = shutil.which("dotnet")
-        if not dotnet_exe:
-            for dp in dotnet_paths:
-                bin_path = os.path.join(dp, 'dotnet')
-                if os.path.exists(bin_path):
-                    env['PATH'] = f"{dp}:{env.get('PATH', '')}"
-                    self._log_safe(f"[ENV] Added to PATH: {dp}", 'info')
+        # 二次确认: 如果 os.environ 中还没有（理论上不可能），再次设置
+        if 'DOTNET_ROOT' not in env:
+            for dp in ['/usr/local/share/dotnet', '/opt/homebrew/share/dotnet']:
+                if os.path.exists(dp):
+                    env['DOTNET_ROOT'] = dp
+                    env['DOTNET_ROOT_ARM64'] = dp
                     break
 
         env['GODOT_DISABLE_CONSOLE'] = '1'
