@@ -158,15 +158,15 @@ func _add_menu_button(text: String, callback: Callable, accent_color: Color) -> 
 	_menu_container.add_child(btn)
 
 func _on_play_pressed() -> void:
-	GD.print("[GameLobby] Play pressed - opening package selector")
+	print("[GameLobby] Play pressed - opening package selector")
 	open_package_selector.emit()
 
 func _on_settings_pressed() -> void:
-	GD.print("[GameLobby] Settings pressed")
+	print("[GameLobby] Settings pressed")
 	open_settings.emit()
 
 func _on_quit_pressed() -> void:
-	GD.print("[GameLobby] Quit pressed")
+	print("[GameLobby] Quit pressed")
 	quit_game.emit()
 
 func _start_ambient_effects() -> void:

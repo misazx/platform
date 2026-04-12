@@ -66,7 +66,7 @@ namespace RoguelikeGame.Packages
 			EnsureDirectoriesExist();
 			LoadLocalStates();
 			await LoadRegistryAsync();
-			RegisterBaseGamePackage();
+			RegisterBuiltinPackages();
 
 			EmitSignal(SignalName.PackageListUpdated);
 			GD.Print($"[PackageManager] Initialized with {_availablePackages.Count} available packages");
@@ -81,7 +81,72 @@ namespace RoguelikeGame.Packages
 			}
 		}
 
-		private void RegisterBaseGamePackage()
+		private void RegisterBuiltinPackages()
+		{
+			const string builtinConfigPath = "res://Config/Data/package_registry.json";
+			
+			if (!Godot.FileAccess.FileExists(builtinConfigPath))
+			{
+				GD.PushWarning("[PackageManager] No builtin package registry found, using fallback");
+				_RegisterFallbackBaseGame();
+				return;
+			}
+
+			try
+			{
+				using var file = Godot.FileAccess.Open(builtinConfigPath, Godot.FileAccess.ModeFlags.Read);
+				var jsonText = file.GetAsText();
+				var parsed = Json.ParseString(jsonText).As<Godot.Collections.Dictionary>();
+				if (parsed == null)
+				{
+					_RegisterFallbackBaseGame();
+					return;
+				}
+
+				if (!parsed.ContainsKey("packages"))
+				{
+					_RegisterFallbackBaseGame();
+					return;
+				}
+
+				var packagesArray = parsed["packages"].AsGodotArray<Godot.Collections.Dictionary>();
+				foreach (var pkgDict in packagesArray)
+				{
+					var isBuiltin = pkgDict.GetValueOrDefault("isFree", Variant.From(true)).AsBool();
+					var pkgType = pkgDict.GetValueOrDefault("type", "").AsString();
+					
+					if (!isBuiltin && pkgType != "base_game")
+						continue;
+
+					var package = ParsePackageData(pkgDict);
+					if (package == null || string.IsNullOrEmpty(package.Id))
+						continue;
+
+					_availablePackages[package.Id] = package;
+
+					if (!_installedPackages.ContainsKey(package.Id))
+					{
+						_installedPackages[package.Id] = new PackageInstallState
+						{
+							PackageId = package.Id,
+							Status = PackageStatus.Installed,
+							InstalledVersion = package.Version,
+							InstalledPath = "res://",
+							InstallDate = DateTime.Now
+						};
+					}
+
+					GD.Print($"[PackageManager] Registered builtin package: {package.Id} ({package.Name})");
+				}
+			}
+			catch (Exception ex)
+			{
+				GD.PrintErr($"[PackageManager] Error loading builtin packages: {ex.Message}");
+				_RegisterFallbackBaseGame();
+			}
+		}
+
+		private void _RegisterFallbackBaseGame()
 		{
 			var baseGame = new PackageData
 			{

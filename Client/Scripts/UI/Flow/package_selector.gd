@@ -163,7 +163,7 @@ func _create_package_card(pkg: Dictionary) -> PanelContainer:
 	card.custom_minimum_size = Vector2(290, 200)
 	card.mouse_filter = Control.MOUSE_FILTER_STOP
 
-	var is_installed := pkg.get("isFree", true)
+	var is_installed: bool = pkg.get("isFree", true)
 	var accent := Color(0.2, 0.6, 0.3) if is_installed else Color(0.6, 0.4, 0.2)
 
 	var style := StyleBoxFlat.new()
@@ -287,5 +287,5 @@ func _get_package_registry() -> Dictionary:
 	return json.data if json.data is Dictionary else {"packages": []}
 
 func _on_back_pressed() -> void:
-	GD.print("[PackageSelector] Back pressed")
+	print("[PackageSelector] Back pressed")
 	back_pressed.emit()

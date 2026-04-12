@@ -1,1 +1,57 @@
-{"version": "1.0.0", "featuredPackages": ["base_game", "frost_expansion", "shadow_realm", "light_shadow_traveler"], "categories": [{"id": "official", "name": "官方内容", "description": "开发团队制作的官方扩展包", "icon": "🎮", "packageIds": ["base_game", "frost_expansion", "light_shadow_traveler"]}, {"id": "platformer", "name": "平台跳跃", "description": "2D横版平台跳跃游戏", "icon": "🌟", "packageIds": ["light_shadow_traveler"]}, {"id": "community", "name": "社区创作", "description": "社区玩家创作的自定义内容", "icon": "👥", "packageIds": ["shadow_realm", "mech_warriors"]}, {"id": "dlc", "name": "DLC扩展", "description": "大型付费扩展内容", "icon": "💎", "packageIds": []}], "packages": [{"id": "base_game", "name": "杀戮尖塔复刻版", "description": "经典Roguelike卡牌游戏体验，包含完整的主线剧情和核心玩法。探索随机生成的地牢，收集强力圣物，构建你的专属卡组！", "version": "1.0.0", "type": 0, "author": "Development Team", "iconPath": "res://Icons/Relics/burningblood.png", "thumbnailPath": "res://Images/Backgrounds/glory.png", "downloadUrl": "", "fileSize": 0, "requiredBaseVersion": "1.0.0", "dependencies": [], "tags": ["roguelike", "card", "strategy", "official", "turn-based"], "features": ["经典卡牌战斗系统", "随机地图生成", "多角色选择（战士、猎人、机器人、观者）", "200+ 张独特卡牌", "圣物收集系统（50+ 圣物）", "药水与事件系统", "Boss战与精英敌人"], "isFree": true, "price": 0, "rating": 4.8, "downloadCount": 10000}, {"id": "frost_expansion", "name": "冰霜领域", "description": "全新的冰霜主题扩展包！探索被永恒寒冬覆盖的新地图，对抗强大的冰霜领主。新增冰霜系卡牌、寒冷机制和独特的冰霜圣物。", "version": "1.2.0", "type": 1, "author": "Development Team", "iconPath": "", "thumbnailPath": "", "downloadUrl": "https://cdn.example.com/packages/frost_expansion_v1.2.0.zip", "fileSize": 256000000, "requiredBaseVersion": "1.0.0", "dependencies": ["base_game"], "tags": ["expansion", "ice", "winter", "new-mechanic", "official"], "features": ["全新冰霜主题地图（5层）", "80+ 冰霜系新卡牌", "寒冷叠加机制", "3个新Boss（冰霜巨人、冬之女王等）", "20+ 新圣物", "新事件和药水", "视觉特效升级"], "isFree": false, "price": 18.00, "rating": 4.6, "downloadCount": 3500, "releaseDate": "2024-12-01T00:00:00", "lastUpdated": "2025-03-15T00:00:00"}, {"id": "shadow_realm", "name": "暗影领域", "description": "社区创作的暗黑风格扩展！进入神秘的暗影维度，掌握暗影力量。包含暗影系卡牌、潜行机制和独特的暗影形态变换系统。", "version": "1.0.0", "type": 3, "author": "ShadowMaster", "iconPath": "", "thumbnailPath": "", "downloadUrl": "https://cdn.example.com/packages/shadow_realm_v1.0.0.zip", "fileSize": 180000000, "requiredBaseVersion": "1.0.0", "dependencies": ["base_game"], "tags": ["community", "dark", "stealth", "transformation", "mod"], "features": ["暗影维度新地图", "60+ 暗影系卡牌", "潜行与暴露机制", "暗影形态变换系统", "15+ 暗影圣物", "新敌人和Boss", "自定义UI皮肤"], "isFree": true, "price": 0, "rating": 4.3, "downloadCount": 1200, "releaseDate": "2025-02-10T00:00:00", "lastUpdated": "2025-04-01T00:00:00"}, {"id": "mech_warriors", "name": "机甲战士", "description": "科幻风格的机甲主题包！操控强大的机甲战士，使用能量武器和科技卡牌。包含全新的能量管理机制和模块化装备系统。", "version": "0.8.0-beta", "type": 3, "author": "TechGamer99", "iconPath": "", "thumbnailPath": "", "downloadUrl": "https://cdn.example.com/packages/mech_warriors_v0.8.0.zip", "fileSize": 320000000, "requiredBaseVersion": "1.0.0", "dependencies": ["base_game"], "tags": ["community", "sci-fi", "mech", "energy-system", "beta"], "features": ["科幻主题地图", "90+ 科技卡牌", "能量管理机制", "模块化装备系统", "25+ 机甲部件", "新角色：机甲驾驶员", "粒子特效增强"], "isFree": true, "price": 0, "rating": 4.1, "downloadCount": 800, "releaseDate": "2025-03-20T00:00:00", "lastUpdated": "2025-04-05T00:00:00"}, {"id": "light_shadow_traveler", "name": "光影旅者", "description": "治愈系2D横版平台跳跃游戏，以光影形态切换为核心创新机制。在光与影之间切换形态，探索遗忘之地，收集散落的记忆碎片！", "version": "1.0.0", "type": 1, "author": "Development Team", "iconPath": "res://GameModes/light_shadow_traveler/Resources/Icons/icon.png", "thumbnailPath": "res://GameModes/light_shadow_traveler/Resources/Images/Backgrounds/forest_bg.png", "downloadUrl": "", "fileSize": 0, "requiredBaseVersion": "1.0.0", "dependencies": [], "tags": ["platformer", "healing", "light-shadow", "puzzle", "official", "side-scroller"], "features": ["光影形态切换核心机制", "5大主题章节50个关卡", "光源互动解谜系统", "三档难度覆盖全玩家", "记忆碎片收集系统", "手绘治愈系美术风格", "原创治愈系配乐"], "isFree": true, "price": 0, "rating": 4.9, "downloadCount": 5000, "entryScene": "res://GameModes/light_shadow_traveler/Scenes/GameScene.tscn", "configFile": "res://GameModes/light_shadow_traveler/Config/Data/package_config.json"}]}
+{
+  "version": "1.0.0",
+  "featuredPackages": ["base_game", "light_shadow_traveler"],
+  "categories": [
+    {"id": "official", "name": "官方内容", "description": "开发团队制作的官方扩展包", "icon": "🎮", "packageIds": ["base_game", "light_shadow_traveler"]},
+    {"id": "community", "name": "社区创作", "description": "社区玩家创作的自定义内容", "icon": "👥", "packageIds": []},
+    {"id": "dlc", "name": "DLC扩展", "description": "大型付费扩展内容", "icon": "💎", "packageIds": []}
+  ],
+  "packages": [
+    {
+      "id": "base_game",
+      "name": "杀戮尖塔复刻版",
+      "description": "经典Roguelike卡牌游戏体验，包含完整的主线剧情和核心玩法。探索随机生成的地牢，收集强力圣物，构建你的专属卡组！",
+      "version": "1.0.0",
+      "type": "base_game",
+      "author": "Development Team",
+      "iconPath": "res://GameModes/base_game/Resources/Icons/Relics/burningblood.png",
+      "thumbnailPath": "res://GameModes/base_game/Resources/Images/Backgrounds/glory.png",
+      "entryScene": "res://GameModes/base_game/Scenes/CharacterSelect.tscn",
+      "characterSelectScene": "res://GameModes/base_game/Scenes/CharacterSelect.tscn",
+      "mapScene": "res://GameModes/base_game/Scenes/MapScene.tscn",
+      "configFile": "res://GameModes/base_game/Config/Data/cards.json",
+      "requiredBaseVersion": "1.0.0",
+      "dependencies": [],
+      "tags": ["roguelike", "card", "strategy", "official", "turn-based"],
+      "features": ["经典卡牌战斗系统", "随机地图生成", "多角色选择（战士、猎人、机器人、观者）", "200+ 张独特卡牌", "圣物收集系统（50+ 圣物）", "药水与事件系统", "Boss战与精英敌人"],
+      "isFree": true,
+      "price": 0,
+      "rating": 4.8,
+      "downloadCount": 10000,
+      "includeInBuild": true
+    },
+    {
+      "id": "light_shadow_traveler",
+      "name": "光影旅者",
+      "description": "治愈系2D横版平台跳跃游戏，以光影形态切换为核心机制，探索5个章节50个关卡。",
+      "version": "0.1.0",
+      "type": "expansion",
+      "author": "Development Team",
+      "iconPath": "res://GameModes/light_shadow_traveler/Resources/Characters/light_form.png",
+      "thumbnailPath": "",
+      "entryScene": "res://GameModes/light_shadow_traveler/Scenes/GameScene.tscn",
+      "characterSelectScene": "",
+      "mapScene": "",
+      "configFile": "res://GameModes/light_shadow_traveler/Config/Data/package_config.json",
+      "requiredBaseVersion": "1.0.0",
+      "dependencies": [],
+      "tags": ["platformer", "adventure", "official", "puzzle"],
+      "features": ["光影形态切换", "5个章节50个关卡", "治愈系美术风格", "物理谜题", "Boss战"],
+      "isFree": true,
+      "price": 0,
+      "rating": 4.2,
+      "downloadCount": 500,
+      "includeInBuild": true
+    }
+  ]
+}

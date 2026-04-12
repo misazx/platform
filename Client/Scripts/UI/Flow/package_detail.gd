@@ -6,7 +6,7 @@ signal back_pressed()
 
 var _package_id: String = ""
 var _package_data: Dictionary = {}
-var _provider: IPackageUIProvider = null
+var _provider: PackageProvider = null
 
 var _bg_overlay: ColorRect
 var _main_panel: PanelContainer
@@ -482,9 +482,9 @@ func _populate_leaderboard() -> void:
 		row.add_child(floor_label)
 
 func _on_back_pressed() -> void:
-	GD.print("[PackageDetail] Back pressed")
+	print("[PackageDetail] Back pressed")
 	back_pressed.emit()
 
 func _on_start_pressed() -> void:
-	GD.print("[PackageDetail] Start pressed for package: %s" % _package_id)
+	print("[PackageDetail] Start pressed for package: %s" % _package_id)
 	start_game_requested.emit(_package_id)
