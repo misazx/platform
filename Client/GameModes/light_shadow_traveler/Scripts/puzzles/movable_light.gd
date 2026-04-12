@@ -10,7 +10,7 @@ signal shadow_platforms_updated
 @export var is_pushable := true
 
 var is_being_pushed := false
-var _push_direction := 0.0
+var _push_direction: float = 0.0
 
 @onready var light: PointLight2D = $LightSource
 @onready var sprite: Sprite2D = $Sprite2D
@@ -32,14 +32,14 @@ func _setup_visuals() -> void:
 			img.set_pixel(14 + dx, 28 + dy, Color(0.6, 0.5, 0.4, 1.0))
 	for dy in range(-8, 1):
 		for dx in range(-4, 5):
-			var dist := abs(dx) / 4.0
-			if dist < 1.0:
-				img.set_pixel(14 + dx, 20 + dy, Color(0.7, 0.65, 0.55, 1.0 - dist * 0.3))
+			var dist_val: float = abs(dx) / 4.0
+			if dist_val < 1.0:
+				img.set_pixel(14 + dx, 20 + dy, Color(0.7, 0.65, 0.55, 1.0 - dist_val * 0.3))
 	for dy in range(-16, -8):
 		for dx in range(-6, 7):
-			var dist := sqrt(dx * dx + (dy + 12) * (dy + 12)) / 8.0
-			if dist < 1.0:
-				var alpha := (1.0 - dist) * 0.9
+			var dist_val: float = sqrt(dx * dx + (dy + 12) * (dy + 12)) / 8.0
+			if dist_val < 1.0:
+				var alpha: float = (1.0 - dist_val) * 0.9
 				img.set_pixel(14 + dx, 20 + dy, Color(1.0, 0.95, 0.7, alpha))
 	sprite.texture = ImageTexture.create_from_image(img)
 
@@ -54,15 +54,15 @@ func _setup_light() -> void:
 	light.height = 10
 
 func _create_light_texture() -> Texture2D:
-	var size := int(light_radius * 2)
+	var size: int = int(light_radius * 2)
 	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
-	var center := size / 2
+	var center: int = size / 2
 	for dy in range(-center, center):
 		for dx in range(-center, center):
-			var dist := sqrt(dx * dx + dy * dy) / float(center)
-			if dist < 1.0:
-				var alpha := (1.0 - dist) * 0.6
+			var dist_val: float = sqrt(dx * dx + dy * dy) / float(center)
+			if dist_val < 1.0:
+				var alpha: float = (1.0 - dist_val) * 0.6
 				img.set_pixel(center + dx, center + dy, Color(light_color.r, light_color.g, light_color.b, alpha))
 	return ImageTexture.create_from_image(img)
 
@@ -83,13 +83,12 @@ func _setup_physics() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_being_pushed and is_pushable:
-		velocity.x = _push_direction * 100.0
-		velocity.y = 0
+		linear_velocity.x = _push_direction * 100.0
+		linear_velocity.y = 0.0
 	else:
-		velocity.x = lerp(velocity.x, 0.0, delta * 5.0)
+		linear_velocity.x = lerp(linear_velocity.x, 0.0, delta * 5.0)
 	if is_pushable:
-		move_and_slide()
-		if velocity.length_squared() > 1.0:
+		if linear_velocity.length_squared() > 1.0:
 			light_moved.emit(self)
 			_update_shadow_platforms()
 

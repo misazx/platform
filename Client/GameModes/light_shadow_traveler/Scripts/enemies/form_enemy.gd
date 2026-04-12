@@ -134,7 +134,7 @@ func _chase(delta: float) -> void:
 	if dist > detection_range * 1.5 or not is_hostile:
 		state = EnemyState.PATROL
 		return
-	var dir := sign(player.global_position.x - global_position.x)
+	var dir: float = sign(player.global_position.x - global_position.x)
 	velocity.x = chase_speed * dir
 	sprite.flip_h = dir < 0
 	facing_right = dir > 0

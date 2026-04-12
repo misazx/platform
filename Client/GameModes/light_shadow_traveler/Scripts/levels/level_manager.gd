@@ -24,12 +24,14 @@ func _load_levels_config() -> void:
 	var file := FileAccess.open(config_path, FileAccess.READ)
 	var json_text := file.get_as_text()
 	file.close()
-	var parsed := JSON.parse_string(json_text)
-	if parsed == null:
+	var parsed: Variant = JSON.parse_string(json_text)
+	if not parsed:
 		push_error("[LevelManager] Failed to parse levels JSON")
 		return
-	var data := parsed as Dictionary
-	var chapters := data.get("chapters", []) as Array
+	var data: Dictionary = parsed as Dictionary
+	if data.is_empty():
+		return
+	var chapters: Array = data.get("chapters", []) as Array
 	for chapter in chapters:
 		var chapter_dict := chapter as Dictionary
 		var chapter_id: String = chapter_dict.get("id", "")
@@ -101,10 +103,11 @@ func get_chapters() -> Array:
 	var file := FileAccess.open(config_path, FileAccess.READ)
 	var json_text := file.get_as_text()
 	file.close()
-	var parsed := JSON.parse_string(json_text)
-	if parsed == null:
+	var parsed: Variant = JSON.parse_string(json_text)
+	if not parsed:
 		return []
-	return (parsed as Dictionary).get("chapters", [])
+	var result: Array = (parsed as Dictionary).get("chapters", []) as Array
+	return result
 
 func save_progress() -> Dictionary:
 	return {
