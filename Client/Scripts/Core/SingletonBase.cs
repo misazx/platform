@@ -16,7 +16,7 @@ namespace RoguelikeGame.Core
                     if (node != null)
                     {
                         var path = $"/root/{typeof(T).Name}";
-                        _instance = node.Root.GetNode<T>(path);
+                        _instance = node.Root.GetNodeOrNull<T>(path);
                     }
                 }
                 return _instance;
