@@ -1,3 +1,29 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# .NET build outputs
+**/bin/
+**/obj/
+*.db
+*.db-shm
+*.db-wal
+
+# macOS
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+
+# IDE
+.vs/
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# .trany cache
+.trany/
