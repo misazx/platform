@@ -153,7 +153,7 @@ namespace RoguelikeGame.UI
         {
             GD.Print("[CharacterSelect] Back pressed");
             AudioManager.Instance?.PlayButtonClick();
-            Main.Instance?.GoToMainMenu();
+            Main.Instance?.GoToLobby();
         }
 
         private string GetClassDisplayName(CharacterClass cls) => cls switch

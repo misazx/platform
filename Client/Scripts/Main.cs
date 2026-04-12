@@ -24,7 +24,11 @@ namespace RoguelikeGame
 
         public void SetLastClickedNodeType(Generation.NodeType type) => _lastClickedNodeType = type;
         public Generation.NodeType GetLastClickedNodeType() => _lastClickedNodeType;
-        private PackageStoreUI _packageStoreUI;
+
+        private Control _lobby;
+        private Control _packageSelector;
+        private Control _packageDetail;
+        private Variant _packageRegistryData = new Variant();
 
         protected override void OnInitialize()
         {
@@ -32,91 +36,171 @@ namespace RoguelikeGame
             GetViewport().TransparentBg = false;
 
             SetupSceneContainer();
-            CreatePackageStoreOverlay();
-            GoToMainMenu();
+            LoadPackageRegistry();
+            GoToLobby();
 
-            GD.Print("[Main] Game initialized successfully with Package System");
+            GD.Print("[Main] Game initialized with new Lobby flow");
         }
 
-        private void SetupSceneContainer()
+        private void LoadPackageRegistry()
         {
-            _currentSceneContainer = new Control
+            string configPath = "res://Config/Data/package_registry.json";
+            if (ResourceLoader.Exists(configPath))
             {
-                Name = "SceneContainer",
-                MouseFilter = Control.MouseFilterEnum.Ignore
-            };
-            _currentSceneContainer.SetAnchorsPreset(Control.LayoutPreset.FullRect);
-            AddChild(_currentSceneContainer);
-            GD.Print("[Main] Scene container created");
+                var file = FileAccess.Open(configPath, FileAccess.ModeFlags.Read);
+                if (file != null)
+                {
+                    var json = new Json();
+                    var err = json.Parse(file.GetAsText());
+                    if (err == Error.Ok)
+                    {
+                        _packageRegistryData = json.Data;
+                        GD.Print("[Main] Package registry loaded");
+                    }
+                }
+            }
         }
 
-        private void CreatePackageStoreOverlay()
+        private Godot.Collections.Dictionary GetPackageData(string packageId)
         {
-            _packageStoreUI = new PackageStoreUI();
-            _packageStoreUI.Visible = false;
-            _packageStoreUI.Name = "PackageStoreUI";
-            AddChild(_packageStoreUI);
-            
-            _packageStoreUI.PackageLaunchRequested += OnPackageLaunchFromStore;
-            
-            GD.Print("[Main] Package Store UI created (hidden)");
+            if (_packageRegistryData.VariantType == Variant.Type.Dictionary)
+            {
+                var reg = _packageRegistryData.AsGodotDictionary();
+                if (reg.TryGetValue("packages", out var packagesVar) && packagesVar.VariantType == Variant.Type.Array)
+                {
+                    var packages = packagesVar.AsGodotArray();
+                    foreach (var pkgVar in packages)
+                    {
+                        if (pkgVar.VariantType == Variant.Type.Dictionary)
+                        {
+                            var pkg = pkgVar.AsGodotDictionary();
+                            if (pkg.TryGetValue("id", out var id) && id.AsString() == packageId)
+                                return pkg;
+                        }
+                    }
+                }
+            }
+            return new Godot.Collections.Dictionary();
         }
 
-        public void GoToMainMenu()
+        private Control InstantiateGDScript(string scriptPath)
         {
-            GD.Print("[Main] Loading MainMenu...");
+            var script = GD.Load<GDScript>(scriptPath);
+            if (script == null)
+            {
+                GD.PushError($"[Main] Failed to load GDScript: {scriptPath}");
+                return null;
+            }
+            var instance = (Control)script.New();
+            return instance;
+        }
+
+        public void GoToLobby()
+        {
+            GD.Print("[Main] Loading Lobby...");
             ClearCurrentScene();
 
-            var mainMenu = LoadScene("res://Scenes/MainMenu.tscn");
-            if (mainMenu is MainMenuScene menuScene)
+            _lobby = InstantiateGDScript("res://Scripts/UI/Flow/game_lobby.gd");
+            if (_lobby != null)
             {
-                _currentScene = mainMenu;
-                _currentSceneContainer.AddChild(mainMenu);
-                
-                menuScene.StartGameRequested += OnStartGameRequested;
-                menuScene.SettingsRequested += OnSettingsRequested;
-                menuScene.QuitRequested += OnQuitRequested;
-                menuScene.PackageStoreRequested += OpenPackageStore;
-                
-                GD.Print("[Main] MainMenu loaded with Package Store button (built-in)");
+                _lobby.Name = "GameLobby";
+                _currentScene = _lobby;
+                _currentSceneContainer.AddChild(_lobby);
+
+                _lobby.Connect("open_package_selector", Callable.From(OnOpenPackageSelector));
+                _lobby.Connect("open_settings", Callable.From(OnSettingsRequested));
+                _lobby.Connect("quit_game", Callable.From(OnQuitRequested));
             }
-            else
-            {
-                GD.PushError("[Main] Failed to load MainMenu!");
-            }
+
+            GD.Print("[Main] Lobby loaded");
         }
 
-        private void OpenPackageStore()
+        private void OnOpenPackageSelector()
         {
-            if (_packageStoreUI == null)
+            GD.Print("[Main] Opening Package Selector...");
+            ClearCurrentScene();
+
+            _packageSelector = InstantiateGDScript("res://Scripts/UI/Flow/package_selector.gd");
+            if (_packageSelector != null)
             {
-                GD.PrintErr("[Main] Package Store UI not initialized!");
-                return;
+                _packageSelector.Name = "PackageSelector";
+                _currentScene = _packageSelector;
+                _currentSceneContainer.AddChild(_packageSelector);
+
+                _packageSelector.Connect("package_selected", Callable.From<string>(OnPackageSelected));
+                _packageSelector.Connect("back_pressed", Callable.From(GoToLobby));
             }
 
-            _packageStoreUI.Visible = true;
-            _packageStoreUI.RefreshPackageList();
-            
-            GD.Print("[Main] Package Store opened");
+            GD.Print("[Main] Package Selector loaded");
         }
 
-        private void OnPackageLaunchFromStore(PackageData package)
+        private void OnPackageSelected(string packageId)
         {
-            GD.Print($"[Main] Launching package from store: {package.Name}");
-            _packageStoreUI.Visible = false;
-            
-            if (package.Id == "base_game")
+            GD.Print($"[Main] Package selected: {packageId}");
+            ClearCurrentScene();
+
+            var pkgData = GetPackageData(packageId);
+
+            _packageDetail = InstantiateGDScript("res://Scripts/UI/Flow/package_detail.gd");
+            if (_packageDetail != null)
             {
-                OnStartGameRequested();
+                _packageDetail.Name = "PackageDetail";
+                _currentScene = _packageDetail;
+                _currentSceneContainer.AddChild(_packageDetail);
+
+                _packageDetail.Call("setup", packageId, pkgData);
+                _packageDetail.Connect("start_game_requested", Callable.From<string>(OnLaunchPackage));
+                _packageDetail.Connect("continue_game_requested", Callable.From<string, int>(OnContinueGame));
+                _packageDetail.Connect("back_pressed", Callable.From(OnOpenPackageSelector));
             }
-            else if (package.Id == "light_shadow_traveler")
+
+            GD.Print($"[Main] Package Detail loaded for: {packageId}");
+        }
+
+        private void OnLaunchPackage(string packageId)
+        {
+            GD.Print($"[Main] Launching package: {packageId}");
+
+            if (packageId == "base_game")
+            {
+                GoToCharacterSelect();
+            }
+            else if (packageId == "light_shadow_traveler")
             {
                 LaunchLightShadowTraveler();
             }
             else
             {
-                GD.Print($"[Main] Custom package launch: {package.EntryScene}");
-                LaunchCustomPackage(package.EntryScene);
+                var pkgData = GetPackageData(packageId);
+                string entryScene = pkgData.TryGetValue("entryScene", out var es) ? es.AsString() : "";
+                LaunchCustomPackage(entryScene);
+            }
+        }
+
+        private void OnContinueGame(string packageId, int slotId)
+        {
+            GD.Print($"[Main] Continue game: {packageId} slot {slotId}");
+
+            if (packageId == "base_game")
+            {
+                var saveSlot = EnhancedSaveSystem.Instance?.LoadGame(slotId);
+                if (saveSlot != null)
+                {
+                    GD.Print($"[Main] Loaded save: {saveSlot.CharacterId} at floor {saveSlot.CurrentFloor}");
+                    MapView.ResetPersistentState();
+                    if (GameManager.Instance != null)
+                        GameManager.Instance.StartNewRun(saveSlot.CharacterId);
+                    GoToMap();
+                }
+                else
+                {
+                    GD.Print("[Main] No save found, starting new game");
+                    GoToCharacterSelect();
+                }
+            }
+            else
+            {
+                OnLaunchPackage(packageId);
             }
         }
 
@@ -135,7 +219,7 @@ namespace RoguelikeGame
             else
             {
                 GD.PushError("[Main] Failed to load 光影旅者 scene!");
-                GoToMainMenu();
+                GoToLobby();
             }
         }
 
@@ -158,14 +242,8 @@ namespace RoguelikeGame
             else
             {
                 GD.PushError($"[Main] Failed to load custom package scene: {entryScene}");
-                GoToMainMenu();
+                GoToLobby();
             }
-        }
-
-        private void OnStartGameRequested()
-        {
-            GD.Print("[Main] StartGameRequested signal received");
-            GoToCharacterSelect();
         }
 
         private void OnSettingsRequested()
@@ -178,6 +256,18 @@ namespace RoguelikeGame
         {
             GD.Print("[Main] QuitRequested signal received");
             QuitGame();
+        }
+
+        private void SetupSceneContainer()
+        {
+            _currentSceneContainer = new Control
+            {
+                Name = "SceneContainer",
+                MouseFilter = Control.MouseFilterEnum.Ignore
+            };
+            _currentSceneContainer.SetAnchorsPreset(Control.LayoutPreset.FullRect);
+            AddChild(_currentSceneContainer);
+            GD.Print("[Main] Scene container created");
         }
 
         public void GoToCharacterSelect()

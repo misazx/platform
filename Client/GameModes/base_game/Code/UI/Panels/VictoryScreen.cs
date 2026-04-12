@@ -106,7 +106,7 @@ namespace RoguelikeGame.UI.Panels
 			menuBtn.Pressed += () =>
 			{
 				Closed?.Invoke();
-				Main.Instance?.GoToMainMenu();
+				Main.Instance?.GoToLobby();
 			};
 			vbox.AddChild(menuBtn);
 		}

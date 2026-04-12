@@ -154,7 +154,7 @@ namespace RoguelikeGame.UI
 		private void OnBackPressed()
 		{
 			GD.Print("[MapView] Back pressed");
-			Main.Instance?.GoToMainMenu();
+			Main.Instance?.GoToLobby();
 		}
 
 		private void LoadMapFromGameManager()
