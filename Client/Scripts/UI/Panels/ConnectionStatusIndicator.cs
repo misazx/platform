@@ -3,7 +3,7 @@ using RoguelikeGame.Network;
 
 namespace RoguelikeGame.UI.Panels
 {
-	public class ConnectionStatusIndicator : Control
+	public partial class ConnectionStatusIndicator : Control
 	{
 		private ColorRect _indicatorLight;
 		private Label _statusText;
@@ -13,7 +13,8 @@ namespace RoguelikeGame.UI.Panels
 		{
 			CustomMinimumSize = new Vector2(120, 30);
 
-			var hbox = new HBoxContainer { SeparationOffset = 8 };
+			var hbox = new HBoxContainer();
+			hbox.AddThemeConstantOverride("separation", 8);
 			AddChild(hbox);
 
 			_indicatorLight = new ColorRect
@@ -41,8 +42,9 @@ namespace RoguelikeGame.UI.Panels
 
 		private void CreateBlinkAnimation()
 		{
+			var lib = new AnimationLibrary();
 			var animation = new Animation();
-			animation.Length = 1.0;
+			animation.Length = 1.0f;
 			animation.LoopMode = Animation.LoopModeEnum.Linear;
 
 			int trackIndex = animation.AddTrack(Animation.TrackType.Value);
@@ -51,8 +53,8 @@ namespace RoguelikeGame.UI.Panels
 			animation.TrackInsertKey(trackIndex, 0.5, 0.3);
 			animation.TrackInsertKey(trackIndex, 1.0, 1.0);
 
-			_animationPlayer.AddLibrary(animation);
-			_animationPlayer.AssignAnimation("blink", animation);
+			lib.AddAnimation("blink", animation);
+			_animationPlayer.AddAnimationLibrary("", lib);
 		}
 
 		public void UpdateStatus(NetworkState state)
@@ -75,7 +77,7 @@ namespace RoguelikeGame.UI.Panels
 					break;
 
 				case NetworkState.Connected:
-					lightColor = new Color(0.3f, 0.8f, 1f);
+					lightColor = new Color(0.3f, 0.8f, 1.0f);
 					text = "已连接";
 					StopBlink();
 					break;

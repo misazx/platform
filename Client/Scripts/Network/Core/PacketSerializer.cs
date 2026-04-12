@@ -1,6 +1,7 @@
 using System;
 using System.Text.Json;
 using Godot;
+using RoguelikeGame.Core;
 
 namespace RoguelikeGame.Network.Core
 {
@@ -152,9 +153,10 @@ namespace RoguelikeGame.Network.Core
 
 		private static void HandleGameStateSync(NetworkPacket packet)
 		{
+			var payloadStr = packet.Payload?.ToString() ?? "";
 			EventBus.Instance.EmitSignal(
 				EventBus.SignalName.GameStateUpdated,
-				packet.Payload
+				Variant.From(payloadStr)
 			);
 		}
 

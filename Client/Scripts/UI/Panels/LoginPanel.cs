@@ -63,7 +63,8 @@ namespace RoguelikeGame.UI.Panels
 			mainPanel.AddThemeStyleboxOverride("panel", panelStyle);
 			AddChild(mainPanel);
 
-			var vbox = new VBoxContainer { SeparationOffset = 15 };
+			var vbox = new VBoxContainer();
+			vbox.AddThemeConstantOverride("separation", 15);
 			mainPanel.AddChild(vbox);
 
 			_titleLabel = new Label
@@ -78,7 +79,8 @@ namespace RoguelikeGame.UI.Panels
 
 			vbox.AddChild(new HSeparator());
 
-			var modeRow = new HBoxContainer { SeparationOffset = 10 };
+			var modeRow = new HBoxContainer();
+			modeRow.AddThemeConstantOverride("separation", 10);
 			vbox.AddChild(modeRow);
 			modeRow.AddChild(new Label { Text = "模式:", CustomMinimumSize = new Vector2(60, 35) });
 			_modeOption = new OptionButton();
@@ -98,13 +100,14 @@ namespace RoguelikeGame.UI.Panels
 			_emailInput.Visible = false;
 			vbox.AddChild(_emailInput);
 
-			var optionsRow = new HBoxContainer { SeparationOffset = 10 };
+			var optionsRow = new HBoxContainer();
+			optionsRow.AddThemeConstantOverride("separation", 10);
 			vbox.AddChild(optionsRow);
 
 			_rememberMeCheck = new CheckBox
 			{
 				Text = "记住登录状态",
-				Pressed = true,
+				ButtonPressed = true,
 				CustomMinimumSize = new Vector2(180, 30)
 			};
 			optionsRow.AddChild(_rememberMeCheck);
@@ -135,7 +138,7 @@ namespace RoguelikeGame.UI.Panels
 				Text = "",
 				HorizontalAlignment = HorizontalAlignment.Center,
 				CustomMinimumSize = new Vector2(400, 30),
-				WrapMode = TextServer.WrapMode.WordSmart
+				AutowrapMode = TextServer.AutowrapMode.WordSmart
 			};
 			_statusLabel.AddThemeFontSizeOverride("font_size", 13);
 			vbox.AddChild(_statusLabel);

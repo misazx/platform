@@ -5,6 +5,7 @@ using RoguelikeGame.Core;
 using RoguelikeGame.UI.Panels;
 using RoguelikeGame.Network;
 using RoguelikeGame.Network.Auth;
+using RoguelikeGame.Network.Rooms;
 
 namespace RoguelikeGame.UI
 {
@@ -45,7 +46,7 @@ namespace RoguelikeGame.UI
 
 			_mainMenu = mainMenu;
 
-			await ToSignal(GetTree(), SceneTreeTree.SignalName.ProcessFrame);
+			await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 
 			AddMultiplayerButtonToMenu();
 			CreateNetworkPanels();
@@ -63,8 +64,8 @@ namespace RoguelikeGame.UI
 			var vbox = FindVBoxContainer(_mainMenu);
 			if (vbox == null)
 			{
-				GD.PrintWarn("[MainMenuNetworkIntegrator] 未找到VBoxContainer，使用备用方案");
-				vbox = _mainMenu;
+				GD.PushWarning("[MainMenuNetworkIntegrator] 未找到VBoxContainer，使用备用方案");
+				vbox = (VBoxContainer)_mainMenu;
 			}
 
 			int insertIndex = 1; // 在"开始游戏"按钮之后
@@ -243,11 +244,11 @@ namespace RoguelikeGame.UI
 			_lobbyPanel.Update();
 		}
 
-		private async void OnLogoutFromLobby()
+		private void OnLogoutFromLobby()
 		{
 			GD.Print("[MainMenuNetworkIntegrator] 从大厅登出");
 
-			await AuthSystem.Instance.LogoutAsync();
+			AuthSystem.Instance.PerformLogout();
 
 			_lobbyPanel.Visible = false;
 			_multiplayerPanel.Visible = true;
@@ -266,8 +267,11 @@ namespace RoguelikeGame.UI
 			_mainMenu?.Hide();
 			_multiplayerPanel?.Hide();
 			_loginPanel?.Hide();
-			_lobbyPanel?.Visible = true;
-			_lobbyPanel?.Update();
+			if (_lobbyPanel != null)
+			{
+				_lobbyPanel.Visible = true;
+				_lobbyPanel.Update();
+			}
 		}
 
 		private void UpdateConnectionIndicator()

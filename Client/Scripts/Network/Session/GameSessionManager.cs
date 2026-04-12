@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using RoguelikeGame.Core;
+using RoguelikeGame.Network.Auth;
+using RoguelikeGame.Network.Core;
 using RoguelikeGame.Network.Rooms;
 
 namespace RoguelikeGame.Network.Session
@@ -222,7 +224,7 @@ namespace RoguelikeGame.Network.Session
 
 			GD.Print($"[GameSessionManager] 发送玩家操作: {actionType} - {cardId}");
 
-			EmitSignal(SignalName.PlayerActionReceived, playerAction);
+			EmitSignal(SignalName.PlayerActionReceived, playerAction.PlayerId, playerAction.Action);
 		}
 
 		public async Task SendEndTurnAsync()
@@ -288,7 +290,7 @@ namespace RoguelikeGame.Network.Session
 					break;
 
 				default:
-					GD.PrintWarn($"[GameSessionManager] 未知操作类型: {action.Action}");
+					GD.PushWarning($"[GameSessionManager] 未知操作类型: {action.Action}");
 					return false;
 			}
 
@@ -347,7 +349,7 @@ namespace RoguelikeGame.Network.Session
 
 					_gameState.LastUpdated = DateTime.UtcNow;
 
-					EmitSignal(SignalName.StateSynced, _gameState);
+					EmitSignal(SignalName.StateSynced, _gameState.RoomId, _gameState.CurrentTurn);
 
 					GD.Print("[GameSessionManager] 远程状态已同步");
 				}

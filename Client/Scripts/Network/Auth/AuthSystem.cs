@@ -309,7 +309,7 @@ namespace RoguelikeGame.Network.Auth
 				var sessionData = new { token, userId, expiryTicks = expiry.Ticks };
 				var json = JsonSerializer.Serialize(sessionData);
 				var configDir = OS.GetUserDataDir();
-				var savePath = $"{config_dir}/auth_session.json";
+				var savePath = $"{configDir}/auth_session.json";
 
 				using var file = FileAccess.Open(savePath, FileAccess.ModeFlags.Write);
 				file.StoreString(json);
@@ -389,7 +389,7 @@ namespace RoguelikeGame.Network.Auth
 			{
 				GD.Print("[AuthSystem] 会话已过期");
 				EmitSignal(SignalName.SessionExpired);
-				Logout();
+				PerformLogout();
 			}
 		}
 

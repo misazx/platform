@@ -4,7 +4,7 @@ using Godot;
 
 namespace RoguelikeGame.Network.Core
 {
-	public class NetworkClock : Node
+	public partial class NetworkClock : Node
 	{
 		private static NetworkClock _instance;
 

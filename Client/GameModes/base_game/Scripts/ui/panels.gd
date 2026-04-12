@@ -1,4 +1,4 @@
-class VictoryScreen extends Control
+class_name VictoryScreen extends Control
 
 signal closed
 
@@ -233,7 +233,7 @@ func _create_card_panel(card) -> PanelContainer:
 	return card_panel
 
 
-class TutorialOverlay extends Control
+class_name TutorialOverlay extends Control
 
 var _content_label: RichTextLabel
 var _next_button: Button
@@ -280,7 +280,7 @@ func _on_next_pressed() -> void:
 		show_page(_current_page)
 
 
-class AchievementPanel extends Control
+class_name AchievementPanel extends Control
 
 signal closed
 
@@ -383,7 +383,7 @@ func _create_category_section(category_name: String) -> VBoxContainer:
 	return section
 
 
-class RestSitePanel extends Control
+class_name RestSitePanel extends Control
 
 signal rest_selected(option: int)
 signal skipped
@@ -456,7 +456,7 @@ func _create_ui() -> void:
 	_main_container.add_child(skip_btn)
 
 
-class RewardPanel extends Control
+class_name RewardPanel extends Control
 
 signal card_chosen(card_data)
 signal relic_chosen(relic_data)
@@ -584,7 +584,7 @@ func _get_slot_data(slot_idx: int) -> String:
 		_: return "未知"
 
 
-class ShopPanel extends Control
+class_name ShopPanel extends Control
 
 signal item_purchased(item_data, price: int)
 signal shop_exit
@@ -660,7 +660,7 @@ func setup_shop(player_gold: int, items: Array) -> void:
 	_container.add_child(exit_btn)
 
 
-class TreasurePanel extends Control
+class_name TreasurePanel extends Control
 
 signal treasure_taken(treasure_id: String)
 signal treasure_skipped
@@ -717,7 +717,7 @@ func setup_treasures(treasures: Array) -> void:
 	_container.add_child(skip_btn)
 
 
-class GameOverScreen extends Control
+class_name GameOverScreen extends Control
 
 signal retry_pressed
 signal menu_pressed
@@ -798,7 +798,7 @@ func setup_game_over(is_victory: bool, score: int = 0) -> void:
 	_container.add_child(menu_btn)
 
 
-class EventPanel extends Control
+class_name EventPanel extends Control
 
 signal option_selected(option_index: int)
 signal event_closed

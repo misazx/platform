@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using RoguelikeGame.Core;
 using RoguelikeGame.Packages;
 using RoguelikeGame.Network;
+using RoguelikeGame.Network.Auth;
 using RoguelikeGame.UI.Panels;
 
 namespace RoguelikeGame.UI
@@ -310,7 +311,7 @@ namespace RoguelikeGame.UI
 		{
 			var loginPanel = new LoginPanel();
 			loginPanel.OnLoginSuccess += OnLoginSuccess;
-			loginPanel.OnCancel += () => loginPanel.QueueFree();
+			loginPanel.OnBack += () => { loginPanel.QueueFree(); };
 			AddChild(loginPanel);
 		}
 

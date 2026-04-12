@@ -1,4 +1,4 @@
-class CharacterSelect extends Control
+class_name CharacterSelect extends Control
 
 signal character_selected(character_id: String)
 

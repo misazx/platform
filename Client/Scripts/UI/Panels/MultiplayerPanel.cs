@@ -66,7 +66,8 @@ namespace RoguelikeGame.UI.Panels
 			mainPanel.AddThemeStyleboxOverride("panel", panelStyle);
 			AddChild(mainPanel);
 
-			var vbox = new VBoxContainer { SeparationOffset = 15 };
+			var vbox = new VBoxContainer();
+			vbox.AddThemeConstantOverride("separation", 15);
 			mainPanel.AddChild(vbox);
 
 			var headerContainer = new HBoxContainer();
@@ -125,11 +126,13 @@ namespace RoguelikeGame.UI.Panels
 
 			vbox.AddChild(new Control { CustomMinimumSize = new Vector2(0, 10) });
 
-			var serverConfigContainer = new VBoxContainer { SeparationOffset = 8 };
+			var serverConfigContainer = new VBoxContainer();
+			serverConfigContainer.AddThemeConstantOverride("separation", 8);
 			serverConfigContainer.AddThemeConstantOverride("separation", 8);
 			vbox.AddChild(serverConfigContainer);
 
-			var addressRow = new HBoxContainer { SeparationOffset = 10 };
+			var addressRow = new HBoxContainer();
+			addressRow.AddThemeConstantOverride("separation", 10);
 			addressRow.AddChild(new Label { Text = "服务器地址:", CustomMinimumSize = new Vector2(100, 0) });
 			_serverAddressInput = new LineEdit
 			{
@@ -168,7 +171,8 @@ namespace RoguelikeGame.UI.Panels
 			var button = new Button();
 			button.CustomMinimumSize = new Vector2(550, 90);
 
-			var vbox = new VBoxContainer { SeparationOffset = 5 };
+			var vbox = new VBoxContainer();
+				vbox.AddThemeConstantOverride("separation", 5);
 			button.AddChild(vbox);
 
 			var titleLabel = new Label
@@ -185,7 +189,7 @@ namespace RoguelikeGame.UI.Panels
 				Text = description,
 				HorizontalAlignment = HorizontalAlignment.Center,
 				CustomMinimumSize = new Vector2(500, 40),
-				WrapMode = TextServer.WrapMode.WordSmart
+				AutowrapMode = TextServer.AutowrapMode.WordSmart
 			};
 			descLabel.AddThemeFontSizeOverride("font_size", 12);
 			descLabel.Modulate = new Color(0.75f, 0.78f, 0.85f);

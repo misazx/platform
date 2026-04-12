@@ -114,10 +114,10 @@ namespace RoguelikeGame.Network.Friends
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 
 				var response = await _httpClient.PostAsync("/api/friends/request", content);
-				var result = await response.Content.ReadAsStringAsync().ContinueWith(t =>
-					JsonSerializer.Deserialize<JsonElement>(t.Result));
+				var responseContent = await response.Content.ReadAsStringAsync();
+				var result = JsonSerializer.Deserialize<JsonElement>(responseContent);
 
-				bool success = result.Result.GetProperty("success").GetBoolean();
+				bool success = result.GetProperty("success").GetBoolean();
 
 				if (success)
 				{
@@ -140,10 +140,10 @@ namespace RoguelikeGame.Network.Friends
 				SetAuthorizationHeader();
 
 				var response = await _httpClient.PostAsync($"/api/friends/{requestId}/accept", null);
-				var result = await response.Content.ReadAsStringAsync().ContinueWith(t =>
-					JsonSerializer.Deserialize<JsonElement>(t.Result));
+				var responseContent = await response.Content.ReadAsStringAsync();
+				var result = JsonSerializer.Deserialize<JsonElement>(responseContent);
 
-				bool success = result.Result.GetProperty("success").GetBoolean();
+				bool success = result.GetProperty("success").GetBoolean();
 
 				if (success)
 				{
@@ -167,10 +167,10 @@ namespace RoguelikeGame.Network.Friends
 				SetAuthorizationHeader();
 
 				var response = await _httpClient.DeleteAsync($"/api/friends/{friendId}");
-				var result = await response.Content.ReadAsStringAsync().ContinueWith(t =>
-					JsonSerializer.Deserialize<JsonElement>(t.Result));
+				var responseContent = await response.Content.ReadAsStringAsync();
+				var result = JsonSerializer.Deserialize<JsonElement>(responseContent);
 
-				bool success = result.Result.GetProperty("success").GetBoolean();
+				bool success = result.GetProperty("success").GetBoolean();
 
 				if (success)
 				{

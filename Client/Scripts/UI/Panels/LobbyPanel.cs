@@ -24,7 +24,7 @@ namespace RoguelikeGame.UI.Panels
 		private LineEdit _chatInput;
 		private Label _onlineCountLabel;
 		private Control _friendsPanel;
-		private Control _connectionIndicator;
+		private ConnectionStatusIndicator _connectionIndicator;
 
 		public event Action<RoomInfo> OnJoinRoom;
 		public event Action OnCreateRoom;
@@ -54,7 +54,7 @@ namespace RoguelikeGame.UI.Panels
 			};
 			AddChild(bg);
 
-			var mainContainer = new HSplitContainer { SplitOffset = -200 };
+			var mainContainer = new HSplitContainer();
 			mainContainer.SetAnchorsPreset(Control.LayoutPreset.FullRect);
 			AddChild(mainContainer);
 
@@ -64,11 +64,13 @@ namespace RoguelikeGame.UI.Panels
 
 		private void CreateLeftSidebar(HSplitContainer parent)
 		{
-			var sidebar = new VBoxContainer { SeparationOffset = 10 };
+			var sidebar = new VBoxContainer();
+			sidebar.AddThemeConstantOverride("separation", 10);
 			sidebar.CustomMinimumSize = new Vector2(250, 0);
 			parent.AddChild(sidebar);
 
-			var headerBox = new VBoxContainer { SeparationOffset = 5 };
+			var headerBox = new VBoxContainer();
+			headerBox.AddThemeConstantOverride("separation", 5);
 			sidebar.AddChild(headerBox);
 
 			_welcomeLabel = new Label
@@ -135,10 +137,12 @@ namespace RoguelikeGame.UI.Panels
 
 		private void CreateMainContent(HSplitContainer parent)
 		{
-			var mainArea = new VBoxContainer { SeparationOffset = 10 };
+			var mainArea = new VBoxContainer();
+			mainArea.AddThemeConstantOverride("separation", 10);
 			parent.AddChild(mainArea);
 
-			var topBar = new HBoxContainer { SeparationOffset = 15 };
+			var topBar = new HBoxContainer();
+			topBar.AddThemeConstantOverride("separation", 15);
 			mainArea.AddChild(topBar);
 
 			var titleLabel = new Label
@@ -160,11 +164,12 @@ namespace RoguelikeGame.UI.Panels
 
 			mainArea.AddChild(new HSeparator());
 
-			var createRoomSection = new VBoxContainer { SeparationOffset = 8 };
+			var createRoomSection = new VBoxContainer();
 			createRoomSection.AddThemeConstantOverride("separation", 8);
 			mainArea.AddChild(createRoomSection);
 
-			var createHeader = new HBoxContainer { SeparationOffset = 10 };
+			var createHeader = new HBoxContainer();
+			createHeader.AddThemeConstantOverride("separation", 10);
 			createRoomSection.AddChild(createHeader);
 
 			createHeader.AddChild(new Label { Text = "🎮 创建房间:", CustomMinimumSize = new Vector2(100, 30) });
@@ -225,7 +230,8 @@ namespace RoguelikeGame.UI.Panels
 
 			mainArea.AddChild(new HSeparator());
 
-			var chatSection = new VBoxContainer { SeparationOffset = 5 };
+			var chatSection = new VBoxContainer();
+			chatSection.AddThemeConstantOverride("separation", 5);
 			mainArea.AddChild(chatSection);
 
 			_chatOutput = new RichTextLabel
@@ -235,7 +241,8 @@ namespace RoguelikeGame.UI.Panels
 			};
 			chatSection.AddChild(_chatOutput);
 
-			var chatRow = new HBoxContainer { SeparationOffset = 8 };
+			var chatRow = new HBoxContainer();
+			chatRow.AddThemeConstantOverride("separation", 8);
 			chatSection.AddChild(chatRow);
 
 			_chatInput = new LineEdit
@@ -280,7 +287,7 @@ namespace RoguelikeGame.UI.Panels
 			{
 				_roomList.Clear();
 
-				_roomList.AddItem("⏳ 正在加载房间列表...", -1, false);
+				_roomList.AddItem("⏳ 正在加载房间列表...");
 
 				var result = await RoomManager.Instance.GetRoomListAsync();
 
@@ -308,7 +315,7 @@ namespace RoguelikeGame.UI.Panels
 
 						string itemText =
 							$"{statusIcon} {modeIcon} {room.Name}\n" +
-							$"   👥 {room.CurrentPlayer}/{room.MaxPlayers} | 🎭 {room.HostName}";
+							$"   👥 {room.CurrentPlayers}/{room.MaxPlayers} | 🎭 {room.HostName}";
 
 						_roomList.AddItem(itemText);
 					}
@@ -317,7 +324,7 @@ namespace RoguelikeGame.UI.Panels
 				}
 				else
 				{
-					_roomList.AddItem("😴 暂无可用房间，快来创建一个吧！", -1, false);
+					_roomList.AddItem("😴 暂无可用房间，快来创建一个吧！");
 					_onlineCountLabel.Text = "在线房间: 0";
 				}
 			}
@@ -325,7 +332,7 @@ namespace RoguelikeGame.UI.Panels
 			{
 				GD.PrintErr($"[LobbyPanel] 加载房间列表失败: {ex.Message}");
 				_roomList.Clear();
-				_roomList.AddItem($"❌ 加载失败: {ex.Message}", -1, false);
+				_roomList.AddItem($"❌ 加载失败: {ex.Message}");
 			}
 		}
 
@@ -335,7 +342,7 @@ namespace RoguelikeGame.UI.Panels
 
 			if (index >= 0 && RoomManager.Instance?.CurrentRoom == null)
 			{
-				OnJoinRoom?.Invoke(null); // 需要从缓存获取实际RoomInfo
+				OnJoinRoom?.Invoke(null);
 			}
 		}
 
@@ -395,24 +402,24 @@ namespace RoguelikeGame.UI.Panels
 			string formattedMsg = $"[color=#{color.ToHtml(false)}]{sender}[/color]: {message}\n";
 
 			_chatOutput.AppendText(formattedMsg);
-			_chatOutput.ScrollToLine(__chatOutput.GetLineCount() - 1);
+			_chatOutput.ScrollToLine(_chatOutput.GetLineCount() - 1);
 		}
 
 		public void AddSystemMessage(string message)
 		{
 			_chatOutput.AppendText($"[color=gray]系统: {message}[/color]\n");
-			_chatOutput.ScrollToLine(__chatOutput.GetLineCount() - 1);
+			_chatOutput.ScrollToLine(_chatOutput.GetLineCount() - 1);
 		}
 
-		private void OnRoomCreatedHandler(RoomInfo room)
+		private void OnRoomCreatedHandler(string roomId, string roomName)
 		{
-			AddSystemMessage($"🏠 房间已创建: {room.Name}");
+			AddSystemMessage($"🏠 房间已创建: {roomName}");
 			LoadRoomList();
 		}
 
-		private void OnRoomJoinedHandler(RoomInfo room)
+		private void OnRoomJoinedHandler(string roomId, string roomName)
 		{
-			AddSystemMessage($"✅ 已加入房间: {room.Name}");
+			AddSystemMessage($"✅ 已加入房间: {roomName}");
 		}
 
 		public void Update()
@@ -423,7 +430,10 @@ namespace RoguelikeGame.UI.Panels
 
 		private void UpdateConnectionStatusDisplay()
 		{
-			_connectionIndicator?.UpdateStatus(NetworkManager.Instance?.State ?? NetworkState.Disconnected);
+			if (_connectionIndicator is ConnectionStatusIndicator indicator)
+			{
+				indicator.UpdateStatus(NetworkManager.Instance?.State ?? NetworkState.Disconnected);
+			}
 		}
 	}
 }

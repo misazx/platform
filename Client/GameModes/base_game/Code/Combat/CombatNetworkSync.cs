@@ -11,7 +11,7 @@ using RoguelikeGame.Network.Session;
 
 namespace RoguelikeGame.Core
 {
-	public class CombatNetworkSync : Node
+	public partial class CombatNetworkSync : Node
 	{
 		private static CombatNetworkSync _instance;
 

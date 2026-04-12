@@ -1,4 +1,4 @@
-class RewardScreen extends Control
+class_name RewardScreen extends Control
 
 signal card_selected(card_data)
 signal relic_selected(relic_data)

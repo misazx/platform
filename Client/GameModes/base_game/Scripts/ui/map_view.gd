@@ -1,4 +1,4 @@
-class MapView extends Control
+class_name MapView extends Control
 
 var _node_layer: Control
 var _connection_layer: Node2D

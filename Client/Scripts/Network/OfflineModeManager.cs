@@ -1,6 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using Godot;
+using RoguelikeGame.Network.Auth;
+using RoguelikeGame.Network.Rooms;
+using RoguelikeGame.Network.Session;
 
 namespace RoguelikeGame.Network
 {
@@ -53,7 +56,7 @@ namespace RoguelikeGame.Network
 
 			if (oldMode == GameModeType.SinglePlayer) return true;
 
-			EmitSignal(SignalName.ModeTransitionStarted, GameModeType.SinglePlayer);
+			EmitSignal(SignalName.ModeTransitionStarted, (int)GameModeType.SinglePlayer);
 			_isTransitioning = true;
 
 			try
@@ -71,7 +74,7 @@ namespace RoguelikeGame.Network
 
 				GD.Print("[OfflineModeManager] ✓ 已切换到单机模式");
 
-				EmitSignal(SignalName.ModeChanged, _currentMode, oldMode);
+				EmitSignal(SignalName.ModeChanged, (int)_currentMode, (int)oldMode);
 				EmitSignal(SignalName.ModeTransitionCompleted, true);
 
 				return true;
@@ -94,7 +97,7 @@ namespace RoguelikeGame.Network
 
 			var oldMode = _currentMode;
 
-			EmitSignal(SignalName.ModeTransitionStarted, GameModeType.LANMultiplayer);
+			EmitSignal(SignalName.ModeTransitionStarted, (int)GameModeType.LANMultiplayer);
 			_isTransitioning = true;
 
 			try
@@ -109,7 +112,7 @@ namespace RoguelikeGame.Network
 
 					GD.Print("[OfflineModeManager] ✓ 已切换到局域网多人模式");
 
-					EmitSignal(SignalName.ModeChanged, _currentMode, oldMode);
+					EmitSignal(SignalName.ModeChanged, (int)_currentMode, (int)oldMode);
 					EmitSignal(SignalName.ModeTransitionCompleted, true);
 
 					return true;
@@ -140,7 +143,7 @@ namespace RoguelikeGame.Network
 
 			var oldMode = _currentMode;
 
-			EmitSignal(SignalName.ModeTransitionStarted, GameModeType.OnlineMultiplayer);
+			EmitSignal(SignalName.ModeTransitionStarted, (int)GameModeType.OnlineMultiplayer);
 			_isTransitioning = true;
 
 			try
@@ -158,7 +161,7 @@ namespace RoguelikeGame.Network
 
 					GD.Print("[OfflineModeManager] ✓ 已切换到在线多人模式");
 
-					EmitSignal(SignalName.ModeChanged, _currentMode, oldMode);
+					EmitSignal(SignalName.ModeChanged, (int)_currentMode, (int)oldMode);
 					EmitSignal(SignalName.ModeTransitionCompleted, true);
 
 					return true;
