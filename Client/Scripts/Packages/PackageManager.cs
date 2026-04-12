@@ -124,6 +124,50 @@ namespace RoguelikeGame.Packages
 					InstallDate = DateTime.Now
 				};
 			}
+
+			var lightShadowTraveler = new PackageData
+			{
+				Id = "light_shadow_traveler",
+				Name = "光影旅者",
+				Description = "治愈系2D横版平台跳跃游戏，以光影形态切换为核心创新机制。在光与影之间切换形态，探索遗忘之地，收集散落的记忆碎片！",
+				Version = "1.0.0",
+				Type = PackageType.Expansion,
+				Author = "Development Team",
+				IconPath = "res://GameModes/light_shadow_traveler/Resources/UI/icon.png",
+				ThumbnailPath = "res://GameModes/light_shadow_traveler/Resources/Images/Backgrounds/forest_bg.png",
+				IsFree = true,
+				RequiredBaseVersion = "1.0.0",
+				Tags = new List<string> { "platformer", "healing", "light-shadow", "puzzle", "official", "side-scroller" },
+				Features = new List<string>
+				{
+					"光影形态切换核心机制",
+					"5大主题章节50个关卡",
+					"光源互动解谜系统",
+					"三档难度覆盖全玩家",
+					"记忆碎片收集系统",
+					"手绘治愈系美术风格",
+					"原创治愈系配乐"
+				},
+				EntryScene = "res://GameModes/light_shadow_traveler/Scenes/GameScene.tscn",
+				ConfigFile = "res://GameModes/light_shadow_traveler/Config/Data/package_config.json",
+				ReleaseDate = DateTime.Now,
+				Rating = 4.9,
+				DownloadCount = 5000
+			};
+
+			_availablePackages["light_shadow_traveler"] = lightShadowTraveler;
+
+			if (!_installedPackages.ContainsKey("light_shadow_traveler"))
+			{
+				_installedPackages["light_shadow_traveler"] = new PackageInstallState
+				{
+					PackageId = "light_shadow_traveler",
+					Status = PackageStatus.Installed,
+					InstalledVersion = lightShadowTraveler.Version,
+					InstalledPath = "res://GameModes/light_shadow_traveler/",
+					InstallDate = DateTime.Now
+				};
+			}
 		}
 
 		public async Task LoadRegistryAsync()

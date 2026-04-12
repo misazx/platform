@@ -86,3 +86,30 @@ SELECT COUNT(*) FROM "sqlite_master" WHERE "type" = 'table' AND "rootpage" IS NO
 2026-04-12 13:39:16.171 +08:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/index.html - 200 null text/html;charset=utf-8 35.2586ms
 2026-04-12 13:39:24.801 +08:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/v1/swagger.json - null null
 2026-04-12 13:39:24.989 +08:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 188.0015ms
+2026-04-12 15:39:01.125 +08:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/index.html - null null
+2026-04-12 15:39:01.126 +08:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/index.html - 200 null text/html;charset=utf-8 0.9557ms
+2026-04-12 18:09:21.918 +08:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger - null null
+2026-04-12 18:09:21.969 +08:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger - 301 0 null 50.2921ms
+2026-04-12 18:09:21.970 +08:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/index.html - null null
+2026-04-12 18:09:21.971 +08:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/index.html - 200 null text/html;charset=utf-8 0.2817ms
+2026-04-12 18:09:21.975 +08:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/index.css - null null
+2026-04-12 18:09:21.975 +08:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/swagger-ui-bundle.js - null null
+2026-04-12 18:09:21.976 +08:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/swagger-ui.css - null null
+2026-04-12 18:09:21.976 +08:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/index.js - null null
+2026-04-12 18:09:21.976 +08:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/swagger-ui-standalone-preset.js - null null
+2026-04-12 18:09:21.977 +08:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/index.js - 200 null application/javascript;charset=utf-8 0.9799ms
+2026-04-12 18:09:21.982 +08:00 [INF] Sending file. Request path: '/index.css'. Physical path: 'N/A'
+2026-04-12 18:09:21.982 +08:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/index.css - 200 202 text/css 7.686ms
+2026-04-12 18:09:21.986 +08:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+2026-04-12 18:09:21.986 +08:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+2026-04-12 18:09:21.987 +08:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/swagger-ui-standalone-preset.js - 200 229223 text/javascript 10.9225ms
+2026-04-12 18:09:21.987 +08:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/swagger-ui.css - 200 154948 text/css 11.027ms
+2026-04-12 18:09:21.990 +08:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+2026-04-12 18:09:21.990 +08:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/swagger-ui-bundle.js - 200 1466324 text/javascript 15.0915ms
+2026-04-12 18:09:22.130 +08:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/v1/swagger.json - null null
+2026-04-12 18:09:22.133 +08:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 3.0185ms
+2026-04-12 18:09:22.138 +08:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/@vite/client - null null
+2026-04-12 18:09:22.141 +08:00 [INF] CORS policy execution successful.
+2026-04-12 18:09:22.159 +08:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/@vite/client - 404 0 null 20.5689ms
+2026-04-12 18:09:22.160 +08:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/@vite/client, Response status code: 404
+2026-04-12 22:20:27.500 +08:00 [INF] Application is shutting down...

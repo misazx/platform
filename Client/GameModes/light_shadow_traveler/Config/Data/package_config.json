@@ -1,0 +1,125 @@
+{
+  "packageId": "light_shadow_traveler",
+  "version": "1.0.0",
+  "displayName": "光影旅者",
+  "description": "治愈系2D横版平台跳跃游戏，以光影形态切换为核心创新机制",
+  "author": "Development Team",
+  "entryScene": "res://GameModes/light_shadow_traveler/Scenes/GameScene.tscn",
+  "configFile": "config/levels.json",
+  "gameplay": {
+    "playerSpeed": 250.0,
+    "playerJumpForce": -420.0,
+    "playerGravity": 980.0,
+    "lightFormSpeed": 250.0,
+    "lightFormJumpForce": -420.0,
+    "shadowFormSpeed": 320.0,
+    "shadowFormJumpForce": -500.0,
+    "shadowGlideGravity": 200.0,
+    "shadowGlideMaxFallSpeed": 100.0,
+    "coyoteTime": 0.1,
+    "inputBufferTime": 0.1,
+    "formSwitchCooldown": 0.3,
+    "maxHealth": 3,
+    "invincibleTime": 1.5,
+    "memoryFragmentsPerLevel": 3,
+    "levelTimeLimit": 300,
+    "checkpointEnabled": true
+  },
+  "difficulty": {
+    "defaultDifficulty": "normal",
+    "availableDifficulties": ["casual", "normal", "hardcore"],
+    "settings": {
+      "casual": {
+        "infiniteLives": true,
+        "jumpPreview": true,
+        "hintDelay": 60,
+        "enemyKnockback": true,
+        "enemyNoKill": true,
+        "checkpointHeal": true
+      },
+      "normal": {
+        "infiniteLives": false,
+        "maxLives": 5,
+        "jumpPreview": false,
+        "hintDelay": 0,
+        "enemyKnockback": true,
+        "enemyNoKill": false,
+        "checkpointHeal": false
+      },
+      "hardcore": {
+        "infiniteLives": false,
+        "maxLives": 1,
+        "jumpPreview": false,
+        "hintDelay": 0,
+        "enemyKnockback": false,
+        "enemyNoKill": false,
+        "checkpointHeal": false,
+        "exclusiveAchievements": true
+      }
+    }
+  },
+  "chapters": [
+    {
+      "id": "forgotten_forest",
+      "name": "遗忘之森",
+      "description": "新手教程章节，学习基础移动、跳跃与形态切换",
+      "theme": "forest",
+      "bgColor": "#2D5A27",
+      "levelCount": 10,
+      "musicTrack": "forest_theme"
+    },
+    {
+      "id": "faded_studio",
+      "name": "褪色画室",
+      "description": "光源互动机制教程，学习推动光源改变影子",
+      "theme": "studio",
+      "bgColor": "#8B6914",
+      "levelCount": 10,
+      "musicTrack": "studio_theme"
+    },
+    {
+      "id": "silent_concert_hall",
+      "name": "寂静音乐厅",
+      "description": "敌人互动机制教程，学习利用形态躲避敌人",
+      "theme": "concert_hall",
+      "bgColor": "#B8860B",
+      "levelCount": 10,
+      "musicTrack": "concert_theme"
+    },
+    {
+      "id": "sleeping_library",
+      "name": "沉睡图书馆",
+      "description": "复杂解谜章节，多光源配合的高阶解谜",
+      "theme": "library",
+      "bgColor": "#4A6984",
+      "levelCount": 10,
+      "musicTrack": "library_theme"
+    },
+    {
+      "id": "light_shadow_temple",
+      "name": "光影神殿",
+      "description": "最终挑战章节，所有机制的综合运用",
+      "theme": "temple",
+      "bgColor": "#6A5ACD",
+      "levelCount": 10,
+      "musicTrack": "temple_theme"
+    }
+  ],
+  "ui": {
+    "theme": "healing",
+    "language": "zh-CN",
+    "showFormIndicator": true,
+    "showFragmentCounter": true,
+    "showHealthBar": true,
+    "showMinimap": false,
+    "animationSpeed": 1.0,
+    "particleEffects": true
+  },
+  "audio": {
+    "masterVolume": 1.0,
+    "bgmVolume": 0.8,
+    "sfxVolume": 1.0,
+    "ambientVolume": 0.6,
+    "enableDynamicMusic": true
+  }
+}

@@ -109,10 +109,56 @@ namespace RoguelikeGame
             {
                 OnStartGameRequested();
             }
+            else if (package.Id == "light_shadow_traveler")
+            {
+                LaunchLightShadowTraveler();
+            }
             else
             {
                 GD.Print($"[Main] Custom package launch: {package.EntryScene}");
-                // TODO: 处理自定义包的启动逻辑
+                LaunchCustomPackage(package.EntryScene);
+            }
+        }
+
+        public void LaunchLightShadowTraveler()
+        {
+            GD.Print("[Main] Launching 光影旅者...");
+            ClearCurrentScene();
+
+            var gameScene = LoadScene("res://GameModes/light_shadow_traveler/Scenes/GameScene.tscn");
+            if (gameScene != null)
+            {
+                _currentScene = gameScene;
+                _currentSceneContainer.AddChild(gameScene);
+                GD.Print("[Main] 光影旅者 loaded successfully");
+            }
+            else
+            {
+                GD.PushError("[Main] Failed to load 光影旅者 scene!");
+                GoToMainMenu();
+            }
+        }
+
+        private void LaunchCustomPackage(string entryScene)
+        {
+            if (string.IsNullOrEmpty(entryScene))
+            {
+                GD.PrintErr("[Main] Custom package has no entry scene!");
+                return;
+            }
+
+            ClearCurrentScene();
+            var scene = LoadScene(entryScene);
+            if (scene != null)
+            {
+                _currentScene = scene;
+                _currentSceneContainer.AddChild(scene);
+                GD.Print($"[Main] Custom package loaded: {entryScene}");
+            }
+            else
+            {
+                GD.PushError($"[Main] Failed to load custom package scene: {entryScene}");
+                GoToMainMenu();
             }
         }
 
@@ -326,6 +372,23 @@ namespace RoguelikeGame
                 if (card != null && engine.CanPlayCard(card))
                 {
                     var result = engine.PlayCard(card);
+
+                    UpdateEnemyHealthFromEngine(hud, engine);
+                    UpdateUIFromEngine(hud, engine);
+                }
+            };
+
+            hud.CardPlayedWithTarget += (cardId, targetIndex) =>
+            {
+                if (!_combatActive || !IsInstanceValid(engine)) return;
+                if (!engine.IsPlayerTurn || engine.IsCombatOver) return;
+
+                GD.Print($"[Main] 🃏 Card played with target: {cardId} → enemy {targetIndex}");
+
+                var card = engine.Player.Hand.Find(c => c.Id == cardId);
+                if (card != null && engine.CanPlayCard(card))
+                {
+                    var result = engine.PlayCard(card, targetIndex);
 
                     UpdateEnemyHealthFromEngine(hud, engine);
                     UpdateUIFromEngine(hud, engine);

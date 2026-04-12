@@ -1,0 +1,234 @@
+{
+  "chapters": [
+    {
+      "id": "forgotten_forest",
+      "name": "遗忘之森",
+      "levels": [
+        {
+          "id": "ff_01",
+          "name": "初醒",
+          "description": "学习基础移动",
+          "tutorialFocus": "move",
+          "platforms": [
+            {"x": 0, "y": 500, "w": 400, "h": 40, "type": "normal"},
+            {"x": 450, "y": 500, "w": 300, "h": 40, "type": "normal"},
+            {"x": 800, "y": 450, "w": 250, "h": 40, "type": "normal"},
+            {"x": 1100, "y": 400, "w": 300, "h": 40, "type": "normal"}
+          ],
+          "enemies": [],
+          "lightSources": [],
+          "fragments": [
+            {"x": 550, "y": 440},
+            {"x": 900, "y": 390},
+            {"x": 1250, "y": 340}
+          ],
+          "startPos": {"x": 100, "y": 400},
+          "endPos": {"x": 1300, "y": 350}
+        },
+        {
+          "id": "ff_02",
+          "name": "跃动",
+          "description": "学习跳跃",
+          "tutorialFocus": "jump",
+          "platforms": [
+            {"x": 0, "y": 500, "w": 300, "h": 40, "type": "normal"},
+            {"x": 400, "y": 450, "w": 150, "h": 40, "type": "normal"},
+            {"x": 650, "y": 380, "w": 150, "h": 40, "type": "normal"},
+            {"x": 900, "y": 320, "w": 200, "h": 40, "type": "normal"},
+            {"x": 1150, "y": 500, "w": 300, "h": 40, "type": "normal"}
+          ],
+          "enemies": [],
+          "lightSources": [],
+          "fragments": [
+            {"x": 460, "y": 390},
+            {"x": 700, "y": 320},
+            {"x": 980, "y": 260}
+          ],
+          "startPos": {"x": 100, "y": 400},
+          "endPos": {"x": 1300, "y": 400}
+        },
+        {
+          "id": "ff_03",
+          "name": "光影初现",
+          "description": "学习形态切换",
+          "tutorialFocus": "form_switch",
+          "platforms": [
+            {"x": 0, "y": 500, "w": 300, "h": 40, "type": "normal"},
+            {"x": 400, "y": 450, "w": 200, "h": 40, "type": "light"},
+            {"x": 700, "y": 400, "w": 200, "h": 40, "type": "shadow"},
+            {"x": 1000, "y": 450, "w": 300, "h": 40, "type": "normal"}
+          ],
+          "enemies": [],
+          "lightSources": [],
+          "fragments": [
+            {"x": 480, "y": 390},
+            {"x": 780, "y": 340},
+            {"x": 1150, "y": 390}
+          ],
+          "startPos": {"x": 100, "y": 400},
+          "endPos": {"x": 1200, "y": 350}
+        },
+        {
+          "id": "ff_04",
+          "name": "光之径",
+          "description": "光形态平台挑战",
+          "tutorialFocus": "light_form",
+          "platforms": [
+            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
+            {"x": 350, "y": 460, "w": 150, "h": 40, "type": "light"},
+            {"x": 580, "y": 420, "w": 150, "h": 40, "type": "light"},
+            {"x": 810, "y": 380, "w": 150, "h": 40, "type": "light"},
+            {"x": 1040, "y": 420, "w": 250, "h": 40, "type": "normal"}
+          ],
+          "enemies": [],
+          "lightSources": [],
+          "fragments": [
+            {"x": 410, "y": 400},
+            {"x": 640, "y": 360},
+            {"x": 870, "y": 320}
+          ],
+          "startPos": {"x": 100, "y": 400},
+          "endPos": {"x": 1150, "y": 320}
+        },
+        {
+          "id": "ff_05",
+          "name": "影之途",
+          "description": "影形态平台挑战",
+          "tutorialFocus": "shadow_form",
+          "platforms": [
+            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
+            {"x": 350, "y": 460, "w": 150, "h": 40, "type": "shadow"},
+            {"x": 580, "y": 400, "w": 150, "h": 40, "type": "shadow"},
+            {"x": 810, "y": 340, "w": 150, "h": 40, "type": "shadow"},
+            {"x": 1040, "y": 400, "w": 250, "h": 40, "type": "normal"}
+          ],
+          "enemies": [],
+          "lightSources": [],
+          "fragments": [
+            {"x": 410, "y": 400},
+            {"x": 640, "y": 340},
+            {"x": 870, "y": 280}
+          ],
+          "startPos": {"x": 100, "y": 400},
+          "endPos": {"x": 1150, "y": 300}
+        },
+        {
+          "id": "ff_06",
+          "name": "交织",
+          "description": "光影交替平台挑战",
+          "tutorialFocus": "mixed_forms",
+          "platforms": [
+            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
+            {"x": 300, "y": 460, "w": 150, "h": 40, "type": "light"},
+            {"x": 550, "y": 420, "w": 150, "h": 40, "type": "shadow"},
+            {"x": 800, "y": 380, "w": 150, "h": 40, "type": "light"},
+            {"x": 1050, "y": 340, "w": 150, "h": 40, "type": "shadow"},
+            {"x": 1280, "y": 380, "w": 200, "h": 40, "type": "normal"}
+          ],
+          "enemies": [],
+          "lightSources": [],
+          "fragments": [
+            {"x": 360, "y": 400},
+            {"x": 610, "y": 360},
+            {"x": 1110, "y": 280}
+          ],
+          "startPos": {"x": 80, "y": 400},
+          "endPos": {"x": 1380, "y": 280}
+        },
+        {
+          "id": "ff_07",
+          "name": "林间漫步",
+          "description": "综合移动与切换",
+          "tutorialFocus": "combined",
+          "platforms": [
+            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
+            {"x": 350, "y": 470, "w": 120, "h": 40, "type": "light"},
+            {"x": 550, "y": 430, "w": 120, "h": 40, "type": "shadow"},
+            {"x": 750, "y": 500, "w": 200, "h": 40, "type": "normal"},
+            {"x": 1020, "y": 440, "w": 120, "h": 40, "type": "light"},
+            {"x": 1220, "y": 380, "w": 120, "h": 40, "type": "shadow"},
+            {"x": 1420, "y": 440, "w": 250, "h": 40, "type": "normal"}
+          ],
+          "enemies": [],
+          "lightSources": [],
+          "fragments": [
+            {"x": 400, "y": 410},
+            {"x": 800, "y": 440},
+            {"x": 1270, "y": 320}
+          ],
+          "startPos": {"x": 80, "y": 400},
+          "endPos": {"x": 1550, "y": 340}
+        },
+        {
+          "id": "ff_08",
+          "name": "高处不胜寒",
+          "description": "高台跳跃挑战",
+          "tutorialFocus": "precision_jump",
+          "platforms": [
+            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
+            {"x": 300, "y": 430, "w": 100, "h": 30, "type": "light"},
+            {"x": 500, "y": 360, "w": 100, "h": 30, "type": "shadow"},
+            {"x": 700, "y": 290, "w": 100, "h": 30, "type": "light"},
+            {"x": 900, "y": 220, "w": 100, "h": 30, "type": "shadow"},
+            {"x": 1100, "y": 280, "w": 250, "h": 40, "type": "normal"}
+          ],
+          "enemies": [],
+          "lightSources": [],
+          "fragments": [
+            {"x": 340, "y": 370},
+            {"x": 540, "y": 300},
+            {"x": 1160, "y": 220}
+          ],
+          "startPos": {"x": 80, "y": 400},
+          "endPos": {"x": 1200, "y": 180}
+        },
+        {
+          "id": "ff_09",
+          "name": "影墙穿越",
+          "description": "学习影形态穿墙",
+          "tutorialFocus": "shadow_wall",
+          "platforms": [
+            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
+            {"x": 350, "y": 500, "w": 30, "h": 200, "type": "shadow_wall"},
+            {"x": 450, "y": 500, "w": 200, "h": 40, "type": "normal"},
+            {"x": 750, "y": 500, "w": 30, "h": 250, "type": "shadow_wall"},
+            {"x": 850, "y": 500, "w": 300, "h": 40, "type": "normal"}
+          ],
+          "enemies": [],
+          "lightSources": [],
+          "fragments": [
+            {"x": 380, "y": 400},
+            {"x": 550, "y": 440},
+            {"x": 1000, "y": 440}
+          ],
+          "startPos": {"x": 80, "y": 400},
+          "endPos": {"x": 1050, "y": 400}
+        },
+        {
+          "id": "ff_10",
+          "name": "森林之心",
+          "description": "第一章Boss关卡",
+          "tutorialFocus": "boss",
+          "platforms": [
+            {"x": 0, "y": 500, "w": 400, "h": 40, "type": "normal"},
+            {"x": 200, "y": 350, "w": 150, "h": 30, "type": "light"},
+            {"x": 500, "y": 300, "w": 150, "h": 30, "type": "shadow"},
+            {"x": 800, "y": 350, "w": 150, "h": 30, "type": "light"},
+            {"x": 1000, "y": 500, "w": 400, "h": 40, "type": "normal"}
+          ],
+          "enemies": [
+            {"x": 600, "y": 440, "type": "shadow_guardian", "attribute": "shadow"}
+          ],
+          "lightSources": [],
+          "fragments": [
+            {"x": 250, "y": 290},
+            {"x": 550, "y": 240},
+            {"x": 850, "y": 290}
+          ],
+          "startPos": {"x": 100, "y": 400},
+          "endPos": {"x": 1200, "y": 400}
+        }
+      ]
+    }
+  ]
+}
