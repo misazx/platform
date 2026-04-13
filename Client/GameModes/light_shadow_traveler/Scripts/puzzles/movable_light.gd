@@ -57,7 +57,7 @@ func _create_light_texture() -> Texture2D:
 	var size: int = int(light_radius * 2)
 	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
-	var center: int = size / 2
+	var center: int = int(size / 2.0)
 	for dy in range(-center, center):
 		for dx in range(-center, center):
 			var dist_val: float = sqrt(dx * dx + dy * dy) / float(center)

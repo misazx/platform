@@ -53,9 +53,11 @@ func _build_ui() -> void:
 	_form_indicator = PanelContainer.new()
 	_form_indicator.name = "FormIndicator"
 	_form_indicator.custom_minimum_size = Vector2(120, 36)
-	_form_indicator.anchors_preset = Control.PRESET_CENTER_TOP
+	_form_indicator.anchors_preset = Control.PRESET_TOP_LEFT
+	_form_indicator.offset_left = 10
 	_form_indicator.offset_top = 55
-	_form_indicator.position.x -= 60
+	_form_indicator.mouse_filter = Control.MOUSE_FILTER_STOP
+	_form_indicator.gui_input.connect(_on_form_button_pressed)
 	var form_style := StyleBoxFlat.new()
 	form_style.bg_color = Color(1.0, 0.95, 0.8, 0.9)
 	form_style.corner_radius_top_left = 18
@@ -138,8 +140,8 @@ func update_form(form: String) -> void:
 		form_style.bg_color = Color(0.2, 0.22, 0.4, 0.9)
 		form_style.border_color = Color(0.4, 0.45, 0.8)
 
-func update_level_name(name: String) -> void:
-	_level_label.text = name
+func update_level_name(level_name: String) -> void:
+	_level_label.text = level_name
 
 func show_tutorial(text: String, duration: float = 3.0) -> void:
 	_tutorial_label.text = "[center]" + text + "[/center]"
@@ -149,3 +151,9 @@ func show_tutorial(text: String, duration: float = 3.0) -> void:
 
 func hide_tutorial() -> void:
 	_tutorial_label.visible = false
+
+signal form_button_pressed
+
+func _on_form_button_pressed(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		form_button_pressed.emit()

@@ -152,6 +152,12 @@ func _update_hud(data: Dictionary) -> void:
 	hud.update_fragments(0, data.get("fragments", []).size())
 	hud.update_form("light")
 	hud.update_level_name(data.get("name", ""))
+	if not hud.form_button_pressed.is_connected(_on_hud_form_button_pressed):
+		hud.form_button_pressed.connect(_on_hud_form_button_pressed)
+
+func _on_hud_form_button_pressed() -> void:
+	if player and not player.is_dead:
+		player._switch_form()
 
 func _show_tutorial(data: Dictionary) -> void:
 	var focus: String = data.get("tutorialFocus", "")
@@ -206,10 +212,10 @@ func _on_goal_reached(body: Node2D) -> void:
 		else:
 			hud.show_tutorial("恭喜通关！所有关卡已完成！", 10.0)
 
-func _on_level_completed(level_id: String) -> void:
+func _on_level_completed(_level_id: String) -> void:
 	hud.show_tutorial("关卡完成！", 2.0)
 
-func _on_level_failed(level_id: String) -> void:
+func _on_level_failed(_level_id: String) -> void:
 	hud.show_tutorial("再试一次！", 2.0)
 
 func _get_next_level_id() -> String:

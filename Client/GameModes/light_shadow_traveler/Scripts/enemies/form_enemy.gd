@@ -112,7 +112,7 @@ func _update_hostility() -> void:
 	else:
 		modulate = Color(0.7, 0.7, 0.7, 0.6)
 
-func _patrol(delta: float) -> void:
+func _patrol(_delta: float) -> void:
 	velocity.x = move_speed * patrol_direction
 	if global_position.x > start_position.x + patrol_range:
 		patrol_direction = -1.0
@@ -125,7 +125,7 @@ func _patrol(delta: float) -> void:
 		if player and global_position.distance_to(player.global_position) < detection_range:
 			state = EnemyState.CHASE
 
-func _chase(delta: float) -> void:
+func _chase(_delta: float) -> void:
 	var player := _get_player()
 	if player == null or not is_hostile:
 		state = EnemyState.PATROL

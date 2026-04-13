@@ -98,12 +98,17 @@ func _physics_process(delta: float) -> void:
 	_update_timers(delta)
 	_handle_input()
 	_apply_gravity(delta)
+	_check_fall_death()
 	_handle_jump()
 	_handle_form_switch()
 	_move(delta)
 	_update_coyote_time()
 	_update_visuals(delta)
 	was_on_floor = is_on_floor()
+
+func _check_fall_death() -> void:
+	if global_position.y > 1000:
+		die()
 
 func _update_timers(delta: float) -> void:
 	if jump_buffer_timer > 0:
@@ -157,7 +162,7 @@ func _handle_jump() -> void:
 func _handle_form_switch() -> void:
 	pass
 
-func _move(delta: float) -> void:
+func _move(_delta: float) -> void:
 	var speed := light_speed if current_form == Form.LIGHT else shadow_speed
 	var input_dir := Input.get_axis("move_left", "move_right")
 	velocity.x = input_dir * speed
