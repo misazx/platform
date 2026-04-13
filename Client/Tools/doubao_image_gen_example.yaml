@@ -1,0 +1,49 @@
+defaults:
+  model: "doubao-seedream-5-0-260128"
+  gen_size: "2K"
+  output_format: "png"
+  watermark: false
+  concurrency: 5
+  retry: 3
+  style_prefix: ""
+  style_suffix: ""
+
+batches:
+  - name: "卡牌攻击图标"
+    size: "64x64"
+    style: "像素艺术风格，复古游戏图标，简洁明快，"
+    output_dir: "Client/GameModes/base_game/Resources/Icons/Cards"
+    resources:
+      - filename: "strike.png"
+        prompt: "一张红色攻击卡牌图标，锋利的剑形符号，深红色背景"
+        negative: "写实,3D,模糊,复杂"
+      - filename: "bash.png"
+        prompt: "一张橙色重击卡牌图标，锤子形状符号，力量感"
+        negative: "写实,3D,模糊,复杂"
+      - filename: "cleave.png"
+        prompt: "一张橙色劈砍卡牌图标，弧形刀刃符号，攻击感"
+        negative: "写实,3D,模糊,复杂"
+
+  - name: "卡牌防御图标"
+    size: "64x64"
+    style: "像素艺术风格，复古游戏图标，简洁明快，"
+    output_dir: "Client/GameModes/base_game/Resources/Icons/Cards"
+    resources:
+      - filename: "defend.png"
+        prompt: "一张蓝色防御卡牌图标，盾牌形状符号，坚固感"
+        negative: "写实,3D,模糊,复杂"
+      - filename: "iron_wave.png"
+        prompt: "一张蓝紫色铁浪卡牌图标，波浪形铁壁符号"
+        negative: "写实,3D,模糊,复杂"
+
+  - name: "角色立绘"
+    size: "200x280"
+    style: "Q版可爱风格，手绘插画，游戏角色立绘，"
+    output_dir: "Client/GameModes/base_game/Resources/Images/Characters"
+    resources:
+      - filename: "Ironclad.png"
+        prompt: "铁甲战士角色立绘，身穿重甲的强壮战士，红色披风，手持巨剑，Q版可爱风格"
+        negative: "写实,恐怖,暴力,3D"
+      - filename: "Silent.png"
+        prompt: "寂静猎手角色立绘，身穿绿色斗篷的敏捷猎人，手持弓箭，Q版可爱风格"
+        negative: "写实,恐怖,暴力,3D"
