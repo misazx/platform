@@ -102,6 +102,10 @@ func _update_hostility() -> void:
 	if player == null:
 		is_hostile = true
 		return
+	if player.is_stealth_active():
+		is_hostile = false
+		modulate = Color(0.5, 0.5, 0.5, 0.4)
+		return
 	match attribute:
 		EnemyAttribute.LIGHT:
 			is_hostile = player.is_shadow_form()

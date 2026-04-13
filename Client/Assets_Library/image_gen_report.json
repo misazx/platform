@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-04-14T02:18:20.933381",
+  "document": "doubao_image_gen_example.yaml",
+  "stats": {
+    "total": 3,
+    "success": 3,
+    "fail": 0,
+    "skip": 0,
+    "elapsed_seconds": 32.7
+  }
+}

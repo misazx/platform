@@ -10,6 +10,9 @@ var level_root: Node2D
 var bg_parallax: ParallaxBackground
 var last_checkpoint_pos := Vector2(100, 400)
 var active_switches: Dictionary = {}
+var environment: EnvironmentSystem
+var current_level_id := ""
+var current_chapter_id := ""
 
 func _ready() -> void:
 	_setup_scene()
@@ -24,6 +27,8 @@ func _setup_scene() -> void:
 	level_manager.level_failed.connect(_on_level_failed)
 	hud = GameHUD.new()
 	add_child(hud)
+	environment = EnvironmentSystem.new()
+	add_child(environment)
 	bg_parallax = ParallaxBackground.new()
 	bg_parallax.name = "Background"
 	add_child(bg_parallax)
@@ -44,6 +49,8 @@ func _setup_input_actions() -> void:
 	_ensure_action("jump", [KEY_SPACE, KEY_W, KEY_UP])
 	_ensure_action("switch_form", [KEY_SHIFT, KEY_TAB])
 	_ensure_action("push_light", [KEY_E, KEY_J])
+	_ensure_action("light_dash", [KEY_Q, KEY_K])
+	_ensure_action("shadow_stealth", [KEY_S, KEY_DOWN])
 
 func _ensure_action(action_name: String, keycodes: Array) -> void:
 	if InputMap.has_action(action_name):
@@ -167,6 +174,7 @@ func _spawn_player(data: Dictionary) -> void:
 	player.health_changed.connect(_on_health_changed)
 	player.player_died.connect(_on_player_died)
 	player.fragment_collected.connect(_on_fragment_count_changed)
+	player.energy_changed.connect(_on_energy_changed)
 	level_root.add_child(player)
 	if is_instance_valid(camera) and camera.get_parent():
 		camera.get_parent().remove_child(camera)
@@ -183,6 +191,8 @@ func _update_hud(data: Dictionary) -> void:
 	hud.update_fragments(0, data.get("fragments", []).size())
 	hud.update_form("light")
 	hud.update_level_name(data.get("name", ""))
+	hud.update_energy(player.form_energy, PlayerCharacter.MAX_FORM_ENERGY)
+	hud.start_timer()
 	if not hud.form_button_pressed.is_connected(_on_hud_form_button_pressed):
 		hud.form_button_pressed.connect(_on_hud_form_button_pressed)
 
@@ -232,10 +242,15 @@ func _on_health_changed(health: int, max_health: int) -> void:
 
 func _on_player_died() -> void:
 	ParticleEffect.spawn_at(level_root, player.global_position, ParticleEffect.EffectType.DEATH, 30)
+	hud.show_damage_flash()
+	hud.stop_timer()
 	level_manager.fail_level()
 	get_tree().create_timer(1.5).timeout.connect(func():
 		_respawn_at_checkpoint()
 	)
+
+func _on_energy_changed(current: float, max_val: float) -> void:
+	hud.update_energy(current, max_val)
 
 func _on_fragment_collected(_fragment: MemoryFragment) -> void:
 	level_manager.add_fragment()

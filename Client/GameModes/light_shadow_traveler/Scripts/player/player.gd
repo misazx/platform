@@ -6,12 +6,21 @@ signal health_changed(new_health: int, max_health: int)
 signal player_died
 signal fragment_collected(count: int)
 signal checkpoint_reached(checkpoint_id: String)
+signal energy_changed(current: float, max_val: float)
 
 enum Form { LIGHT, SHADOW }
 
 const COYOTE_TIME := 0.1
 const INPUT_BUFFER_TIME := 0.1
 const FORM_SWITCH_COOLDOWN := 0.3
+const LIGHT_DASH_SPEED := 600.0
+const LIGHT_DASH_DURATION := 0.15
+const LIGHT_DASH_ENERGY := 25.0
+const SHADOW_STEALTH_SPEED_MULT := 0.4
+const SHADOW_STEALTH_ENERGY_RATE := 15.0
+const MAX_FORM_ENERGY := 100.0
+const ENERGY_REGEN_RATE := 12.0
+const LIGHT_WALL_JUMP_FORCE := -350.0
 
 @export var light_speed := 250.0
 @export var light_jump_force := -420.0
@@ -35,6 +44,13 @@ var form_switch_timer := 0.0
 var invincible_timer := 0.0
 var was_on_floor := false
 var facing_right := true
+var form_energy := MAX_FORM_ENERGY
+var is_dashing := false
+var dash_timer := 0.0
+var is_stealthing := false
+var can_wall_jump := false
+var wall_jump_dir := 0.0
+var _trail_timer := 0.0
 
 var _light_color := Color(1.0, 0.95, 0.85, 1.0)
 var _shadow_color := Color(0.3, 0.35, 0.6, 0.85)
@@ -45,6 +61,10 @@ var glow: PointLight2D
 var collision: CollisionShape2D
 var anim_player: AnimationPlayer
 var ray_floor: RayCast2D
+var ray_wall_left: RayCast2D
+var ray_wall_right: RayCast2D
+var stealth_visual: ColorRect
+var dash_trail: Node2D
 
 func _ready() -> void:
 	current_health = max_health
@@ -70,6 +90,27 @@ func _setup_visuals() -> void:
 	ray_floor.target_position = Vector2(0, 20)
 	ray_floor.enabled = true
 	add_child(ray_floor)
+	ray_wall_left = RayCast2D.new()
+	ray_wall_left.name = "RayWallLeft"
+	ray_wall_left.target_position = Vector2(-16, 0)
+	ray_wall_left.enabled = true
+	add_child(ray_wall_left)
+	ray_wall_right = RayCast2D.new()
+	ray_wall_right.name = "RayWallRight"
+	ray_wall_right.target_position = Vector2(16, 0)
+	ray_wall_right.enabled = true
+	add_child(ray_wall_right)
+	stealth_visual = ColorRect.new()
+	stealth_visual.name = "StealthOverlay"
+	stealth_visual.size = Vector2(40, 40)
+	stealth_visual.position = Vector2(-20, -20)
+	stealth_visual.color = Color(0.2, 0.25, 0.5, 0.0)
+	stealth_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stealth_visual.z_index = 1
+	add_child(stealth_visual)
+	dash_trail = Node2D.new()
+	dash_trail.name = "DashTrail"
+	add_child(dash_trail)
 	_create_player_sprite()
 
 func _create_player_sprite() -> void:
@@ -100,10 +141,16 @@ func _physics_process(delta: float) -> void:
 	_apply_gravity(delta)
 	_check_fall_death()
 	_handle_jump()
+	_handle_wall_jump()
 	_handle_form_switch()
+	_handle_dash(delta)
+	_handle_stealth(delta)
+	_regen_energy(delta)
 	_move(delta)
 	_update_coyote_time()
+	_update_wall_detection()
 	_update_visuals(delta)
+	_update_dash_trail(delta)
 	was_on_floor = is_on_floor()
 
 func _check_fall_death() -> void:
@@ -120,6 +167,10 @@ func _update_timers(delta: float) -> void:
 		if invincible_timer <= 0:
 			is_invincible = false
 			modulate.a = 1.0
+	if is_dashing:
+		dash_timer -= delta
+		if dash_timer <= 0:
+			is_dashing = false
 
 func _handle_input() -> void:
 	if Input.is_action_just_pressed("jump"):
@@ -130,14 +181,87 @@ func _handle_input() -> void:
 		facing_right = true
 	if Input.is_action_just_pressed("move_left"):
 		facing_right = false
+	if Input.is_action_just_pressed("light_dash") and current_form == Form.LIGHT and form_energy >= LIGHT_DASH_ENERGY and not is_dashing:
+		_start_dash()
+	if Input.is_action_pressed("shadow_stealth") and current_form == Form.SHADOW and form_energy > 0:
+		is_stealthing = true
+	else:
+		if is_stealthing:
+			is_stealthing = false
+			stealth_visual.color = Color(0.2, 0.25, 0.5, 0.0)
 
 func _switch_form() -> void:
 	form_switch_timer = FORM_SWITCH_COOLDOWN
 	var new_form := Form.SHADOW if current_form == Form.LIGHT else Form.LIGHT
 	current_form = new_form
+	is_stealthing = false
+	is_dashing = false
+	stealth_visual.color = Color(0.2, 0.25, 0.5, 0.0)
 	_update_form_visuals()
 	form_changed.emit("shadow" if current_form == Form.SHADOW else "light")
 	ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.FORM_SWITCH_LIGHT if current_form == Form.LIGHT else ParticleEffect.EffectType.FORM_SWITCH_SHADOW, 15)
+
+func _start_dash() -> void:
+	is_dashing = true
+	dash_timer = LIGHT_DASH_DURATION
+	form_energy -= LIGHT_DASH_ENERGY
+	energy_changed.emit(form_energy, MAX_FORM_ENERGY)
+	velocity.y = 0.0
+	ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.FORM_SWITCH_LIGHT, 20)
+
+func _handle_dash(delta: float) -> void:
+	if not is_dashing:
+		return
+	var dash_dir := 1.0 if facing_right else -1.0
+	velocity.x = LIGHT_DASH_SPEED * dash_dir
+	velocity.y = 0.0
+	move_and_slide()
+
+func _handle_stealth(delta: float) -> void:
+	if not is_stealthing:
+		return
+	form_energy -= SHADOW_STEALTH_ENERGY_RATE * delta
+	if form_energy <= 0:
+		form_energy = 0
+		is_stealthing = false
+		stealth_visual.color = Color(0.2, 0.25, 0.5, 0.0)
+	energy_changed.emit(form_energy, MAX_FORM_ENERGY)
+	stealth_visual.color = Color(0.2, 0.25, 0.5, 0.4)
+	if glow:
+		glow.energy = 0.1
+
+func _regen_energy(delta: float) -> void:
+	if is_dashing or is_stealthing:
+		return
+	var regen := ENERGY_REGEN_RATE * delta
+	if current_form == Form.LIGHT:
+		regen *= 1.5
+	form_energy = min(form_energy + regen, MAX_FORM_ENERGY)
+	energy_changed.emit(form_energy, MAX_FORM_ENERGY)
+
+func _update_wall_detection() -> void:
+	if is_on_floor():
+		can_wall_jump = false
+		return
+	if ray_wall_left.is_colliding() and not facing_right:
+		can_wall_jump = true
+		wall_jump_dir = 1.0
+	elif ray_wall_right.is_colliding() and facing_right:
+		can_wall_jump = true
+		wall_jump_dir = -1.0
+	else:
+		can_wall_jump = false
+
+func _handle_wall_jump() -> void:
+	if not can_wall_jump:
+		return
+	if jump_buffer_timer > 0 and current_form == Form.LIGHT:
+		velocity.x = light_speed * wall_jump_dir
+		velocity.y = LIGHT_WALL_JUMP_FORCE
+		jump_buffer_timer = 0.0
+		coyote_timer = 0.0
+		facing_right = wall_jump_dir > 0
+		ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.FORM_SWITCH_LIGHT, 8)
 
 func is_light_form() -> bool:
 	return current_form == Form.LIGHT
@@ -145,7 +269,12 @@ func is_light_form() -> bool:
 func is_shadow_form() -> bool:
 	return current_form == Form.SHADOW
 
+func is_stealth_active() -> bool:
+	return is_stealthing
+
 func _apply_gravity(delta: float) -> void:
+	if is_dashing:
+		return
 	if is_on_floor():
 		is_glidering = false
 		return
@@ -170,7 +299,11 @@ func _handle_form_switch() -> void:
 	pass
 
 func _move(_delta: float) -> void:
+	if is_dashing:
+		return
 	var speed := light_speed if current_form == Form.LIGHT else shadow_speed
+	if is_stealthing:
+		speed *= SHADOW_STEALTH_SPEED_MULT
 	var input_dir := Input.get_axis("move_left", "move_right")
 	velocity.x = input_dir * speed
 	if input_dir != 0:
@@ -221,14 +354,34 @@ func _update_visuals(delta: float) -> void:
 		_glow_intensity = min(_glow_intensity + delta * 3.0, 1.0)
 	else:
 		_glow_intensity = max(_glow_intensity - delta * 3.0, 0.0)
-	if glow:
+	if glow and not is_stealthing:
 		glow.energy = (1.2 if current_form == Form.LIGHT else 0.6) + _glow_intensity * 0.5
+	if is_dashing:
+		modulate.a = 0.7
+
+func _update_dash_trail(delta: float) -> void:
+	if not is_dashing:
+		for child in dash_trail.get_children():
+			child.modulate.a -= delta * 5.0
+			if child.modulate.a <= 0:
+				child.queue_free()
+		return
+	_trail_timer += delta
+	if _trail_timer > 0.03:
+		_trail_timer = 0.0
+		var trail_sprite := Sprite2D.new()
+		trail_sprite.texture = sprite.texture
+		trail_sprite.flip_h = sprite.flip_h
+		trail_sprite.global_position = global_position
+		trail_sprite.modulate = Color(1.0, 0.95, 0.7, 0.5)
+		dash_trail.add_child(trail_sprite)
 
 func take_damage(amount: int = 1) -> void:
-	if is_invincible or is_dead:
+	if is_invincible or is_dead or is_stealthing:
 		return
 	current_health -= amount
 	health_changed.emit(current_health, max_health)
+	ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.DAMAGE_TAKEN, 15)
 	if current_health <= 0:
 		die()
 	else:
@@ -248,6 +401,7 @@ func die() -> void:
 func heal(amount: int = 1) -> void:
 	current_health = min(current_health + amount, max_health)
 	health_changed.emit(current_health, max_health)
+	ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.HEAL, 12)
 
 func collect_fragment() -> void:
 	fragments_collected += 1
@@ -258,9 +412,3 @@ func reach_checkpoint(checkpoint_id: String) -> void:
 
 func get_form_name() -> String:
 	return "light" if current_form == Form.LIGHT else "shadow"
-
-func is_light_form() -> bool:
-	return current_form == Form.LIGHT
-
-func is_shadow_form() -> bool:
-	return current_form == Form.SHADOW
