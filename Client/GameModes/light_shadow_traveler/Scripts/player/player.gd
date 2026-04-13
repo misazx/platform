@@ -181,14 +181,20 @@ func _update_coyote_time() -> void:
 
 func _update_form_visuals() -> void:
 	_create_player_sprite()
+	if not is_instance_valid(glow):
+		return
 	if current_form == Form.LIGHT:
 		glow.color = Color(1.0, 0.95, 0.8, 0.6)
 		glow.energy = 1.2
-		glow.texture = _create_glow_texture(Color(1.0, 0.95, 0.8))
+		var tex := _create_glow_texture(Color(1.0, 0.95, 0.8))
+		if tex:
+			glow.texture = tex
 	else:
 		glow.color = Color(0.3, 0.35, 0.7, 0.4)
 		glow.energy = 0.6
-		glow.texture = _create_glow_texture(Color(0.3, 0.35, 0.7))
+		var tex := _create_glow_texture(Color(0.3, 0.35, 0.7))
+		if tex:
+			glow.texture = tex
 
 func _create_glow_texture(color: Color) -> Texture2D:
 	var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)

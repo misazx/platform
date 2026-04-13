@@ -144,7 +144,14 @@ func _spawn_player(data: Dictionary) -> void:
 	player.player_died.connect(_on_player_died)
 	player.fragment_collected.connect(_on_fragment_count_changed)
 	level_root.add_child(player)
-	camera.get_parent().remove_child(camera)
+	if is_instance_valid(camera) and camera.get_parent():
+		camera.get_parent().remove_child(camera)
+	else:
+		camera = Camera2D.new()
+		camera.name = "Camera"
+		camera.zoom = Vector2(1.5, 1.5)
+		camera.position_smoothing_enabled = true
+		camera.position_smoothing_speed = 8.0
 	player.add_child(camera)
 
 func _update_hud(data: Dictionary) -> void:
