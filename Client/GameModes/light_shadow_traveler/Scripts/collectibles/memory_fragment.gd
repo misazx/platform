@@ -9,10 +9,9 @@ signal collected(fragment: MemoryFragment)
 var is_collected := false
 var _bob_time := 0.0
 var _initial_y := 0.0
-
-@onready var sprite: Sprite2D = $Sprite2D
-@onready var glow: PointLight2D = $FragmentGlow
-@onready var collect_area: CollisionShape2D = $CollectArea
+var sprite: Sprite2D
+var glow: PointLight2D
+var collect_area: CollisionShape2D
 
 func _ready() -> void:
 	_initial_y = position.y
@@ -23,9 +22,8 @@ func _ready() -> void:
 		monitoring = false
 
 func _setup_visuals() -> void:
-	if not sprite:
-		sprite = Sprite2D.new()
-		add_child(sprite)
+	sprite = Sprite2D.new()
+	add_child(sprite)
 	var img := Image.create(24, 24, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
 	for dy in range(-10, 11):
@@ -46,20 +44,18 @@ func _setup_visuals() -> void:
 				if px + dx >= 0 and px + dx < 24 and py + dy >= 0 and py + dy < 24:
 					img.set_pixel(px + dx, py + dy, Color(1, 0.9, 0.5, 1.0))
 	sprite.texture = ImageTexture.create_from_image(img)
-	if not glow:
-		glow = PointLight2D.new()
-		glow.name = "FragmentGlow"
-		add_child(glow)
+	glow = PointLight2D.new()
+	glow.name = "FragmentGlow"
+	add_child(glow)
 	glow.color = Color(0.8, 0.7, 1.0, 0.5)
 	glow.energy = 0.8
 	glow.texture = _make_glow()
-	if not collect_area:
-		collect_area = CollisionShape2D.new()
-		collect_area.name = "CollectArea"
-		add_child(collect_area)
-		var shape := CircleShape2D.new()
-		shape.radius = 15.0
-		collect_area.shape = shape
+	collect_area = CollisionShape2D.new()
+	collect_area.name = "CollectArea"
+	add_child(collect_area)
+	var shape := CircleShape2D.new()
+	shape.radius = 15.0
+	collect_area.shape = shape
 
 func _make_glow() -> Texture2D:
 	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)

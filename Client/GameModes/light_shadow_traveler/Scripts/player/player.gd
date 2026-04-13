@@ -40,11 +40,11 @@ var _light_color := Color(1.0, 0.95, 0.85, 1.0)
 var _shadow_color := Color(0.3, 0.35, 0.6, 0.85)
 var _glow_intensity := 0.0
 
-@onready var sprite := $Sprite2D as Sprite2D
-@onready var glow := $Glow as PointLight2D
-@onready var collision := $CollisionShape2D as CollisionShape2D
-@onready var anim_player := $AnimationPlayer as AnimationPlayer
-@onready var ray_floor := $RayCastFloor as RayCast2D
+var sprite: Sprite2D
+var glow: PointLight2D
+var collision: CollisionShape2D
+var anim_player: AnimationPlayer
+var ray_floor: RayCast2D
 
 func _ready() -> void:
 	current_health = max_health
@@ -54,26 +54,22 @@ func _ready() -> void:
 	health_changed.emit(current_health, max_health)
 
 func _setup_visuals() -> void:
-	if not sprite:
-		sprite = Sprite2D.new()
-		add_child(sprite)
-	if not glow:
-		glow = PointLight2D.new()
-		glow.name = "Glow"
-		add_child(glow)
-	if not collision:
-		collision = CollisionShape2D.new()
-		var shape = CapsuleShape2D.new()
-		shape.radius = 12.0
-		shape.height = 28.0
-		collision.shape = shape
-		add_child(collision)
-	if not ray_floor:
-		ray_floor = RayCast2D.new()
-		ray_floor.name = "RayCastFloor"
-		ray_floor.target_position = Vector2(0, 20)
-		ray_floor.enabled = true
-		add_child(ray_floor)
+	sprite = Sprite2D.new()
+	add_child(sprite)
+	glow = PointLight2D.new()
+	glow.name = "Glow"
+	add_child(glow)
+	collision = CollisionShape2D.new()
+	var shape = CapsuleShape2D.new()
+	shape.radius = 12.0
+	shape.height = 28.0
+	collision.shape = shape
+	add_child(collision)
+	ray_floor = RayCast2D.new()
+	ray_floor.name = "RayCastFloor"
+	ray_floor.target_position = Vector2(0, 20)
+	ray_floor.enabled = true
+	add_child(ray_floor)
 	_create_player_sprite()
 
 func _create_player_sprite() -> void:

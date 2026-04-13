@@ -11,9 +11,9 @@ var is_active := true
 var _original_color: Color
 var _inactive_color := Color(0.3, 0.3, 0.3, 0.3)
 
-@onready var collision_shape: CollisionShape2D = $CollisionShape2D
-@onready var visual: ColorRect = $Visual
-@onready var glow: PointLight2D = $PlatformGlow
+var collision_shape: CollisionShape2D
+var visual: ColorRect
+var glow: PointLight2D
 
 func _ready() -> void:
 	_setup_platform()

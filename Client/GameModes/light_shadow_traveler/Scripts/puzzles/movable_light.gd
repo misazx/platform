@@ -12,9 +12,9 @@ signal shadow_platforms_updated
 var is_being_pushed := false
 var _push_direction: float = 0.0
 
-@onready var light: PointLight2D = $LightSource
-@onready var sprite: Sprite2D = $Sprite2D
-@onready var interaction_area: Area2D = $InteractionArea
+var light: PointLight2D
+var sprite: Sprite2D
+var interaction_area: Area2D
 
 func _ready() -> void:
 	_setup_visuals()

@@ -21,10 +21,10 @@ var state_timer := 0.0
 var is_hostile := true
 var facing_right := true
 
-@onready var sprite: Sprite2D = $Sprite2D
-@onready var detection_area: Area2D = $DetectionArea
-@onready var attack_area: Area2D = $AttackArea
-@onready var health_bar: ProgressBar = $HealthBar
+var sprite: Sprite2D
+var detection_area: Area2D
+var attack_area: Area2D
+var health_bar: ProgressBar
 
 func _ready() -> void:
 	start_position = global_position
