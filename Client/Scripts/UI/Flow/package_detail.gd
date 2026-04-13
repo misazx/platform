@@ -6,7 +6,7 @@ signal back_pressed()
 
 var _package_id: String = ""
 var _package_data: Dictionary = {}
-var _provider: PackageProvider = null
+var _provider: Dictionary = {}
 
 var _bg_overlay: ColorRect
 var _main_panel: PanelContainer
@@ -233,8 +233,8 @@ func _populate_saves() -> void:
 	_saves_tab.add_child(saves_title)
 
 	var save_slots: Array = []
-	if _provider != null:
-		save_slots = _provider.get_save_slots()
+	if not _provider.is_empty():
+		save_slots = _provider.get("save_slots", [])
 
 	if save_slots.is_empty():
 		for i in range(3):
@@ -332,8 +332,8 @@ func _populate_achievements() -> void:
 	_achievements_tab.add_child(achievements_title)
 
 	var achievements: Array = []
-	if _provider != null:
-		achievements = _provider.get_achievement_data()
+	if not _provider.is_empty():
+		achievements = _provider.get("achievement_data", [])
 
 	if achievements.is_empty():
 		var default_achievements := [
@@ -427,8 +427,8 @@ func _populate_leaderboard() -> void:
 		header_row.add_child(h_label)
 
 	var leaderboard: Array = []
-	if _provider != null:
-		leaderboard = _provider.get_leaderboard_data()
+	if not _provider.is_empty():
+		leaderboard = _provider.get("leaderboard_data", [])
 
 	if leaderboard.is_empty():
 		var empty_label := Label.new()
