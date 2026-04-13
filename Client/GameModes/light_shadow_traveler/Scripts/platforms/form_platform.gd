@@ -76,17 +76,21 @@ func _update_visuals() -> void:
 		else:
 			visual.color = _inactive_color
 			visual.modulate.a = 0.3
-	if glow:
+	if glow and is_instance_valid(glow):
 		if is_active:
 			match platform_type:
 				PlatformType.LIGHT:
 					glow.color = Color(1.0, 0.95, 0.7, 0.4)
 					glow.energy = 0.8
-					glow.texture = _make_glow_tex(Color(1.0, 0.95, 0.7))
+					var tex := _make_glow_tex(Color(1.0, 0.95, 0.7))
+					if tex:
+						glow.texture = tex
 				PlatformType.SHADOW, PlatformType.SHADOW_WALL:
 					glow.color = Color(0.3, 0.35, 0.7, 0.3)
 					glow.energy = 0.5
-					glow.texture = _make_glow_tex(Color(0.3, 0.35, 0.7))
+					var tex := _make_glow_tex(Color(0.3, 0.35, 0.7))
+					if tex:
+						glow.texture = tex
 				_:
 					glow.energy = 0.0
 		else:

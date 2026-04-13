@@ -1,0 +1,1 @@
+{"nodes": [{"id": "check_js3", "label": "check_js3.py", "file_type": "code", "source_file": "check_js3.py", "source_location": "L1"}], "edges": [{"source": "check_js3", "target": "re", "relation": "imports", "confidence": "EXTRACTED", "source_file": "check_js3.py", "source_location": "L1", "weight": 1.0}]}

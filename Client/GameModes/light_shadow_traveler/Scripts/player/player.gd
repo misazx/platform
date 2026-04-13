@@ -119,12 +119,19 @@ func _update_timers(delta: float) -> void:
 func _handle_input() -> void:
 	if Input.is_action_just_pressed("jump"):
 		jump_buffer_timer = INPUT_BUFFER_TIME
-	if Input.is_action_just_pressed("switch_form"):
-		form_switch_timer = FORM_SWITCH_COOLDOWN
+	if Input.is_action_just_pressed("switch_form") and form_switch_timer <= 0:
+		_switch_form()
 	if Input.is_action_just_pressed("move_right"):
 		facing_right = true
 	if Input.is_action_just_pressed("move_left"):
 		facing_right = false
+
+func _switch_form() -> void:
+	form_switch_timer = FORM_SWITCH_COOLDOWN
+	var new_form := Form.SHADOW if current_form == Form.LIGHT else Form.LIGHT
+	current_form = new_form
+	_update_form_visuals()
+	form_changed.emit("shadow" if current_form == Form.SHADOW else "light")
 
 func _apply_gravity(delta: float) -> void:
 	if is_on_floor():
@@ -148,12 +155,7 @@ func _handle_jump() -> void:
 			is_glidering = false
 
 func _handle_form_switch() -> void:
-	if form_switch_timer > 0 and form_switch_timer < FORM_SWITCH_COOLDOWN - 0.01:
-		var new_form := Form.SHADOW if current_form == Form.LIGHT else Form.LIGHT
-		current_form = new_form
-		form_switch_timer = 0.0
-		_update_form_visuals()
-		form_changed.emit("shadow" if current_form == Form.SHADOW else "light")
+	pass
 
 func _move(delta: float) -> void:
 	var speed := light_speed if current_form == Form.LIGHT else shadow_speed

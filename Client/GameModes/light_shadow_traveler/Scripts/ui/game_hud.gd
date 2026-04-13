@@ -55,7 +55,7 @@ func _build_ui() -> void:
 	_form_indicator.custom_minimum_size = Vector2(120, 36)
 	_form_indicator.anchors_preset = Control.PRESET_CENTER_TOP
 	_form_indicator.offset_top = 55
-	_form_indicator.offset_left = -60
+	_form_indicator.position.x -= 60
 	var form_style := StyleBoxFlat.new()
 	form_style.bg_color = Color(1.0, 0.95, 0.8, 0.9)
 	form_style.corner_radius_top_left = 18
