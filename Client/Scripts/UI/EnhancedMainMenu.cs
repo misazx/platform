@@ -15,11 +15,18 @@ namespace RoguelikeGame.UI
 		private Button _continueButton;
 		private Button _packageStoreButton;
 		private Button _multiplayerButton;
+		private Button _leaderboardButton;
 		private Button _quitButton;
 		private Label _titleLabel;
 		private Label _versionLabel;
+		private Label _userStatusLabel;
+		private Button _authButton;
 		private PackageStoreUI _packageStoreUI;
 		private MultiplayerPanel _multiplayerPanel;
+		private LeaderboardPanel _leaderboardPanel;
+		private GameModeSelectPanel _gameModeSelectPanel;
+
+		private PackageData _currentLaunchingPackage;
 
 		[Export]
 		public string GameTitle { get; set; } = "Roguelike Game";
@@ -74,6 +81,8 @@ namespace RoguelikeGame.UI
 			_titleLabel.Modulate = new Color(1f, 0.95f, 0.8f);
 			vbox.AddChild(_titleLabel);
 
+			CreateUserBar(vbox);
+
 			var subtitleLabel = new Label
 			{
 				Text = "✨ 多玩法包系统 v1.0 ✨",
@@ -98,6 +107,10 @@ namespace RoguelikeGame.UI
 		_multiplayerButton = CreateStyledButton("🌐 多人游戏");
 		_multiplayerButton.Modulate = new Color(0.7f, 0.85f, 1f);
 		vbox.AddChild(_multiplayerButton);
+
+		_leaderboardButton = CreateStyledButton("🏆 排行榜");
+		_leaderboardButton.Modulate = new Color(1f, 0.85f, 0.3f);
+		vbox.AddChild(_leaderboardButton);
 
 		_continueButton = CreateStyledButton("📂 继续游戏");
 			_continueButton.Disabled = true;
@@ -180,6 +193,19 @@ namespace RoguelikeGame.UI
 			_multiplayerPanel.OnOnlineSelected += OnMultiplayerOnlineSelected;
 			_multiplayerPanel.OnBack += OnMultiplayerBack;
 			AddChild(_multiplayerPanel);
+
+			_leaderboardPanel = new LeaderboardPanel();
+			_leaderboardPanel.Visible = false;
+			_leaderboardPanel.OnBack += () => _leaderboardPanel.Visible = false;
+			AddChild(_leaderboardPanel);
+
+			_gameModeSelectPanel = new GameModeSelectPanel();
+			_gameModeSelectPanel.Visible = false;
+			_gameModeSelectPanel.OnSinglePlayerSelected += OnSinglePlayerSelected;
+			_gameModeSelectPanel.OnCreateRoomSelected += OnCreateRoomSelected;
+			_gameModeSelectPanel.OnJoinRoomSelected += OnJoinRoomSelected;
+			_gameModeSelectPanel.OnBack += () => _gameModeSelectPanel.Visible = false;
+			AddChild(_gameModeSelectPanel);
 		}
 
 		private void ConnectSignals()
@@ -187,12 +213,25 @@ namespace RoguelikeGame.UI
 			_newGameButton.Pressed += OnNewGamePressed;
 			_packageStoreButton.Pressed += OnPackageStorePressed;
 			_multiplayerButton.Pressed += OnMultiplayerPressed;
+			_leaderboardButton.Pressed += OnLeaderboardPressed;
 			_continueButton.Pressed += OnContinuePressed;
 			_quitButton.Pressed += OnQuitPressed;
 
 			if (PackageManager.Instance != null)
 			{
 				PackageManager.Instance.PackageListUpdated += UpdatePackageCount;
+			}
+
+			if (AuthSystem.Instance != null)
+			{
+				AuthSystem.Instance.Connect(AuthSystem.SignalName.LoginCompleted, Callable.From((bool success, string msg) =>
+				{
+					if (success) UpdateAuthUI();
+				}));
+				AuthSystem.Instance.Connect(AuthSystem.SignalName.Logout, Callable.From(() =>
+				{
+					UpdateAuthUI();
+				}));
 			}
 		}
 
@@ -227,15 +266,16 @@ namespace RoguelikeGame.UI
 		private void OnNewGamePressed()
 		{
 			GD.Print("[EnhancedMainMenu] Starting base game");
-			Hide();
 
-			if (PackageManager.Instance != null &&
-			    PackageManager.Instance.CanLaunchPackage("base_game"))
+			var pkg = PackageManager.Instance?.GetPackage("base_game");
+			if (pkg != null)
 			{
-				PackageManager.Instance.LaunchPackage("base_game");
+				_currentLaunchingPackage = pkg;
+				_gameModeSelectPanel.ShowForPackage(pkg);
 			}
 			else
 			{
+				Hide();
 				GameInitializer.QuickStart();
 			}
 		}
@@ -340,6 +380,116 @@ namespace RoguelikeGame.UI
 		private void OnLeaveLobby()
 		{
 			GD.Print("[EnhancedMainMenu] Leaving lobby");
+		}
+
+		private void CreateUserBar(VBoxContainer parent)
+		{
+			var userBar = new HBoxContainer();
+			userBar.AddThemeConstantOverride("separation", 10);
+			parent.AddChild(userBar);
+
+			_userStatusLabel = new Label
+			{
+				Text = "",
+				HorizontalAlignment = HorizontalAlignment.Left,
+				CustomMinimumSize = new Vector2(300, 28),
+				MouseFilter = MouseFilterEnum.Ignore
+			};
+			_userStatusLabel.AddThemeFontSizeOverride("font_size", 13);
+			userBar.AddChild(_userStatusLabel);
+
+			userBar.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
+
+			_authButton = new Button
+			{
+				Text = "🔐 登录 / 注册",
+				CustomMinimumSize = new Vector2(140, 32)
+			};
+			_authButton.AddThemeFontSizeOverride("font_size", 13);
+			_authButton.Pressed += OnAuthButtonPressed;
+			userBar.AddChild(_authButton);
+
+			UpdateAuthUI();
+		}
+
+		private void UpdateAuthUI()
+		{
+			if (AuthSystem.Instance?.IsAuthenticated == true && AuthSystem.Instance.CurrentUser != null)
+			{
+				var user = AuthSystem.Instance.CurrentUser;
+				_userStatusLabel.Text = $"👤 {user.Username} | Lv.{user.Level} | 胜场: {user.GamesWon}";
+				_userStatusLabel.Modulate = new Color(0.4f, 0.9f, 0.6f);
+				_authButton.Text = "🚪 登出";
+			}
+			else
+			{
+				_userStatusLabel.Text = "未登录 - 单人模式可用，多人模式需登录";
+				_userStatusLabel.Modulate = new Color(0.6f, 0.62f, 0.68f);
+				_authButton.Text = "🔐 登录 / 注册";
+			}
+		}
+
+		private void OnAuthButtonPressed()
+		{
+			if (AuthSystem.Instance?.IsAuthenticated == true)
+			{
+				AuthSystem.Instance.PerformLogout();
+				UpdateAuthUI();
+			}
+			else
+			{
+				ShowLoginPanel();
+			}
+		}
+
+		private void OnLeaderboardPressed()
+		{
+			GD.Print("[EnhancedMainMenu] Opening leaderboard");
+			_leaderboardPanel.Visible = true;
+		}
+
+		private void OnSinglePlayerSelected()
+		{
+			GD.Print("[EnhancedMainMenu] Single player mode selected");
+			_gameModeSelectPanel.Visible = false;
+			Hide();
+
+			if (_currentLaunchingPackage != null && PackageManager.Instance?.CanLaunchPackage(_currentLaunchingPackage.Id) == true)
+			{
+				PackageManager.Instance.LaunchPackage(_currentLaunchingPackage.Id);
+			}
+			else if (_currentLaunchingPackage?.Id == "base_game")
+			{
+				GameInitializer.QuickStart();
+			}
+		}
+
+		private void OnCreateRoomSelected()
+		{
+			GD.Print("[EnhancedMainMenu] Create room selected");
+			_gameModeSelectPanel.Visible = false;
+
+			if (!EnsureAuthenticated()) return;
+
+			EnterLobby();
+		}
+
+		private void OnJoinRoomSelected()
+		{
+			GD.Print("[EnhancedMainMenu] Join room selected");
+			_gameModeSelectPanel.Visible = false;
+
+			if (!EnsureAuthenticated()) return;
+
+			EnterLobby();
+		}
+
+		private bool EnsureAuthenticated()
+		{
+			if (AuthSystem.Instance?.IsAuthenticated == true) return true;
+
+			ShowLoginPanel();
+			return false;
 		}
 
 		private Texture2D TryLoadBackground()

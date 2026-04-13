@@ -176,11 +176,11 @@ namespace RoguelikeGame.UI.Panels
 				_packageSelector.Selected = selectedIndex;
 		}
 
-		private async void OnPackageChanged(long index)
+		private void OnPackageChanged(long index)
 		{
 			if (index >= 0 && index < _packageSelector.ItemCount)
 			{
-				await LoadLeaderboard();
+				LoadLeaderboard();
 			}
 		}
 
@@ -271,9 +271,9 @@ namespace RoguelikeGame.UI.Panels
 					_statsLabel.Text = $"📊 总场次: {totalGames} | 玩家: {players} | 胜利: {victories} | 最高分: {highScore}";
 				}
 
-				if (AuthSystem.Instance?.IsAuthenticated == true && !string.IsNullOrEmpty(AuthSystem.Instance.UserId))
+				if (AuthSystem.Instance?.IsAuthenticated == true && !string.IsNullOrEmpty(AuthSystem.Instance.CurrentUser?.Id))
 				{
-					await LoadUserRank(packageId);
+					LoadUserRank(packageId);
 				}
 				else
 				{
@@ -295,7 +295,7 @@ namespace RoguelikeGame.UI.Panels
 		{
 			try
 			{
-				string userId = AuthSystem.Instance.UserId;
+				string userId = AuthSystem.Instance.CurrentUser?.Id ?? "";
 				string url = $"{_baseUrl}/api/leaderboard/{packageId}/user/{userId}";
 
 				var response = await _httpClient.GetAsync(url);
@@ -323,7 +323,7 @@ namespace RoguelikeGame.UI.Panels
 			int idx = _packageSelector.Selected;
 			if (idx >= 0)
 			{
-				var meta = _packageSelector.GetItemSelectedMetadata(idx);
+				var meta = _packageSelector.GetItemMetadata(idx);
 				if (meta.VariantType == Variant.Type.String)
 					return meta.AsString();
 			}

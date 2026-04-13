@@ -14,7 +14,7 @@ namespace RoguelikeGame.UI.Panels
 		private Button _joinRoomButton;
 		private Button _backButton;
 		private Label _statusLabel;
-		private PanelContainer _multiplayerSection;
+		private VBoxContainer _multiplayerSection;
 
 		public event Action OnSinglePlayerSelected;
 		public event Action OnCreateRoomSelected;
@@ -158,7 +158,7 @@ namespace RoguelikeGame.UI.Panels
 
 			_packageInfoLabel.Text =
 				$"版本: {_currentPackage.Version} | " +
-				$"评分: ⭐{_currentPackage.Score:F1} | " +
+				$"评分: ⭐{_currentPackage.Rating:F1} | " +
 				$"{_currentPackage.DownloadCount:N0} 次游玩";
 
 			if (_currentPackage.SupportsMultiplayer)
