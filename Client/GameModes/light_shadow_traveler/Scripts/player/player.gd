@@ -137,6 +137,13 @@ func _switch_form() -> void:
 	current_form = new_form
 	_update_form_visuals()
 	form_changed.emit("shadow" if current_form == Form.SHADOW else "light")
+	ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.FORM_SWITCH_LIGHT if current_form == Form.LIGHT else ParticleEffect.EffectType.FORM_SWITCH_SHADOW, 15)
+
+func is_light_form() -> bool:
+	return current_form == Form.LIGHT
+
+func is_shadow_form() -> bool:
+	return current_form == Form.SHADOW
 
 func _apply_gravity(delta: float) -> void:
 	if is_on_floor():

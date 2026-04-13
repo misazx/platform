@@ -8,6 +8,8 @@ var current_difficulty := "normal"
 var camera: Camera2D
 var level_root: Node2D
 var bg_parallax: ParallaxBackground
+var last_checkpoint_pos := Vector2(100, 400)
+var active_switches: Dictionary = {}
 
 func _ready() -> void:
 	_setup_scene()
@@ -106,6 +108,28 @@ func _build_level(data: Dictionary) -> void:
 		var light_source := MovableLightSource.new()
 		light_source.setup_from_data(l_data as Dictionary)
 		level_root.add_child(light_source)
+	var moving_platforms := data.get("movingPlatforms", []) as Array
+	for m_data in moving_platforms:
+		var mplatform := MovingPlatform.new()
+		mplatform.setup_from_data(m_data as Dictionary)
+		level_root.add_child(mplatform)
+	var switches := data.get("switches", []) as Array
+	for s_data in switches:
+		var sw := LightShadowSwitch.new()
+		sw.position = Vector2(s_data.get("x", 0), s_data.get("y", 0))
+		sw.setup_from_data(s_data as Dictionary)
+		sw.switch_activated.connect(_on_switch_activated)
+		sw.switch_deactivated.connect(_on_switch_deactivated)
+		level_root.add_child(sw)
+	var checkpoints := data.get("checkpoints", []) as Array
+	for c_data in checkpoints:
+		var cp := Checkpoint.new()
+		cp.position = Vector2(c_data.get("x", 0), c_data.get("y", 0))
+		cp.checkpoint_id = c_data.get("id", "")
+		if c_data.get("isStart", false):
+			cp.is_start = true
+		cp.checkpoint_activated.connect(_on_checkpoint_activated)
+		level_root.add_child(cp)
 	var end_pos := data.get("endPos", {}) as Dictionary
 	if not end_pos.is_empty():
 		var goal := Area2D.new()
@@ -181,6 +205,20 @@ func _show_tutorial(data: Dictionary) -> void:
 			hud.show_tutorial("影形态可踩上蓝紫色影平台", 4.0)
 		"shadow_wall":
 			hud.show_tutorial("影形态可穿过薄影墙", 4.0)
+		"mixed_forms":
+			hud.show_tutorial("快速切换光/影形态通过交替平台", 4.0)
+		"push_light":
+			hud.show_tutorial("按 E 推动光源改变影子方向", 4.0)
+		"switch_mechanic":
+			hud.show_tutorial("踩上开关激活对应平台", 4.0)
+		"enemy_dodge":
+			hud.show_tutorial("躲避敌人！不同形态可免疫对应敌人", 4.0)
+		"boss":
+			hud.show_tutorial("Boss战！利用光影形态切换取胜", 4.0)
+		"combined":
+			hud.show_tutorial("综合运用所有技巧", 4.0)
+		"precision_jump":
+			hud.show_tutorial("精确跳跃！影形态可滑翔减速", 4.0)
 
 func _clear_level() -> void:
 	for child in level_root.get_children():
@@ -193,9 +231,10 @@ func _on_health_changed(health: int, max_health: int) -> void:
 	hud.update_health(health, max_health)
 
 func _on_player_died() -> void:
+	ParticleEffect.spawn_at(level_root, player.global_position, ParticleEffect.EffectType.DEATH, 30)
 	level_manager.fail_level()
 	get_tree().create_timer(1.5).timeout.connect(func():
-		_load_and_build_level(current_level_id if current_level_id != "" else "ff_01")
+		_respawn_at_checkpoint()
 	)
 
 func _on_fragment_collected(_fragment: MemoryFragment) -> void:
@@ -224,6 +263,54 @@ func _on_level_completed(_level_id: String) -> void:
 
 func _on_level_failed(_level_id: String) -> void:
 	hud.show_tutorial("再试一次！", 2.0)
+
+func _respawn_at_checkpoint() -> void:
+	if is_instance_valid(player):
+		player.queue_free()
+	player = PlayerCharacter.new()
+	player.name = "Player"
+	player.add_to_group("player")
+	player.position = last_checkpoint_pos
+	player.form_changed.connect(_on_form_changed)
+	player.health_changed.connect(_on_health_changed)
+	player.player_died.connect(_on_player_died)
+	player.fragment_collected.connect(_on_fragment_count_changed)
+	level_root.add_child(player)
+	if is_instance_valid(camera) and camera.get_parent():
+		camera.get_parent().remove_child(camera)
+	else:
+		camera = Camera2D.new()
+		camera.name = "Camera"
+		camera.zoom = Vector2(1.5, 1.5)
+		camera.position_smoothing_enabled = true
+		camera.position_smoothing_speed = 8.0
+	player.add_child(camera)
+	hud.update_health(player.max_health, player.max_health)
+	hud.update_form("light")
+	ParticleEffect.spawn_at(level_root, last_checkpoint_pos, ParticleEffect.EffectType.HEAL, 20)
+
+func _on_checkpoint_activated(checkpoint_id: String) -> void:
+	for child in level_root.get_children():
+		if child is Checkpoint and child.checkpoint_id == checkpoint_id:
+			last_checkpoint_pos = child.get_spawn_position()
+			break
+	ParticleEffect.spawn_at(level_root, last_checkpoint_pos, ParticleEffect.EffectType.CHECKPOINT_ACTIVATE, 25)
+	hud.show_tutorial("检查点已激活", 1.5)
+
+func _on_switch_activated(switch_id: String) -> void:
+	active_switches[switch_id] = true
+	var target_id := ""
+	for child in level_root.get_children():
+		if child is LightShadowSwitch and child.switch_id == switch_id:
+			target_id = child.target_id
+			break
+	if target_id != "":
+		for child in level_root.get_children():
+			if child is FormPlatform and target_id.begins_with("sw_platform"):
+				child.set_active(true)
+
+func _on_switch_deactivated(switch_id: String) -> void:
+	active_switches.erase(switch_id)
 
 func _get_next_level_id() -> String:
 	var all_ids := level_manager.levels_data.keys()
