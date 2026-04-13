@@ -312,6 +312,10 @@ namespace RoguelikeGame.Packages
 				DownloadCount = (int)ConvertToLong(pkgDict.GetValueOrDefault("downloadCount", Variant.From(0))),
 				EntryScene = pkgDict.GetValueOrDefault("entryScene", "").AsString(),
 				ConfigFile = pkgDict.GetValueOrDefault("configFile", "").AsString(),
+				SupportsMultiplayer = ConvertToBool(pkgDict.GetValueOrDefault("supportsMultiplayer", Variant.From(false))),
+				MaxPlayers = ConvertToInt(pkgDict.GetValueOrDefault("maxPlayers", Variant.From(4))),
+				HasLeaderboard = ConvertToBool(pkgDict.GetValueOrDefault("hasLeaderboard", Variant.From(true))),
+				LeaderboardType = pkgDict.GetValueOrDefault("leaderboardType", "score").AsString(),
 				Tags = ParseStringList(pkgDict, "tags"),
 				Features = ParseStringList(pkgDict, "features"),
 				Dependencies = ParseStringList(pkgDict, "dependencies")

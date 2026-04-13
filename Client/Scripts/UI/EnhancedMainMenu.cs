@@ -262,7 +262,8 @@ namespace RoguelikeGame.UI
 		{
 			GD.Print($"[EnhancedMainMenu] Launching package: {package.Name}");
 			_packageStoreUI.Visible = false;
-			Hide();
+			_currentLaunchingPackage = package;
+			_gameModeSelectPanel.ShowForPackage(package);
 		}
 
 		private void OnMultiplayerPressed()

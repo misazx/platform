@@ -94,6 +94,18 @@ namespace RoguelikeGame.Packages
 
 		[JsonPropertyName("configFile")]
 		public string ConfigFile { get; set; }
+
+		[JsonPropertyName("supportsMultiplayer")]
+		public bool SupportsMultiplayer { get; set; } = false;
+
+		[JsonPropertyName("maxPlayers")]
+		public int MaxPlayers { get; set; } = 4;
+
+		[JsonPropertyName("hasLeaderboard")]
+		public bool HasLeaderboard { get; set; } = true;
+
+		[JsonPropertyName("leaderboardType")]
+		public string LeaderboardType { get; set; } = "score";
 	}
 
 	public class PackageInstallState

@@ -144,7 +144,7 @@ func _spawn_player(data: Dictionary) -> void:
 	player.player_died.connect(_on_player_died)
 	player.fragment_collected.connect(_on_fragment_count_changed)
 	level_root.add_child(player)
-	camera.remote_path = player.get_path()
+	camera.remote_path = camera.get_path_to(player)
 
 func _update_hud(data: Dictionary) -> void:
 	hud.update_health(player.max_health, player.max_health)

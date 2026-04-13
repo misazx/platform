@@ -28,7 +28,11 @@
       "price": 0,
       "rating": 4.8,
       "downloadCount": 10000,
-      "includeInBuild": true
+      "includeInBuild": true,
+      "supportsMultiplayer": true,
+      "maxPlayers": 4,
+      "hasLeaderboard": true,
+      "leaderboardType": "score"
     },
     {
       "id": "light_shadow_traveler",
@@ -51,7 +55,11 @@
       "price": 0,
       "rating": 4.2,
       "downloadCount": 500,
-      "includeInBuild": true
+      "includeInBuild": true,
+      "supportsMultiplayer": false,
+      "maxPlayers": 1,
+      "hasLeaderboard": true,
+      "leaderboardType": "time"
     }
   ]
 }
