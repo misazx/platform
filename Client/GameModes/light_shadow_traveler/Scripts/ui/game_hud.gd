@@ -165,12 +165,12 @@ func _setup_hud() -> void:
 func _make_heart_texture(filled: bool) -> ImageTexture:
 	var img := Image.create(24, 24, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
-	var color := Color(0.9, 0.2, 0.3) if filled else Color(0.3, 0.3, 0.3, 0.5)
+	var color: Color = Color(0.9, 0.2, 0.3) if filled else Color(0.3, 0.3, 0.3, 0.5)
 	for dy in range(-10, 11):
 		for dx in range(-10, 11):
-			var dist := sqrt(dx * dx + dy * dy)
+			var dist: float = sqrt(dx * dx + dy * dy)
 			if dist < 10:
-				var alpha := 1.0 if filled else 0.3
+				var alpha: float = 1.0 if filled else 0.3
 				if not filled and dist < 8:
 					alpha = 0.1
 				img.set_pixel(12 + dx, 12 + dy, Color(color.r, color.g, color.b, alpha))
@@ -182,7 +182,7 @@ func _process(delta: float) -> void:
 		_update_timer_display()
 	if _damage_flash_timer > 0:
 		_damage_flash_timer -= delta
-		var alpha := _damage_flash_timer / 0.3
+		var alpha: float = _damage_flash_timer / 0.3
 		_damage_overlay.color = Color(1.0, 0.0, 0.0, alpha * 0.3)
 	if _combo_timer > 0:
 		_combo_timer -= delta
@@ -191,9 +191,9 @@ func _process(delta: float) -> void:
 			_combo_label.visible = false
 
 func _update_timer_display() -> void:
-	var minutes := int(_elapsed_time) / 60
-	var seconds := int(_elapsed_time) % 60
-	var ms := int((_elapsed_time - int(_elapsed_time)) * 100)
+	var minutes: int = int(_elapsed_time) / 60
+	var seconds: int = int(_elapsed_time) % 60
+	var ms: int = int((_elapsed_time - int(_elapsed_time)) * 100)
 	_timer_label.text = "%d:%02d.%02d" % [minutes, seconds, ms]
 
 func update_health(current: int, max_val: int) -> void:

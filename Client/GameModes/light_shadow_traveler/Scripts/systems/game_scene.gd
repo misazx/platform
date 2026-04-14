@@ -80,7 +80,7 @@ func _load_and_build_level(level_id: String) -> void:
 	level_manager.load_level(level_id)
 
 func _on_level_loaded(level_id: String) -> void:
-	var data := level_manager.get_level_data(level_id)
+	var data: Dictionary = level_manager.get_level_data(level_id)
 	if data.is_empty():
 		push_error("[GameScene] No data for level: " + level_id)
 		return
@@ -90,19 +90,19 @@ func _on_level_loaded(level_id: String) -> void:
 	_show_tutorial(data)
 
 func _build_level(data: Dictionary) -> void:
-	var platforms := data.get("platforms", []) as Array
+	var platforms: Array = data.get("platforms", []) as Array
 	for p_data in platforms:
 		var platform := FormPlatform.new()
 		platform.setup_from_data(p_data as Dictionary)
 		if p_data.get("type", "normal") in ["shadow", "shadow_wall"]:
 			platform.add_to_group("shadow_platform")
 		level_root.add_child(platform)
-	var enemies := data.get("enemies", []) as Array
+	var enemies: Array = data.get("enemies", []) as Array
 	for e_data in enemies:
 		var enemy := FormEnemy.new()
 		enemy.setup_from_data(e_data as Dictionary)
 		level_root.add_child(enemy)
-	var fragments := data.get("fragments", []) as Array
+	var fragments: Array = data.get("fragments", []) as Array
 	for i in range(fragments.size()):
 		var f_data := fragments[i] as Dictionary
 		var fragment := MemoryFragment.new()
@@ -110,17 +110,17 @@ func _build_level(data: Dictionary) -> void:
 		fragment.fragment_id = level_root.name + "_frag_" + str(i)
 		fragment.collected.connect(_on_fragment_collected)
 		level_root.add_child(fragment)
-	var light_sources := data.get("lightSources", []) as Array
+	var light_sources: Array = data.get("lightSources", []) as Array
 	for l_data in light_sources:
 		var light_source := MovableLightSource.new()
 		light_source.setup_from_data(l_data as Dictionary)
 		level_root.add_child(light_source)
-	var moving_platforms := data.get("movingPlatforms", []) as Array
+	var moving_platforms: Array = data.get("movingPlatforms", []) as Array
 	for m_data in moving_platforms:
 		var mplatform := MovingPlatform.new()
 		mplatform.setup_from_data(m_data as Dictionary)
 		level_root.add_child(mplatform)
-	var switches := data.get("switches", []) as Array
+	var switches: Array = data.get("switches", []) as Array
 	for s_data in switches:
 		var sw := LightShadowSwitch.new()
 		sw.position = Vector2(s_data.get("x", 0), s_data.get("y", 0))
@@ -128,7 +128,7 @@ func _build_level(data: Dictionary) -> void:
 		sw.switch_activated.connect(_on_switch_activated)
 		sw.switch_deactivated.connect(_on_switch_deactivated)
 		level_root.add_child(sw)
-	var checkpoints := data.get("checkpoints", []) as Array
+	var checkpoints: Array = data.get("checkpoints", []) as Array
 	for c_data in checkpoints:
 		var cp := Checkpoint.new()
 		cp.position = Vector2(c_data.get("x", 0), c_data.get("y", 0))
@@ -137,7 +137,7 @@ func _build_level(data: Dictionary) -> void:
 			cp.is_start = true
 		cp.checkpoint_activated.connect(_on_checkpoint_activated)
 		level_root.add_child(cp)
-	var end_pos := data.get("endPos", {}) as Dictionary
+	var end_pos: Dictionary = data.get("endPos", {}) as Dictionary
 	if not end_pos.is_empty():
 		var goal := Area2D.new()
 		goal.name = "LevelGoal"
@@ -152,7 +152,7 @@ func _build_level(data: Dictionary) -> void:
 		goal_img.fill(Color(0, 0, 0, 0))
 		for dy in range(-25, 26):
 			for dx in range(-15, 16):
-				var dist := sqrt(dx * dx * 0.5 + dy * dy) / 25.0
+				var dist: float = sqrt(dx * dx * 0.5 + dy * dy) / 25.0
 				if dist < 1.0:
 					goal_img.set_pixel(20 + dx, 30 + dy, Color(0.9, 0.85, 1.0, (1.0 - dist) * 0.7))
 		goal_sprite.texture = ImageTexture.create_from_image(goal_img)
@@ -168,7 +168,7 @@ func _spawn_player(data: Dictionary) -> void:
 	player = PlayerCharacter.new()
 	player.name = "Player"
 	player.add_to_group("player")
-	var start_pos := data.get("startPos", {}) as Dictionary
+	var start_pos: Dictionary = data.get("startPos", {}) as Dictionary
 	player.position = Vector2(start_pos.get("x", 100), start_pos.get("y", 400))
 	player.form_changed.connect(_on_form_changed)
 	player.health_changed.connect(_on_health_changed)
@@ -254,18 +254,18 @@ func _on_energy_changed(current: float, max_val: float) -> void:
 
 func _on_fragment_collected(_fragment: MemoryFragment) -> void:
 	level_manager.add_fragment()
-	var count := level_manager.get_fragment_count(level_manager.current_level_id)
-	var data := level_manager.get_level_data(level_manager.current_level_id)
+	var count: int = level_manager.get_fragment_count(level_manager.current_level_id)
+	var data: Dictionary = level_manager.get_level_data(level_manager.current_level_id)
 	hud.update_fragments(count, data.get("fragments", []).size())
 
 func _on_fragment_count_changed(count: int) -> void:
-	var data := level_manager.get_level_data(level_manager.current_level_id)
+	var data: Dictionary = level_manager.get_level_data(level_manager.current_level_id)
 	hud.update_fragments(count, data.get("fragments", []).size())
 
 func _on_goal_reached(body: Node2D) -> void:
 	if body is PlayerCharacter:
 		level_manager.complete_level()
-		var next_id := _get_next_level_id()
+		var next_id: String = _get_next_level_id()
 		if next_id != "":
 			get_tree().create_timer(1.0).timeout.connect(func():
 				_load_and_build_level(next_id)
@@ -328,9 +328,9 @@ func _on_switch_deactivated(switch_id: String) -> void:
 	active_switches.erase(switch_id)
 
 func _get_next_level_id() -> String:
-	var all_ids := level_manager.levels_data.keys()
+	var all_ids: Array = level_manager.levels_data.keys()
 	all_ids.sort()
-	var current_idx := all_ids.find(level_manager.current_level_id)
+	var current_idx: int = all_ids.find(level_manager.current_level_id)
 	if current_idx >= 0 and current_idx < all_ids.size() - 1:
 		return all_ids[current_idx + 1]
 	return ""

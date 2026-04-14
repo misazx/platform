@@ -33,11 +33,11 @@ func _load_levels_config() -> void:
 		return
 	var chapters: Array = data.get("chapters", []) as Array
 	for chapter in chapters:
-		var chapter_dict := chapter as Dictionary
+		var chapter_dict: Dictionary = chapter as Dictionary
 		var chapter_id: String = chapter_dict.get("id", "")
-		var levels := chapter_dict.get("levels", []) as Array
+		var levels: Array = chapter_dict.get("levels", []) as Array
 		for level in levels:
-			var level_dict := level as Dictionary
+			var level_dict: Dictionary = level as Dictionary
 			var level_id: String = level_dict.get("id", "")
 			levels_data[level_id] = level_dict
 			levels_data[level_id]["chapter_id"] = chapter_id

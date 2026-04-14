@@ -116,12 +116,12 @@ func _setup_visuals() -> void:
 func _create_player_sprite() -> void:
 	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
-	var body_color := _light_color if current_form == Form.LIGHT else _shadow_color
+	var body_color: Color = _light_color if current_form == Form.LIGHT else _shadow_color
 	for dy in range(-10, 11):
 		for dx in range(-8, 9):
-			var dist := sqrt(dx * dx + dy * dy * 0.6)
+			var dist: float = sqrt(dx * dx + dy * dy * 0.6)
 			if dist < 10:
-				var alpha := 1.0 - dist / 10.0
+				var alpha: float = 1.0 - dist / 10.0
 				img.set_pixel(16 + dx, 16 + dy, Color(body_color.r, body_color.g, body_color.b, alpha))
 	for dy in range(-6, -2):
 		for dx in range(-4, 5):
@@ -192,7 +192,7 @@ func _handle_input() -> void:
 
 func _switch_form() -> void:
 	form_switch_timer = FORM_SWITCH_COOLDOWN
-	var new_form := Form.SHADOW if current_form == Form.LIGHT else Form.LIGHT
+	var new_form: Form = Form.SHADOW if current_form == Form.LIGHT else Form.LIGHT
 	current_form = new_form
 	is_stealthing = false
 	is_dashing = false
@@ -212,7 +212,7 @@ func _start_dash() -> void:
 func _handle_dash(delta: float) -> void:
 	if not is_dashing:
 		return
-	var dash_dir := 1.0 if facing_right else -1.0
+	var dash_dir: float = 1.0 if facing_right else -1.0
 	velocity.x = LIGHT_DASH_SPEED * dash_dir
 	velocity.y = 0.0
 	move_and_slide()
@@ -233,7 +233,7 @@ func _handle_stealth(delta: float) -> void:
 func _regen_energy(delta: float) -> void:
 	if is_dashing or is_stealthing:
 		return
-	var regen := ENERGY_REGEN_RATE * delta
+	var regen: float = ENERGY_REGEN_RATE * delta
 	if current_form == Form.LIGHT:
 		regen *= 1.5
 	form_energy = min(form_energy + regen, MAX_FORM_ENERGY)
@@ -289,7 +289,7 @@ func _apply_gravity(delta: float) -> void:
 func _handle_jump() -> void:
 	if jump_buffer_timer > 0:
 		if is_on_floor() or coyote_timer > 0:
-			var jump_force := light_jump_force if current_form == Form.LIGHT else shadow_jump_force
+			var jump_force: float = light_jump_force if current_form == Form.LIGHT else shadow_jump_force
 			velocity.y = jump_force
 			jump_buffer_timer = 0.0
 			coyote_timer = 0.0
@@ -301,10 +301,10 @@ func _handle_form_switch() -> void:
 func _move(_delta: float) -> void:
 	if is_dashing:
 		return
-	var speed := light_speed if current_form == Form.LIGHT else shadow_speed
+	var speed: float = light_speed if current_form == Form.LIGHT else shadow_speed
 	if is_stealthing:
 		speed *= SHADOW_STEALTH_SPEED_MULT
-	var input_dir := Input.get_axis("move_left", "move_right")
+	var input_dir: float = Input.get_axis("move_left", "move_right")
 	velocity.x = input_dir * speed
 	if input_dir != 0:
 		sprite.flip_h = input_dir < 0
@@ -341,9 +341,9 @@ func _create_glow_texture(color: Color) -> Texture2D:
 	img.fill(Color(0, 0, 0, 0))
 	for dy in range(-32, 32):
 		for dx in range(-32, 32):
-			var dist := sqrt(dx * dx + dy * dy) / 32.0
+			var dist: float = sqrt(dx * dx + dy * dy) / 32.0
 			if dist < 1.0:
-				var alpha := (1.0 - dist) * 0.5
+				var alpha: float = (1.0 - dist) * 0.5
 				img.set_pixel(32 + dx, 32 + dy, Color(color.r, color.g, color.b, alpha))
 	return ImageTexture.create_from_image(img)
 
