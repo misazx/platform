@@ -69,7 +69,33 @@ namespace RoguelikeGame.Server.Controllers
                 if (success && room != null)
                 {
                     _logger.LogInformation("玩家加入房间: {UserId} -> {RoomId}", userId, roomId);
-                    return Ok(new { success = true, room, message });
+
+                    var roomData = new
+                    {
+                        room.Id,
+                        room.Name,
+                        room.HostId,
+                        hostName = room.Host?.Username ?? "",
+                        room.Status,
+                        room.Mode,
+                        room.MaxPlayers,
+                        room.CurrentPlayers,
+                        room.HasPassword,
+                        room.Seed,
+                        room.CreatedAt,
+                        players = room.Players.Select(p => new
+                        {
+                            p.Id,
+                            p.UserId,
+                            username = p.User?.Username ?? "",
+                            p.IsReady,
+                            p.CharacterId,
+                            p.Score,
+                            p.JoinedAt
+                        })
+                    };
+
+                    return Ok(new { success = true, room = roomData, message });
                 }
                 else
                 {
@@ -109,10 +135,35 @@ namespace RoguelikeGame.Server.Controllers
             {
                 var rooms = await _roomService.GetPublicRoomsAsync(page, pageSize);
 
+                var roomList = rooms.Select(r => new
+                {
+                    r.Id,
+                    r.Name,
+                    r.HostId,
+                    hostName = r.Host?.Username ?? "",
+                    r.Status,
+                    r.Mode,
+                    r.MaxPlayers,
+                    r.CurrentPlayers,
+                    r.HasPassword,
+                    r.Seed,
+                    r.CreatedAt,
+                    players = r.Players.Select(p => new
+                    {
+                        p.Id,
+                        p.UserId,
+                        username = p.User?.Username ?? "",
+                        p.IsReady,
+                        p.CharacterId,
+                        p.Score,
+                        p.JoinedAt
+                    })
+                });
+
                 return Ok(new
                 {
                     success = true,
-                    rooms,
+                    rooms = roomList,
                     page,
                     pageSize,
                     total = rooms.Count
@@ -135,7 +186,32 @@ namespace RoguelikeGame.Server.Controllers
                 return NotFound(new { success = false, message = "房间不存在" });
             }
 
-            return Ok(new { success = true, room });
+            var roomData = new
+            {
+                room.Id,
+                room.Name,
+                room.HostId,
+                hostName = room.Host?.Username ?? "",
+                room.Status,
+                room.Mode,
+                room.MaxPlayers,
+                room.CurrentPlayers,
+                room.HasPassword,
+                room.Seed,
+                room.CreatedAt,
+                players = room.Players.Select(p => new
+                {
+                    p.Id,
+                    p.UserId,
+                    username = p.User?.Username ?? "",
+                    p.IsReady,
+                    p.CharacterId,
+                    p.Score,
+                    p.JoinedAt
+                })
+            };
+
+            return Ok(new { success = true, room = roomData });
         }
 
         [HttpPost("{roomId}/ready")]
