@@ -25,7 +25,7 @@ func _process(delta: float) -> void:
 	position.y += sin(_bob_phase) * 0.5
 
 func _draw() -> void:
-	var alpha := _color.a * min(_life / 2.0, 1.0)
+	var alpha: float = _color.a * min(_life / 2.0, 1.0)
 	draw_circle(Vector2.ZERO, _size, Color(_color.r, _color.g, _color.b, alpha))
 
 func _reset_particle() -> void:

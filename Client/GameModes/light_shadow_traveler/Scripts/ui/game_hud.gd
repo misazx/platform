@@ -39,7 +39,7 @@ func _setup_hud() -> void:
 		var heart := TextureRect.new()
 		heart.name = "Heart%d" % i
 		heart.custom_minimum_size = Vector2(28, 28)
-		heart.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTER
+		heart.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		heart.texture = _make_heart_texture(true)
 		_health_hearts.append(heart)
 		top_bar.add_child(heart)
