@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using RoguelikeGame.Server.Models;
 using RoguelikeGame.Server.Services;
 
 namespace RoguelikeGame.Server.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/rooms")]
     [Authorize]
     public class RoomController : ControllerBase
     {
@@ -182,6 +183,7 @@ namespace RoguelikeGame.Server.Controllers
         [MaxLength(100)]
         public string Name { get; set; } = "";
 
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public GameMode Mode { get; set; } = GameMode.PvP;
 
         [Range(2, 4)]

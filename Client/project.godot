@@ -50,6 +50,11 @@ AudioGenerator="*res://GameModes/base_game/Code/Audio/AudioGenerator.cs"
 ResourceInitializer="*res://Scripts/Core/ResourceInitializer.cs"
 NetworkManager="*res://Scripts/Network/NetworkManager.cs"
 AuthSystem="*res://Scripts/Network/Auth/AuthSystem.cs"
+RoomManager="*res://Scripts/Network/Rooms/RoomManager.cs"
+OfflineModeManager="*res://Scripts/Network/OfflineModeManager.cs"
+GameSessionManager="*res://Scripts/Network/Session/GameSessionManager.cs"
+MultiProtocolManager="*res://Scripts/Network/MultiProtocolManager.cs"
+ConnectionManager="*res://Scripts/Network/Core/ConnectionManager.cs"
 
 [display]
 

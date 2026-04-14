@@ -21,7 +21,11 @@ try
 
     builder.Host.UseSerilog();
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+        });
     builder.Services.AddSignalR();
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -30,6 +34,7 @@ try
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IRoomService, RoomService>();
     builder.Services.AddScoped<IMatchmakingService, MatchmakingService>();
+    builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
 
     builder.Services.AddAuthentication(options =>
     {

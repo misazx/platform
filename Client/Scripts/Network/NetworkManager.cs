@@ -211,7 +211,7 @@ namespace RoguelikeGame.Network
 			if (_state != NetworkState.Disconnected)
 			{
 				UpdateState(NetworkState.Disconnected);
-				EmitSignal("connection_lost", "连接意外断开");
+				EmitSignal(SignalName.ConnectionLost, "连接意外断开");
 			}
 		}
 

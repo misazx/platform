@@ -45,7 +45,7 @@ namespace RoguelikeGame.Network.Core
 			_adapters = new Dictionary<ConnectionMode, IConnectionAdapter>
 			{
 				{ ConnectionMode.LAN, new ENetConnectionAdapter() },
-				{ ConnectionMode.Online, new WebRTCConnectionAdapter() }
+				{ ConnectionMode.Online, new WebSocketConnectionAdapter() }
 			};
 
 			GD.Print("[ConnectionManager] 初始化完成，可用协议:");

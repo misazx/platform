@@ -144,18 +144,18 @@ namespace RoguelikeGame.Network
 
 		private async Task<bool> ConnectBluetoothAsync(string address, int port)
 		{
-			GD.Print($"[MultiProtocolManager] 尝试蓝牙/WebRTC连接...");
+			GD.Print($"[MultiProtocolManager] 尝试蓝牙/WebSocket连接...");
 
 			try
 			{
-				var wsAdapter = new WebRTCConnectionAdapter();
+				var wsAdapter = new WebSocketConnectionAdapter();
 				AddChild(wsAdapter);
 
 				bool success = await wsAdapter.ConnectAsync(address, port);
 
 				if (success)
 				{
-					GD.Print("[MultiProtocolManager] ✓ 蓝牙/WebRTC连接成功");
+					GD.Print("[MultiProtocolManager] ✓ 蓝牙/WebSocket连接成功");
 				}
 				else
 				{
