@@ -54,7 +54,9 @@ var _trail_timer := 0.0
 
 var _light_color := Color(1.0, 0.95, 0.85, 1.0)
 var _shadow_color := Color(0.3, 0.35, 0.6, 0.85)
-var _glow_intensity := 0.0
+var _light_glow_tex: Texture2D
+var _shadow_glow_tex: Texture2D
+var _glow_intensity: float = 0.0
 
 var sprite: Sprite2D
 var glow: PointLight2D
@@ -326,15 +328,17 @@ func _update_form_visuals() -> void:
 	if current_form == Form.LIGHT:
 		glow.color = Color(1.0, 0.95, 0.8, 0.6)
 		glow.energy = 1.2
-		var tex := _create_glow_texture(Color(1.0, 0.95, 0.8))
-		if tex:
-			glow.texture = tex
+		if _light_glow_tex == null:
+			_light_glow_tex = _create_glow_texture(Color(1.0, 0.95, 0.8))
+		if _light_glow_tex:
+			glow.texture = _light_glow_tex
 	else:
 		glow.color = Color(0.3, 0.35, 0.7, 0.4)
 		glow.energy = 0.6
-		var tex := _create_glow_texture(Color(0.3, 0.35, 0.7))
-		if tex:
-			glow.texture = tex
+		if _shadow_glow_tex == null:
+			_shadow_glow_tex = _create_glow_texture(Color(0.3, 0.35, 0.7))
+		if _shadow_glow_tex:
+			glow.texture = _shadow_glow_tex
 
 func _create_glow_texture(color: Color) -> Texture2D:
 	var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
