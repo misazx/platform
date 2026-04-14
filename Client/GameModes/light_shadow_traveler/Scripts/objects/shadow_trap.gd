@@ -72,12 +72,12 @@ func _activate_trap(player: PlayerCharacter) -> void:
 	match trap_type:
 		TrapType.DAMAGE:
 			player.take_damage(damage_amount)
-			ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.DAMAGE_TAKEN, 10)
+			ParticleEffect.create_and_spawn(get_parent(), global_position, ParticleEffect.EffectType.DAMAGE_TAKEN, 10)
 		TrapType.SLOW:
 			player.velocity *= slow_factor
 		TrapType.TELEPORT:
 			player.global_position = teleport_target
-			ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.FORM_SWITCH_SHADOW, 15)
+			ParticleEffect.create_and_spawn(get_parent(), global_position, ParticleEffect.EffectType.FORM_SWITCH_SHADOW, 15)
 		TrapType.REVEAL:
 			_reveal_nearby_fragments()
 

@@ -199,7 +199,7 @@ func _switch_form() -> void:
 	stealth_visual.color = Color(0.2, 0.25, 0.5, 0.0)
 	_update_form_visuals()
 	form_changed.emit("shadow" if current_form == Form.SHADOW else "light")
-	ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.FORM_SWITCH_LIGHT if current_form == Form.LIGHT else ParticleEffect.EffectType.FORM_SWITCH_SHADOW, 15)
+	ParticleEffect.create_and_spawn(get_parent(), global_position, ParticleEffect.EffectType.FORM_SWITCH_LIGHT if current_form == Form.LIGHT else ParticleEffect.EffectType.FORM_SWITCH_SHADOW, 15)
 
 func _start_dash() -> void:
 	is_dashing = true
@@ -207,7 +207,7 @@ func _start_dash() -> void:
 	form_energy -= LIGHT_DASH_ENERGY
 	energy_changed.emit(form_energy, MAX_FORM_ENERGY)
 	velocity.y = 0.0
-	ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.FORM_SWITCH_LIGHT, 20)
+	ParticleEffect.create_and_spawn(get_parent(), global_position, ParticleEffect.EffectType.FORM_SWITCH_LIGHT, 20)
 
 func _handle_dash(delta: float) -> void:
 	if not is_dashing:
@@ -261,7 +261,7 @@ func _handle_wall_jump() -> void:
 		jump_buffer_timer = 0.0
 		coyote_timer = 0.0
 		facing_right = wall_jump_dir > 0
-		ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.FORM_SWITCH_LIGHT, 8)
+		ParticleEffect.create_and_spawn(get_parent(), global_position, ParticleEffect.EffectType.FORM_SWITCH_LIGHT, 8)
 
 func is_light_form() -> bool:
 	return current_form == Form.LIGHT
@@ -381,7 +381,7 @@ func take_damage(amount: int = 1) -> void:
 		return
 	current_health -= amount
 	health_changed.emit(current_health, max_health)
-	ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.DAMAGE_TAKEN, 15)
+	ParticleEffect.create_and_spawn(get_parent(), global_position, ParticleEffect.EffectType.DAMAGE_TAKEN, 15)
 	if current_health <= 0:
 		die()
 	else:
@@ -401,7 +401,7 @@ func die() -> void:
 func heal(amount: int = 1) -> void:
 	current_health = min(current_health + amount, max_health)
 	health_changed.emit(current_health, max_health)
-	ParticleEffect.spawn_at(get_parent(), global_position, ParticleEffect.EffectType.HEAL, 12)
+	ParticleEffect.create_and_spawn(get_parent(), global_position, ParticleEffect.EffectType.HEAL, 12)
 
 func collect_fragment() -> void:
 	fragments_collected += 1

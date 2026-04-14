@@ -241,7 +241,7 @@ func _on_health_changed(health: int, max_health: int) -> void:
 	hud.update_health(health, max_health)
 
 func _on_player_died() -> void:
-	ParticleEffect.spawn_at(level_root, player.global_position, ParticleEffect.EffectType.DEATH, 30)
+	ParticleEffect.create_and_spawn(level_root, player.global_position, ParticleEffect.EffectType.DEATH, 30)
 	hud.show_damage_flash()
 	hud.stop_timer()
 	level_manager.fail_level()
@@ -302,14 +302,14 @@ func _respawn_at_checkpoint() -> void:
 	player.add_child(camera)
 	hud.update_health(player.max_health, player.max_health)
 	hud.update_form("light")
-	ParticleEffect.spawn_at(level_root, last_checkpoint_pos, ParticleEffect.EffectType.HEAL, 20)
+	ParticleEffect.create_and_spawn(level_root, last_checkpoint_pos, ParticleEffect.EffectType.HEAL, 20)
 
 func _on_checkpoint_activated(checkpoint_id: String) -> void:
 	for child in level_root.get_children():
 		if child is Checkpoint and child.checkpoint_id == checkpoint_id:
 			last_checkpoint_pos = child.get_spawn_position()
 			break
-	ParticleEffect.spawn_at(level_root, last_checkpoint_pos, ParticleEffect.EffectType.CHECKPOINT_ACTIVATE, 25)
+	ParticleEffect.create_and_spawn(level_root, last_checkpoint_pos, ParticleEffect.EffectType.CHECKPOINT_ACTIVATE, 25)
 	hud.show_tutorial("检查点已激活", 1.5)
 
 func _on_switch_activated(switch_id: String) -> void:
@@ -335,7 +335,6 @@ func _get_next_level_id() -> String:
 		return all_ids[current_idx + 1]
 	return ""
 
-var current_level_id := ""
 
 func load_level_by_id(level_id: String) -> void:
 	current_level_id = level_id

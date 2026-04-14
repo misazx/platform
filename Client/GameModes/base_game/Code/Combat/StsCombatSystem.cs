@@ -766,18 +766,20 @@ namespace RoguelikeGame.Core
 		private List<StsEnemyData> GetTargets(StsCardTarget target, int targetIndex)
 		{
 			var targets = new List<StsEnemyData>();
-			var aliveEnemies = _enemies.Where(e => !e.IsDead).ToList();
 
 			switch (target)
 			{
 				case StsCardTarget.EnemySingle:
-					if (targetIndex >= 0 && targetIndex < aliveEnemies.Count)
-						targets.Add(aliveEnemies[targetIndex]);
-					else if (aliveEnemies.Count > 0)
-						targets.Add(aliveEnemies[0]);
+					if (targetIndex >= 0 && targetIndex < _enemies.Count && !_enemies[targetIndex].IsDead)
+						targets.Add(_enemies[targetIndex]);
+					else
+					{
+						var alive = _enemies.FirstOrDefault(e => !e.IsDead);
+						if (alive != null) targets.Add(alive);
+					}
 					break;
 				case StsCardTarget.EnemyAll:
-					targets.AddRange(aliveEnemies);
+					targets.AddRange(_enemies.Where(e => !e.IsDead));
 					break;
 				default:
 					break;
@@ -790,13 +792,159 @@ namespace RoguelikeGame.Core
 		{
 			float roll = _rng.Randf();
 
-			enemy.CurrentIntent = enemy.Id switch
+			var baseId = enemy.Id.Split('_')[0];
+			if (enemy.Id.StartsWith("AcidSlime")) baseId = "AcidSlime";
+			else if (enemy.Id.StartsWith("SpikeSlime")) baseId = "SpikeSlime";
+
+			enemy.CurrentIntent = baseId switch
 			{
-				"Cultist" or "cultist" => GenerateCultistIntent(enemy, roll),
-				"JawWorm" or "jawworm" => GenerateJawWormIntent(enemy, roll),
-				"Louse" or "louse" => GenerateLouseIntent(enemy, roll),
+				"Cultist" => GenerateCultistIntent(enemy, roll),
+				"JawWorm" => GenerateJawWormIntent(enemy, roll),
+				"Louse" => GenerateLouseIntent(enemy, roll),
+				"Slaver" => GenerateSlaverIntent(enemy, roll),
+				"RedSlaver" => GenerateRedSlaverIntent(enemy, roll),
+				"FungiBeast" => GenerateFungiBeastIntent(enemy, roll),
+				"Gremlin" => GenerateGremlinNobIntent(enemy, roll),
+				"Lagavulin" => GenerateLagavulinIntent(enemy, roll),
+				"Sentry" => GenerateSentryIntent(enemy, roll),
+				"ShelledParasite" => GenerateShelledParasiteIntent(enemy, roll),
+				"AcidSlime" => GenerateAcidSlimeIntent(enemy, roll),
+				"SpikeSlime" => GenerateSpikeSlimeIntent(enemy, roll),
+				"TaskMaster" => GenerateTaskMasterIntent(enemy, roll),
+				"FungusLing" => GenerateFungusLingIntent(enemy, roll),
+				"The" => GenerateBossIntent(enemy, roll),
+				"Hexaghost" => GenerateBossIntent(enemy, roll),
+				"Donu" => GenerateBossIntent(enemy, roll),
 				_ => GenerateDefaultIntent(roll)
 			};
+		}
+
+		private StsEnemyIntent GenerateSlaverIntent(StsEnemyData enemy, float roll)
+		{
+			if (_turnNumber % 4 == 1)
+				return StsEnemyIntent.CreateDebuff("虚弱", 2);
+			else if (roll < 0.5f)
+				return StsEnemyIntent.CreateAttack(12 + _turnNumber / 3);
+			else
+				return StsEnemyIntent.CreateDefend(6);
+		}
+
+		private StsEnemyIntent GenerateRedSlaverIntent(StsEnemyData enemy, float roll)
+		{
+			if (_turnNumber % 3 == 0)
+				return StsEnemyIntent.CreateDebuff("脆弱", 2);
+			else if (roll < 0.6f)
+				return StsEnemyIntent.CreateAttack(13 + _turnNumber / 3);
+			else
+				return StsEnemyIntent.CreateAttack(8);
+		}
+
+		private StsEnemyIntent GenerateFungiBeastIntent(StsEnemyData enemy, float roll)
+		{
+			if (_turnNumber % 3 == 0)
+				return StsEnemyIntent.CreateBuff("力量", 2);
+			else
+				return StsEnemyIntent.CreateAttack(6 + _turnNumber / 2);
+		}
+
+		private StsEnemyIntent GenerateGremlinNobIntent(StsEnemyData enemy, float roll)
+		{
+			if (_turnNumber == 1)
+				return StsEnemyIntent.CreateBuff("力量", 2);
+			else if (roll < 0.6f)
+				return StsEnemyIntent.CreateAttack(14 + _turnNumber);
+			else
+				return StsEnemyIntent.CreateAttack(10 + _turnNumber / 2);
+		}
+
+		private StsEnemyIntent GenerateLagavulinIntent(StsEnemyData enemy, float roll)
+		{
+			int cycle = _turnNumber % 3;
+			if (cycle == 0)
+				return StsEnemyIntent.CreateDebuff("力量-1", 1);
+			else if (cycle == 1)
+				return StsEnemyIntent.CreateDefend(12);
+			else
+				return StsEnemyIntent.CreateAttack(18 + _turnNumber / 2);
+		}
+
+		private StsEnemyIntent GenerateSentryIntent(StsEnemyData enemy, float roll)
+		{
+			if (_turnNumber % 2 == 1)
+				return StsEnemyIntent.CreateDefend(8);
+			else
+				return StsEnemyIntent.CreateAttack(9 + _turnNumber / 3);
+		}
+
+		private StsEnemyIntent GenerateShelledParasiteIntent(StsEnemyData enemy, float roll)
+		{
+			if (_turnNumber % 3 == 0)
+				return StsEnemyIntent.CreateDebuff("脆弱", 1);
+			else if (roll < 0.5f)
+				return StsEnemyIntent.CreateAttack(8 + _turnNumber / 2);
+			else
+				return StsEnemyIntent.CreateDefend(10);
+		}
+
+		private StsEnemyIntent GenerateAcidSlimeIntent(StsEnemyData enemy, float roll)
+		{
+			if (roll < 0.3f)
+				return StsEnemyIntent.CreateDebuff("虚弱", 1);
+			else
+				return StsEnemyIntent.CreateAttack(5 + _turnNumber / 3);
+		}
+
+		private StsEnemyIntent GenerateSpikeSlimeIntent(StsEnemyData enemy, float roll)
+		{
+			if (roll < 0.3f)
+				return StsEnemyIntent.CreateDebuff("脆弱", 1);
+			else
+				return StsEnemyIntent.CreateAttack(5 + _turnNumber / 3);
+		}
+
+		private StsEnemyIntent GenerateTaskMasterIntent(StsEnemyData enemy, float roll)
+		{
+			if (_turnNumber % 3 == 0)
+				return StsEnemyIntent.CreateBuff("力量", 1);
+			else if (roll < 0.5f)
+				return StsEnemyIntent.CreateAttack(10 + _turnNumber / 2);
+			else
+				return StsEnemyIntent.CreateDefend(8);
+		}
+
+		private StsEnemyIntent GenerateFungusLingIntent(StsEnemyData enemy, float roll)
+		{
+			if (_turnNumber % 2 == 0)
+				return StsEnemyIntent.CreateBuff("力量", 1);
+			else
+				return StsEnemyIntent.CreateAttack(6 + _turnNumber / 2);
+		}
+
+		private StsEnemyIntent GenerateBossIntent(StsEnemyData enemy, float roll)
+		{
+			int phase = enemy.CurrentHp > enemy.MaxHp / 2 ? 1 : 2;
+			int cycle = _turnNumber % 4;
+
+			if (phase == 1)
+			{
+				return cycle switch
+				{
+					0 => StsEnemyIntent.CreateAttack(16 + _turnNumber / 2),
+					1 => StsEnemyIntent.CreateDefend(14),
+					2 => StsEnemyIntent.CreateBuff("力量", 2),
+					_ => StsEnemyIntent.CreateAttack(12 + _turnNumber / 3)
+				};
+			}
+			else
+			{
+				return cycle switch
+				{
+					0 => StsEnemyIntent.CreateAttack(20 + _turnNumber),
+					1 => StsEnemyIntent.CreateDebuff("脆弱", 2),
+					2 => StsEnemyIntent.CreateAttack(15 + _turnNumber / 2),
+					_ => StsEnemyIntent.CreateBuff("力量", 3)
+				};
+			}
 		}
 
 		private StsEnemyIntent GenerateCultistIntent(StsEnemyData enemy, float roll)

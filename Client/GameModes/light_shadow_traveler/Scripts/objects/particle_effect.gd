@@ -70,14 +70,18 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	for p in _particles:
 		if p.life > 0:
-			var alpha := p.life / p.max_life
-			var draw_color := Color(p.color.r, p.color.g, p.color.b, p.color.a * alpha)
+			var alpha_val: float = float(p.life) / float(p.max_life)
+			var draw_color := Color(p.color.r, p.color.g, p.color.b, p.color.a * alpha_val)
 			draw_circle(p.pos, p.size, draw_color)
 
-static func spawn_at(parent: Node2D, pos: Vector2, type: EffectType, count: int = 20) -> ParticleEffect:
+func spawn_effect(parent: Node2D, pos: Vector2, type: EffectType, count: int = 20) -> ParticleEffect:
 	var effect := ParticleEffect.new()
 	effect.effect_type = type
 	effect.particle_count = count
 	effect.global_position = pos
 	parent.add_child(effect)
 	return effect
+
+static func create_and_spawn(parent: Node2D, pos: Vector2, type: EffectType, count: int = 20) -> ParticleEffect:
+	var helper := ParticleEffect.new()
+	return helper.spawn_effect(parent, pos, type, count)

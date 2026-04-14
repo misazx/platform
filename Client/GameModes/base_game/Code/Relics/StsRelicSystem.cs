@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 namespace RoguelikeGame.Core
@@ -45,6 +46,7 @@ namespace RoguelikeGame.Core
 		public Action<StsCombatEngine, int> OnDamageDealt { get; set; }
 		public Action<StsCombatEngine, int> OnDamageTaken { get; set; }
 		public Action<StsCombatEngine> OnKill { get; set; }
+		public int Counter { get; set; }
 
 		public static StsRelicData CreateBurningBlood() => new()
 		{
@@ -138,7 +140,17 @@ namespace RoguelikeGame.Core
 			{
 				if (card.Type == StsCardType.Attack)
 				{
-					GD.Print("[Relic] Shuriken tracks attack cards");
+					var shuriken = engine.RelicManager?.GetOwnedRelics().FirstOrDefault(r => r.Id == "Shuriken");
+					if (shuriken != null)
+					{
+						shuriken.Counter++;
+						if (shuriken.Counter >= 3)
+						{
+							shuriken.Counter = 0;
+							engine.Player.Strength += 1;
+							GD.Print("[Relic] Shuriken: 3 attacks → +1 Strength");
+						}
+					}
 				}
 			}
 		};
@@ -169,7 +181,17 @@ namespace RoguelikeGame.Core
 			{
 				if (card.Exhaust)
 				{
-					GD.Print("[Relic] Dead Branch adds random card on Exhaust");
+					var allCards = StsCardDatabase.GetAllCards();
+					if (allCards != null && allCards.Count > 0)
+					{
+						var randomCard = allCards[new Random().Next(allCards.Count)];
+						var newCard = StsCardDatabase.GetCard(randomCard.Id);
+						if (newCard != null)
+						{
+							engine.Player.Hand.Add(newCard);
+							GD.Print($"[Relic] Dead Branch added {newCard.Name} to hand");
+						}
+					}
 				}
 			}
 		};
@@ -187,6 +209,130 @@ namespace RoguelikeGame.Core
 					engine.DrawCards(1);
 					GD.Print("[Relic] Runic Cube drew 1 card on damage");
 				}
+			}
+		};
+
+		public static StsRelicData CreatePenNib() => new()
+		{
+			Id = "Pen_Nib",
+			Name = "笔尖",
+			Description = "每打出 10 张攻击牌，下一张攻击牌伤害翻倍。",
+			Rarity = StsRelicRarity.Common,
+			OnCardPlayed = (engine, card) =>
+			{
+				if (card.Type == StsCardType.Attack)
+				{
+					var relic = engine.RelicManager?.GetOwnedRelics().FirstOrDefault(r => r.Id == "Pen_Nib");
+					if (relic != null)
+					{
+						relic.Counter++;
+						if (relic.Counter >= 10)
+						{
+							relic.Counter = 0;
+							engine.Player.Strength += 10;
+							GD.Print("[Relic] Pen Nib: next attack doubled!");
+						}
+					}
+				}
+			}
+		};
+
+		public static StsRelicData CreateRedSkull() => new()
+		{
+			Id = "Red_Skull",
+			Name = "红骷髅",
+			Description = "生命值低于50%时，获得3点力量。",
+			Rarity = StsRelicRarity.Common,
+			OnDamageTaken = (engine, damage) =>
+			{
+				if (engine.Player.CurrentHp <= engine.Player.MaxHp / 2)
+				{
+					var relic = engine.RelicManager?.GetOwnedRelics().FirstOrDefault(r => r.Id == "Red_Skull");
+					if (relic != null && relic.Counter == 0)
+					{
+						relic.Counter = 1;
+						engine.Player.Strength += 3;
+						GD.Print("[Relic] Red Skull: HP below 50%, +3 Strength");
+					}
+				}
+			},
+			OnCombatStart = (engine) =>
+			{
+				var relic = engine.RelicManager?.GetOwnedRelics().FirstOrDefault(r => r.Id == "Red_Skull");
+				if (relic != null) relic.Counter = 0;
+			}
+		};
+
+		public static StsRelicData CreateKunai() => new()
+		{
+			Id = "Kunai",
+			Name = "苦无",
+			Description = "每回合打出3张攻击牌，获得1点敏捷。",
+			Rarity = StsRelicRarity.Uncommon,
+			OnCardPlayed = (engine, card) =>
+			{
+				if (card.Type == StsCardType.Attack)
+				{
+					var relic = engine.RelicManager?.GetOwnedRelics().FirstOrDefault(r => r.Id == "Kunai");
+					if (relic != null)
+					{
+						relic.Counter++;
+						if (relic.Counter >= 3)
+						{
+							relic.Counter = 0;
+							engine.Player.Dexterity += 1;
+							GD.Print("[Relic] Kunai: 3 attacks → +1 Dexterity");
+						}
+					}
+				}
+			},
+			OnTurnStart = (engine) =>
+			{
+				var relic = engine.RelicManager?.GetOwnedRelics().FirstOrDefault(r => r.Id == "Kunai");
+				if (relic != null) relic.Counter = 0;
+			}
+		};
+
+		public static StsRelicData CreateSundial() => new()
+		{
+			Id = "Sundial",
+			Name = "日晷",
+			Description = "每洗牌3次，获得2金币。",
+			Rarity = StsRelicRarity.Common,
+			OnCombatStart = (engine) =>
+			{
+				var relic = engine.RelicManager?.GetOwnedRelics().FirstOrDefault(r => r.Id == "Sundial");
+				if (relic != null) relic.Counter = 0;
+			}
+		};
+
+		public static StsRelicData CreateBloodstone() => new()
+		{
+			Id = "Bloodstone",
+			Name = "血石",
+			Description = "每打出一张能力牌，回复2点生命。",
+			Rarity = StsRelicRarity.Uncommon,
+			OnCardPlayed = (engine, card) =>
+			{
+				if (card.Type == StsCardType.Power)
+				{
+					int heal = Math.Min(2, engine.Player.MaxHp - engine.Player.CurrentHp);
+					engine.Player.CurrentHp += heal;
+					GD.Print($"[Relic] Bloodstone: Power card → healed {heal} HP");
+				}
+			}
+		};
+
+		public static StsRelicData CreateThreadAndNeedle() => new()
+		{
+			Id = "Thread_and_Needle",
+			Name = "针线",
+			Description = "战斗开始时获得7点格挡。",
+			Rarity = StsRelicRarity.Common,
+			OnCombatStart = (engine) =>
+			{
+				engine.Player.Block += 7;
+				GD.Print("[Relic] Thread and Needle: +7 block");
 			}
 		};
 	}
@@ -213,6 +359,12 @@ namespace RoguelikeGame.Core
 			Register(StsRelicData.CreateOrichalcum());
 			Register(StsRelicData.CreateDeadBranch());
 			Register(StsRelicData.CreateRunicCube());
+			Register(StsRelicData.CreatePenNib());
+			Register(StsRelicData.CreateRedSkull());
+			Register(StsRelicData.CreateKunai());
+			Register(StsRelicData.CreateSundial());
+			Register(StsRelicData.CreateBloodstone());
+			Register(StsRelicData.CreateThreadAndNeedle());
 		}
 
 		private static void Register(StsRelicData relic)
