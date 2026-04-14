@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-04-14T23:04:22.108091",
-  "document": "Client/Tools/doubao_image_gen_all.yaml",
+  "timestamp": "2026-04-15T02:03:28.023958",
+  "document": "Client/Tools/doubao_image_gen_lst.yaml",
   "stats": {
-    "total": 161,
-    "success": 45,
-    "fail": 116,
+    "total": 20,
+    "success": 0,
+    "fail": 20,
     "skip": 0,
-    "elapsed_seconds": 829.0
+    "elapsed_seconds": 103.6
   }
 }

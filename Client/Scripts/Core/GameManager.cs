@@ -381,12 +381,13 @@ namespace RoguelikeGame.Core
 			_currentRun.CurrentFloor++;
 			_currentRun.CurrentRoom = 0;
 
-			if (_currentRun.CurrentFloor > 4)
+			if (_currentRun.CurrentFloor > EncounterGenerator.GetTotalFloors())
 			{
 				EndRun(true);
 				return;
 			}
 
+			RoguelikeGame.UI.MapView.ResetPersistentState();
 			GenerateCurrentFloor();
 			ChangePhase(GamePhase.MapNavigation);
 

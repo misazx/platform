@@ -669,8 +669,11 @@ namespace RoguelikeGame.UI
 
 		private void HighlightEnemies(bool highlight)
 		{
-			foreach (var enemy in _enemies)
+			for (int i = 0; i < _enemies.Count; i++)
 			{
+				var enemy = _enemies[i];
+				bool isAlive = enemy._currentHp > 0;
+				if (highlight && !isAlive) continue;
 				enemy.SetSelectable(highlight);
 			}
 		}
@@ -1033,6 +1036,12 @@ namespace RoguelikeGame.UI
 			_healthBar.Value = current;
 			_healthText.Text = $"{current}/{max}";
 
+			if (current <= 0)
+			{
+				SetDead();
+				return;
+			}
+
 			if ((float)current / max <= 0.3f)
 			{
 				var lowHealthStyle = new StyleBoxFlat
@@ -1045,6 +1054,30 @@ namespace RoguelikeGame.UI
 				};
 				_healthBar.AddThemeStyleboxOverride("fill", lowHealthStyle);
 			}
+		}
+
+		public void SetDead()
+		{
+			_isSelectable = false;
+			MouseFilter = MouseFilterEnum.Ignore;
+			Modulate = new Color(0.4f, 0.4f, 0.4f, 0.5f);
+			_intentLabel.Text = "";
+			_healthText.Text = "💀";
+
+			var deadStyle = new StyleBoxFlat
+			{
+				BgColor = new Color(0.05f, 0.05f, 0.05f, 0.6f),
+				CornerRadiusTopLeft = 8,
+				CornerRadiusTopRight = 8,
+				CornerRadiusBottomLeft = 8,
+				CornerRadiusBottomRight = 8,
+				BorderWidthLeft = 1,
+				BorderWidthRight = 1,
+				BorderWidthTop = 1,
+				BorderWidthBottom = 1,
+				BorderColor = new Color(0.3f, 0.3f, 0.3f, 0.5f)
+			};
+			_body.AddThemeStyleboxOverride("panel", deadStyle);
 		}
 
 		public void UpdateIntent(string text, string icon = "")

@@ -3,6 +3,8 @@ class_name PackageDetail extends Control
 signal start_game_requested(package_id: String)
 signal continue_game_requested(package_id: String, slot_id: int)
 signal back_pressed()
+signal create_room_requested(package_id: String)
+signal join_room_requested(package_id: String)
 
 var _package_id: String = ""
 var _package_data: Dictionary = {}
@@ -19,6 +21,8 @@ var _overview_tab: VBoxContainer
 var _saves_tab: VBoxContainer
 var _achievements_tab: VBoxContainer
 var _leaderboard_tab: ScrollContainer
+var _leaderboard_status: Label
+var _mode_select_panel: PanelContainer
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -157,7 +161,7 @@ func setup(package_id: String, package_data: Dictionary) -> void:
 	_populate_overview()
 	_populate_saves()
 	_populate_achievements()
-	_populate_leaderboard()
+	_fetch_leaderboard_from_server()
 
 func _populate_overview() -> void:
 	for child in _overview_tab.get_children():
@@ -412,34 +416,72 @@ func _populate_leaderboard() -> void:
 	lb_title.modulate = Color(1, 0.9, 0.6)
 	leaderboard_vbox.add_child(lb_title)
 
+	_leaderboard_status = Label.new()
+	_leaderboard_status.text = "⏳ 正在加载..."
+	_leaderboard_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_leaderboard_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_leaderboard_status.add_theme_font_size_override("font_size", 13)
+	_leaderboard_status.modulate = Color.YELLOW
+	leaderboard_vbox.add_child(_leaderboard_status)
+
+func _fetch_leaderboard_from_server() -> void:
+	_populate_leaderboard()
+
+	var http := HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(_on_leaderboard_received)
+
+	var url := "http://127.0.0.1:5000/api/leaderboard/%s/top?top=20" % _package_id
+	var err := http.request(url)
+	if err != Error.OK:
+		_update_leaderboard_status("❌ 无法连接服务器")
+		http.queue_free()
+
+func _on_leaderboard_received(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
+	var http_node := get_child(get_child_count() - 1) as HTTPRequest
+	if http_node != null:
+		http_node.queue_free()
+
+	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
+		_update_leaderboard_status("❌ 加载失败 (HTTP %d)" % code)
+		return
+
+	var json := JSON.new()
+	if json.parse(body.get_string_from_utf8()) != Error.OK:
+		_update_leaderboard_status("❌ 数据解析失败")
+		return
+
+	var data: Dictionary = json.data
+	if not data.get("success", false):
+		_update_leaderboard_status("❌ 服务器返回错误")
+		return
+
+	var entries: Array = data.get("data", [])
+	if entries.is_empty():
+		_update_leaderboard_status("暂无排行数据")
+		return
+
+	_update_leaderboard_status("")
+
+	var leaderboard_vbox := _leaderboard_tab.get_child(0) as VBoxContainer
+	if leaderboard_vbox == null:
+		return
+
 	var header_row := HBoxContainer.new()
 	header_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	header_row.add_theme_constant_override("separation", 10)
 	leaderboard_vbox.add_child(header_row)
 
-	for h in ["排名", "玩家", "分数", "层数"]:
+	for h in ["排名", "玩家", "分数", "层数", "击杀", "结果"]:
 		var h_label := Label.new()
 		h_label.text = h
 		h_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		h_label.add_theme_font_size_override("font_size", 12)
 		h_label.modulate = Color(0.5, 0.5, 0.5)
-		h_label.custom_minimum_size = Vector2(120, 0) if h != "排名" else Vector2(60, 0)
+		h_label.custom_minimum_size = Vector2(80, 0) if h != "排名" else Vector2(50, 0)
 		header_row.add_child(h_label)
 
-	var leaderboard: Array = []
-	if not _provider.is_empty():
-		leaderboard = _provider.get("leaderboard_data", [])
-
-	if leaderboard.is_empty():
-		var empty_label := Label.new()
-		empty_label.text = "暂无排行数据"
-		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		empty_label.modulate = Color.GRAY
-		empty_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		leaderboard_vbox.add_child(empty_label)
-		return
-
-	for entry in leaderboard:
+	for entry in entries:
 		var row := HBoxContainer.new()
 		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		row.add_theme_constant_override("separation", 10)
@@ -447,10 +489,14 @@ func _populate_leaderboard() -> void:
 
 		var rank: int = entry.get("rank", 0)
 		var rank_label := Label.new()
-		rank_label.text = "%d" % rank
+		match rank:
+			1: rank_label.text = "🥇"
+			2: rank_label.text = "🥈"
+			3: rank_label.text = "🥉"
+			_: rank_label.text = "#%d" % rank
 		rank_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		rank_label.add_theme_font_size_override("font_size", 14)
-		rank_label.custom_minimum_size = Vector2(60, 0)
+		rank_label.custom_minimum_size = Vector2(50, 0)
 		match rank:
 			1: rank_label.modulate = Color(1, 0.85, 0.2)
 			2: rank_label.modulate = Color(0.8, 0.8, 0.85)
@@ -459,32 +505,161 @@ func _populate_leaderboard() -> void:
 		row.add_child(rank_label)
 
 		var name_label := Label.new()
-		name_label.text = entry.get("name", "???")
+		name_label.text = entry.get("username", "???")
 		name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		name_label.add_theme_font_size_override("font_size", 14)
-		name_label.custom_minimum_size = Vector2(120, 0)
+		name_label.custom_minimum_size = Vector2(80, 0)
 		row.add_child(name_label)
 
 		var score_label := Label.new()
 		score_label.text = "%d" % entry.get("score", 0)
 		score_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		score_label.add_theme_font_size_override("font_size", 14)
-		score_label.custom_minimum_size = Vector2(120, 0)
+		score_label.custom_minimum_size = Vector2(80, 0)
 		score_label.modulate = Color(1, 0.9, 0.5)
 		row.add_child(score_label)
 
 		var floor_label := Label.new()
-		floor_label.text = "%d 层" % entry.get("floor", entry.get("level", 0))
+		floor_label.text = "%d" % entry.get("floorReached", 0)
 		floor_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		floor_label.add_theme_font_size_override("font_size", 14)
-		floor_label.custom_minimum_size = Vector2(120, 0)
+		floor_label.custom_minimum_size = Vector2(80, 0)
 		floor_label.modulate = Color(0.6, 0.8, 0.6)
 		row.add_child(floor_label)
+
+		var kill_label := Label.new()
+		kill_label.text = "%d" % entry.get("killCount", 0)
+		kill_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		kill_label.add_theme_font_size_override("font_size", 14)
+		kill_label.custom_minimum_size = Vector2(80, 0)
+		row.add_child(kill_label)
+
+		var victory: bool = entry.get("isVictory", false)
+		var result_label := Label.new()
+		result_label.text = "✅" if victory else "❌"
+		result_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		result_label.add_theme_font_size_override("font_size", 14)
+		result_label.custom_minimum_size = Vector2(80, 0)
+		row.add_child(result_label)
+
+func _update_leaderboard_status(text: String) -> void:
+	if _leaderboard_status != null:
+		_leaderboard_status.text = text
+		if text.begins_with("❌"):
+			_leaderboard_status.modulate = Color.RED
+		elif text.begins_with("⏳"):
+			_leaderboard_status.modulate = Color.YELLOW
+		else:
+			_leaderboard_status.modulate = Color.GRAY
 
 func _on_back_pressed() -> void:
 	print("[PackageDetail] Back pressed")
 	back_pressed.emit()
 
 func _on_start_pressed() -> void:
-	print("[PackageDetail] Start pressed for package: %s" % _package_id)
-	start_game_requested.emit(_package_id)
+	var supports_multi: bool = _package_data.get("supportsMultiplayer", false)
+	if supports_multi:
+		_show_mode_select()
+	else:
+		print("[PackageDetail] Single player only, starting: %s" % _package_id)
+		start_game_requested.emit(_package_id)
+
+func _show_mode_select() -> void:
+	if _mode_select_panel != null:
+		_mode_select_panel.queue_free()
+		_mode_select_panel = null
+
+	_mode_select_panel = PanelContainer.new()
+	_mode_select_panel.set_anchors_preset(Control.PRESET_CENTER)
+	_mode_select_panel.custom_minimum_size = Vector2(420, 340)
+	_mode_select_panel.z_index = 100
+	_mode_select_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.07, 0.06, 0.12, 0.98)
+	style.corner_radius_top_left = 20
+	style.corner_radius_top_right = 20
+	style.corner_radius_bottom_left = 20
+	style.corner_radius_bottom_right = 20
+	style.border_width_left = 3
+	style.border_width_right = 3
+	style.border_width_top = 3
+	style.border_width_bottom = 3
+	style.border_color = Color(0.4, 0.55, 0.85)
+	_mode_select_panel.add_theme_stylebox_override("panel", style)
+	add_child(_mode_select_panel)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 14)
+	_mode_select_panel.add_child(vbox)
+
+	var title := Label.new()
+	title.text = "🎮 选择游戏模式"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 24)
+	title.modulate = Color(1, 0.9, 0.6)
+	vbox.add_child(title)
+
+	var max_p: int = _package_data.get("maxPlayers", 4)
+	var info := Label.new()
+	info.text = "支持最多 %d 人联机" % max_p
+	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	info.add_theme_font_size_override("font_size", 13)
+	info.modulate = Color(0.4, 0.85, 0.6)
+	vbox.add_child(info)
+
+	vbox.add_child(HSeparator.new())
+
+	var single_btn := Button.new()
+	single_btn.text = "🎯 单人模式"
+	single_btn.custom_minimum_size = Vector2(360, 55)
+	single_btn.add_theme_font_size_override("font_size", 18)
+	single_btn.pressed.connect(func():
+		_close_mode_select()
+		start_game_requested.emit(_package_id)
+	)
+	vbox.add_child(single_btn)
+
+	var create_btn := Button.new()
+	create_btn.text = "🏠 创建房间"
+	create_btn.custom_minimum_size = Vector2(360, 55)
+	create_btn.add_theme_font_size_override("font_size", 18)
+	create_btn.pressed.connect(func():
+		_close_mode_select()
+		create_room_requested.emit(_package_id)
+	)
+	vbox.add_child(create_btn)
+
+	var join_btn := Button.new()
+	join_btn.text = "🔍 加入房间"
+	join_btn.custom_minimum_size = Vector2(360, 55)
+	join_btn.add_theme_font_size_override("font_size", 18)
+	join_btn.pressed.connect(func():
+		_close_mode_select()
+		join_room_requested.emit(_package_id)
+	)
+	vbox.add_child(join_btn)
+
+	var auth_system = _get_auth_system()
+	if auth_system == null or not auth_system.IsAuthenticated:
+		create_btn.disabled = true
+		join_btn.disabled = true
+		create_btn.tooltip_text = "需要先登录"
+		join_btn.tooltip_text = "需要先登录"
+
+	var cancel_btn := Button.new()
+	cancel_btn.text = "取消"
+	cancel_btn.custom_minimum_size = Vector2(120, 36)
+	cancel_btn.pressed.connect(_close_mode_select)
+	vbox.add_child(cancel_btn)
+
+func _close_mode_select() -> void:
+	if _mode_select_panel != null:
+		_mode_select_panel.queue_free()
+		_mode_select_panel = null
+
+func _get_auth_system():
+	var node = get_node_or_null("/root/AuthSystem")
+	if node != null:
+		return node
+	return null

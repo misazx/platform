@@ -110,6 +110,8 @@ namespace RoguelikeGame
                 _lobby.Connect("open_package_selector", Callable.From(OnOpenPackageSelector));
                 _lobby.Connect("open_settings", Callable.From(OnSettingsRequested));
                 _lobby.Connect("quit_game", Callable.From(OnQuitRequested));
+                _lobby.Connect("open_login", Callable.From(OnLoginRequested));
+                _lobby.Connect("open_leaderboard", Callable.From(OnLeaderboardRequested));
             }
 
             GD.Print("[Main] Lobby loaded");
@@ -152,6 +154,8 @@ namespace RoguelikeGame
                 _packageDetail.Connect("start_game_requested", Callable.From<string>(OnLaunchPackage));
                 _packageDetail.Connect("continue_game_requested", Callable.From<string, int>(OnContinueGame));
                 _packageDetail.Connect("back_pressed", Callable.From(OnOpenPackageSelector));
+                _packageDetail.Connect("create_room_requested", Callable.From<string>(OnCreateRoomRequested));
+                _packageDetail.Connect("join_room_requested", Callable.From<string>(OnJoinRoomRequested));
             }
 
             GD.Print($"[Main] Package Detail loaded for: {packageId}");
@@ -256,6 +260,76 @@ namespace RoguelikeGame
         {
             GD.Print("[Main] QuitRequested signal received");
             QuitGame();
+        }
+
+        private void OnLoginRequested()
+        {
+            GD.Print("[Main] Login requested");
+            var loginPanel = new LoginPanel();
+            AddChild(loginPanel);
+            loginPanel.OnLoginSuccess += () =>
+            {
+                RemoveChild(loginPanel);
+                loginPanel.QueueFree();
+
+                if (_lobby != null && IsInstanceValid(_lobby))
+                    _lobby.Call("on_login_success");
+            };
+            loginPanel.OnBack += () =>
+            {
+                RemoveChild(loginPanel);
+                loginPanel.QueueFree();
+            };
+        }
+
+        private void OnLeaderboardRequested()
+        {
+            GD.Print("[Main] Leaderboard requested");
+            var leaderboardPanel = new LeaderboardPanel();
+            AddChild(leaderboardPanel);
+            leaderboardPanel.OnBack += () =>
+            {
+                RemoveChild(leaderboardPanel);
+                leaderboardPanel.QueueFree();
+            };
+        }
+
+        private void OnCreateRoomRequested(string packageId)
+        {
+            GD.Print($"[Main] Create room requested for: {packageId}");
+
+            if (Network.Auth.AuthSystem.Instance?.IsAuthenticated != true)
+            {
+                OnLoginRequested();
+                return;
+            }
+
+            var lobbyPanel = new LobbyPanel();
+            AddChild(lobbyPanel);
+            lobbyPanel.OnLeave += () =>
+            {
+                RemoveChild(lobbyPanel);
+                lobbyPanel.QueueFree();
+            };
+        }
+
+        private void OnJoinRoomRequested(string packageId)
+        {
+            GD.Print($"[Main] Join room requested for: {packageId}");
+
+            if (Network.Auth.AuthSystem.Instance?.IsAuthenticated != true)
+            {
+                OnLoginRequested();
+                return;
+            }
+
+            var lobbyPanel = new LobbyPanel();
+            AddChild(lobbyPanel);
+            lobbyPanel.OnLeave += () =>
+            {
+                RemoveChild(lobbyPanel);
+                lobbyPanel.QueueFree();
+            };
         }
 
         private void SetupSceneContainer()

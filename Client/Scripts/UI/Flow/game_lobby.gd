@@ -2,6 +2,8 @@ class_name GameLobby extends Control
 
 signal open_package_selector()
 signal open_settings()
+signal open_login()
+signal open_leaderboard()
 signal quit_game()
 
 var _bg_texture_rect: TextureRect
@@ -9,6 +11,8 @@ var _title_label: Label
 var _subtitle_label: Label
 var _menu_container: VBoxContainer
 var _player_info_bar: HBoxContainer
+var _user_status_label: Label
+var _auth_button: Button
 var _version_label: Label
 var _particle_container: Node2D
 
@@ -17,6 +21,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_build_ui()
 	_start_ambient_effects()
+	_update_auth_ui()
 
 func _build_ui() -> void:
 	_bg_texture_rect = TextureRect.new()
@@ -46,13 +51,13 @@ func _build_ui() -> void:
 	add_child(center_container)
 
 	var main_vbox := VBoxContainer.new()
-	main_vbox.custom_minimum_size = Vector2(500, 600)
+	main_vbox.custom_minimum_size = Vector2(500, 650)
 	main_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	main_vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	center_container.add_child(main_vbox)
 
 	var top_spacer := Control.new()
-	top_spacer.custom_minimum_size = Vector2(0, 60)
+	top_spacer.custom_minimum_size = Vector2(0, 40)
 	top_spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	main_vbox.add_child(top_spacer)
 
@@ -73,9 +78,16 @@ func _build_ui() -> void:
 	main_vbox.add_child(_subtitle_label)
 
 	var title_spacer := Control.new()
-	title_spacer.custom_minimum_size = Vector2(0, 50)
+	title_spacer.custom_minimum_size = Vector2(0, 20)
 	title_spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	main_vbox.add_child(title_spacer)
+
+	_build_user_bar(main_vbox)
+
+	var menu_spacer := Control.new()
+	menu_spacer.custom_minimum_size = Vector2(0, 15)
+	menu_spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	main_vbox.add_child(menu_spacer)
 
 	_menu_container = VBoxContainer.new()
 	_menu_container.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -84,31 +96,14 @@ func _build_ui() -> void:
 	main_vbox.add_child(_menu_container)
 
 	_add_menu_button("🎮  选择玩法", _on_play_pressed, Color(0.2, 0.6, 0.3))
+	_add_menu_button("🏆  排行榜", _on_leaderboard_pressed, Color(0.7, 0.55, 0.15))
 	_add_menu_button("⚙️  设置", _on_settings_pressed, Color(0.3, 0.35, 0.5))
 	_add_menu_button("🚪  退出游戏", _on_quit_pressed, Color(0.5, 0.2, 0.2))
 
 	var bottom_spacer := Control.new()
-	bottom_spacer.custom_minimum_size = Vector2(0, 40)
+	bottom_spacer.custom_minimum_size = Vector2(0, 30)
 	bottom_spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	main_vbox.add_child(bottom_spacer)
-
-	_player_info_bar = HBoxContainer.new()
-	_player_info_bar.alignment = BoxContainer.ALIGNMENT_CENTER
-	_player_info_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	main_vbox.add_child(_player_info_bar)
-
-	var player_icon := Label.new()
-	player_icon.text = "👤"
-	player_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	player_icon.add_theme_font_size_override("font_size", 18)
-	_player_info_bar.add_child(player_icon)
-
-	var player_name := Label.new()
-	player_name.text = "  玩家  |  💰 0"
-	player_name.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	player_name.add_theme_font_size_override("font_size", 14)
-	player_name.modulate = Color(0.7, 0.7, 0.7)
-	_player_info_bar.add_child(player_name)
 
 	_version_label = Label.new()
 	_version_label.text = "v0.2.0 Alpha"
@@ -117,6 +112,55 @@ func _build_ui() -> void:
 	_version_label.add_theme_font_size_override("font_size", 11)
 	_version_label.modulate = Color(0.4, 0.4, 0.4)
 	main_vbox.add_child(_version_label)
+
+func _build_user_bar(parent: VBoxContainer) -> void:
+	var user_bar := HBoxContainer.new()
+	user_bar.alignment = BoxContainer.ALIGNMENT_CENTER
+	user_bar.add_theme_constant_override("separation", 12)
+	user_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(user_bar)
+
+	_user_status_label = Label.new()
+	_user_status_label.text = "未登录 - 单人模式可用"
+	_user_status_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_user_status_label.add_theme_font_size_override("font_size", 13)
+	_user_status_label.modulate = Color(0.55, 0.58, 0.65)
+	_user_status_label.custom_minimum_size = Vector2(280, 28)
+	user_bar.add_child(_user_status_label)
+
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	user_bar.add_child(spacer)
+
+	_auth_button = Button.new()
+	_auth_button.text = "🔐 登录 / 注册"
+	_auth_button.custom_minimum_size = Vector2(130, 32)
+	_auth_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	_auth_button.add_theme_font_size_override("font_size", 13)
+	_auth_button.pressed.connect(_on_auth_pressed)
+	user_bar.add_child(_auth_button)
+
+func _update_auth_ui() -> void:
+	var auth_system = _get_auth_system()
+	if auth_system == null:
+		return
+
+	if auth_system.IsAuthenticated and auth_system.CurrentUser != null:
+		var user = auth_system.CurrentUser
+		_user_status_label.text = "👤 %s  |  Lv.%d  |  胜场: %d" % [user.Username, user.Level, user.GamesWon]
+		_user_status_label.modulate = Color(0.4, 0.9, 0.6)
+		_auth_button.text = "🚪 登出"
+	else:
+		_user_status_label.text = "未登录 - 单人模式可用，多人模式需登录"
+		_user_status_label.modulate = Color(0.55, 0.58, 0.65)
+		_auth_button.text = "🔐 登录 / 注册"
+
+func _get_auth_system():
+	var node = get_node_or_null("/root/AuthSystem")
+	if node != null:
+		return node
+	return null
 
 func _add_menu_button(text: String, callback: Callable, accent_color: Color) -> void:
 	var btn := Button.new()
@@ -161,6 +205,10 @@ func _on_play_pressed() -> void:
 	print("[GameLobby] Play pressed - opening package selector")
 	open_package_selector.emit()
 
+func _on_leaderboard_pressed() -> void:
+	print("[GameLobby] Leaderboard pressed")
+	open_leaderboard.emit()
+
 func _on_settings_pressed() -> void:
 	print("[GameLobby] Settings pressed")
 	open_settings.emit()
@@ -168,6 +216,14 @@ func _on_settings_pressed() -> void:
 func _on_quit_pressed() -> void:
 	print("[GameLobby] Quit pressed")
 	quit_game.emit()
+
+func _on_auth_pressed() -> void:
+	var auth_system = _get_auth_system()
+	if auth_system != null and auth_system.IsAuthenticated:
+		auth_system.PerformLogout()
+		_update_auth_ui()
+	else:
+		open_login.emit()
 
 func _start_ambient_effects() -> void:
 	var tween := create_tween().set_loops()
@@ -189,3 +245,9 @@ func update_player_info(playerName: String, gold: int) -> void:
 	for child in _player_info_bar.get_children():
 		if child is Label and child.text.begins_with("  "):
 			child.text = "  %s  |  💰 %d" % [playerName, gold]
+
+func on_login_success() -> void:
+	_update_auth_ui()
+
+func on_logout() -> void:
+	_update_auth_ui()
