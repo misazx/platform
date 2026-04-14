@@ -45,7 +45,18 @@ namespace RoguelikeGame.Network
 		private void InitializeComponents()
 		{
 			_connectionManager = ConnectionManager.Instance;
+			if (_connectionManager == null)
+			{
+				_connectionManager = new ConnectionManager();
+				AddChild(_connectionManager);
+			}
+
 			_lanDiscovery = LANDiscoveryService.Instance;
+			if (_lanDiscovery == null)
+			{
+				_lanDiscovery = new LANDiscoveryService();
+				AddChild(_lanDiscovery);
+			}
 
 			_lanDiscovery.HostDiscovered += OnHostDiscoveredHandler;
 			_lanDiscovery.HostLost += OnHostLostHandler;

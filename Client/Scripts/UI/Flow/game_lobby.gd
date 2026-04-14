@@ -185,7 +185,7 @@ func _create_gradient_bg() -> ImageTexture:
 			img.set_pixel(x, y, Color(r, g, b))
 	return ImageTexture.create_from_image(img)
 
-func update_player_info(name: String, gold: int) -> void:
+func update_player_info(playerName: String, gold: int) -> void:
 	for child in _player_info_bar.get_children():
 		if child is Label and child.text.begins_with("  "):
-			child.text = "  %s  |  💰 %d" % [name, gold]
+			child.text = "  %s  |  💰 %d" % [playerName, gold]
