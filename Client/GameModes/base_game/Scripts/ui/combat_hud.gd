@@ -465,36 +465,151 @@ func _on_card_pressed(card) -> void:
 
 	var cost: int = card_data.get("cost", 1)
 	if _current_energy >= cost:
-		var type: int = card_data.get("type", CardDatabase.CardType.ATTACK)
-		var needs_target := type == CardDatabase.CardType.ATTACK
-		if needs_target and _enemies_ui.size() > 1:
-			_is_selecting_target = true
-			_pending_card = card
-			_phase_label.text = "选择目标"
-			_phase_label.modulate = Color(1, 0.5, 0.2)
-			_highlight_enemies(true)
-			GD.print("[CombatHUD] 🎯 Select target for: %s" % card_data.get("name", ""))
+		var type: int = card_data.get("type", 0)
+	var needs_target := type == 0
+	if needs_target and _enemies_ui.size() > 1:
+		var alive_count := 0
+		for eui in _enemies_ui:
+			if not eui.is_dead:
+				alive_count += 1
+		if alive_count <= 1:
+			var target_idx := _find_first_alive_enemy()
+			if target_idx >= 0:
+				GD.print("[CombatHUD] 🃏 出牌: %s (费用:%d) -> 敌人%d" % [card_data.get("name", ""), cost, target_idx])
+				show_card_play_animation(card_data, target_idx)
+				card_played_with_target.emit(card_data.get("id", ""), target_idx)
+			else:
+				GD.print("[CombatHUD] ❌ 没有存活敌人")
+			return
+		_is_selecting_target = true
+		_pending_card = card
+		_phase_label.text = "选择目标"
+		_phase_label.modulate = Color(1, 0.5, 0.2)
+		_highlight_enemies(true)
+		GD.print("[CombatHUD] 🎯 Select target for: %s" % card_data.get("name", ""))
+	else:
+		var target_idx := _find_first_alive_enemy() if needs_target else -1
+		if needs_target and target_idx < 0:
+			GD.print("[CombatHUD] ❌ 没有存活敌人")
+			return
+		GD.print("[CombatHUD] 🃏 出牌: %s (费用:%d)" % [card_data.get("name", ""), cost])
+		show_card_play_animation(card_data, target_idx)
+		if target_idx >= 0:
+			card_played_with_target.emit(card_data.get("id", ""), target_idx)
 		else:
-			GD.print("[CombatHUD] 🃏 出牌: %s (费用:%d)" % [card_data.get("name", ""), cost])
 			card_played.emit(card_data.get("id", ""))
 	else:
 		GD.print("[CombatHUD] ❌ 能量不足: %s 需要%d点, 当前%d点" % [card_data.get("name", ""), cost, _current_energy])
 
 func _on_enemy_clicked(enemy_index: int) -> void:
 	if _is_selecting_target and _pending_card != null:
+		if enemy_index >= 0 and enemy_index < _enemies_ui.size() and _enemies_ui[enemy_index].is_dead:
+			GD.print("[CombatHUD] ❌ 不能选择已死亡的敌人")
+			return
 		var card = _pending_card
 		_is_selecting_target = false
 		_pending_card = null
 		_highlight_enemies(false)
 		_phase_label.text = "你的回合"
 		_phase_label.modulate = Color(0.5, 0.9, 0.5)
-
 		GD.print("[CombatHUD] 🎯 Target selected: enemy %d" % enemy_index)
-		card_played_with_target.emit(card.card_data.get("id", "") if card.card_data else "", enemy_index)
+		var card_data = card.card_data if card.card_data else {}
+		show_card_play_animation(card_data, enemy_index)
+		card_played_with_target.emit(card_data.get("id", "") if card.card_data else "", enemy_index)
 
 func _highlight_enemies(highlight: bool) -> void:
 	for enemy in _enemies_ui:
+		if highlight and enemy.is_dead:
+			continue
 		enemy.set_selectable(highlight)
+
+func _find_first_alive_enemy() -> int:
+	for i in range(_enemies_ui.size()):
+		if not _enemies_ui[i].is_dead:
+			return i
+	return -1
+
+func show_enemy_attack_feedback(enemy_index: int) -> void:
+	if enemy_index >= 0 and enemy_index < _enemy_sprites.size():
+		_enemy_sprites[enemy_index].play_attack_animation(Vector2(200, 300))
+	var shake_tween := create_tween()
+	shake_tween.tween_property(_root_container, "position:x", _root_container.position.x + 8, 0.05)
+	shake_tween.tween_property(_root_container, "position:x", _root_container.position.x - 6, 0.05)
+	shake_tween.tween_property(_root_container, "position:x", _root_container.position.x + 4, 0.05)
+	shake_tween.tween_property(_root_container, "position:x", _root_container.position.x, 0.05)
+
+func show_player_hit_feedback() -> void:
+	if _player_sprite and _player_sprite.has_method("play_hit_animation"):
+		_player_sprite.play_hit_animation()
+	var hit_tween := create_tween()
+	hit_tween.tween_property(_player_status_area, "modulate", Color(1, 0.3, 0.3), 0.1)
+	hit_tween.tween_property(_player_status_area, "modulate", Color.WHITE, 0.2).set_delay(0.1)
+
+func show_enemy_hit_feedback(enemy_index: int) -> void:
+	if enemy_index >= 0 and enemy_index < _enemy_sprites.size():
+		_enemy_sprites[enemy_index].play_hit_animation()
+	if enemy_index >= 0 and enemy_index < _enemies_ui.size():
+		var enemy_ui = _enemies_ui[enemy_index]
+		var hit_tween := enemy_ui.create_tween()
+		hit_tween.tween_property(enemy_ui, "modulate", Color(1, 0.5, 0.5), 0.08)
+		hit_tween.tween_property(enemy_ui, "modulate", Color.WHITE, 0.15).set_delay(0.08)
+
+func show_card_play_animation(card_data: Dictionary, target_enemy_index: int) -> void:
+	var icon_path: String = card_data.get("icon_path", "")
+	if icon_path == "":
+		var type_val: int = card_data.get("type", 0)
+		match type_val:
+			0: icon_path = "res://GameModes/base_game/Resources/Icons/Cards/strike.png"
+			1: icon_path = "res://GameModes/base_game/Resources/Icons/Cards/defend.png"
+			2: icon_path = "res://GameModes/base_game/Resources/Icons/Skills/fireball.png"
+			_: icon_path = "res://GameModes/base_game/Resources/Icons/Cards/card_0.png"
+	var icon_tex := load(icon_path) as Texture2D
+	if icon_tex == null: return
+	var card_bg := PanelContainer.new()
+	card_bg.custom_minimum_size = Vector2(84, 114)
+	card_bg.z_index = 99
+	card_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var bg_style := StyleBoxFlat.new()
+	bg_style.bg_color = Color(0.12, 0.1, 0.08, 0.95)
+	bg_style.corner_radius_top_left = 6
+	bg_style.corner_radius_top_right = 6
+	bg_style.corner_radius_bottom_left = 6
+	bg_style.corner_radius_bottom_right = 6
+	bg_style.border_width_left = 2
+	bg_style.border_width_right = 2
+	bg_style.border_width_top = 2
+	bg_style.border_width_bottom = 2
+	var type_val: int = card_data.get("type", 0)
+	match type_val:
+		0: bg_style.border_color = Color(0.8, 0.3, 0.3)
+		1: bg_style.border_color = Color(0.3, 0.5, 0.9)
+		2: bg_style.border_color = Color(0.9, 0.7, 0.2)
+		_: bg_style.border_color = Color(0.5, 0.5, 0.5)
+	card_bg.add_theme_stylebox_override("panel", bg_style)
+	var card_img := TextureRect.new()
+	card_img.texture = icon_tex
+	card_img.custom_minimum_size = Vector2(80, 110)
+	card_img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	card_img.z_index = 100
+	card_img.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card_bg.add_child(card_img)
+	var start_pos := Vector2(540, 400)
+	var end_pos: Vector2
+	if target_enemy_index >= 0 and target_enemy_index < _enemy_sprites.size():
+		end_pos = _enemy_sprites[target_enemy_index].global_position + Vector2(0, -30)
+	else:
+		end_pos = Vector2(540, 200) if type_val != 1 else Vector2(120, 300)
+	card_bg.position = start_pos
+	add_child(card_bg)
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(card_bg, "position", end_pos, 0.4).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(card_bg, "scale", Vector2(1.2, 1.2), 0.2)
+	tween.tween_property(card_bg, "modulate", Color(2, 2, 2, 1), 0.2)
+	tween.chain()
+	tween.tween_property(card_bg, "modulate", Color(1, 1, 1, 0), 0.3).set_delay(0.3)
+	tween.tween_property(card_bg, "scale", Vector2(0.5, 0.5), 0.3).set_delay(0.3)
+	tween.tween_callback(card_bg.queue_free).set_delay(0.7)
 
 
 class BattleCharacterSprite extends Control
@@ -577,14 +692,23 @@ func _generate_placeholder_sprite() -> ImageTexture:
 	return ImageTexture.create_from_image(img)
 
 func play_attack_animation(target_pos: Vector2) -> void:
+	var orig_pos := position
+	var direction := (target_pos - position).normalized()
 	var tween := create_tween()
-	tween.tween_property(self, "position:x", position.x + 40, 0.12).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "position:x", position.x, 0.12).set_delay(0.12).set_ease(Tween.EASE_IN)
+	tween.tween_property(self, "position", orig_pos + direction * 50, 0.15).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(self, "scale", Vector2(1.15, 1.15), 0.1)
+	tween.tween_property(self, "position", orig_pos, 0.15).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(self, "scale", Vector2.ONE, 0.15)
 
 func play_hit_animation() -> void:
+	var orig_pos := position
 	var tween := create_tween()
-	tween.tween_property(_sprite_frame, "modulate", Color(2, 2, 2, 1), 0.08)
-	tween.tween_property(_sprite_frame, "modulate", Color.WHITE, 0.12).set_delay(0.08)
+	tween.tween_property(_sprite_frame, "modulate", Color(2, 0.5, 0.5, 1), 0.06)
+	tween.parallel().tween_property(self, "position:x", orig_pos.x - 8, 0.04)
+	tween.tween_property(self, "position:x", orig_pos.x + 6, 0.04)
+	tween.tween_property(self, "position:x", orig_pos.x - 4, 0.04)
+	tween.tween_property(self, "position", orig_pos, 0.06)
+	tween.parallel().tween_property(_sprite_frame, "modulate", Color.WHITE, 0.15)
 
 func play_death_animation() -> void:
 	var tween := create_tween()
@@ -605,6 +729,9 @@ var _health_bar: ProgressBar
 var _health_text: Label
 var _intent_label: Label
 var _is_selectable: bool = false
+
+var is_dead: bool:
+	get: return _current_hp <= 0
 
 func _init(p_name: String = "", p_max_hp: int = 0) -> void:
 	_name = p_name.replace("_pack", "").replace("_", " ")
@@ -700,7 +827,9 @@ func update_health(current: int, max_val: int) -> void:
 	_health_bar.max_value = max_val
 	_health_bar.value = current
 	_health_text.text = "%d/%d" % [current, max_val]
-	
+	if current <= 0:
+		set_dead()
+		return
 	if float(current) / max_val <= 0.3:
 		var low_health_style := StyleBoxFlat.new()
 		low_health_style.bg_color = Color(0.55, 0.12, 0.12)
@@ -709,6 +838,27 @@ func update_health(current: int, max_val: int) -> void:
 		low_health_style.corner_radius_bottom_left = 3
 		low_health_style.corner_radius_bottom_right = 3
 		_health_bar.add_theme_stylebox_override("fill", low_health_style)
+
+func set_dead() -> void:
+	_is_selectable = false
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_intent_label.text = ""
+	var dead_style := StyleBoxFlat.new()
+	dead_style.bg_color = Color(0.05, 0.05, 0.05, 0.6)
+	dead_style.corner_radius_top_left = 8
+	dead_style.corner_radius_top_right = 8
+	dead_style.corner_radius_bottom_left = 8
+	dead_style.corner_radius_bottom_right = 8
+	dead_style.border_width_left = 1
+	dead_style.border_width_right = 1
+	dead_style.border_width_top = 1
+	dead_style.border_width_bottom = 1
+	dead_style.border_color = Color(0.3, 0.3, 0.3, 0.5)
+	_body.add_theme_stylebox_override("panel", dead_style)
+	var tween := create_tween()
+	tween.tween_property(self, "modulate", Color(0.4, 0.4, 0.4, 0.3), 0.6).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(self, "scale", Vector2(0.85, 0.85), 0.6).set_ease(Tween.EASE_IN)
+	tween.tween_callback(func(): _health_text.text = "💀")
 
 func update_intent(text: String, icon: String = "") -> void:
 	_intent_label.text = ("%s %s" % [icon, text]) if icon != "" else text
@@ -805,13 +955,13 @@ func set_card_data(data: Dictionary) -> void:
 	_cost_label.text = str(data.get("cost", 0))
 	_desc_label.text = data.get("description", "")
 
-	var type_val: int = data.get("type", CardDatabase.CardType.ATTACK)
+	var type_val: int = data.get("type", 0)
 	match type_val:
-		CardDatabase.CardType.ATTACK:
+		0:
 			_cost_label.modulate = Color(1, 0.35, 0.35)
-		CardDatabase.CardType.SKILL:
+		1:
 			_cost_label.modulate = Color(0.35, 0.6, 1)
-		CardDatabase.CardType.POWER:
+		2:
 			_cost_label.modulate = Color(0.9, 0.75, 0.3)
 		_:
 			_cost_label.modulate = Color(1, 0.85, 0.2)
