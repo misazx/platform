@@ -24,6 +24,8 @@ var _leaderboard_tab: ScrollContainer
 var _leaderboard_status: Label
 var _mode_select_panel: PanelContainer
 
+var _server_saves_container: VBoxContainer
+
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -163,6 +165,7 @@ func setup(package_id: String, package_data: Dictionary) -> void:
 	_populate_achievements()
 	_fetch_leaderboard_from_server()
 	_fetch_server_saves()
+	_fetch_achievements_from_server()
 
 func _populate_overview() -> void:
 	for child in _overview_tab.get_children():
@@ -248,6 +251,30 @@ func _populate_saves() -> void:
 	for slot in save_slots:
 		var slot_panel := _create_save_slot(slot)
 		_saves_tab.add_child(slot_panel)
+
+	var sep := HSeparator.new()
+	sep.custom_minimum_size = Vector2(0, 8)
+	_saves_tab.add_child(sep)
+
+	var server_title := Label.new()
+	server_title.text = "☁️ 服务器存档"
+	server_title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	server_title.add_theme_font_size_override("font_size", 16)
+	server_title.modulate = Color(0.3, 0.6, 0.9)
+	_saves_tab.add_child(server_title)
+
+	_server_saves_container = VBoxContainer.new()
+	_server_saves_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_server_saves_container.add_theme_constant_override("separation", 6)
+	_saves_tab.add_child(_server_saves_container)
+
+	var server_hint := Label.new()
+	server_hint.text = "⏳ 正在加载服务器存档..."
+	server_hint.name = "ServerSavesHint"
+	server_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	server_hint.add_theme_font_size_override("font_size", 12)
+	server_hint.modulate = Color.YELLOW
+	_server_saves_container.add_child(server_hint)
 
 func _create_save_slot(slot: Dictionary) -> PanelContainer:
 	var panel := PanelContainer.new()
@@ -409,6 +436,21 @@ func _create_achievement_item(ach: Dictionary) -> PanelContainer:
 	desc_label.modulate = Color(0.7, 0.7, 0.7) if unlocked else Color(0.35, 0.35, 0.35)
 	desc_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hbox.add_child(desc_label)
+
+	var progress: int = ach.get("progress", 0)
+	var target: int = ach.get("target", 1)
+	if target > 1 or progress > 0:
+		var progress_label := Label.new()
+		progress_label.text = "%d/%d" % [progress, target]
+		progress_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		progress_label.add_theme_font_size_override("font_size", 12)
+		progress_label.custom_minimum_size = Vector2(60, 0)
+		progress_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		if unlocked:
+			progress_label.modulate = Color(0.3, 0.9, 0.4)
+		else:
+			progress_label.modulate = Color(0.5, 0.5, 0.5)
+		hbox.add_child(progress_label)
 
 	return panel
 
@@ -628,6 +670,249 @@ func _on_server_saves_received(result: int, code: int, _headers: PackedStringArr
 	if http_node != null:
 		http_node.queue_free()
 
+	if _server_saves_container == null:
+		return
+
+	for child in _server_saves_container.get_children():
+		child.queue_free()
+
+	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
+		var err_label := Label.new()
+		err_label.text = "❌ 无法加载服务器存档"
+		err_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		err_label.add_theme_font_size_override("font_size", 12)
+		err_label.modulate = Color.RED
+		_server_saves_container.add_child(err_label)
+		return
+
+	var json := JSON.new()
+	if json.parse(body.get_string_from_utf8()) != Error.OK:
+		var err_label := Label.new()
+		err_label.text = "❌ 数据解析失败"
+		err_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		err_label.add_theme_font_size_override("font_size", 12)
+		err_label.modulate = Color.RED
+		_server_saves_container.add_child(err_label)
+		return
+
+	var data: Dictionary = json.data
+	if not data.get("success", false):
+		var err_label := Label.new()
+		err_label.text = "❌ 服务器返回错误"
+		err_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		err_label.add_theme_font_size_override("font_size", 12)
+		err_label.modulate = Color.RED
+		_server_saves_container.add_child(err_label)
+		return
+
+	var server_saves: Array = data.get("data", [])
+	if server_saves.is_empty():
+		var empty_label := Label.new()
+		empty_label.text = "暂无服务器存档"
+		empty_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		empty_label.add_theme_font_size_override("font_size", 12)
+		empty_label.modulate = Color.GRAY
+		_server_saves_container.add_child(empty_label)
+		return
+
+	for sv in server_saves:
+		var sv_panel := _create_server_save_slot(sv)
+		_server_saves_container.add_child(sv_panel)
+
+func _create_server_save_slot(sv: Dictionary) -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(800, 60)
+
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.06, 0.08, 0.14, 0.9)
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_left = 8
+	style.corner_radius_bottom_right = 8
+	style.border_width_left = 1
+	style.border_width_right = 1
+	style.border_width_top = 1
+	style.border_width_bottom = 1
+	style.border_color = Color(0.2, 0.4, 0.7)
+	panel.add_theme_stylebox_override("panel", style)
+
+	var hbox := HBoxContainer.new()
+	hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hbox.add_theme_constant_override("separation", 10)
+	panel.add_child(hbox)
+
+	var slot_id: int = sv.get("slotId", 0)
+	var slot_label := Label.new()
+	slot_label.text = "☁️ 槽位 %d" % slot_id
+	slot_label.custom_minimum_size = Vector2(80, 0)
+	slot_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	slot_label.add_theme_font_size_override("font_size", 13)
+	slot_label.modulate = Color(0.4, 0.7, 0.9)
+	hbox.add_child(slot_label)
+
+	var info_text := "%s | 层数:%d | 💰%d | HP:%d/%d" % [
+		sv.get("characterId", "???"),
+		sv.get("currentFloor", 0),
+		sv.get("gold", 0),
+		sv.get("currentHP", 0),
+		sv.get("maxHP", 0)
+	]
+	var info_label := Label.new()
+	info_label.text = info_text
+	info_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	info_label.add_theme_font_size_override("font_size", 12)
+	info_label.modulate = Color(0.7, 0.75, 0.8)
+	info_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hbox.add_child(info_label)
+
+	var time_text: String = sv.get("savedAt", "")
+	if time_text.length() > 10:
+		time_text = time_text.substr(0, 10)
+	var time_label := Label.new()
+	time_label.text = time_text
+	time_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	time_label.add_theme_font_size_override("font_size", 11)
+	time_label.modulate = Color(0.5, 0.5, 0.5)
+	time_label.custom_minimum_size = Vector2(90, 0)
+	hbox.add_child(time_label)
+
+	var download_btn := Button.new()
+	download_btn.text = "⬇️ 下载"
+	download_btn.custom_minimum_size = Vector2(80, 32)
+	download_btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	download_btn.modulate = Color(0.2, 0.7, 0.4)
+	download_btn.tooltip_text = "下载到本地存档槽位 %d" % slot_id
+	download_btn.pressed.connect(func():
+		_download_save_from_server(slot_id)
+	)
+	hbox.add_child(download_btn)
+
+	var delete_btn := Button.new()
+	delete_btn.text = "🗑️"
+	delete_btn.custom_minimum_size = Vector2(40, 32)
+	delete_btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	delete_btn.modulate = Color(0.8, 0.3, 0.3)
+	delete_btn.tooltip_text = "删除服务器存档槽位 %d" % slot_id
+	delete_btn.pressed.connect(func():
+		_delete_server_save(slot_id)
+	)
+	hbox.add_child(delete_btn)
+
+	return panel
+
+func _download_save_from_server(slot_id: int) -> void:
+	var auth_system = _get_auth_system()
+	if auth_system == null or not auth_system.IsAuthenticated:
+		print("[PackageDetail] 下载存档需要先登录")
+		return
+
+	var http := HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(_on_save_downloaded)
+
+	var url := "http://127.0.0.1:5000/api/save/%s/download/%d" % [_package_id, slot_id]
+	var token: String = auth_system.Token
+	var headers := ["Authorization: Bearer %s" % token]
+	var err := http.request(url, headers)
+	if err != Error.OK:
+		print("[PackageDetail] 下载存档请求失败: %s" % err)
+		http.queue_free()
+
+func _on_save_downloaded(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
+	var http_node := get_child(get_child_count() - 1) as HTTPRequest
+	if http_node != null:
+		http_node.queue_free()
+
+	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
+		print("[PackageDetail] ❌ 下载存档失败 (HTTP %d)" % code)
+		return
+
+	var json := JSON.new()
+	if json.parse(body.get_string_from_utf8()) != Error.OK:
+		print("[PackageDetail] ❌ 下载存档数据解析失败")
+		return
+
+	var data: Dictionary = json.data
+	if not data.get("success", false):
+		print("[PackageDetail] ❌ 服务器返回错误")
+		return
+
+	var save_info: Dictionary = data.get("data", {})
+	var save_data_str: String = save_info.get("saveData", "")
+	var slot_id: int = save_info.get("slotId", 1)
+
+	if save_data_str.is_empty():
+		print("[PackageDetail] ❌ 存档数据为空")
+		return
+
+	var save_json := JSON.new()
+	if save_json.parse(save_data_str) != Error.OK:
+		print("[PackageDetail] ❌ 存档JSON解析失败")
+		return
+
+	var save_dict: Dictionary = save_json.data
+	save_dict["slot_id"] = slot_id
+	save_dict["has_save"] = true
+
+	if not _provider.is_empty() and _provider.has("save_save_slot"):
+		var save_fn: Callable = _provider.get("save_save_slot")
+		save_fn.call(slot_id, save_dict)
+		print("[PackageDetail] ✅ 存档已下载到本地槽位 %d" % slot_id)
+		_populate_saves()
+		_fetch_server_saves()
+	else:
+		print("[PackageDetail] ⚠️ 无法保存到本地，provider不支持save_save_slot")
+
+func _delete_server_save(slot_id: int) -> void:
+	var auth_system = _get_auth_system()
+	if auth_system == null or not auth_system.IsAuthenticated:
+		print("[PackageDetail] 删除存档需要先登录")
+		return
+
+	var http := HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(_on_server_save_deleted)
+
+	var url := "http://127.0.0.1:5000/api/save/%s/delete/%d" % [_package_id, slot_id]
+	var token: String = auth_system.Token
+	var headers := ["Authorization: Bearer %s" % token]
+	var err := http.request(url, headers, HTTPClient.METHOD_DELETE)
+	if err != Error.OK:
+		print("[PackageDetail] 删除存档请求失败: %s" % err)
+		http.queue_free()
+
+func _on_server_save_deleted(result: int, code: int, _headers: PackedStringArray, _body: PackedByteArray) -> void:
+	var http_node := get_child(get_child_count() - 1) as HTTPRequest
+	if http_node != null:
+		http_node.queue_free()
+
+	if result == HTTPRequest.RESULT_SUCCESS and code == 200:
+		print("[PackageDetail] ✅ 服务器存档已删除")
+		_fetch_server_saves()
+	else:
+		print("[PackageDetail] ❌ 删除服务器存档失败 (HTTP %d)" % code)
+
+func _fetch_achievements_from_server() -> void:
+	var auth_system = _get_auth_system()
+	if auth_system == null or not auth_system.IsAuthenticated:
+		return
+
+	var http := HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(_on_server_achievements_received)
+
+	var url := "http://127.0.0.1:5000/api/achievement/%s?userId=%s" % [_package_id, _get_user_id()]
+	var token: String = auth_system.Token
+	var headers := ["Authorization: Bearer %s" % token]
+	var err := http.request(url, headers)
+	if err != Error.OK:
+		http.queue_free()
+
+func _on_server_achievements_received(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
+	var http_node := get_child(get_child_count() - 1) as HTTPRequest
+	if http_node != null:
+		http_node.queue_free()
+
 	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
 		return
 
@@ -639,25 +924,39 @@ func _on_server_saves_received(result: int, code: int, _headers: PackedStringArr
 	if not data.get("success", false):
 		return
 
-	var server_saves: Array = data.get("data", [])
-	if server_saves.is_empty():
+	var server_achievements: Array = data.get("data", [])
+	if server_achievements.is_empty():
 		return
 
-	for sv in server_saves:
-		var slot_id: int = sv.get("slotId", 0)
-		var label_text := "☁️ 服务器存档 %d: %s | 层数:%d | 💰%d | %s" % [
-			slot_id,
-			sv.get("characterId", "???"),
-			sv.get("currentFloor", 0),
-			sv.get("gold", 0),
-			sv.get("savedAt", "").substr(0, 10)
-		]
-		var server_label := Label.new()
-		server_label.text = label_text
-		server_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		server_label.add_theme_font_size_override("font_size", 12)
-		server_label.modulate = Color(0.4, 0.7, 0.9)
-		_saves_tab.add_child(server_label)
+	var sep := HSeparator.new()
+	sep.custom_minimum_size = Vector2(0, 6)
+	_achievements_tab.add_child(sep)
+
+	var server_title := Label.new()
+	server_title.text = "☁️ 服务器同步成就"
+	server_title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	server_title.add_theme_font_size_override("font_size", 14)
+	server_title.modulate = Color(0.3, 0.6, 0.9)
+	_achievements_tab.add_child(server_title)
+
+	for ach in server_achievements:
+		var ach_panel := _create_achievement_item({
+			"id": ach.get("achievementId", ""),
+			"name": ach.get("achievementName", "???"),
+			"desc": ach.get("description", ""),
+			"unlocked": ach.get("isUnlocked", false),
+			"progress": ach.get("progress", 0),
+			"target": ach.get("target", 1)
+		})
+		_achievements_tab.add_child(ach_panel)
+
+func _get_user_id() -> String:
+	var auth_system = _get_auth_system()
+	if auth_system != null and auth_system.IsAuthenticated:
+		var user = auth_system.CurrentUser
+		if user != null:
+			return str(user.Id)
+	return ""
 
 func _on_back_pressed() -> void:
 	print("[PackageDetail] Back pressed")

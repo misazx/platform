@@ -10,25 +10,82 @@
           "description": "在沉睡中醒来，学习移动与跳跃",
           "tutorialFocus": "move",
           "platforms": [
-            {"x": 0, "y": 500, "w": 350, "h": 40, "type": "normal"},
-            {"x": 450, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 750, "y": 460, "w": 150, "h": 40, "type": "normal"},
-            {"x": 1000, "y": 420, "w": 150, "h": 40, "type": "normal"},
-            {"x": 1250, "y": 460, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1550, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 350,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 450,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 750,
+              "y": 460,
+              "w": 150,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1000,
+              "y": 420,
+              "w": 150,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1250,
+              "y": 460,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1550,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [],
           "enemies": [],
           "lightSources": [],
           "switches": [],
-          "checkpoints": [{"x": 800, "y": 410, "id": "cp1"}],
-          "fragments": [
-            {"x": 500, "y": 440},
-            {"x": 1050, "y": 360},
-            {"x": 1350, "y": 400}
+          "checkpoints": [
+            {
+              "x": 800,
+              "y": 410,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 100, "y": 400},
-          "endPos": {"x": 1700, "y": 400}
+          "fragments": [
+            {
+              "x": 500,
+              "y": 440
+            },
+            {
+              "x": 1050,
+              "y": 360
+            },
+            {
+              "x": 1350,
+              "y": 400
+            }
+          ],
+          "startPos": {
+            "x": 100,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1700,
+            "y": 400
+          }
         },
         {
           "id": "ff_02",
@@ -36,26 +93,89 @@
           "description": "跳跃的节奏，掌握空中控制",
           "tutorialFocus": "jump",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 380, "y": 440, "w": 120, "h": 30, "type": "normal"},
-            {"x": 600, "y": 370, "w": 120, "h": 30, "type": "normal"},
-            {"x": 820, "y": 300, "w": 120, "h": 30, "type": "normal"},
-            {"x": 1050, "y": 350, "w": 150, "h": 40, "type": "normal"},
-            {"x": 1300, "y": 280, "w": 120, "h": 30, "type": "normal"},
-            {"x": 1500, "y": 350, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 380,
+              "y": 440,
+              "w": 120,
+              "h": 30,
+              "type": "normal"
+            },
+            {
+              "x": 600,
+              "y": 370,
+              "w": 120,
+              "h": 30,
+              "type": "normal"
+            },
+            {
+              "x": 820,
+              "y": 300,
+              "w": 120,
+              "h": 30,
+              "type": "normal"
+            },
+            {
+              "x": 1050,
+              "y": 350,
+              "w": 150,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1300,
+              "y": 280,
+              "w": 120,
+              "h": 30,
+              "type": "normal"
+            },
+            {
+              "x": 1500,
+              "y": 350,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [],
           "enemies": [],
           "lightSources": [],
           "switches": [],
-          "checkpoints": [{"x": 870, "y": 250, "id": "cp1"}],
-          "fragments": [
-            {"x": 430, "y": 380},
-            {"x": 870, "y": 240},
-            {"x": 1350, "y": 220}
+          "checkpoints": [
+            {
+              "x": 870,
+              "y": 250,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1650, "y": 250}
+          "fragments": [
+            {
+              "x": 430,
+              "y": 380
+            },
+            {
+              "x": 870,
+              "y": 240
+            },
+            {
+              "x": 1350,
+              "y": 220
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1650,
+            "y": 250
+          }
         },
         {
           "id": "ff_03",
@@ -63,25 +183,82 @@
           "description": "发现光与影的力量",
           "tutorialFocus": "form_switch",
           "platforms": [
-            {"x": 0, "y": 500, "w": 300, "h": 40, "type": "normal"},
-            {"x": 400, "y": 450, "w": 200, "h": 40, "type": "light"},
-            {"x": 700, "y": 400, "w": 200, "h": 40, "type": "shadow"},
-            {"x": 1000, "y": 350, "w": 200, "h": 40, "type": "light"},
-            {"x": 1300, "y": 400, "w": 200, "h": 40, "type": "shadow"},
-            {"x": 1600, "y": 450, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 400,
+              "y": 450,
+              "w": 200,
+              "h": 40,
+              "type": "light"
+            },
+            {
+              "x": 700,
+              "y": 400,
+              "w": 200,
+              "h": 40,
+              "type": "shadow"
+            },
+            {
+              "x": 1000,
+              "y": 350,
+              "w": 200,
+              "h": 40,
+              "type": "light"
+            },
+            {
+              "x": 1300,
+              "y": 400,
+              "w": 200,
+              "h": 40,
+              "type": "shadow"
+            },
+            {
+              "x": 1600,
+              "y": 450,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [],
           "enemies": [],
           "lightSources": [],
           "switches": [],
-          "checkpoints": [{"x": 1050, "y": 300, "id": "cp1"}],
-          "fragments": [
-            {"x": 480, "y": 390},
-            {"x": 780, "y": 340},
-            {"x": 1380, "y": 340}
+          "checkpoints": [
+            {
+              "x": 1050,
+              "y": 300,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 100, "y": 400},
-          "endPos": {"x": 1750, "y": 350}
+          "fragments": [
+            {
+              "x": 480,
+              "y": 390
+            },
+            {
+              "x": 780,
+              "y": 340
+            },
+            {
+              "x": 1380,
+              "y": 340
+            }
+          ],
+          "startPos": {
+            "x": 100,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1750,
+            "y": 350
+          }
         },
         {
           "id": "ff_04",
@@ -89,27 +266,93 @@
           "description": "只有光形态才能踏上的金色道路",
           "tutorialFocus": "light_form",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 350, "y": 450, "w": 130, "h": 30, "type": "light"},
-            {"x": 580, "y": 400, "w": 130, "h": 30, "type": "light"},
-            {"x": 810, "y": 350, "w": 130, "h": 30, "type": "light"},
-            {"x": 1040, "y": 300, "w": 130, "h": 30, "type": "light"},
-            {"x": 1270, "y": 350, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 350,
+              "y": 450,
+              "w": 130,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 580,
+              "y": 400,
+              "w": 130,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 810,
+              "y": 350,
+              "w": 130,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 1040,
+              "y": 300,
+              "w": 130,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 1270,
+              "y": 350,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 700, "y": 500, "w": 100, "h": 20, "moveType": "vertical", "range": 150, "speed": 60, "formType": "light"}
+            {
+              "x": 700,
+              "y": 500,
+              "w": 100,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 150,
+              "speed": 60,
+              "formType": "light"
+            }
           ],
           "enemies": [],
           "lightSources": [],
           "switches": [],
-          "checkpoints": [{"x": 860, "y": 300, "id": "cp1"}],
-          "fragments": [
-            {"x": 400, "y": 390},
-            {"x": 640, "y": 340},
-            {"x": 1090, "y": 240}
+          "checkpoints": [
+            {
+              "x": 860,
+              "y": 300,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1400, "y": 250}
+          "fragments": [
+            {
+              "x": 400,
+              "y": 390
+            },
+            {
+              "x": 640,
+              "y": 340
+            },
+            {
+              "x": 1090,
+              "y": 240
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1400,
+            "y": 250
+          }
         },
         {
           "id": "ff_05",
@@ -117,25 +360,82 @@
           "description": "影形态的滑翔与暗影平台",
           "tutorialFocus": "shadow_form",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 400, "y": 440, "w": 130, "h": 30, "type": "shadow"},
-            {"x": 650, "y": 380, "w": 130, "h": 30, "type": "shadow"},
-            {"x": 900, "y": 320, "w": 130, "h": 30, "type": "shadow"},
-            {"x": 1150, "y": 260, "w": 130, "h": 30, "type": "shadow"},
-            {"x": 1400, "y": 350, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 400,
+              "y": 440,
+              "w": 130,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 650,
+              "y": 380,
+              "w": 130,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 900,
+              "y": 320,
+              "w": 130,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1150,
+              "y": 260,
+              "w": 130,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1400,
+              "y": 350,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [],
           "enemies": [],
           "lightSources": [],
           "switches": [],
-          "checkpoints": [{"x": 950, "y": 270, "id": "cp1"}],
-          "fragments": [
-            {"x": 450, "y": 380},
-            {"x": 700, "y": 320},
-            {"x": 1200, "y": 200}
+          "checkpoints": [
+            {
+              "x": 950,
+              "y": 270,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1550, "y": 250}
+          "fragments": [
+            {
+              "x": 450,
+              "y": 380
+            },
+            {
+              "x": 700,
+              "y": 320
+            },
+            {
+              "x": 1200,
+              "y": 200
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1550,
+            "y": 250
+          }
         },
         {
           "id": "ff_06",
@@ -143,27 +443,96 @@
           "description": "光影交替，快速切换是关键",
           "tutorialFocus": "mixed_forms",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 300, "y": 450, "w": 120, "h": 30, "type": "light"},
-            {"x": 520, "y": 400, "w": 120, "h": 30, "type": "shadow"},
-            {"x": 740, "y": 350, "w": 120, "h": 30, "type": "light"},
-            {"x": 960, "y": 300, "w": 120, "h": 30, "type": "shadow"},
-            {"x": 1180, "y": 250, "w": 120, "h": 30, "type": "light"},
-            {"x": 1400, "y": 300, "w": 120, "h": 30, "type": "shadow"},
-            {"x": 1600, "y": 350, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 300,
+              "y": 450,
+              "w": 120,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 520,
+              "y": 400,
+              "w": 120,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 740,
+              "y": 350,
+              "w": 120,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 960,
+              "y": 300,
+              "w": 120,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1180,
+              "y": 250,
+              "w": 120,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 1400,
+              "y": 300,
+              "w": 120,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1600,
+              "y": 350,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [],
           "enemies": [],
           "lightSources": [],
           "switches": [],
-          "checkpoints": [{"x": 790, "y": 300, "id": "cp1"}],
-          "fragments": [
-            {"x": 350, "y": 390},
-            {"x": 790, "y": 290},
-            {"x": 1450, "y": 240}
+          "checkpoints": [
+            {
+              "x": 790,
+              "y": 300,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1750, "y": 250}
+          "fragments": [
+            {
+              "x": 350,
+              "y": 390
+            },
+            {
+              "x": 790,
+              "y": 290
+            },
+            {
+              "x": 1450,
+              "y": 240
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1750,
+            "y": 250
+          }
         },
         {
           "id": "ff_07",
@@ -171,29 +540,101 @@
           "description": "移动平台与光影的配合",
           "tutorialFocus": "combined",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 700, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1200, "y": 450, "w": 120, "h": 30, "type": "light"},
-            {"x": 1450, "y": 400, "w": 120, "h": 30, "type": "shadow"},
-            {"x": 1700, "y": 450, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 700,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1200,
+              "y": 450,
+              "w": 120,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 1450,
+              "y": 400,
+              "w": 120,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1700,
+              "y": 450,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 350, "y": 480, "w": 120, "h": 20, "moveType": "horizontal", "range": 150, "speed": 70},
-            {"x": 950, "y": 450, "w": 120, "h": 20, "moveType": "vertical", "range": 100, "speed": 50}
+            {
+              "x": 350,
+              "y": 480,
+              "w": 120,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 150,
+              "speed": 70
+            },
+            {
+              "x": 950,
+              "y": 450,
+              "w": 120,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 100,
+              "speed": 50
+            }
           ],
           "enemies": [
-            {"x": 750, "y": 440, "type": "patrol", "attribute": "shadow"}
+            {
+              "x": 750,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
           ],
           "lightSources": [],
           "switches": [],
-          "checkpoints": [{"x": 750, "y": 450, "id": "cp1"}],
-          "fragments": [
-            {"x": 400, "y": 420},
-            {"x": 1000, "y": 370},
-            {"x": 1500, "y": 340}
+          "checkpoints": [
+            {
+              "x": 750,
+              "y": 450,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1850, "y": 350}
+          "fragments": [
+            {
+              "x": 400,
+              "y": 420
+            },
+            {
+              "x": 1000,
+              "y": 370
+            },
+            {
+              "x": 1500,
+              "y": 340
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1850,
+            "y": 350
+          }
         },
         {
           "id": "ff_08",
@@ -201,28 +642,100 @@
           "description": "精密跳跃与影形态滑翔的结合",
           "tutorialFocus": "precision_jump",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 320, "y": 420, "w": 80, "h": 25, "type": "light"},
-            {"x": 520, "y": 340, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 720, "y": 260, "w": 80, "h": 25, "type": "light"},
-            {"x": 920, "y": 200, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 1120, "y": 150, "w": 80, "h": 25, "type": "light"},
-            {"x": 1350, "y": 200, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 320,
+              "y": 420,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 520,
+              "y": 340,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 720,
+              "y": 260,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 920,
+              "y": 200,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 1120,
+              "y": 150,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 1350,
+              "y": 200,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 1000, "y": 300, "w": 80, "h": 20, "moveType": "horizontal", "range": 80, "speed": 40, "formType": "shadow"}
+            {
+              "x": 1000,
+              "y": 300,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 80,
+              "speed": 40,
+              "formType": "shadow"
+            }
           ],
           "enemies": [],
           "lightSources": [],
           "switches": [],
-          "checkpoints": [{"x": 770, "y": 210, "id": "cp1"}],
-          "fragments": [
-            {"x": 360, "y": 360},
-            {"x": 760, "y": 200},
-            {"x": 1160, "y": 90}
+          "checkpoints": [
+            {
+              "x": 770,
+              "y": 210,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1500, "y": 100}
+          "fragments": [
+            {
+              "x": 360,
+              "y": 360
+            },
+            {
+              "x": 760,
+              "y": 200
+            },
+            {
+              "x": 1160,
+              "y": 90
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1500,
+            "y": 100
+          }
         },
         {
           "id": "ff_09",
@@ -230,29 +743,107 @@
           "description": "影形态可穿过薄影墙，寻找隐藏路径",
           "tutorialFocus": "shadow_wall",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 350, "y": 500, "w": 30, "h": 200, "type": "shadow_wall"},
-            {"x": 450, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 750, "y": 500, "w": 30, "h": 250, "type": "shadow_wall"},
-            {"x": 850, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1150, "y": 500, "w": 30, "h": 200, "type": "shadow_wall"},
-            {"x": 1250, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 350,
+              "y": 500,
+              "w": 30,
+              "h": 200,
+              "type": "shadow_wall"
+            },
+            {
+              "x": 450,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 750,
+              "y": 500,
+              "w": 30,
+              "h": 250,
+              "type": "shadow_wall"
+            },
+            {
+              "x": 850,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1150,
+              "y": 500,
+              "w": 30,
+              "h": 200,
+              "type": "shadow_wall"
+            },
+            {
+              "x": 1250,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [],
           "enemies": [
-            {"x": 500, "y": 440, "type": "patrol", "attribute": "light"},
-            {"x": 900, "y": 440, "type": "patrol", "attribute": "shadow"}
+            {
+              "x": 500,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "light"
+            },
+            {
+              "x": 900,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
           ],
           "lightSources": [],
           "switches": [],
-          "checkpoints": [{"x": 500, "y": 450, "id": "cp1"}, {"x": 900, "y": 450, "id": "cp2"}],
-          "fragments": [
-            {"x": 380, "y": 380},
-            {"x": 780, "y": 380},
-            {"x": 1180, "y": 380}
+          "checkpoints": [
+            {
+              "x": 500,
+              "y": 450,
+              "id": "cp1"
+            },
+            {
+              "x": 900,
+              "y": 450,
+              "id": "cp2"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1450, "y": 400}
+          "fragments": [
+            {
+              "x": 380,
+              "y": 380
+            },
+            {
+              "x": 780,
+              "y": 380
+            },
+            {
+              "x": 1180,
+              "y": 380
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1450,
+            "y": 400
+          }
         },
         {
           "id": "ff_10",
@@ -260,31 +851,106 @@
           "description": "第一章Boss - 暗影守卫",
           "tutorialFocus": "boss",
           "platforms": [
-            {"x": 0, "y": 500, "w": 400, "h": 40, "type": "normal"},
-            {"x": 200, "y": 350, "w": 120, "h": 30, "type": "light"},
-            {"x": 500, "y": 280, "w": 120, "h": 30, "type": "shadow"},
-            {"x": 800, "y": 350, "w": 120, "h": 30, "type": "light"},
-            {"x": 1050, "y": 280, "w": 120, "h": 30, "type": "shadow"},
-            {"x": 1300, "y": 500, "w": 400, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 400,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 200,
+              "y": 350,
+              "w": 120,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 500,
+              "y": 280,
+              "w": 120,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 800,
+              "y": 350,
+              "w": 120,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 1050,
+              "y": 280,
+              "w": 120,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1300,
+              "y": 500,
+              "w": 400,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 600, "y": 450, "w": 100, "h": 20, "moveType": "horizontal", "range": 200, "speed": 60}
+            {
+              "x": 600,
+              "y": 450,
+              "w": 100,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 200,
+              "speed": 60
+            }
           ],
           "enemies": [
-            {"x": 700, "y": 440, "type": "shadow_guardian", "attribute": "shadow"}
+            {
+              "x": 700,
+              "y": 440,
+              "type": "shadow_guardian",
+              "attribute": "shadow"
+            }
           ],
           "lightSources": [
-            {"x": 400, "y": 460, "radius": 180, "energy": 1.2}
+            {
+              "x": 400,
+              "y": 460,
+              "radius": 180,
+              "energy": 1.2
+            }
           ],
           "switches": [],
-          "checkpoints": [{"x": 100, "y": 450, "id": "cp1"}],
-          "fragments": [
-            {"x": 250, "y": 290},
-            {"x": 550, "y": 220},
-            {"x": 1100, "y": 220}
+          "checkpoints": [
+            {
+              "x": 100,
+              "y": 450,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 100, "y": 400},
-          "endPos": {"x": 1500, "y": 400}
+          "fragments": [
+            {
+              "x": 250,
+              "y": 290
+            },
+            {
+              "x": 550,
+              "y": 220
+            },
+            {
+              "x": 1100,
+              "y": 220
+            }
+          ],
+          "startPos": {
+            "x": 100,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1500,
+            "y": 400
+          }
         }
       ]
     },
@@ -298,25 +964,76 @@
           "description": "推动光源，改变影子的方向",
           "tutorialFocus": "push_light",
           "platforms": [
-            {"x": 0, "y": 500, "w": 300, "h": 40, "type": "normal"},
-            {"x": 400, "y": 500, "w": 400, "h": 40, "type": "normal"},
-            {"x": 900, "y": 500, "w": 300, "h": 40, "type": "normal"},
-            {"x": 1300, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 400,
+              "y": 500,
+              "w": 400,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 900,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1300,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [],
           "enemies": [],
           "lightSources": [
-            {"x": 500, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
+            {
+              "x": 500,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
           ],
           "switches": [],
-          "checkpoints": [{"x": 450, "y": 450, "id": "cp1"}],
-          "fragments": [
-            {"x": 600, "y": 440},
-            {"x": 1000, "y": 440},
-            {"x": 1400, "y": 440}
+          "checkpoints": [
+            {
+              "x": 450,
+              "y": 450,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 100, "y": 400},
-          "endPos": {"x": 1500, "y": 400}
+          "fragments": [
+            {
+              "x": 600,
+              "y": 440
+            },
+            {
+              "x": 1000,
+              "y": 440
+            },
+            {
+              "x": 1400,
+              "y": 440
+            }
+          ],
+          "startPos": {
+            "x": 100,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1500,
+            "y": 400
+          }
         },
         {
           "id": "fs_02",
@@ -324,25 +1041,76 @@
           "description": "利用光源创造影平台路径",
           "tutorialFocus": "light_shadow_puzzle",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 600, "y": 500, "w": 200, "h": 40, "type": "shadow"},
-            {"x": 900, "y": 450, "w": 150, "h": 30, "type": "shadow"},
-            {"x": 1150, "y": 400, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 600,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "shadow"
+            },
+            {
+              "x": 900,
+              "y": 450,
+              "w": 150,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1150,
+              "y": 400,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [],
           "enemies": [],
           "lightSources": [
-            {"x": 350, "y": 460, "radius": 250, "energy": 1.8, "pushable": true}
+            {
+              "x": 350,
+              "y": 460,
+              "radius": 250,
+              "energy": 1.8,
+              "pushable": true
+            }
           ],
           "switches": [],
-          "checkpoints": [{"x": 650, "y": 450, "id": "cp1"}],
-          "fragments": [
-            {"x": 400, "y": 440},
-            {"x": 700, "y": 440},
-            {"x": 950, "y": 390}
+          "checkpoints": [
+            {
+              "x": 650,
+              "y": 450,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1300, "y": 300}
+          "fragments": [
+            {
+              "x": 400,
+              "y": 440
+            },
+            {
+              "x": 700,
+              "y": 440
+            },
+            {
+              "x": 950,
+              "y": 390
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1300,
+            "y": 300
+          }
         },
         {
           "id": "fs_03",
@@ -350,26 +1118,87 @@
           "description": "开关控制平台的出现与消失",
           "tutorialFocus": "switch_mechanic",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 500, "y": 450, "w": 150, "h": 30, "type": "light"},
-            {"x": 800, "y": 400, "w": 150, "h": 30, "type": "shadow"},
-            {"x": 1100, "y": 450, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 500,
+              "y": 450,
+              "w": 150,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 800,
+              "y": 400,
+              "w": 150,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1100,
+              "y": 450,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [],
           "enemies": [],
           "lightSources": [],
           "switches": [
-            {"x": 300, "y": 460, "id": "sw1", "switchType": "light_only", "targetId": "sw_platform_1", "targetType": "platform", "stayActive": true},
-            {"x": 650, "y": 410, "id": "sw2", "switchType": "shadow_only", "targetId": "sw_platform_2", "targetType": "platform", "stayActive": true}
+            {
+              "x": 300,
+              "y": 460,
+              "id": "sw1",
+              "switchType": "light_only",
+              "targetId": "sw_platform_1",
+              "targetType": "platform",
+              "stayActive": true
+            },
+            {
+              "x": 650,
+              "y": 410,
+              "id": "sw2",
+              "switchType": "shadow_only",
+              "targetId": "sw_platform_2",
+              "targetType": "platform",
+              "stayActive": true
+            }
           ],
-          "checkpoints": [{"x": 550, "y": 400, "id": "cp1"}],
+          "checkpoints": [
+            {
+              "x": 550,
+              "y": 400,
+              "id": "cp1"
+            }
+          ],
           "fragments": [
-            {"x": 350, "y": 440},
-            {"x": 650, "y": 360},
-            {"x": 1000, "y": 400}
+            {
+              "x": 350,
+              "y": 440
+            },
+            {
+              "x": 650,
+              "y": 360
+            },
+            {
+              "x": 1000,
+              "y": 400
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1250, "y": 350}
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1250,
+            "y": 350
+          }
         },
         {
           "id": "fs_04",
@@ -377,27 +1206,90 @@
           "description": "多光源配合的解谜",
           "tutorialFocus": "multi_light",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 400, "y": 480, "w": 150, "h": 30, "type": "shadow"},
-            {"x": 700, "y": 450, "w": 150, "h": 30, "type": "light"},
-            {"x": 1000, "y": 420, "w": 150, "h": 30, "type": "shadow"},
-            {"x": 1300, "y": 450, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 400,
+              "y": 480,
+              "w": 150,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 700,
+              "y": 450,
+              "w": 150,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 1000,
+              "y": 420,
+              "w": 150,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1300,
+              "y": 450,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [],
           "enemies": [],
           "lightSources": [
-            {"x": 250, "y": 460, "radius": 200, "energy": 1.5, "pushable": true},
-            {"x": 850, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
+            {
+              "x": 250,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            },
+            {
+              "x": 850,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
           ],
           "switches": [],
-          "checkpoints": [{"x": 750, "y": 400, "id": "cp1"}],
-          "fragments": [
-            {"x": 450, "y": 420},
-            {"x": 750, "y": 390},
-            {"x": 1050, "y": 360}
+          "checkpoints": [
+            {
+              "x": 750,
+              "y": 400,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1450, "y": 350}
+          "fragments": [
+            {
+              "x": 450,
+              "y": 420
+            },
+            {
+              "x": 750,
+              "y": 390
+            },
+            {
+              "x": 1050,
+              "y": 360
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1450,
+            "y": 350
+          }
         },
         {
           "id": "fs_05",
@@ -405,27 +1297,88 @@
           "description": "移动平台与光源的配合",
           "tutorialFocus": "moving_light",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 800, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1200, "y": 450, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 800,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1200,
+              "y": 450,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 400, "y": 480, "w": 100, "h": 20, "moveType": "horizontal", "range": 150, "speed": 60},
-            {"x": 1000, "y": 460, "w": 100, "h": 20, "moveType": "vertical", "range": 100, "speed": 50}
+            {
+              "x": 400,
+              "y": 480,
+              "w": 100,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 150,
+              "speed": 60
+            },
+            {
+              "x": 1000,
+              "y": 460,
+              "w": 100,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 100,
+              "speed": 50
+            }
           ],
           "enemies": [],
           "lightSources": [
-            {"x": 500, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
+            {
+              "x": 500,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
           ],
           "switches": [],
-          "checkpoints": [{"x": 850, "y": 450, "id": "cp1"}],
-          "fragments": [
-            {"x": 450, "y": 440},
-            {"x": 900, "y": 440},
-            {"x": 1300, "y": 390}
+          "checkpoints": [
+            {
+              "x": 850,
+              "y": 450,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1400, "y": 350}
+          "fragments": [
+            {
+              "x": 450,
+              "y": 440
+            },
+            {
+              "x": 900,
+              "y": 440
+            },
+            {
+              "x": 1300,
+              "y": 390
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1400,
+            "y": 350
+          }
         },
         {
           "id": "fs_06",
@@ -433,29 +1386,97 @@
           "description": "影墙与光源的组合谜题",
           "tutorialFocus": "shadow_wall_light",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 400, "y": 500, "w": 30, "h": 200, "type": "shadow_wall"},
-            {"x": 500, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 850, "y": 500, "w": 30, "h": 200, "type": "shadow_wall"},
-            {"x": 950, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1250, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 400,
+              "y": 500,
+              "w": 30,
+              "h": 200,
+              "type": "shadow_wall"
+            },
+            {
+              "x": 500,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 850,
+              "y": 500,
+              "w": 30,
+              "h": 200,
+              "type": "shadow_wall"
+            },
+            {
+              "x": 950,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1250,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [],
           "enemies": [
-            {"x": 550, "y": 440, "type": "patrol", "attribute": "light"}
+            {
+              "x": 550,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "light"
+            }
           ],
           "lightSources": [
-            {"x": 300, "y": 460, "radius": 250, "energy": 1.5, "pushable": true}
+            {
+              "x": 300,
+              "y": 460,
+              "radius": 250,
+              "energy": 1.5,
+              "pushable": true
+            }
           ],
           "switches": [],
-          "checkpoints": [{"x": 550, "y": 450, "id": "cp1"}],
-          "fragments": [
-            {"x": 430, "y": 380},
-            {"x": 700, "y": 440},
-            {"x": 1100, "y": 440}
+          "checkpoints": [
+            {
+              "x": 550,
+              "y": 450,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1400, "y": 400}
+          "fragments": [
+            {
+              "x": 430,
+              "y": 380
+            },
+            {
+              "x": 700,
+              "y": 440
+            },
+            {
+              "x": 1100,
+              "y": 440
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1400,
+            "y": 400
+          }
         },
         {
           "id": "fs_07",
@@ -463,30 +1484,104 @@
           "description": "复杂的光影路径选择",
           "tutorialFocus": "path_choice",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 350, "y": 450, "w": 120, "h": 30, "type": "light"},
-            {"x": 350, "y": 550, "w": 120, "h": 30, "type": "shadow"},
-            {"x": 600, "y": 400, "w": 120, "h": 30, "type": "shadow"},
-            {"x": 600, "y": 500, "w": 120, "h": 30, "type": "light"},
-            {"x": 850, "y": 350, "w": 120, "h": 30, "type": "light"},
-            {"x": 1100, "y": 400, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 350,
+              "y": 450,
+              "w": 120,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 350,
+              "y": 550,
+              "w": 120,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 600,
+              "y": 400,
+              "w": 120,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 600,
+              "y": 500,
+              "w": 120,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 850,
+              "y": 350,
+              "w": 120,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 1100,
+              "y": 400,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [],
           "enemies": [
-            {"x": 650, "y": 440, "type": "patrol", "attribute": "shadow"}
+            {
+              "x": 650,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
           ],
           "lightSources": [
-            {"x": 200, "y": 460, "radius": 200, "energy": 1.3, "pushable": true}
+            {
+              "x": 200,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.3,
+              "pushable": true
+            }
           ],
           "switches": [],
-          "checkpoints": [{"x": 650, "y": 350, "id": "cp1"}],
-          "fragments": [
-            {"x": 400, "y": 390},
-            {"x": 650, "y": 340},
-            {"x": 950, "y": 290}
+          "checkpoints": [
+            {
+              "x": 650,
+              "y": 350,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1250, "y": 300}
+          "fragments": [
+            {
+              "x": 400,
+              "y": 390
+            },
+            {
+              "x": 650,
+              "y": 340
+            },
+            {
+              "x": 950,
+              "y": 290
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1250,
+            "y": 300
+          }
         },
         {
           "id": "fs_08",
@@ -494,26 +1589,91 @@
           "description": "连续移动平台的挑战",
           "tutorialFocus": "moving_challenge",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1500, "y": 400, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1500,
+              "y": 400,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 350, "y": 480, "w": 100, "h": 20, "moveType": "horizontal", "range": 100, "speed": 70},
-            {"x": 600, "y": 440, "w": 100, "h": 20, "moveType": "vertical", "range": 80, "speed": 55},
-            {"x": 850, "y": 400, "w": 100, "h": 20, "moveType": "horizontal", "range": 120, "speed": 65},
-            {"x": 1100, "y": 380, "w": 100, "h": 20, "moveType": "circular", "range": 80, "speed": 50}
+            {
+              "x": 350,
+              "y": 480,
+              "w": 100,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 100,
+              "speed": 70
+            },
+            {
+              "x": 600,
+              "y": 440,
+              "w": 100,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 80,
+              "speed": 55
+            },
+            {
+              "x": 850,
+              "y": 400,
+              "w": 100,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 120,
+              "speed": 65
+            },
+            {
+              "x": 1100,
+              "y": 380,
+              "w": 100,
+              "h": 20,
+              "moveType": "circular",
+              "range": 80,
+              "speed": 50
+            }
           ],
           "enemies": [],
           "lightSources": [],
           "switches": [],
-          "checkpoints": [{"x": 650, "y": 390, "id": "cp1"}],
-          "fragments": [
-            {"x": 400, "y": 430},
-            {"x": 750, "y": 370},
-            {"x": 1150, "y": 330}
+          "checkpoints": [
+            {
+              "x": 650,
+              "y": 390,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1650, "y": 300}
+          "fragments": [
+            {
+              "x": 400,
+              "y": 430
+            },
+            {
+              "x": 750,
+              "y": 370
+            },
+            {
+              "x": 1150,
+              "y": 330
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1650,
+            "y": 300
+          }
         },
         {
           "id": "fs_09",
@@ -521,32 +1681,116 @@
           "description": "开关与光源的复杂组合",
           "tutorialFocus": "complex_puzzle",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 500, "y": 450, "w": 150, "h": 30, "type": "light"},
-            {"x": 800, "y": 400, "w": 150, "h": 30, "type": "shadow"},
-            {"x": 1100, "y": 350, "w": 150, "h": 30, "type": "light"},
-            {"x": 1400, "y": 400, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 500,
+              "y": 450,
+              "w": 150,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 800,
+              "y": 400,
+              "w": 150,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1100,
+              "y": 350,
+              "w": 150,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 1400,
+              "y": 400,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 350, "y": 480, "w": 80, "h": 20, "moveType": "vertical", "range": 60, "speed": 40, "formType": "shadow"}
+            {
+              "x": 350,
+              "y": 480,
+              "w": 80,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 60,
+              "speed": 40,
+              "formType": "shadow"
+            }
           ],
           "enemies": [
-            {"x": 850, "y": 340, "type": "patrol", "attribute": "light"}
+            {
+              "x": 850,
+              "y": 340,
+              "type": "patrol",
+              "attribute": "light"
+            }
           ],
           "lightSources": [
-            {"x": 300, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
+            {
+              "x": 300,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
           ],
           "switches": [
-            {"x": 650, "y": 410, "id": "sw1", "switchType": "both", "targetId": "sw_platform_1", "targetType": "platform", "isToggle": true}
+            {
+              "x": 650,
+              "y": 410,
+              "id": "sw1",
+              "switchType": "both",
+              "targetId": "sw_platform_1",
+              "targetType": "platform",
+              "isToggle": true
+            }
           ],
-          "checkpoints": [{"x": 550, "y": 400, "id": "cp1"}, {"x": 1150, "y": 300, "id": "cp2"}],
+          "checkpoints": [
+            {
+              "x": 550,
+              "y": 400,
+              "id": "cp1"
+            },
+            {
+              "x": 1150,
+              "y": 300,
+              "id": "cp2"
+            }
+          ],
           "fragments": [
-            {"x": 350, "y": 440},
-            {"x": 750, "y": 360},
-            {"x": 1150, "y": 290}
+            {
+              "x": 350,
+              "y": 440
+            },
+            {
+              "x": 750,
+              "y": 360
+            },
+            {
+              "x": 1150,
+              "y": 290
+            }
           ],
-          "startPos": {"x": 80, "y": 400},
-          "endPos": {"x": 1550, "y": 300}
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1550,
+            "y": 300
+          }
         },
         {
           "id": "fs_10",
@@ -554,33 +1798,120 @@
           "description": "第二章Boss - 光影画师",
           "tutorialFocus": "boss",
           "platforms": [
-            {"x": 0, "y": 500, "w": 350, "h": 40, "type": "normal"},
-            {"x": 300, "y": 380, "w": 100, "h": 25, "type": "light"},
-            {"x": 550, "y": 320, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 800, "y": 380, "w": 100, "h": 25, "type": "light"},
-            {"x": 1050, "y": 320, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 1300, "y": 500, "w": 350, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 350,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 300,
+              "y": 380,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 550,
+              "y": 320,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 800,
+              "y": 380,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 1050,
+              "y": 320,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 1300,
+              "y": 500,
+              "w": 350,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 600, "y": 450, "w": 80, "h": 20, "moveType": "horizontal", "range": 200, "speed": 70}
+            {
+              "x": 600,
+              "y": 450,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 200,
+              "speed": 70
+            }
           ],
           "enemies": [
-            {"x": 700, "y": 440, "type": "light_painter", "attribute": "light"},
-            {"x": 900, "y": 440, "type": "shadow_guardian", "attribute": "shadow"}
+            {
+              "x": 700,
+              "y": 440,
+              "type": "light_painter",
+              "attribute": "light"
+            },
+            {
+              "x": 900,
+              "y": 440,
+              "type": "shadow_guardian",
+              "attribute": "shadow"
+            }
           ],
           "lightSources": [
-            {"x": 400, "y": 460, "radius": 200, "energy": 1.5, "pushable": true},
-            {"x": 1000, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
+            {
+              "x": 400,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            },
+            {
+              "x": 1000,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
           ],
           "switches": [],
-          "checkpoints": [{"x": 100, "y": 450, "id": "cp1"}],
-          "fragments": [
-            {"x": 350, "y": 320},
-            {"x": 700, "y": 260},
-            {"x": 1100, "y": 260}
+          "checkpoints": [
+            {
+              "x": 100,
+              "y": 450,
+              "id": "cp1"
+            }
           ],
-          "startPos": {"x": 100, "y": 400},
-          "endPos": {"x": 1500, "y": 400}
+          "fragments": [
+            {
+              "x": 350,
+              "y": 320
+            },
+            {
+              "x": 700,
+              "y": 260
+            },
+            {
+              "x": 1100,
+              "y": 260
+            }
+          ],
+          "startPos": {
+            "x": 100,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1500,
+            "y": 400
+          }
         }
       ]
     },
@@ -589,201 +1920,899 @@
       "name": "寂静音乐厅",
       "levels": [
         {
-          "id": "sc_01", "name": "寂静前奏", "description": "学习躲避敌人",
+          "id": "sc_01",
+          "name": "寂静前奏",
+          "description": "学习躲避敌人",
           "tutorialFocus": "enemy_dodge",
           "platforms": [
-            {"x": 0, "y": 500, "w": 300, "h": 40, "type": "normal"},
-            {"x": 500, "y": 500, "w": 400, "h": 40, "type": "normal"},
-            {"x": 1100, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 500,
+              "y": 500,
+              "w": 400,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1100,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [
-            {"x": 600, "y": 440, "type": "patrol", "attribute": "shadow"}
+          "movingPlatforms": [],
+          "enemies": [
+            {
+              "x": 600,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
           ],
-          "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 550, "y": 450, "id": "cp1"}],
-          "fragments": [{"x": 300, "y": 440}, {"x": 700, "y": 440}, {"x": 1200, "y": 440}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1300, "y": 400}
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 550,
+              "y": 450,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 300,
+              "y": 440
+            },
+            {
+              "x": 700,
+              "y": 440
+            },
+            {
+              "x": 1200,
+              "y": 440
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1300,
+            "y": 400
+          }
         },
         {
-          "id": "sc_02", "name": "光影协奏", "description": "利用形态切换躲避不同敌人",
+          "id": "sc_02",
+          "name": "光影协奏",
+          "description": "利用形态切换躲避不同敌人",
           "tutorialFocus": "form_dodge",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 450, "y": 500, "w": 300, "h": 40, "type": "normal"},
-            {"x": 900, "y": 500, "w": 300, "h": 40, "type": "normal"},
-            {"x": 1350, "y": 500, "w": 250, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 450,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 900,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1350,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [
-            {"x": 500, "y": 440, "type": "patrol", "attribute": "light"},
-            {"x": 1000, "y": 440, "type": "patrol", "attribute": "shadow"}
+          "movingPlatforms": [],
+          "enemies": [
+            {
+              "x": 500,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "light"
+            },
+            {
+              "x": 1000,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
           ],
-          "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 500, "y": 450, "id": "cp1"}],
-          "fragments": [{"x": 350, "y": 440}, {"x": 700, "y": 440}, {"x": 1100, "y": 440}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1450, "y": 400}
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 500,
+              "y": 450,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 350,
+              "y": 440
+            },
+            {
+              "x": 700,
+              "y": 440
+            },
+            {
+              "x": 1100,
+              "y": 440
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1450,
+            "y": 400
+          }
         },
         {
-          "id": "sc_03", "name": "回旋曲", "description": "环形移动平台上的战斗",
+          "id": "sc_03",
+          "name": "回旋曲",
+          "description": "环形移动平台上的战斗",
           "tutorialFocus": "moving_combat",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1200, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1200,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 500, "y": 450, "w": 120, "h": 20, "moveType": "circular", "range": 150, "speed": 45}
+            {
+              "x": 500,
+              "y": 450,
+              "w": 120,
+              "h": 20,
+              "moveType": "circular",
+              "range": 150,
+              "speed": 45
+            }
           ],
           "enemies": [
-            {"x": 700, "y": 440, "type": "patrol", "attribute": "shadow"}
+            {
+              "x": 700,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
           ],
-          "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 100, "y": 450, "id": "cp1"}],
-          "fragments": [{"x": 400, "y": 440}, {"x": 700, "y": 350}, {"x": 1100, "y": 440}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1400, "y": 400}
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 100,
+              "y": 450,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 400,
+              "y": 440
+            },
+            {
+              "x": 700,
+              "y": 350
+            },
+            {
+              "x": 1100,
+              "y": 440
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1400,
+            "y": 400
+          }
         },
         {
-          "id": "sc_04", "name": "小步舞曲", "description": "精确跳跃躲避巡逻敌人",
+          "id": "sc_04",
+          "name": "小步舞曲",
+          "description": "精确跳跃躲避巡逻敌人",
           "tutorialFocus": "precision_dodge",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 350, "y": 450, "w": 100, "h": 30, "type": "light"},
-            {"x": 550, "y": 400, "w": 100, "h": 30, "type": "shadow"},
-            {"x": 750, "y": 450, "w": 100, "h": 30, "type": "light"},
-            {"x": 950, "y": 400, "w": 100, "h": 30, "type": "shadow"},
-            {"x": 1150, "y": 450, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 350,
+              "y": 450,
+              "w": 100,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 550,
+              "y": 400,
+              "w": 100,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 750,
+              "y": 450,
+              "w": 100,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 950,
+              "y": 400,
+              "w": 100,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1150,
+              "y": 450,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [
-            {"x": 450, "y": 390, "type": "patrol", "attribute": "light"},
-            {"x": 850, "y": 390, "type": "patrol", "attribute": "shadow"}
+          "movingPlatforms": [],
+          "enemies": [
+            {
+              "x": 450,
+              "y": 390,
+              "type": "patrol",
+              "attribute": "light"
+            },
+            {
+              "x": 850,
+              "y": 390,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
           ],
-          "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 600, "y": 350, "id": "cp1"}],
-          "fragments": [{"x": 400, "y": 390}, {"x": 700, "y": 390}, {"x": 1000, "y": 340}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1300, "y": 350}
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 600,
+              "y": 350,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 400,
+              "y": 390
+            },
+            {
+              "x": 700,
+              "y": 390
+            },
+            {
+              "x": 1000,
+              "y": 340
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1300,
+            "y": 350
+          }
         },
         {
-          "id": "sc_05", "name": "变奏曲", "description": "开关改变敌人行为",
+          "id": "sc_05",
+          "name": "变奏曲",
+          "description": "开关改变敌人行为",
           "tutorialFocus": "switch_enemy",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 500, "y": 500, "w": 300, "h": 40, "type": "normal"},
-            {"x": 1000, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 500,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1000,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [
-            {"x": 600, "y": 440, "type": "patrol", "attribute": "shadow"},
-            {"x": 1100, "y": 440, "type": "patrol", "attribute": "light"}
+          "movingPlatforms": [],
+          "enemies": [
+            {
+              "x": 600,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "shadow"
+            },
+            {
+              "x": 1100,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "light"
+            }
           ],
-          "lightSources": [], "switches": [
-            {"x": 350, "y": 460, "id": "sw1", "switchType": "both", "targetId": "enemy_1", "targetType": "enemy", "isToggle": true}
+          "lightSources": [],
+          "switches": [
+            {
+              "x": 350,
+              "y": 460,
+              "id": "sw1",
+              "switchType": "both",
+              "targetId": "enemy_1",
+              "targetType": "enemy",
+              "isToggle": true
+            }
           ],
-          "checkpoints": [{"x": 550, "y": 450, "id": "cp1"}],
-          "fragments": [{"x": 350, "y": 440}, {"x": 700, "y": 440}, {"x": 1150, "y": 440}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1200, "y": 400}
+          "checkpoints": [
+            {
+              "x": 550,
+              "y": 450,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 350,
+              "y": 440
+            },
+            {
+              "x": 700,
+              "y": 440
+            },
+            {
+              "x": 1150,
+              "y": 440
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1200,
+            "y": 400
+          }
         },
         {
-          "id": "sc_06", "name": "间奏曲", "description": "光影形态快速切换躲避连续敌人",
+          "id": "sc_06",
+          "name": "间奏曲",
+          "description": "光影形态快速切换躲避连续敌人",
           "tutorialFocus": "rapid_switch",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 350, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 700, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1050, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1400, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 350,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 700,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1050,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1400,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [
-            {"x": 400, "y": 440, "type": "patrol", "attribute": "light"},
-            {"x": 750, "y": 440, "type": "patrol", "attribute": "shadow"},
-            {"x": 1100, "y": 440, "type": "patrol", "attribute": "light"}
+          "movingPlatforms": [],
+          "enemies": [
+            {
+              "x": 400,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "light"
+            },
+            {
+              "x": 750,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "shadow"
+            },
+            {
+              "x": 1100,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "light"
+            }
           ],
-          "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 750, "y": 450, "id": "cp1"}],
-          "fragments": [{"x": 250, "y": 440}, {"x": 600, "y": 440}, {"x": 1200, "y": 440}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1550, "y": 400}
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 750,
+              "y": 450,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 250,
+              "y": 440
+            },
+            {
+              "x": 600,
+              "y": 440
+            },
+            {
+              "x": 1200,
+              "y": 440
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1550,
+            "y": 400
+          }
         },
         {
-          "id": "sc_07", "name": "谐谑曲", "description": "影墙后的隐藏敌人",
+          "id": "sc_07",
+          "name": "谐谑曲",
+          "description": "影墙后的隐藏敌人",
           "tutorialFocus": "shadow_wall_enemy",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 400, "y": 500, "w": 30, "h": 200, "type": "shadow_wall"},
-            {"x": 500, "y": 500, "w": 300, "h": 40, "type": "normal"},
-            {"x": 950, "y": 500, "w": 30, "h": 200, "type": "shadow_wall"},
-            {"x": 1050, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 400,
+              "y": 500,
+              "w": 30,
+              "h": 200,
+              "type": "shadow_wall"
+            },
+            {
+              "x": 500,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 950,
+              "y": 500,
+              "w": 30,
+              "h": 200,
+              "type": "shadow_wall"
+            },
+            {
+              "x": 1050,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [
-            {"x": 600, "y": 440, "type": "patrol", "attribute": "shadow"},
-            {"x": 1150, "y": 440, "type": "patrol", "attribute": "light"}
+          "movingPlatforms": [],
+          "enemies": [
+            {
+              "x": 600,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "shadow"
+            },
+            {
+              "x": 1150,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "light"
+            }
           ],
-          "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 550, "y": 450, "id": "cp1"}],
-          "fragments": [{"x": 430, "y": 380}, {"x": 700, "y": 440}, {"x": 1100, "y": 440}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1250, "y": 400}
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 550,
+              "y": 450,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 430,
+              "y": 380
+            },
+            {
+              "x": 700,
+              "y": 440
+            },
+            {
+              "x": 1100,
+              "y": 440
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1250,
+            "y": 400
+          }
         },
         {
-          "id": "sc_08", "name": "夜曲", "description": "黑暗中依靠光源前进",
+          "id": "sc_08",
+          "name": "夜曲",
+          "description": "黑暗中依靠光源前进",
           "tutorialFocus": "dark_navigation",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 400, "y": 480, "w": 150, "h": 30, "type": "shadow"},
-            {"x": 700, "y": 460, "w": 150, "h": 30, "type": "light"},
-            {"x": 1000, "y": 440, "w": 150, "h": 30, "type": "shadow"},
-            {"x": 1300, "y": 460, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 400,
+              "y": 480,
+              "w": 150,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 700,
+              "y": 460,
+              "w": 150,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 1000,
+              "y": 440,
+              "w": 150,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1300,
+              "y": 460,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [
-            {"x": 750, "y": 400, "type": "patrol", "attribute": "shadow"}
+          "movingPlatforms": [],
+          "enemies": [
+            {
+              "x": 750,
+              "y": 400,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
           ],
           "lightSources": [
-            {"x": 550, "y": 460, "radius": 200, "energy": 2.0, "pushable": true}
+            {
+              "x": 550,
+              "y": 460,
+              "radius": 200,
+              "energy": 2.0,
+              "pushable": true
+            }
           ],
           "switches": [],
-          "checkpoints": [{"x": 750, "y": 410, "id": "cp1"}],
-          "fragments": [{"x": 450, "y": 420}, {"x": 800, "y": 400}, {"x": 1100, "y": 380}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1450, "y": 360}
+          "checkpoints": [
+            {
+              "x": 750,
+              "y": 410,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 450,
+              "y": 420
+            },
+            {
+              "x": 800,
+              "y": 400
+            },
+            {
+              "x": 1100,
+              "y": 380
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1450,
+            "y": 360
+          }
         },
         {
-          "id": "sc_09", "name": "安魂曲", "description": "综合战斗挑战",
+          "id": "sc_09",
+          "name": "安魂曲",
+          "description": "综合战斗挑战",
           "tutorialFocus": "combat_challenge",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 400, "y": 450, "w": 150, "h": 30, "type": "light"},
-            {"x": 700, "y": 400, "w": 150, "h": 30, "type": "shadow"},
-            {"x": 1000, "y": 450, "w": 150, "h": 30, "type": "light"},
-            {"x": 1300, "y": 400, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 400,
+              "y": 450,
+              "w": 150,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 700,
+              "y": 400,
+              "w": 150,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 1000,
+              "y": 450,
+              "w": 150,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 1300,
+              "y": 400,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 550, "y": 470, "w": 80, "h": 20, "moveType": "horizontal", "range": 80, "speed": 50}
+            {
+              "x": 550,
+              "y": 470,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 80,
+              "speed": 50
+            }
           ],
           "enemies": [
-            {"x": 500, "y": 390, "type": "patrol", "attribute": "shadow"},
-            {"x": 800, "y": 340, "type": "patrol", "attribute": "light"},
-            {"x": 1100, "y": 390, "type": "patrol", "attribute": "shadow"}
+            {
+              "x": 500,
+              "y": 390,
+              "type": "patrol",
+              "attribute": "shadow"
+            },
+            {
+              "x": 800,
+              "y": 340,
+              "type": "patrol",
+              "attribute": "light"
+            },
+            {
+              "x": 1100,
+              "y": 390,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
           ],
-          "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 450, "y": 400, "id": "cp1"}, {"x": 1050, "y": 400, "id": "cp2"}],
-          "fragments": [{"x": 450, "y": 390}, {"x": 800, "y": 340}, {"x": 1200, "y": 340}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1450, "y": 300}
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 450,
+              "y": 400,
+              "id": "cp1"
+            },
+            {
+              "x": 1050,
+              "y": 400,
+              "id": "cp2"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 450,
+              "y": 390
+            },
+            {
+              "x": 800,
+              "y": 340
+            },
+            {
+              "x": 1200,
+              "y": 340
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1450,
+            "y": 300
+          }
         },
         {
-          "id": "sc_10", "name": "交响终章", "description": "第三章Boss - 寂静指挥家",
+          "id": "sc_10",
+          "name": "交响终章",
+          "description": "第三章Boss - 寂静指挥家",
           "tutorialFocus": "boss",
           "platforms": [
-            {"x": 0, "y": 500, "w": 300, "h": 40, "type": "normal"},
-            {"x": 250, "y": 370, "w": 100, "h": 25, "type": "light"},
-            {"x": 500, "y": 310, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 750, "y": 370, "w": 100, "h": 25, "type": "light"},
-            {"x": 1000, "y": 310, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 1250, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 250,
+              "y": 370,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 500,
+              "y": 310,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 750,
+              "y": 370,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 1000,
+              "y": 310,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 1250,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 600, "y": 450, "w": 80, "h": 20, "moveType": "horizontal", "range": 150, "speed": 65}
+            {
+              "x": 600,
+              "y": 450,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 150,
+              "speed": 65
+            }
           ],
           "enemies": [
-            {"x": 650, "y": 440, "type": "shadow_guardian", "attribute": "shadow"},
-            {"x": 850, "y": 440, "type": "patrol", "attribute": "light"}
+            {
+              "x": 650,
+              "y": 440,
+              "type": "shadow_guardian",
+              "attribute": "shadow"
+            },
+            {
+              "x": 850,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "light"
+            }
           ],
-          "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 100, "y": 450, "id": "cp1"}],
-          "fragments": [{"x": 300, "y": 310}, {"x": 650, "y": 250}, {"x": 1050, "y": 250}],
-          "startPos": {"x": 100, "y": 400}, "endPos": {"x": 1400, "y": 400}
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 100,
+              "y": 450,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 300,
+              "y": 310
+            },
+            {
+              "x": 650,
+              "y": 250
+            },
+            {
+              "x": 1050,
+              "y": 250
+            }
+          ],
+          "startPos": {
+            "x": 100,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1400,
+            "y": 400
+          }
         }
       ]
     },
@@ -792,212 +2821,1056 @@
       "name": "沉睡图书馆",
       "levels": [
         {
-          "id": "sl_01", "name": "书架之间", "description": "多层书架间的跳跃解谜",
+          "id": "sl_01",
+          "name": "书架之间",
+          "description": "多层书架间的跳跃解谜",
           "tutorialFocus": "vertical_puzzle",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 300, "y": 430, "w": 100, "h": 25, "type": "light"},
-            {"x": 500, "y": 360, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 300, "y": 290, "w": 100, "h": 25, "type": "light"},
-            {"x": 500, "y": 220, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 700, "y": 280, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 300,
+              "y": 430,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 500,
+              "y": 360,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 300,
+              "y": 290,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 500,
+              "y": 220,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 700,
+              "y": 280,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [], "lightSources": [
-            {"x": 200, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
-          ], "switches": [],
-          "checkpoints": [{"x": 350, "y": 250, "id": "cp1"}],
-          "fragments": [{"x": 350, "y": 370}, {"x": 350, "y": 230}, {"x": 800, "y": 220}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 900, "y": 180}
+          "movingPlatforms": [],
+          "enemies": [],
+          "lightSources": [
+            {
+              "x": 200,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
+          ],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 350,
+              "y": 250,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 350,
+              "y": 370
+            },
+            {
+              "x": 350,
+              "y": 230
+            },
+            {
+              "x": 800,
+              "y": 220
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 900,
+            "y": 180
+          }
         },
         {
-          "id": "sl_02", "name": "知识之门", "description": "开关组合解锁通路",
+          "id": "sl_02",
+          "name": "知识之门",
+          "description": "开关组合解锁通路",
           "tutorialFocus": "multi_switch",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 500, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1000, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 500,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1000,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [], "lightSources": [],
+          "movingPlatforms": [],
+          "enemies": [],
+          "lightSources": [],
           "switches": [
-            {"x": 250, "y": 460, "id": "sw1", "switchType": "light_only", "targetId": "bridge_1", "targetType": "platform", "stayActive": true},
-            {"x": 750, "y": 460, "id": "sw2", "switchType": "shadow_only", "targetId": "bridge_2", "targetType": "platform", "stayActive": true}
+            {
+              "x": 250,
+              "y": 460,
+              "id": "sw1",
+              "switchType": "light_only",
+              "targetId": "bridge_1",
+              "targetType": "platform",
+              "stayActive": true
+            },
+            {
+              "x": 750,
+              "y": 460,
+              "id": "sw2",
+              "switchType": "shadow_only",
+              "targetId": "bridge_2",
+              "targetType": "platform",
+              "stayActive": true
+            }
           ],
-          "checkpoints": [{"x": 550, "y": 450, "id": "cp1"}],
-          "fragments": [{"x": 300, "y": 440}, {"x": 600, "y": 440}, {"x": 1100, "y": 440}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1200, "y": 400}
+          "checkpoints": [
+            {
+              "x": 550,
+              "y": 450,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 300,
+              "y": 440
+            },
+            {
+              "x": 600,
+              "y": 440
+            },
+            {
+              "x": 1100,
+              "y": 440
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1200,
+            "y": 400
+          }
         },
         {
-          "id": "sl_03", "name": "回廊", "description": "循环路径中的光影选择",
+          "id": "sl_03",
+          "name": "回廊",
+          "description": "循环路径中的光影选择",
           "tutorialFocus": "path_puzzle",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 350, "y": 450, "w": 120, "h": 30, "type": "light"},
-            {"x": 600, "y": 400, "w": 120, "h": 30, "type": "shadow"},
-            {"x": 850, "y": 450, "w": 120, "h": 30, "type": "light"},
-            {"x": 1100, "y": 400, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 350,
+              "y": 450,
+              "w": 120,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 600,
+              "y": 400,
+              "w": 120,
+              "h": 30,
+              "type": "shadow"
+            },
+            {
+              "x": 850,
+              "y": 450,
+              "w": 120,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 1100,
+              "y": 400,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 500, "y": 480, "w": 80, "h": 20, "moveType": "circular", "range": 100, "speed": 40}
-          ], "enemies": [
-            {"x": 700, "y": 340, "type": "patrol", "attribute": "shadow"}
-          ], "lightSources": [
-            {"x": 300, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
-          ], "switches": [],
-          "checkpoints": [{"x": 650, "y": 350, "id": "cp1"}],
-          "fragments": [{"x": 400, "y": 390}, {"x": 700, "y": 340}, {"x": 1000, "y": 390}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1250, "y": 300}
+            {
+              "x": 500,
+              "y": 480,
+              "w": 80,
+              "h": 20,
+              "moveType": "circular",
+              "range": 100,
+              "speed": 40
+            }
+          ],
+          "enemies": [
+            {
+              "x": 700,
+              "y": 340,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
+          ],
+          "lightSources": [
+            {
+              "x": 300,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
+          ],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 650,
+              "y": 350,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 400,
+              "y": 390
+            },
+            {
+              "x": 700,
+              "y": 340
+            },
+            {
+              "x": 1000,
+              "y": 390
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1250,
+            "y": 300
+          }
         },
         {
-          "id": "sl_04", "name": "禁书区", "description": "影墙后的秘密通道",
+          "id": "sl_04",
+          "name": "禁书区",
+          "description": "影墙后的秘密通道",
           "tutorialFocus": "hidden_paths",
           "platforms": [
-            {"x": 0, "y": 500, "w": 250, "h": 40, "type": "normal"},
-            {"x": 400, "y": 500, "w": 30, "h": 200, "type": "shadow_wall"},
-            {"x": 500, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 500, "y": 300, "w": 200, "h": 40, "type": "shadow"},
-            {"x": 800, "y": 350, "w": 150, "h": 30, "type": "light"},
-            {"x": 1100, "y": 400, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 250,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 400,
+              "y": 500,
+              "w": 30,
+              "h": 200,
+              "type": "shadow_wall"
+            },
+            {
+              "x": 500,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 500,
+              "y": 310,
+              "w": 200,
+              "h": 40,
+              "type": "shadow"
+            },
+            {
+              "x": 800,
+              "y": 350,
+              "w": 150,
+              "h": 30,
+              "type": "light"
+            },
+            {
+              "x": 1100,
+              "y": 400,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [
-            {"x": 550, "y": 440, "type": "patrol", "attribute": "light"}
-          ], "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 550, "y": 450, "id": "cp1"}],
-          "fragments": [{"x": 430, "y": 380}, {"x": 600, "y": 240}, {"x": 900, "y": 290}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1250, "y": 300}
+          "movingPlatforms": [],
+          "enemies": [
+            {
+              "x": 550,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "light"
+            }
+          ],
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 550,
+              "y": 450,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 430,
+              "y": 380
+            },
+            {
+              "x": 600,
+              "y": 240
+            },
+            {
+              "x": 900,
+              "y": 290
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1250,
+            "y": 300
+          }
         },
         {
-          "id": "sl_05", "name": "时光书页", "description": "移动平台与开关的精密配合",
+          "id": "sl_05",
+          "name": "时光书页",
+          "description": "移动平台与开关的精密配合",
           "tutorialFocus": "timing_puzzle",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1200, "y": 400, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1200,
+              "y": 400,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 400, "y": 480, "w": 100, "h": 20, "moveType": "horizontal", "range": 100, "speed": 60},
-            {"x": 700, "y": 440, "w": 100, "h": 20, "moveType": "vertical", "range": 80, "speed": 50},
-            {"x": 1000, "y": 420, "w": 100, "h": 20, "moveType": "horizontal", "range": 80, "speed": 55}
-          ], "enemies": [], "lightSources": [],
-          "switches": [
-            {"x": 550, "y": 460, "id": "sw1", "switchType": "both", "targetId": "bridge_1", "targetType": "platform", "stayActive": true}
+            {
+              "x": 400,
+              "y": 480,
+              "w": 100,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 100,
+              "speed": 60
+            },
+            {
+              "x": 700,
+              "y": 440,
+              "w": 100,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 80,
+              "speed": 50
+            },
+            {
+              "x": 1000,
+              "y": 420,
+              "w": 100,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 80,
+              "speed": 55
+            }
           ],
-          "checkpoints": [{"x": 750, "y": 390, "id": "cp1"}],
-          "fragments": [{"x": 450, "y": 430}, {"x": 750, "y": 370}, {"x": 1050, "y": 370}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1350, "y": 300}
+          "enemies": [],
+          "lightSources": [],
+          "switches": [
+            {
+              "x": 550,
+              "y": 460,
+              "id": "sw1",
+              "switchType": "both",
+              "targetId": "bridge_1",
+              "targetType": "platform",
+              "stayActive": true
+            }
+          ],
+          "checkpoints": [
+            {
+              "x": 750,
+              "y": 390,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 450,
+              "y": 430
+            },
+            {
+              "x": 750,
+              "y": 370
+            },
+            {
+              "x": 1050,
+              "y": 370
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1350,
+            "y": 300
+          }
         },
         {
-          "id": "sl_06", "name": "迷宫书架", "description": "复杂的多层解谜",
+          "id": "sl_06",
+          "name": "迷宫书架",
+          "description": "复杂的多层解谜",
           "tutorialFocus": "complex_multi",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 350, "y": 450, "w": 100, "h": 25, "type": "light"},
-            {"x": 550, "y": 400, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 750, "y": 350, "w": 100, "h": 25, "type": "light"},
-            {"x": 950, "y": 300, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 1150, "y": 350, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 350,
+              "y": 450,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 550,
+              "y": 400,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 750,
+              "y": 350,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 950,
+              "y": 300,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 1150,
+              "y": 350,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 450, "y": 470, "w": 80, "h": 20, "moveType": "vertical", "range": 60, "speed": 40, "formType": "shadow"}
-          ], "enemies": [
-            {"x": 800, "y": 290, "type": "patrol", "attribute": "shadow"}
-          ], "lightSources": [
-            {"x": 250, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
-          ], "switches": [
-            {"x": 650, "y": 360, "id": "sw1", "switchType": "light_only", "targetId": "bridge_1", "targetType": "platform", "stayActive": true}
+            {
+              "x": 450,
+              "y": 470,
+              "w": 80,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 60,
+              "speed": 40,
+              "formType": "shadow"
+            }
           ],
-          "checkpoints": [{"x": 600, "y": 350, "id": "cp1"}, {"x": 1000, "y": 250, "id": "cp2"}],
-          "fragments": [{"x": 400, "y": 390}, {"x": 700, "y": 310}, {"x": 1000, "y": 240}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1300, "y": 250}
+          "enemies": [
+            {
+              "x": 800,
+              "y": 290,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
+          ],
+          "lightSources": [
+            {
+              "x": 250,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
+          ],
+          "switches": [
+            {
+              "x": 650,
+              "y": 360,
+              "id": "sw1",
+              "switchType": "light_only",
+              "targetId": "bridge_1",
+              "targetType": "platform",
+              "stayActive": true
+            }
+          ],
+          "checkpoints": [
+            {
+              "x": 600,
+              "y": 350,
+              "id": "cp1"
+            },
+            {
+              "x": 1000,
+              "y": 250,
+              "id": "cp2"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 400,
+              "y": 390
+            },
+            {
+              "x": 700,
+              "y": 310
+            },
+            {
+              "x": 1000,
+              "y": 240
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1300,
+            "y": 250
+          }
         },
         {
-          "id": "sl_07", "name": "封印之页", "description": "多重开关解封通路",
+          "id": "sl_07",
+          "name": "封印之页",
+          "description": "多重开关解封通路",
           "tutorialFocus": "seal_puzzle",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 400, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 800, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1200, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 400,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 800,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1200,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [
-            {"x": 500, "y": 440, "type": "patrol", "attribute": "shadow"},
-            {"x": 900, "y": 440, "type": "patrol", "attribute": "light"}
-          ], "lightSources": [],
+          "movingPlatforms": [],
+          "enemies": [
+            {
+              "x": 500,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "shadow"
+            },
+            {
+              "x": 900,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "light"
+            }
+          ],
+          "lightSources": [],
           "switches": [
-            {"x": 250, "y": 460, "id": "sw1", "switchType": "light_only", "targetId": "seal_1", "targetType": "platform", "stayActive": true},
-            {"x": 650, "y": 460, "id": "sw2", "switchType": "shadow_only", "targetId": "seal_2", "targetType": "platform", "stayActive": true},
-            {"x": 1050, "y": 460, "id": "sw3", "switchType": "both", "targetId": "seal_3", "targetType": "platform", "stayActive": true}
+            {
+              "x": 250,
+              "y": 460,
+              "id": "sw1",
+              "switchType": "light_only",
+              "targetId": "seal_1",
+              "targetType": "platform",
+              "stayActive": true
+            },
+            {
+              "x": 650,
+              "y": 460,
+              "id": "sw2",
+              "switchType": "shadow_only",
+              "targetId": "seal_2",
+              "targetType": "platform",
+              "stayActive": true
+            },
+            {
+              "x": 1050,
+              "y": 460,
+              "id": "sw3",
+              "switchType": "both",
+              "targetId": "seal_3",
+              "targetType": "platform",
+              "stayActive": true
+            }
           ],
-          "checkpoints": [{"x": 450, "y": 450, "id": "cp1"}, {"x": 850, "y": 450, "id": "cp2"}],
-          "fragments": [{"x": 300, "y": 440}, {"x": 700, "y": 440}, {"x": 1100, "y": 440}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1350, "y": 400}
+          "checkpoints": [
+            {
+              "x": 450,
+              "y": 450,
+              "id": "cp1"
+            },
+            {
+              "x": 850,
+              "y": 450,
+              "id": "cp2"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 300,
+              "y": 440
+            },
+            {
+              "x": 700,
+              "y": 440
+            },
+            {
+              "x": 1100,
+              "y": 440
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1350,
+            "y": 400
+          }
         },
         {
-          "id": "sl_08", "name": "知识深渊", "description": "垂直下降的挑战",
+          "id": "sl_08",
+          "name": "知识深渊",
+          "description": "垂直下降的挑战",
           "tutorialFocus": "descent",
           "platforms": [
-            {"x": 400, "y": 200, "w": 200, "h": 40, "type": "normal"},
-            {"x": 300, "y": 300, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 500, "y": 400, "w": 100, "h": 25, "type": "light"},
-            {"x": 300, "y": 500, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 500, "y": 600, "w": 100, "h": 25, "type": "light"},
-            {"x": 350, "y": 700, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 400,
+              "y": 200,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 300,
+              "y": 300,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 500,
+              "y": 400,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 300,
+              "y": 500,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 500,
+              "y": 600,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 350,
+              "y": 700,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 400, "y": 350, "w": 80, "h": 20, "moveType": "horizontal", "range": 80, "speed": 45}
-          ], "enemies": [
-            {"x": 350, "y": 440, "type": "patrol", "attribute": "shadow"}
-          ], "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 350, "y": 350, "id": "cp1"}, {"x": 350, "y": 550, "id": "cp2"}],
-          "fragments": [{"x": 350, "y": 250}, {"x": 450, "y": 450}, {"x": 350, "y": 650}],
-          "startPos": {"x": 450, "y": 100}, "endPos": {"x": 500, "y": 650}
+            {
+              "x": 400,
+              "y": 350,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 80,
+              "speed": 45
+            }
+          ],
+          "enemies": [
+            {
+              "x": 350,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
+          ],
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 350,
+              "y": 350,
+              "id": "cp1"
+            },
+            {
+              "x": 350,
+              "y": 550,
+              "id": "cp2"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 350,
+              "y": 250
+            },
+            {
+              "x": 450,
+              "y": 450
+            },
+            {
+              "x": 350,
+              "y": 650
+            }
+          ],
+          "startPos": {
+            "x": 450,
+            "y": 160
+          },
+          "endPos": {
+            "x": 500,
+            "y": 650
+          }
         },
         {
-          "id": "sl_09", "name": "最终之页", "description": "图书馆终极解谜",
+          "id": "sl_09",
+          "name": "最终之页",
+          "description": "图书馆终极解谜",
           "tutorialFocus": "ultimate_puzzle",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 350, "y": 450, "w": 100, "h": 25, "type": "light"},
-            {"x": 550, "y": 400, "w": 30, "h": 150, "type": "shadow_wall"},
-            {"x": 650, "y": 380, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 900, "y": 350, "w": 100, "h": 25, "type": "light"},
-            {"x": 1150, "y": 400, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 350,
+              "y": 450,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 550,
+              "y": 400,
+              "w": 30,
+              "h": 150,
+              "type": "shadow_wall"
+            },
+            {
+              "x": 650,
+              "y": 380,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 900,
+              "y": 350,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 1150,
+              "y": 400,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 450, "y": 470, "w": 80, "h": 20, "moveType": "vertical", "range": 60, "speed": 40}
-          ], "enemies": [
-            {"x": 700, "y": 320, "type": "patrol", "attribute": "shadow"},
-            {"x": 950, "y": 290, "type": "patrol", "attribute": "light"}
-          ], "lightSources": [
-            {"x": 250, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
-          ], "switches": [
-            {"x": 800, "y": 310, "id": "sw1", "switchType": "both", "targetId": "final_bridge", "targetType": "platform", "stayActive": true}
+            {
+              "x": 450,
+              "y": 470,
+              "w": 80,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 60,
+              "speed": 40
+            }
           ],
-          "checkpoints": [{"x": 400, "y": 400, "id": "cp1"}, {"x": 950, "y": 300, "id": "cp2"}],
-          "fragments": [{"x": 400, "y": 390}, {"x": 700, "y": 320}, {"x": 1000, "y": 290}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1300, "y": 300}
+          "enemies": [
+            {
+              "x": 700,
+              "y": 320,
+              "type": "patrol",
+              "attribute": "shadow"
+            },
+            {
+              "x": 950,
+              "y": 290,
+              "type": "patrol",
+              "attribute": "light"
+            }
+          ],
+          "lightSources": [
+            {
+              "x": 250,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
+          ],
+          "switches": [
+            {
+              "x": 800,
+              "y": 310,
+              "id": "sw1",
+              "switchType": "both",
+              "targetId": "final_bridge",
+              "targetType": "platform",
+              "stayActive": true
+            }
+          ],
+          "checkpoints": [
+            {
+              "x": 400,
+              "y": 400,
+              "id": "cp1"
+            },
+            {
+              "x": 950,
+              "y": 300,
+              "id": "cp2"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 400,
+              "y": 390
+            },
+            {
+              "x": 700,
+              "y": 320
+            },
+            {
+              "x": 1000,
+              "y": 290
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1300,
+            "y": 300
+          }
         },
         {
-          "id": "sl_10", "name": "图书馆守护者", "description": "第四章Boss - 知识守卫",
+          "id": "sl_10",
+          "name": "图书馆守护者",
+          "description": "第四章Boss - 知识守卫",
           "tutorialFocus": "boss",
           "platforms": [
-            {"x": 0, "y": 500, "w": 300, "h": 40, "type": "normal"},
-            {"x": 250, "y": 380, "w": 100, "h": 25, "type": "light"},
-            {"x": 500, "y": 300, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 750, "y": 380, "w": 100, "h": 25, "type": "light"},
-            {"x": 1000, "y": 300, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 1250, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 250,
+              "y": 380,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 500,
+              "y": 300,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 750,
+              "y": 380,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 1000,
+              "y": 300,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 1250,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 600, "y": 450, "w": 80, "h": 20, "moveType": "horizontal", "range": 180, "speed": 60},
-            {"x": 900, "y": 420, "w": 80, "h": 20, "moveType": "vertical", "range": 80, "speed": 50}
-          ], "enemies": [
-            {"x": 650, "y": 440, "type": "shadow_guardian", "attribute": "shadow"},
-            {"x": 850, "y": 440, "type": "shadow_guardian", "attribute": "light"}
-          ], "lightSources": [
-            {"x": 400, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
-          ], "switches": [],
-          "checkpoints": [{"x": 100, "y": 450, "id": "cp1"}],
-          "fragments": [{"x": 300, "y": 320}, {"x": 650, "y": 240}, {"x": 1050, "y": 240}],
-          "startPos": {"x": 100, "y": 400}, "endPos": {"x": 1400, "y": 400}
+            {
+              "x": 600,
+              "y": 450,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 180,
+              "speed": 60
+            },
+            {
+              "x": 900,
+              "y": 420,
+              "w": 80,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 80,
+              "speed": 50
+            }
+          ],
+          "enemies": [
+            {
+              "x": 650,
+              "y": 440,
+              "type": "shadow_guardian",
+              "attribute": "shadow"
+            },
+            {
+              "x": 850,
+              "y": 440,
+              "type": "shadow_guardian",
+              "attribute": "light"
+            }
+          ],
+          "lightSources": [
+            {
+              "x": 400,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
+          ],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 100,
+              "y": 450,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 300,
+              "y": 320
+            },
+            {
+              "x": 650,
+              "y": 240
+            },
+            {
+              "x": 1050,
+              "y": 240
+            }
+          ],
+          "startPos": {
+            "x": 100,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1400,
+            "y": 400
+          }
         }
       ]
     },
@@ -1006,241 +3879,1276 @@
       "name": "光影神殿",
       "levels": [
         {
-          "id": "lt_01", "name": "神殿入口", "description": "所有机制的综合运用",
+          "id": "lt_01",
+          "name": "神殿入口",
+          "description": "所有机制的综合运用",
           "tutorialFocus": "all_mechanics",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 350, "y": 450, "w": 100, "h": 25, "type": "light"},
-            {"x": 550, "y": 400, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 750, "y": 350, "w": 30, "h": 150, "type": "shadow_wall"},
-            {"x": 850, "y": 400, "w": 100, "h": 25, "type": "light"},
-            {"x": 1050, "y": 350, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 350,
+              "y": 450,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 550,
+              "y": 400,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 750,
+              "y": 350,
+              "w": 30,
+              "h": 150,
+              "type": "shadow_wall"
+            },
+            {
+              "x": 850,
+              "y": 400,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 1050,
+              "y": 350,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 450, "y": 470, "w": 80, "h": 20, "moveType": "horizontal", "range": 80, "speed": 50}
-          ], "enemies": [
-            {"x": 600, "y": 340, "type": "patrol", "attribute": "shadow"}
-          ], "lightSources": [
-            {"x": 250, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
-          ], "switches": [
-            {"x": 900, "y": 360, "id": "sw1", "switchType": "both", "targetId": "bridge_1", "targetType": "platform", "stayActive": true}
+            {
+              "x": 450,
+              "y": 470,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 80,
+              "speed": 50
+            }
           ],
-          "checkpoints": [{"x": 600, "y": 350, "id": "cp1"}],
-          "fragments": [{"x": 400, "y": 390}, {"x": 700, "y": 340}, {"x": 950, "y": 300}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1200, "y": 250}
+          "enemies": [
+            {
+              "x": 600,
+              "y": 340,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
+          ],
+          "lightSources": [
+            {
+              "x": 250,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
+          ],
+          "switches": [
+            {
+              "x": 900,
+              "y": 360,
+              "id": "sw1",
+              "switchType": "both",
+              "targetId": "bridge_1",
+              "targetType": "platform",
+              "stayActive": true
+            }
+          ],
+          "checkpoints": [
+            {
+              "x": 600,
+              "y": 350,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 400,
+              "y": 390
+            },
+            {
+              "x": 700,
+              "y": 340
+            },
+            {
+              "x": 950,
+              "y": 300
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1200,
+            "y": 250
+          }
         },
         {
-          "id": "lt_02", "name": "光影回廊", "description": "快速切换形态通过连续平台",
+          "id": "lt_02",
+          "name": "光影回廊",
+          "description": "快速切换形态通过连续平台",
           "tutorialFocus": "rapid_switching",
           "platforms": [
-            {"x": 0, "y": 500, "w": 150, "h": 40, "type": "normal"},
-            {"x": 250, "y": 460, "w": 80, "h": 25, "type": "light"},
-            {"x": 400, "y": 420, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 550, "y": 380, "w": 80, "h": 25, "type": "light"},
-            {"x": 700, "y": 340, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 850, "y": 300, "w": 80, "h": 25, "type": "light"},
-            {"x": 1000, "y": 260, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 1150, "y": 300, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 150,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 250,
+              "y": 460,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 400,
+              "y": 420,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 550,
+              "y": 380,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 700,
+              "y": 340,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 850,
+              "y": 300,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 1000,
+              "y": 260,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 1150,
+              "y": 300,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [], "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 600, "y": 340, "id": "cp1"}],
-          "fragments": [{"x": 300, "y": 400}, {"x": 650, "y": 300}, {"x": 1050, "y": 200}],
-          "startPos": {"x": 60, "y": 400}, "endPos": {"x": 1300, "y": 200}
+          "movingPlatforms": [],
+          "enemies": [],
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 600,
+              "y": 340,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 300,
+              "y": 400
+            },
+            {
+              "x": 650,
+              "y": 300
+            },
+            {
+              "x": 1050,
+              "y": 200
+            }
+          ],
+          "startPos": {
+            "x": 60,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1300,
+            "y": 200
+          }
         },
         {
-          "id": "lt_03", "name": "时空裂隙", "description": "移动平台上的精密操作",
+          "id": "lt_03",
+          "name": "时空裂隙",
+          "description": "移动平台上的精密操作",
           "tutorialFocus": "precision_timing",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1500, "y": 400, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1500,
+              "y": 400,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 350, "y": 480, "w": 80, "h": 20, "moveType": "horizontal", "range": 100, "speed": 70, "formType": "light"},
-            {"x": 600, "y": 440, "w": 80, "h": 20, "moveType": "vertical", "range": 80, "speed": 55, "formType": "shadow"},
-            {"x": 850, "y": 400, "w": 80, "h": 20, "moveType": "circular", "range": 80, "speed": 50},
-            {"x": 1100, "y": 380, "w": 80, "h": 20, "moveType": "horizontal", "range": 100, "speed": 65, "formType": "light"}
-          ], "enemies": [], "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 700, "y": 390, "id": "cp1"}],
-          "fragments": [{"x": 400, "y": 430}, {"x": 750, "y": 370}, {"x": 1150, "y": 330}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1650, "y": 300}
+            {
+              "x": 350,
+              "y": 480,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 100,
+              "speed": 70,
+              "formType": "light"
+            },
+            {
+              "x": 600,
+              "y": 440,
+              "w": 80,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 80,
+              "speed": 55,
+              "formType": "shadow"
+            },
+            {
+              "x": 850,
+              "y": 400,
+              "w": 80,
+              "h": 20,
+              "moveType": "circular",
+              "range": 80,
+              "speed": 50
+            },
+            {
+              "x": 1100,
+              "y": 380,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 100,
+              "speed": 65,
+              "formType": "light"
+            }
+          ],
+          "enemies": [],
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 700,
+              "y": 390,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 400,
+              "y": 430
+            },
+            {
+              "x": 750,
+              "y": 370
+            },
+            {
+              "x": 1150,
+              "y": 330
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1650,
+            "y": 300
+          }
         },
         {
-          "id": "lt_04", "name": "光影祭坛", "description": "多光源与开关的终极配合",
+          "id": "lt_04",
+          "name": "光影祭坛",
+          "description": "多光源与开关的终极配合",
           "tutorialFocus": "ultimate_puzzle",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 400, "y": 450, "w": 100, "h": 25, "type": "light"},
-            {"x": 600, "y": 400, "w": 30, "h": 150, "type": "shadow_wall"},
-            {"x": 700, "y": 380, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 950, "y": 350, "w": 100, "h": 25, "type": "light"},
-            {"x": 1200, "y": 400, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 400,
+              "y": 450,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 600,
+              "y": 400,
+              "w": 30,
+              "h": 150,
+              "type": "shadow_wall"
+            },
+            {
+              "x": 700,
+              "y": 380,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 950,
+              "y": 350,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 1200,
+              "y": 400,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 500, "y": 470, "w": 80, "h": 20, "moveType": "vertical", "range": 60, "speed": 40}
-          ], "enemies": [
-            {"x": 800, "y": 320, "type": "patrol", "attribute": "shadow"}
-          ], "lightSources": [
-            {"x": 250, "y": 460, "radius": 200, "energy": 1.5, "pushable": true},
-            {"x": 850, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
-          ], "switches": [
-            {"x": 450, "y": 410, "id": "sw1", "switchType": "light_only", "targetId": "bridge_1", "targetType": "platform", "stayActive": true},
-            {"x": 1050, "y": 310, "id": "sw2", "switchType": "shadow_only", "targetId": "bridge_2", "targetType": "platform", "stayActive": true}
+            {
+              "x": 500,
+              "y": 470,
+              "w": 80,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 60,
+              "speed": 40
+            }
           ],
-          "checkpoints": [{"x": 500, "y": 400, "id": "cp1"}, {"x": 1000, "y": 300, "id": "cp2"}],
-          "fragments": [{"x": 350, "y": 440}, {"x": 750, "y": 320}, {"x": 1100, "y": 290}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1350, "y": 300}
+          "enemies": [
+            {
+              "x": 800,
+              "y": 320,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
+          ],
+          "lightSources": [
+            {
+              "x": 250,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            },
+            {
+              "x": 850,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
+          ],
+          "switches": [
+            {
+              "x": 450,
+              "y": 410,
+              "id": "sw1",
+              "switchType": "light_only",
+              "targetId": "bridge_1",
+              "targetType": "platform",
+              "stayActive": true
+            },
+            {
+              "x": 1050,
+              "y": 310,
+              "id": "sw2",
+              "switchType": "shadow_only",
+              "targetId": "bridge_2",
+              "targetType": "platform",
+              "stayActive": true
+            }
+          ],
+          "checkpoints": [
+            {
+              "x": 500,
+              "y": 400,
+              "id": "cp1"
+            },
+            {
+              "x": 1000,
+              "y": 300,
+              "id": "cp2"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 350,
+              "y": 440
+            },
+            {
+              "x": 750,
+              "y": 320
+            },
+            {
+              "x": 1100,
+              "y": 290
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1350,
+            "y": 300
+          }
         },
         {
-          "id": "lt_05", "name": "永恒之柱", "description": "垂直攀升的终极挑战",
+          "id": "lt_05",
+          "name": "永恒之柱",
+          "description": "垂直攀升的终极挑战",
           "tutorialFocus": "vertical_climb",
           "platforms": [
-            {"x": 400, "y": 700, "w": 300, "h": 40, "type": "normal"},
-            {"x": 300, "y": 600, "w": 80, "h": 25, "type": "light"},
-            {"x": 500, "y": 520, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 300, "y": 440, "w": 80, "h": 25, "type": "light"},
-            {"x": 500, "y": 360, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 300, "y": 280, "w": 80, "h": 25, "type": "light"},
-            {"x": 500, "y": 200, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 400, "y": 120, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 400,
+              "y": 700,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 300,
+              "y": 600,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 500,
+              "y": 520,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 300,
+              "y": 440,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 500,
+              "y": 360,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 300,
+              "y": 280,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 500,
+              "y": 200,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 400,
+              "y": 120,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 400, "y": 480, "w": 80, "h": 20, "moveType": "horizontal", "range": 80, "speed": 50}
-          ], "enemies": [
-            {"x": 400, "y": 380, "type": "patrol", "attribute": "shadow"},
-            {"x": 400, "y": 240, "type": "patrol", "attribute": "light"}
-          ], "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 350, "y": 400, "id": "cp1"}, {"x": 350, "y": 240, "id": "cp2"}],
-          "fragments": [{"x": 350, "y": 540}, {"x": 350, "y": 380}, {"x": 450, "y": 140}],
-          "startPos": {"x": 450, "y": 600}, "endPos": {"x": 500, "y": 70}
+            {
+              "x": 400,
+              "y": 480,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 80,
+              "speed": 50
+            }
+          ],
+          "enemies": [
+            {
+              "x": 400,
+              "y": 380,
+              "type": "patrol",
+              "attribute": "shadow"
+            },
+            {
+              "x": 400,
+              "y": 240,
+              "type": "patrol",
+              "attribute": "light"
+            }
+          ],
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 350,
+              "y": 400,
+              "id": "cp1"
+            },
+            {
+              "x": 350,
+              "y": 240,
+              "id": "cp2"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 350,
+              "y": 540
+            },
+            {
+              "x": 350,
+              "y": 380
+            },
+            {
+              "x": 450,
+              "y": 140
+            }
+          ],
+          "startPos": {
+            "x": 450,
+            "y": 660
+          },
+          "endPos": {
+            "x": 500,
+            "y": 70
+          }
         },
         {
-          "id": "lt_06", "name": "镜像殿堂", "description": "对称布局中的光影选择",
+          "id": "lt_06",
+          "name": "镜像殿堂",
+          "description": "对称布局中的光影选择",
           "tutorialFocus": "mirror_puzzle",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 350, "y": 450, "w": 100, "h": 25, "type": "light"},
-            {"x": 550, "y": 450, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 350, "y": 350, "w": 100, "h": 25, "type": "shadow"},
-            {"x": 550, "y": 350, "w": 100, "h": 25, "type": "light"},
-            {"x": 450, "y": 250, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 350,
+              "y": 450,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 550,
+              "y": 450,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 350,
+              "y": 350,
+              "w": 100,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 550,
+              "y": 350,
+              "w": 100,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 450,
+              "y": 250,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
-          "movingPlatforms": [], "enemies": [
-            {"x": 450, "y": 390, "type": "patrol", "attribute": "shadow"},
-            {"x": 450, "y": 290, "type": "patrol", "attribute": "light"}
-          ], "lightSources": [
-            {"x": 250, "y": 460, "radius": 200, "energy": 1.5, "pushable": true},
-            {"x": 650, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
-          ], "switches": [],
-          "checkpoints": [{"x": 450, "y": 400, "id": "cp1"}],
-          "fragments": [{"x": 300, "y": 390}, {"x": 600, "y": 390}, {"x": 450, "y": 190}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 500, "y": 150}
+          "movingPlatforms": [],
+          "enemies": [
+            {
+              "x": 450,
+              "y": 390,
+              "type": "patrol",
+              "attribute": "shadow"
+            },
+            {
+              "x": 450,
+              "y": 290,
+              "type": "patrol",
+              "attribute": "light"
+            }
+          ],
+          "lightSources": [
+            {
+              "x": 250,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            },
+            {
+              "x": 650,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
+          ],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 450,
+              "y": 400,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 300,
+              "y": 390
+            },
+            {
+              "x": 600,
+              "y": 390
+            },
+            {
+              "x": 450,
+              "y": 190
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 500,
+            "y": 150
+          }
         },
         {
-          "id": "lt_07", "name": "光暗交界", "description": "光暗区域的精确切换",
+          "id": "lt_07",
+          "name": "光暗交界",
+          "description": "光暗区域的精确切换",
           "tutorialFocus": "zone_switch",
           "platforms": [
-            {"x": 0, "y": 500, "w": 150, "h": 40, "type": "normal"},
-            {"x": 300, "y": 460, "w": 80, "h": 25, "type": "light"},
-            {"x": 500, "y": 420, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 700, "y": 380, "w": 80, "h": 25, "type": "light"},
-            {"x": 900, "y": 340, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 1100, "y": 300, "w": 80, "h": 25, "type": "light"},
-            {"x": 1300, "y": 340, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 150,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 300,
+              "y": 460,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 500,
+              "y": 420,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 700,
+              "y": 380,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 900,
+              "y": 340,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 1100,
+              "y": 300,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 1300,
+              "y": 340,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 600, "y": 450, "w": 80, "h": 20, "moveType": "horizontal", "range": 60, "speed": 55, "formType": "shadow"},
-            {"x": 1000, "y": 380, "w": 80, "h": 20, "moveType": "vertical", "range": 50, "speed": 45, "formType": "light"}
-          ], "enemies": [
-            {"x": 500, "y": 360, "type": "patrol", "attribute": "light"},
-            {"x": 900, "y": 280, "type": "patrol", "attribute": "shadow"}
-          ], "lightSources": [], "switches": [],
-          "checkpoints": [{"x": 600, "y": 350, "id": "cp1"}, {"x": 1000, "y": 280, "id": "cp2"}],
-          "fragments": [{"x": 350, "y": 400}, {"x": 700, "y": 320}, {"x": 1150, "y": 240}],
-          "startPos": {"x": 60, "y": 400}, "endPos": {"x": 1450, "y": 240}
+            {
+              "x": 600,
+              "y": 450,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 60,
+              "speed": 55,
+              "formType": "shadow"
+            },
+            {
+              "x": 1000,
+              "y": 380,
+              "w": 80,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 50,
+              "speed": 45,
+              "formType": "light"
+            }
+          ],
+          "enemies": [
+            {
+              "x": 500,
+              "y": 360,
+              "type": "patrol",
+              "attribute": "light"
+            },
+            {
+              "x": 900,
+              "y": 280,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
+          ],
+          "lightSources": [],
+          "switches": [],
+          "checkpoints": [
+            {
+              "x": 600,
+              "y": 350,
+              "id": "cp1"
+            },
+            {
+              "x": 1000,
+              "y": 280,
+              "id": "cp2"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 350,
+              "y": 400
+            },
+            {
+              "x": 700,
+              "y": 320
+            },
+            {
+              "x": 1150,
+              "y": 240
+            }
+          ],
+          "startPos": {
+            "x": 60,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1450,
+            "y": 240
+          }
         },
         {
-          "id": "lt_08", "name": "轮回之路", "description": "循环机制中的解谜",
+          "id": "lt_08",
+          "name": "轮回之路",
+          "description": "循环机制中的解谜",
           "tutorialFocus": "loop_puzzle",
           "platforms": [
-            {"x": 0, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 400, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 800, "y": 500, "w": 200, "h": 40, "type": "normal"},
-            {"x": 1200, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 400,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 800,
+              "y": 500,
+              "w": 200,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 1200,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 300, "y": 450, "w": 80, "h": 20, "moveType": "circular", "range": 60, "speed": 40},
-            {"x": 700, "y": 450, "w": 80, "h": 20, "moveType": "circular", "range": 60, "speed": 40},
-            {"x": 1100, "y": 450, "w": 80, "h": 20, "moveType": "circular", "range": 60, "speed": 40}
-          ], "enemies": [
-            {"x": 500, "y": 440, "type": "patrol", "attribute": "shadow"},
-            {"x": 900, "y": 440, "type": "patrol", "attribute": "light"}
-          ], "lightSources": [
-            {"x": 300, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
-          ], "switches": [
-            {"x": 550, "y": 460, "id": "sw1", "switchType": "both", "targetId": "loop_bridge", "targetType": "platform", "isToggle": true},
-            {"x": 950, "y": 460, "id": "sw2", "switchType": "both", "targetId": "final_bridge", "targetType": "platform", "stayActive": true}
+            {
+              "x": 300,
+              "y": 450,
+              "w": 80,
+              "h": 20,
+              "moveType": "circular",
+              "range": 60,
+              "speed": 40
+            },
+            {
+              "x": 700,
+              "y": 450,
+              "w": 80,
+              "h": 20,
+              "moveType": "circular",
+              "range": 60,
+              "speed": 40
+            },
+            {
+              "x": 1100,
+              "y": 450,
+              "w": 80,
+              "h": 20,
+              "moveType": "circular",
+              "range": 60,
+              "speed": 40
+            }
           ],
-          "checkpoints": [{"x": 500, "y": 450, "id": "cp1"}, {"x": 900, "y": 450, "id": "cp2"}],
-          "fragments": [{"x": 350, "y": 440}, {"x": 750, "y": 440}, {"x": 1150, "y": 440}],
-          "startPos": {"x": 80, "y": 400}, "endPos": {"x": 1350, "y": 400}
+          "enemies": [
+            {
+              "x": 500,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "shadow"
+            },
+            {
+              "x": 900,
+              "y": 440,
+              "type": "patrol",
+              "attribute": "light"
+            }
+          ],
+          "lightSources": [
+            {
+              "x": 300,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
+          ],
+          "switches": [
+            {
+              "x": 550,
+              "y": 460,
+              "id": "sw1",
+              "switchType": "both",
+              "targetId": "loop_bridge",
+              "targetType": "platform",
+              "isToggle": true
+            },
+            {
+              "x": 950,
+              "y": 460,
+              "id": "sw2",
+              "switchType": "both",
+              "targetId": "final_bridge",
+              "targetType": "platform",
+              "stayActive": true
+            }
+          ],
+          "checkpoints": [
+            {
+              "x": 500,
+              "y": 450,
+              "id": "cp1"
+            },
+            {
+              "x": 900,
+              "y": 450,
+              "id": "cp2"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 350,
+              "y": 440
+            },
+            {
+              "x": 750,
+              "y": 440
+            },
+            {
+              "x": 1150,
+              "y": 440
+            }
+          ],
+          "startPos": {
+            "x": 80,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1350,
+            "y": 400
+          }
         },
         {
-          "id": "lt_09", "name": "终焉之前", "description": "最终Boss前的终极考验",
+          "id": "lt_09",
+          "name": "终焉之前",
+          "description": "最终Boss前的终极考验",
           "tutorialFocus": "ultimate_test",
           "platforms": [
-            {"x": 0, "y": 500, "w": 150, "h": 40, "type": "normal"},
-            {"x": 300, "y": 450, "w": 80, "h": 25, "type": "light"},
-            {"x": 500, "y": 400, "w": 30, "h": 150, "type": "shadow_wall"},
-            {"x": 600, "y": 380, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 800, "y": 340, "w": 80, "h": 25, "type": "light"},
-            {"x": 1000, "y": 300, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 1200, "y": 350, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 150,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 300,
+              "y": 450,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 500,
+              "y": 400,
+              "w": 30,
+              "h": 150,
+              "type": "shadow_wall"
+            },
+            {
+              "x": 600,
+              "y": 380,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 800,
+              "y": 340,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 1000,
+              "y": 300,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 1200,
+              "y": 350,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 400, "y": 470, "w": 80, "h": 20, "moveType": "horizontal", "range": 80, "speed": 60, "formType": "light"},
-            {"x": 700, "y": 400, "w": 80, "h": 20, "moveType": "vertical", "range": 60, "speed": 50, "formType": "shadow"},
-            {"x": 900, "y": 360, "w": 80, "h": 20, "moveType": "circular", "range": 60, "speed": 45}
-          ], "enemies": [
-            {"x": 550, "y": 340, "type": "patrol", "attribute": "shadow"},
-            {"x": 850, "y": 280, "type": "patrol", "attribute": "light"},
-            {"x": 1050, "y": 240, "type": "patrol", "attribute": "shadow"}
-          ], "lightSources": [
-            {"x": 200, "y": 460, "radius": 200, "energy": 1.5, "pushable": true}
-          ], "switches": [
-            {"x": 650, "y": 340, "id": "sw1", "switchType": "both", "targetId": "bridge_1", "targetType": "platform", "stayActive": true}
+            {
+              "x": 400,
+              "y": 470,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 80,
+              "speed": 60,
+              "formType": "light"
+            },
+            {
+              "x": 700,
+              "y": 400,
+              "w": 80,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 60,
+              "speed": 50,
+              "formType": "shadow"
+            },
+            {
+              "x": 900,
+              "y": 360,
+              "w": 80,
+              "h": 20,
+              "moveType": "circular",
+              "range": 60,
+              "speed": 45
+            }
           ],
-          "checkpoints": [{"x": 500, "y": 350, "id": "cp1"}, {"x": 900, "y": 280, "id": "cp2"}],
-          "fragments": [{"x": 350, "y": 390}, {"x": 700, "y": 320}, {"x": 1050, "y": 240}],
-          "startPos": {"x": 60, "y": 400}, "endPos": {"x": 1350, "y": 250}
+          "enemies": [
+            {
+              "x": 550,
+              "y": 340,
+              "type": "patrol",
+              "attribute": "shadow"
+            },
+            {
+              "x": 850,
+              "y": 280,
+              "type": "patrol",
+              "attribute": "light"
+            },
+            {
+              "x": 1050,
+              "y": 240,
+              "type": "patrol",
+              "attribute": "shadow"
+            }
+          ],
+          "lightSources": [
+            {
+              "x": 200,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.5,
+              "pushable": true
+            }
+          ],
+          "switches": [
+            {
+              "x": 650,
+              "y": 340,
+              "id": "sw1",
+              "switchType": "both",
+              "targetId": "bridge_1",
+              "targetType": "platform",
+              "stayActive": true
+            }
+          ],
+          "checkpoints": [
+            {
+              "x": 500,
+              "y": 350,
+              "id": "cp1"
+            },
+            {
+              "x": 900,
+              "y": 280,
+              "id": "cp2"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 350,
+              "y": 390
+            },
+            {
+              "x": 700,
+              "y": 320
+            },
+            {
+              "x": 1050,
+              "y": 240
+            }
+          ],
+          "startPos": {
+            "x": 60,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1350,
+            "y": 250
+          }
         },
         {
-          "id": "lt_10", "name": "光影合一", "description": "最终Boss - 光影之神",
+          "id": "lt_10",
+          "name": "光影合一",
+          "description": "最终Boss - 光影之神",
           "tutorialFocus": "final_boss",
           "platforms": [
-            {"x": 0, "y": 500, "w": 300, "h": 40, "type": "normal"},
-            {"x": 200, "y": 370, "w": 80, "h": 25, "type": "light"},
-            {"x": 400, "y": 300, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 600, "y": 250, "w": 80, "h": 25, "type": "light"},
-            {"x": 800, "y": 300, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 1000, "y": 370, "w": 80, "h": 25, "type": "light"},
-            {"x": 1200, "y": 300, "w": 80, "h": 25, "type": "shadow"},
-            {"x": 1400, "y": 500, "w": 300, "h": 40, "type": "normal"}
+            {
+              "x": 0,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            },
+            {
+              "x": 200,
+              "y": 370,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 400,
+              "y": 300,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 600,
+              "y": 250,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 800,
+              "y": 300,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 1000,
+              "y": 370,
+              "w": 80,
+              "h": 25,
+              "type": "light"
+            },
+            {
+              "x": 1200,
+              "y": 300,
+              "w": 80,
+              "h": 25,
+              "type": "shadow"
+            },
+            {
+              "x": 1400,
+              "y": 500,
+              "w": 300,
+              "h": 40,
+              "type": "normal"
+            }
           ],
           "movingPlatforms": [
-            {"x": 500, "y": 450, "w": 80, "h": 20, "moveType": "horizontal", "range": 200, "speed": 70},
-            {"x": 900, "y": 420, "w": 80, "h": 20, "moveType": "vertical", "range": 100, "speed": 55}
-          ], "enemies": [
-            {"x": 700, "y": 440, "type": "shadow_guardian", "attribute": "shadow"},
-            {"x": 900, "y": 440, "type": "shadow_guardian", "attribute": "light"}
-          ], "lightSources": [
-            {"x": 350, "y": 460, "radius": 200, "energy": 1.8, "pushable": true},
-            {"x": 1050, "y": 460, "radius": 200, "energy": 1.8, "pushable": true}
-          ], "switches": [
-            {"x": 600, "y": 210, "id": "sw1", "switchType": "both", "targetId": "final_bridge", "targetType": "platform", "stayActive": true}
+            {
+              "x": 500,
+              "y": 450,
+              "w": 80,
+              "h": 20,
+              "moveType": "horizontal",
+              "range": 200,
+              "speed": 70
+            },
+            {
+              "x": 900,
+              "y": 420,
+              "w": 80,
+              "h": 20,
+              "moveType": "vertical",
+              "range": 100,
+              "speed": 55
+            }
           ],
-          "checkpoints": [{"x": 100, "y": 450, "id": "cp1"}],
-          "fragments": [{"x": 250, "y": 310}, {"x": 650, "y": 190}, {"x": 1100, "y": 240}],
-          "startPos": {"x": 100, "y": 400}, "endPos": {"x": 1550, "y": 400}
+          "enemies": [
+            {
+              "x": 700,
+              "y": 440,
+              "type": "shadow_guardian",
+              "attribute": "shadow"
+            },
+            {
+              "x": 900,
+              "y": 440,
+              "type": "shadow_guardian",
+              "attribute": "light"
+            }
+          ],
+          "lightSources": [
+            {
+              "x": 350,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.8,
+              "pushable": true
+            },
+            {
+              "x": 1050,
+              "y": 460,
+              "radius": 200,
+              "energy": 1.8,
+              "pushable": true
+            }
+          ],
+          "switches": [
+            {
+              "x": 600,
+              "y": 210,
+              "id": "sw1",
+              "switchType": "both",
+              "targetId": "final_bridge",
+              "targetType": "platform",
+              "stayActive": true
+            }
+          ],
+          "checkpoints": [
+            {
+              "x": 100,
+              "y": 450,
+              "id": "cp1"
+            }
+          ],
+          "fragments": [
+            {
+              "x": 250,
+              "y": 310
+            },
+            {
+              "x": 650,
+              "y": 190
+            },
+            {
+              "x": 1100,
+              "y": 240
+            }
+          ],
+          "startPos": {
+            "x": 100,
+            "y": 460
+          },
+          "endPos": {
+            "x": 1550,
+            "y": 400
+          }
         }
       ]
     }

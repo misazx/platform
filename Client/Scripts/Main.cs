@@ -29,6 +29,7 @@ namespace RoguelikeGame
         private Control _packageSelector;
         private Control _packageDetail;
         private Variant _packageRegistryData = new Variant();
+        private string _currentPackageId = "base_game";
 
         protected override void OnInitialize()
         {
@@ -164,6 +165,7 @@ namespace RoguelikeGame
         private void OnLaunchPackage(string packageId)
         {
             GD.Print($"[Main] Launching package: {packageId}");
+            _currentPackageId = packageId;
 
             if (packageId == "base_game")
             {
@@ -184,6 +186,7 @@ namespace RoguelikeGame
         private void OnContinueGame(string packageId, int slotId)
         {
             GD.Print($"[Main] Continue game: {packageId} slot {slotId}");
+            _currentPackageId = packageId;
 
             if (packageId == "base_game")
             {
@@ -963,7 +966,7 @@ namespace RoguelikeGame
                 client.Timeout = TimeSpan.FromSeconds(5);
 
                 var content = new System.Net.Http.StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                var response = await client.PostAsync("http://127.0.0.1:5000/api/leaderboard/base_game/submit", content);
+                var response = await client.PostAsync($"http://127.0.0.1:5000/api/leaderboard/{_currentPackageId}/submit", content);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -1024,7 +1027,7 @@ namespace RoguelikeGame
                 client.Timeout = TimeSpan.FromSeconds(5);
 
                 var content = new System.Net.Http.StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                var response = await client.PostAsync("http://127.0.0.1:5000/api/achievement/base_game/sync", content);
+                var response = await client.PostAsync($"http://127.0.0.1:5000/api/achievement/{_currentPackageId}/sync", content);
 
                 if (response.IsSuccessStatusCode)
                     GD.Print("[Main] ✅ 成就已同步到服务器");

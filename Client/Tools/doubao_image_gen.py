@@ -70,7 +70,6 @@ FALLBACK_MODELS = [
     "doubao-seedream-5-0-lite-260128",
     "doubao-seedream-4-5-251128",
     "doubao-seedream-4-0-250828",
-    "doubao-seedream-3.0-t2i",
 ]
 
 GEN_SIZE_MAP = {
@@ -85,7 +84,13 @@ MODEL_MIN_PIXELS = {
     "doubao-seedream-5-0-lite-260128": 3686400,
     "doubao-seedream-4-5-251128": 3686400,
     "doubao-seedream-4-0-250828": 3686400,
-    "doubao-seedream-3.0-t2i": 921600,
+}
+
+MODEL_SUPPORTS_OUTPUT_FORMAT = {
+    "doubao-seedream-5-0-260128": True,
+    "doubao-seedream-5-0-lite-260128": True,
+    "doubao-seedream-4-5-251128": False,
+    "doubao-seedream-4-0-250828": False,
 }
 
 MODEL_COOLDOWN_SECONDS = 120
@@ -212,10 +217,11 @@ def call_seedream_api(api_key, model, prompt, gen_size, output_format="png",
         "model": model,
         "prompt": prompt,
         "size": gen_size,
-        "output_format": output_format,
         "response_format": response_format,
         "watermark": watermark,
     }
+    if MODEL_SUPPORTS_OUTPUT_FORMAT.get(model, True) and output_format:
+        payload_dict["output_format"] = output_format
     if negative:
         payload_dict["negative_prompt"] = negative
 
@@ -253,6 +259,10 @@ def call_seedream_api(api_key, model, prompt, gen_size, output_format="png",
             last_error = f"HTTP {e.code}: {body[:200]}"
             if e.code == 429:
                 return {"type": "rate_limited", "data": last_error}
+            if e.code == 404:
+                return {"type": "model_not_found", "data": last_error}
+            if e.code == 400 and "output_format" in body:
+                return {"type": "param_unsupported", "data": last_error}
             if attempt < retry - 1:
                 time.sleep(2 ** attempt)
         except urllib.error.URLError as e:
@@ -343,6 +353,26 @@ def generate_single_resource(api_key, model_rotator, gen_size, output_format, wa
                 return False
             continue
 
+        if result.get("type") == "model_not_found":
+            tried_models.add(model)
+            model_rotator.mark_rate_limited(model)
+            print(f"    [ROTATE] {model} 模型不存在(404)，切换下一个")
+            if len(tried_models) >= max_model_attempts:
+                print(f"  [FAIL] {filename}: 所有模型不可用")
+                stats.fail += 1
+                return False
+            continue
+
+        if result.get("type") == "param_unsupported":
+            tried_models.add(model)
+            model_rotator.mark_rate_limited(model)
+            print(f"    [ROTATE] {model} 参数不支持(400)，切换下一个")
+            if len(tried_models) >= max_model_attempts:
+                print(f"  [FAIL] {filename}: 所有模型参数不兼容")
+                stats.fail += 1
+                return False
+            continue
+
         if result.get("type") == "error":
             print(f"  [FAIL] {filename}: {result['data']}")
             stats.fail += 1
@@ -429,7 +459,8 @@ def preview_document(doc):
     print(f"豆包生图 - 文档预览")
     print(f"{'='*60}")
     print(f"全局配置:")
-    print(f"  模型: {defaults.get('model', DEFAULT_MODEL)}")
+    print(f"  主模型: {defaults.get('model', DEFAULT_MODEL)}")
+    print(f"  模型轮询: {' → '.join(FALLBACK_MODELS)}")
     print(f"  生成尺寸: {defaults.get('gen_size', '自动')}")
     print(f"  输出格式: {defaults.get('output_format', 'png')}")
     print(f"  水印: {defaults.get('watermark', False)}")
@@ -454,14 +485,13 @@ def preview_document(doc):
     print(f"{'='*60}")
 
 
-def run_batch(api_key, defaults, batch, batch_index, stats):
+def run_batch(api_key, model_rotator, defaults, batch, batch_index, stats):
     name = batch.get("name", f"批次{batch_index}")
     target_size = batch.get("size", "64x64")
     style = batch.get("style", "")
     output_dir = batch.get("output_dir", "")
     resources = batch.get("resources", [])
 
-    model = batch.get("model", defaults.get("model", DEFAULT_MODEL))
     gen_size = batch.get("gen_size", defaults.get("gen_size", ""))
     output_format = batch.get("output_format", defaults.get("output_format", "png"))
     watermark = batch.get("watermark", defaults.get("watermark", False))
@@ -476,6 +506,8 @@ def run_batch(api_key, defaults, batch, batch_index, stats):
     print(f"\n{'─'*50}")
     print(f"批次 {batch_index}: {name} | {target_size} | {len(resources)}个资源")
     print(f"输出: {output_dir}")
+    print(f"模型轮询状态:")
+    print(model_rotator.status_summary())
     print(f"{'─'*50}")
 
     stats.total += len(resources)
@@ -485,7 +517,7 @@ def run_batch(api_key, defaults, batch, batch_index, stats):
         for res in resources:
             future = executor.submit(
                 generate_single_resource,
-                api_key, model, gen_size, output_format, watermark, retry,
+                api_key, model_rotator, gen_size, output_format, watermark, retry,
                 res, style, global_style_prefix, global_style_suffix,
                 output_dir, target_size, stats,
             )
@@ -515,14 +547,25 @@ def run_from_document(doc_path, dry_run=False, batch_filter=None):
     api_key = resolve_api_key(defaults.get("api_key", ""))
     batches = doc.get("batches", [])
 
+    primary_model = defaults.get("model", DEFAULT_MODEL)
+    fallback_models = FALLBACK_MODELS
+    model_rotator = ModelRotator(primary_model=primary_model, fallback_models=fallback_models)
+
+    print(f"\n模型轮询列表:")
+    for m in model_rotator.models:
+        tag = " (主)" if m == primary_model else ""
+        print(f"  - {m}{tag}")
+
     stats = GenStats()
 
     for i, batch in enumerate(batches):
         if batch_filter is not None and i != batch_filter:
             continue
-        run_batch(api_key, defaults, batch, i, stats)
+        run_batch(api_key, model_rotator, defaults, batch, i, stats)
 
     print(stats.summary())
+    print(f"\n最终模型状态:")
+    print(model_rotator.status_summary())
 
     report_path = PROJECT_ROOT / "Client" / "Assets_Library" / "image_gen_report.json"
     report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -536,6 +579,11 @@ def run_from_document(doc_path, dry_run=False, batch_filter=None):
             "skip": stats.skip,
             "elapsed_seconds": round(stats.elapsed(), 1),
         },
+        "model_rotator": {
+            "models": model_rotator.models,
+            "fail_counts": model_rotator.fail_counts,
+            "cooldowns": {k: v for k, v in model_rotator.cooldowns.items()},
+        },
     }
     with open(str(report_path), "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
@@ -547,25 +595,54 @@ def run_single(prompt, output, size, model, gen_size, output_format, negative):
     stats = GenStats()
     stats.total = 1
 
-    resolved_size = resolve_gen_size(gen_size, size, model)
+    model_rotator = ModelRotator(primary_model=model)
+    max_model_attempts = len(model_rotator.models)
+    tried_models = set()
 
-    print(f"单张生成: {output} | {size} (API: {resolved_size})")
-    print(f"提示词: {prompt}")
+    for model_attempt in range(max_model_attempts):
+        current_model = model_rotator.get_next_model()
+        resolved_size = resolve_gen_size(gen_size, size, current_model)
 
-    result = call_seedream_api(
-        api_key=api_key,
-        model=model,
-        prompt=prompt,
-        gen_size=resolved_size,
-        output_format=output_format,
-        response_format="url",
-        watermark=False,
-        negative=negative,
-        retry=3,
-    )
+        print(f"单张生成: {output} | {size} (API: {resolved_size}) [{current_model}]")
+        print(f"提示词: {prompt}")
 
-    if result.get("type") == "error":
-        print(f"[FAIL] {result['data']}")
+        result = call_seedream_api(
+            api_key=api_key,
+            model=current_model,
+            prompt=prompt,
+            gen_size=resolved_size,
+            output_format=output_format,
+            response_format="url",
+            watermark=False,
+            negative=negative,
+            retry=1,
+        )
+
+        if result.get("type") == "rate_limited":
+            tried_models.add(current_model)
+            model_rotator.mark_rate_limited(current_model)
+            if len(tried_models) >= max_model_attempts:
+                print(f"[FAIL] 所有模型额度耗尽(429)")
+                sys.exit(1)
+            continue
+
+        if result.get("type") in ("model_not_found", "param_unsupported"):
+            tried_models.add(current_model)
+            model_rotator.mark_rate_limited(current_model)
+            print(f"    [ROTATE] {current_model} 不可用({result['type']})，切换下一个")
+            if len(tried_models) >= max_model_attempts:
+                print(f"[FAIL] 所有模型不可用")
+                sys.exit(1)
+            continue
+
+        if result.get("type") == "error":
+            print(f"[FAIL] {result['data']}")
+            sys.exit(1)
+
+        model_rotator.mark_success(current_model)
+        break
+    else:
+        print("[FAIL] 所有模型均失败")
         sys.exit(1)
 
     try:

@@ -17,6 +17,10 @@ var _progress_label: Label
 var _damage_overlay: ColorRect
 var _combo_label: Label
 var _screen_flash: ColorRect
+var _shortcut_panel: PanelContainer
+var _shortcut_content: VBoxContainer
+var _shortcut_toggle_btn: Button
+var _shortcut_expanded := true
 
 var _elapsed_time := 0.0
 var _is_timing := false
@@ -161,6 +165,113 @@ func _setup_hud() -> void:
 	_combo_label.add_theme_font_size_override("font_size", 24)
 	_combo_label.visible = false
 	add_child(_combo_label)
+	_setup_shortcut_panel()
+
+func _setup_shortcut_panel() -> void:
+	_shortcut_panel = PanelContainer.new()
+	_shortcut_panel.name = "ShortcutPanel"
+	_shortcut_panel.anchors_preset = Control.PRESET_TOP_RIGHT
+	_shortcut_panel.offset_left = -200
+	_shortcut_panel.offset_top = 8
+	_shortcut_panel.offset_right = -8
+	_shortcut_panel.offset_bottom = 260
+	_shortcut_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.0, 0.0, 0.0, 0.55)
+	panel_style.border_width_bottom = 1
+	panel_style.border_width_top = 1
+	panel_style.border_width_left = 1
+	panel_style.border_width_right = 1
+	panel_style.border_color = Color(1.0, 1.0, 1.0, 0.15)
+	panel_style.corner_radius_bottom_left = 6
+	panel_style.corner_radius_bottom_right = 6
+	panel_style.corner_radius_top_left = 6
+	panel_style.corner_radius_top_right = 6
+	_shortcut_panel.add_theme_stylebox_override("panel", panel_style)
+	add_child(_shortcut_panel)
+	var main_vbox := VBoxContainer.new()
+	main_vbox.name = "MainVBox"
+	main_vbox.add_theme_constant_override("separation", 0)
+	_shortcut_panel.add_child(main_vbox)
+	var title_bar := HBoxContainer.new()
+	title_bar.name = "TitleBar"
+	title_bar.add_theme_constant_override("separation", 4)
+	main_vbox.add_child(title_bar)
+	var title_label := Label.new()
+	title_label.name = "TitleLabel"
+	title_label.text = "操作指南"
+	title_label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.9))
+	title_label.add_theme_font_size_override("font_size", 13)
+	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title_bar.add_child(title_label)
+	_shortcut_toggle_btn = Button.new()
+	_shortcut_toggle_btn.name = "ToggleBtn"
+	_shortcut_toggle_btn.text = "▲"
+	_shortcut_toggle_btn.custom_minimum_size = Vector2(24, 20)
+	_shortcut_toggle_btn.add_theme_font_size_override("font_size", 11)
+	_shortcut_toggle_btn.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.8))
+	_shortcut_toggle_btn.add_theme_color_override("font_hover_color", Color(1.0, 0.95, 0.7))
+	var btn_normal := StyleBoxFlat.new()
+	btn_normal.bg_color = Color(1.0, 1.0, 1.0, 0.08)
+	btn_normal.border_width_bottom = 0
+	btn_normal.border_width_top = 0
+	btn_normal.border_width_left = 0
+	btn_normal.border_width_right = 0
+	btn_normal.corner_radius_bottom_left = 3
+	btn_normal.corner_radius_bottom_right = 3
+	btn_normal.corner_radius_top_left = 3
+	btn_normal.corner_radius_top_right = 3
+	_shortcut_toggle_btn.add_theme_stylebox_override("normal", btn_normal)
+	var btn_hover := StyleBoxFlat.new()
+	btn_hover.bg_color = Color(1.0, 1.0, 1.0, 0.15)
+	btn_hover.corner_radius_bottom_left = 3
+	btn_hover.corner_radius_bottom_right = 3
+	btn_hover.corner_radius_top_left = 3
+	btn_hover.corner_radius_top_right = 3
+	_shortcut_toggle_btn.add_theme_stylebox_override("hover", btn_hover)
+	_shortcut_toggle_btn.pressed.connect(_on_shortcut_toggle)
+	title_bar.add_child(_shortcut_toggle_btn)
+	var sep := HSeparator.new()
+	sep.name = "Separator"
+	sep.add_theme_stylebox_override("separator", StyleBoxLine.new())
+	main_vbox.add_child(sep)
+	_shortcut_content = VBoxContainer.new()
+	_shortcut_content.name = "ShortcutContent"
+	_shortcut_content.add_theme_constant_override("separation", 2)
+	main_vbox.add_child(_shortcut_content)
+	var shortcuts: Array[Dictionary] = [
+		{"keys": "A / D  ←/→", "desc": "移动", "color": Color(0.85, 0.85, 0.85)},
+		{"keys": "Space / W / ↑", "desc": "跳跃", "color": Color(0.85, 0.85, 0.85)},
+		{"keys": "Shift / Tab", "desc": "切换形态", "color": Color(0.95, 0.9, 0.7)},
+		{"keys": "Q / K", "desc": "光形态冲刺", "color": Color(1.0, 0.95, 0.7)},
+		{"keys": "S / ↓ (按住)", "desc": "影形态潜行", "color": Color(0.5, 0.55, 0.85)},
+		{"keys": "Space (按住)", "desc": "影形态滑翔", "color": Color(0.5, 0.55, 0.85)},
+		{"keys": "E / J", "desc": "推动光源", "color": Color(0.85, 0.85, 0.85)},
+	]
+	for entry: Dictionary in shortcuts:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 6)
+		_shortcut_content.add_child(row)
+		var key_label := Label.new()
+		key_label.text = entry["keys"]
+		key_label.add_theme_color_override("font_color", entry["color"])
+		key_label.add_theme_font_size_override("font_size", 11)
+		key_label.custom_minimum_size = Vector2(110, 18)
+		row.add_child(key_label)
+		var desc_label := Label.new()
+		desc_label.text = entry["desc"]
+		desc_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+		desc_label.add_theme_font_size_override("font_size", 11)
+		row.add_child(desc_label)
+
+func _on_shortcut_toggle() -> void:
+	_shortcut_expanded = not _shortcut_expanded
+	_shortcut_content.visible = _shortcut_expanded
+	_shortcut_toggle_btn.text = "▼" if not _shortcut_expanded else "▲"
+	if _shortcut_expanded:
+		_shortcut_panel.offset_bottom = 260
+	else:
+		_shortcut_panel.offset_bottom = 48
 
 func _make_heart_texture(filled: bool) -> ImageTexture:
 	var img := Image.create(24, 24, false, Image.FORMAT_RGBA8)
