@@ -4,13 +4,13 @@ using Godot;
 
 namespace RoguelikeGame.Network.Core
 {
-	public partial class WebRTCConnectionAdapter : Node, IConnectionAdapter
+	public partial class WebSocketConnectionAdapter : Node, IConnectionAdapter
 	{
 		private WebSocketPeer _webSocketPeer;
 		private bool _isConnected = false;
 		private string _targetUrl = "";
 
-		public bool IsConnected => _isConnected && _webSocketPeer?.GetReadyState() == WebSocketPeer.State.Open;
+		public new bool IsConnected => _isConnected && _webSocketPeer?.GetReadyState() == WebSocketPeer.State.Open;
 		public string ConnectionInfo => IsConnected ? _targetUrl : "未连接";
 
 		public event Action<byte[]> OnDataReceived;
@@ -21,7 +21,7 @@ namespace RoguelikeGame.Network.Core
 		public override void _Ready()
 		{
 			_webSocketPeer = new WebSocketPeer();
-			GD.Print("[WebRTCAdapter] WebRTC连接适配器已初始化");
+			GD.Print("[WebSocketAdapter] WebSocket连接适配器已初始化");
 		}
 
 		public async Task<bool> ConnectAsync(string address, int port)
@@ -30,20 +30,20 @@ namespace RoguelikeGame.Network.Core
 			{
 				_targetUrl = $"ws://{address}:{port}/hubs/game?id={Guid.NewGuid()}";
 
-				GD.Print($"[WebRTCAdapter] 正在通过WebSocket连接: {_targetUrl}");
+				GD.Print($"[WebSocketAdapter] 正在通过WebSocket连接: {_targetUrl}");
 
 				var err = _webSocketPeer.ConnectToUrl(_targetUrl);
 
 				if (err != Error.Ok)
 				{
-					GD.PrintErr($"[WebRTCAdapter] WebSocket连接失败: {err}");
+					GD.PrintErr($"[WebSocketAdapter] WebSocket连接失败: {err}");
 					OnError?.Invoke($"连接错误: {err}");
 					return false;
 				}
 
 				_isConnected = true;
 
-				GD.Print($"[WebRTCAdapter] WebSocket连接成功");
+				GD.Print($"[WebSocketAdapter] WebSocket连接成功");
 
 				OnConnected?.Invoke();
 
@@ -51,7 +51,7 @@ namespace RoguelikeGame.Network.Core
 			}
 			catch (Exception ex)
 			{
-				GD.PrintErr($"[WebRTCAdapter] 连接异常: {ex.Message}");
+				GD.PrintErr($"[WebSocketAdapter] 连接异常: {ex.Message}");
 				OnError?.Invoke(ex.Message);
 				return false;
 			}
@@ -66,13 +66,13 @@ namespace RoguelikeGame.Network.Core
 					_webSocketPeer.Close();
 					_isConnected = false;
 
-					GD.Print("[WebRTCAdapter] WebSocket已断开");
+					GD.Print("[WebSocketAdapter] WebSocket已断开");
 					OnDisconnected?.Invoke();
 				}
 			}
 			catch (Exception ex)
 			{
-				GD.PrintErr($"[WebRTCAdapter] 断开连接异常: {ex.Message}");
+				GD.PrintErr($"[WebSocketAdapter] 断开连接异常: {ex.Message}");
 			}
 		}
 
@@ -80,7 +80,7 @@ namespace RoguelikeGame.Network.Core
 		{
 			if (!IsConnected || _webSocketPeer == null)
 			{
-				GD.PrintErr("[WebRTCAdapter] 无法发送: 未连接");
+				GD.PrintErr("[WebSocketAdapter] 无法发送: 未连接");
 				return;
 			}
 
@@ -89,13 +89,13 @@ namespace RoguelikeGame.Network.Core
 				var err = _webSocketPeer.Send(data, WebSocketPeer.WriteMode.Text);
 				if (err != Error.Ok)
 				{
-					GD.PrintErr($"[WebRTCAdapter] 发送数据失败: {err}");
+					GD.PrintErr($"[WebSocketAdapter] 发送数据失败: {err}");
 					OnError?.Invoke($"发送错误: {err}");
 				}
 			}
 			catch (Exception ex)
 			{
-				GD.PrintErr($"[WebRTCAdapter] 发送数据异常: {ex.Message}");
+				GD.PrintErr($"[WebSocketAdapter] 发送数据异常: {ex.Message}");
 				OnError?.Invoke(ex.Message);
 			}
 		}
@@ -118,7 +118,7 @@ namespace RoguelikeGame.Network.Core
 				}
 				catch (Exception ex)
 				{
-					GD.PrintErr($"[WebRTCAdapter] 接收数据异常: {ex.Message}");
+					GD.PrintErr($"[WebSocketAdapter] 接收数据异常: {ex.Message}");
 				}
 			}
 
@@ -134,7 +134,7 @@ namespace RoguelikeGame.Network.Core
 					break;
 
 				case WebSocketPeer.State.Closing:
-					GD.Print("[WebRTCAdapter] 连接正在关闭...");
+					GD.Print("[WebSocketAdapter] 连接正在关闭...");
 					break;
 			}
 		}
