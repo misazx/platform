@@ -633,6 +633,8 @@ namespace RoguelikeGame
                 AchievementManager.Instance?.UpdateProgress("first_victory", 1);
                 EnhancedSaveSystem.Instance?.SaveGame(1, run);
 
+                SubmitRunToServer(run, true);
+
                 bool isBoss = engine.Enemies.Any(e => e.IsDead && (e.Id?.Contains("Guardian") == true || e.Id?.Contains("Collector") == true || e.Id?.Contains("Automaton") == true || e.Id?.Contains("Awakener") == true));
 
                 GetTree().CreateTimer(2.0f).Timeout += () =>
@@ -699,6 +701,8 @@ namespace RoguelikeGame
                 }
 
                 GameManager.Instance?.EndCombat(false);
+
+                SubmitRunToServer(run, false);
 
                 GetTree().CreateTimer(2.5f).Timeout += () =>
                 {
@@ -923,9 +927,116 @@ namespace RoguelikeGame
             return panel;
         }
 
+        private async void SubmitRunToServer(RunData run, bool isVictory)
+        {
+            try
+            {
+                if (run == null) return;
+
+                var authSystem = Network.Auth.AuthSystem.Instance;
+                if (authSystem?.IsAuthenticated != true)
+                {
+                    GD.Print("[Main] 未登录，跳过服务器提交");
+                    return;
+                }
+
+                long score = (long)(run.Gold * 10 + run.TotalEnemiesDefeated * 50 + run.CurrentFloor * 100);
+                if (isVictory) score += 5000;
+
+                double playTimeSeconds = (run.EndTime - run.StartTime).TotalSeconds;
+
+                var requestData = new
+                {
+                    score,
+                    floorReached = run.CurrentFloor,
+                    killCount = run.TotalEnemiesDefeated,
+                    playTimeSeconds,
+                    characterUsed = run.CharacterId ?? "ironclad",
+                    isVictory
+                };
+
+                var json = System.Text.Json.JsonSerializer.Serialize(requestData);
+
+                using var client = new System.Net.Http.HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authSystem.Token);
+                client.Timeout = TimeSpan.FromSeconds(5);
+
+                var content = new System.Net.Http.StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                var response = await client.PostAsync("http://127.0.0.1:5000/api/leaderboard/base_game/submit", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    GD.Print($"[Main] ✅ 分数已提交到服务器: {score} (胜利={isVictory})");
+                }
+                else
+                {
+                    GD.PrintErr($"[Main] 提交分数失败: {response.StatusCode}");
+                }
+
+                SyncAchievementsToServer();
+            }
+            catch (Exception ex)
+            {
+                GD.PrintErr($"[Main] 提交分数异常: {ex.Message}");
+            }
+        }
+
+        private async void SyncAchievementsToServer()
+        {
+            try
+            {
+                var authSystem = Network.Auth.AuthSystem.Instance;
+                if (authSystem?.IsAuthenticated != true) return;
+
+                var achievements = new List<object>
+                {
+                    new { achievementId = "first_victory", achievementName = "初次胜利", description = "首次通关游戏", isUnlocked = false, progress = 0, target = 1 },
+                    new { achievementId = "kill_100_enemies", achievementName = "百人斩", description = "击败100个敌人", isUnlocked = false, progress = 0, target = 100 },
+                    new { achievementId = "all_relics", achievementName = "收藏家", description = "收集所有遗物", isUnlocked = false, progress = 0, target = 1 },
+                    new { achievementId = "no_damage", achievementName = "无伤通关", description = "不受伤完成一场战斗", isUnlocked = false, progress = 0, target = 1 }
+                };
+
+                var achManager = AchievementManager.Instance;
+                if (achManager != null)
+                {
+                    achievements.Clear();
+                    foreach (var ach in achManager.GetAllDefinitions(true))
+                    {
+                        achievements.Add(new
+                        {
+                            achievementId = ach.Id,
+                            achievementName = ach.Name,
+                            description = ach.Description,
+                            isUnlocked = ach.IsUnlocked,
+                            progress = ach.CurrentProgress,
+                            target = ach.MaxProgress
+                        });
+                    }
+                }
+
+                var requestData = new { achievements };
+                var json = System.Text.Json.JsonSerializer.Serialize(requestData);
+
+                using var client = new System.Net.Http.HttpClient();
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authSystem.Token);
+                client.Timeout = TimeSpan.FromSeconds(5);
+
+                var content = new System.Net.Http.StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                var response = await client.PostAsync("http://127.0.0.1:5000/api/achievement/base_game/sync", content);
+
+                if (response.IsSuccessStatusCode)
+                    GD.Print("[Main] ✅ 成就已同步到服务器");
+            }
+            catch (Exception ex)
+            {
+                GD.PrintErr($"[Main] 同步成就异常: {ex.Message}");
+            }
+        }
+
         public void QuitGame()
         {
-            GD.Print("[Main] Quitting game");
             GetTree().Quit();
         }
 

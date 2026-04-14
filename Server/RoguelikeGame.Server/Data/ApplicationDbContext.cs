@@ -14,6 +14,8 @@ namespace RoguelikeGame.Server.Data
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomPlayer> RoomPlayers { get; set; }
         public DbSet<LeaderboardEntry> LeaderboardEntries { get; set; }
+        public DbSet<AchievementEntry> AchievementEntries { get; set; }
+        public DbSet<SaveEntry> SaveEntries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,6 +50,18 @@ namespace RoguelikeGame.Server.Data
                 entity.HasIndex(e => e.PackageId);
                 entity.HasIndex(e => new { e.PackageId, e.Score });
                 entity.HasIndex(e => e.UserId);
+            });
+
+            modelBuilder.Entity<AchievementEntry>(entity =>
+            {
+                entity.HasIndex(e => new { e.UserId, e.PackageId, e.AchievementId }).IsUnique();
+                entity.HasIndex(e => e.PackageId);
+            });
+
+            modelBuilder.Entity<SaveEntry>(entity =>
+            {
+                entity.HasIndex(e => new { e.UserId, e.PackageId, e.SlotId }).IsUnique();
+                entity.HasIndex(e => e.PackageId);
             });
         }
     }

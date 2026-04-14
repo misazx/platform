@@ -672,8 +672,7 @@ namespace RoguelikeGame.UI
 			for (int i = 0; i < _enemies.Count; i++)
 			{
 				var enemy = _enemies[i];
-				bool isAlive = enemy._currentHp > 0;
-				if (highlight && !isAlive) continue;
+				if (highlight && enemy.IsDead) continue;
 				enemy.SetSelectable(highlight);
 			}
 		}
@@ -762,17 +761,35 @@ namespace RoguelikeGame.UI
 		{
 			if (enemyIndex >= 0 && enemyIndex < _enemySprites.Count)
 				_enemySprites[enemyIndex].PlayAttackAnimation(new Vector2(200, 300));
+
+			var shakeTween = CreateTween();
+			shakeTween.TweenProperty(_rootContainer, "position:x", _rootContainer.Position.X + 8, 0.05f);
+			shakeTween.TweenProperty(_rootContainer, "position:x", _rootContainer.Position.X - 6, 0.05f);
+			shakeTween.TweenProperty(_rootContainer, "position:x", _rootContainer.Position.X + 4, 0.05f);
+			shakeTween.TweenProperty(_rootContainer, "position:x", _rootContainer.Position.X, 0.05f);
 		}
 
 		public void ShowPlayerHitFeedback()
 		{
 			_playerSprite?.PlayHitAnimation();
+
+			var hitTween = CreateTween();
+			hitTween.TweenProperty(_playerStatusArea, "modulate", new Color(1f, 0.3f, 0.3f), 0.1f);
+			hitTween.TweenProperty(_playerStatusArea, "modulate", Colors.White, 0.2f).SetDelay(0.1f);
 		}
 
 		public void ShowEnemyHitFeedback(int enemyIndex)
 		{
 			if (enemyIndex >= 0 && enemyIndex < _enemySprites.Count)
 				_enemySprites[enemyIndex].PlayHitAnimation();
+
+			if (enemyIndex >= 0 && enemyIndex < _enemies.Count)
+			{
+				var enemyUI = _enemies[enemyIndex];
+				var hitTween = enemyUI.CreateTween();
+				hitTween.TweenProperty(enemyUI, "modulate", new Color(1f, 0.5f, 0.5f), 0.08f);
+				hitTween.TweenProperty(enemyUI, "modulate", Colors.White, 0.15f).SetDelay(0.08f);
+			}
 		}
 	}
 
@@ -878,23 +895,30 @@ namespace RoguelikeGame.UI
 
 		public void PlayAttackAnimation(Vector2 targetPos)
 		{
+			float direction = _isPlayer ? 1f : -1f;
 			var tween = CreateTween();
-			tween.TweenProperty(this, "position:x", Position.X + 40, 0.12f).SetEase(Tween.EaseType.Out);
-			tween.TweenProperty(this, "position:x", Position.X, 0.12f).SetDelay(0.12f).SetEase(Tween.EaseType.In);
+			tween.TweenProperty(this, "position:x", Position.X + 50 * direction, 0.1f).SetEase(Tween.EaseType.Out);
+			tween.TweenProperty(this, "position:x", Position.X, 0.15f).SetDelay(0.1f).SetEase(Tween.EaseType.In);
+			tween.Parallel().TweenProperty(_spriteFrame, "scale", new Vector2(1.1f, 1.1f), 0.1f);
+			tween.TweenProperty(_spriteFrame, "scale", Vector2.One, 0.1f).SetDelay(0.1f);
 		}
 
 		public void PlayHitAnimation()
 		{
 			var tween = CreateTween();
-			tween.TweenProperty(_spriteFrame, "modulate", new Color(2f, 2f, 2f, 1f), 0.08f);
-			tween.TweenProperty(_spriteFrame, "modulate", Colors.White, 0.12f).SetDelay(0.08f);
+			tween.TweenProperty(_spriteFrame, "modulate", new Color(2f, 0.5f, 0.5f, 1f), 0.06f);
+			tween.TweenProperty(_spriteFrame, "modulate", new Color(0.7f, 0.7f, 0.7f, 1f), 0.06f).SetDelay(0.06f);
+			tween.TweenProperty(_spriteFrame, "modulate", Colors.White, 0.1f).SetDelay(0.12f);
+			tween.Parallel().TweenProperty(this, "position:x", Position.X - 8, 0.05f);
+			tween.TweenProperty(this, "position:x", Position.X, 0.05f).SetDelay(0.05f);
 		}
 
 		public void PlayDeathAnimation()
 		{
 			var tween = CreateTween();
-			tween.TweenProperty(this, "modulate:a", 0f, 0.5f).SetEase(Tween.EaseType.In);
-			tween.TweenProperty(this, "scale", new Vector2(0.8f, 0.8f), 0.5f).SetEase(Tween.EaseType.In);
+			tween.TweenProperty(this, "modulate:a", 0f, 0.6f).SetEase(Tween.EaseType.In);
+			tween.Parallel().TweenProperty(this, "scale", new Vector2(0.7f, 0.7f), 0.6f).SetEase(Tween.EaseType.In);
+			tween.Parallel().TweenProperty(this, "rotation", Mathf.DegToRad(-15f), 0.6f).SetEase(Tween.EaseType.In);
 		}
 	}
 
@@ -903,6 +927,7 @@ namespace RoguelikeGame.UI
 		private string _name;
 		private int _maxHp;
 		private int _currentHp;
+		public bool IsDead => _currentHp <= 0;
 		private int _enemyIndex = -1;
 
 		private PanelContainer _body;
@@ -1060,9 +1085,7 @@ namespace RoguelikeGame.UI
 		{
 			_isSelectable = false;
 			MouseFilter = MouseFilterEnum.Ignore;
-			Modulate = new Color(0.4f, 0.4f, 0.4f, 0.5f);
 			_intentLabel.Text = "";
-			_healthText.Text = "💀";
 
 			var deadStyle = new StyleBoxFlat
 			{
@@ -1078,6 +1101,11 @@ namespace RoguelikeGame.UI
 				BorderColor = new Color(0.3f, 0.3f, 0.3f, 0.5f)
 			};
 			_body.AddThemeStyleboxOverride("panel", deadStyle);
+
+			var tween = CreateTween();
+			tween.TweenProperty(this, "modulate", new Color(0.4f, 0.4f, 0.4f, 0.3f), 0.6f).SetEase(Tween.EaseType.In);
+			tween.Parallel().TweenProperty(this, "scale", new Vector2(0.85f, 0.85f), 0.6f).SetEase(Tween.EaseType.In);
+			tween.TweenCallback(Callable.From(() => { _healthText.Text = "💀"; }));
 		}
 
 		public void UpdateIntent(string text, string icon = "")

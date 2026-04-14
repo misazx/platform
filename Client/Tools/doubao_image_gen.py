@@ -65,6 +65,14 @@ API_URL = "https://ark.cn-beijing.volces.com/api/v3/images/generations"
 DEFAULT_API_KEY = "dae84b47-92fc-4afa-bdcc-4e8bf99b486b"
 DEFAULT_MODEL = "doubao-seedream-5-0-260128"
 
+FALLBACK_MODELS = [
+    "doubao-seedream-5-0-260128",
+    "doubao-seedream-5-0-lite-260128",
+    "doubao-seedream-4-5-251128",
+    "doubao-seedream-4-0-250828",
+    "doubao-seedream-3.0-t2i",
+]
+
 GEN_SIZE_MAP = {
     "1K": "1024x1024",
     "2K": "2048x2048",
@@ -79,6 +87,8 @@ MODEL_MIN_PIXELS = {
     "doubao-seedream-4-0-250828": 3686400,
     "doubao-seedream-3.0-t2i": 921600,
 }
+
+MODEL_COOLDOWN_SECONDS = 120
 
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
@@ -104,6 +114,63 @@ class GenStats:
             f"失败: {self.fail}  跳过: {self.skip}\n"
             f"{'='*60}"
         )
+
+
+class ModelRotator:
+    def __init__(self, primary_model=None, fallback_models=None):
+        self.models = [primary_model or DEFAULT_MODEL]
+        for m in (fallback_models or FALLBACK_MODELS):
+            if m not in self.models:
+                self.models.append(m)
+        self.cooldowns = {}
+        self.fail_counts = {}
+        self._current_index = 0
+
+    def get_next_model(self):
+        now = time.time()
+        for _ in range(len(self.models)):
+            model = self.models[self._current_index % len(self.models)]
+            cd_until = self.cooldowns.get(model, 0)
+            if now >= cd_until:
+                return model
+            self._current_index += 1
+        best = self.models[0]
+        earliest = self.cooldowns.get(best, 0)
+        for m in self.models[1:]:
+            t = self.cooldowns.get(m, 0)
+            if t < earliest:
+                earliest = t
+                best = m
+        wait = max(0, earliest - now)
+        if wait > 0:
+            print(f"    [ROTATE] 所有模型冷却中，等待 {wait:.0f}s (最早恢复: {best})")
+            time.sleep(wait)
+        return best
+
+    def mark_rate_limited(self, model):
+        self.cooldowns[model] = time.time() + MODEL_COOLDOWN_SECONDS
+        self.fail_counts[model] = self.fail_counts.get(model, 0) + 1
+        self._current_index += 1
+        next_model = self.get_next_model()
+        print(f"    [ROTATE] {model} 额度耗尽(429)，切换到 {next_model}")
+        return next_model
+
+    def mark_success(self, model):
+        self.fail_counts.pop(model, None)
+        self.cooldowns.pop(model, None)
+
+    def status_summary(self):
+        now = time.time()
+        lines = []
+        for m in self.models:
+            cd = self.cooldowns.get(m, 0)
+            fails = self.fail_counts.get(m, 0)
+            if cd > now:
+                remaining = cd - now
+                lines.append(f"  {m}: 冷却中({remaining:.0f}s) 失败{fails}次")
+            else:
+                lines.append(f"  {m}: 可用 失败{fails}次")
+        return "\n".join(lines)
 
 
 def resolve_api_key(config_key=""):
@@ -140,7 +207,7 @@ def resolve_gen_size(gen_size, target_size, model):
 
 def call_seedream_api(api_key, model, prompt, gen_size, output_format="png",
                       response_format="url", watermark=False, negative="",
-                      retry=3):
+                      retry=1):
     payload_dict = {
         "model": model,
         "prompt": prompt,
@@ -185,18 +252,17 @@ def call_seedream_api(api_key, model, prompt, gen_size, output_format="png",
                 pass
             last_error = f"HTTP {e.code}: {body[:200]}"
             if e.code == 429:
-                wait = min(2 ** attempt * 2, 30)
-                time.sleep(wait)
-                continue
+                return {"type": "rate_limited", "data": last_error}
+            if attempt < retry - 1:
+                time.sleep(2 ** attempt)
         except urllib.error.URLError as e:
             last_error = f"网络错误: {e.reason}"
-            time.sleep(2 ** attempt)
+            if attempt < retry - 1:
+                time.sleep(2 ** attempt)
         except Exception as e:
             last_error = f"未知错误: {e}"
-
-        if attempt < retry - 1:
-            wait = 2 ** attempt
-            time.sleep(wait)
+            if attempt < retry - 1:
+                time.sleep(2 ** attempt)
 
     return {"type": "error", "data": last_error or "所有重试均失败"}
 
@@ -230,7 +296,7 @@ def resize_image(image_data, target_w, target_h, output_format="png"):
     return buf.getvalue()
 
 
-def generate_single_resource(api_key, model, gen_size, output_format, watermark,
+def generate_single_resource(api_key, model_rotator, gen_size, output_format, watermark,
                              retry, resource, batch_style, global_style_prefix,
                              global_style_suffix, output_dir, target_size, stats):
     filename = resource.get("filename", "")
@@ -245,24 +311,46 @@ def generate_single_resource(api_key, model, gen_size, output_format, watermark,
     full_prompt = f"{global_style_prefix}{batch_style}{prompt}{global_style_suffix}"
 
     tw, th = map(int, target_size.split("x"))
-    resolved_size = resolve_gen_size(gen_size, target_size, model)
 
-    print(f"  [GEN] {filename} | {target_size} (API: {resolved_size}) | {full_prompt[:60]}...")
+    max_model_attempts = len(model_rotator.models)
+    tried_models = set()
 
-    result = call_seedream_api(
-        api_key=api_key,
-        model=model,
-        prompt=full_prompt,
-        gen_size=resolved_size,
-        output_format=output_format,
-        response_format="url",
-        watermark=watermark,
-        negative=negative,
-        retry=retry,
-    )
+    for model_attempt in range(max_model_attempts):
+        model = model_rotator.get_next_model()
+        resolved_size = resolve_gen_size(gen_size, target_size, model)
 
-    if result.get("type") == "error":
-        print(f"  [FAIL] {filename}: {result['data']}")
+        model_tag = f"[{model.split('-')[-1]}]" if len(model.split('-')) > 3 else ""
+        print(f"  [GEN] {filename} | {target_size} (API: {resolved_size}) {model_tag} | {full_prompt[:60]}...")
+
+        result = call_seedream_api(
+            api_key=api_key,
+            model=model,
+            prompt=full_prompt,
+            gen_size=resolved_size,
+            output_format=output_format,
+            response_format="url",
+            watermark=watermark,
+            negative=negative,
+            retry=1,
+        )
+
+        if result.get("type") == "rate_limited":
+            tried_models.add(model)
+            model_rotator.mark_rate_limited(model)
+            if len(tried_models) >= max_model_attempts:
+                print(f"  [FAIL] {filename}: 所有模型额度耗尽(429)")
+                stats.fail += 1
+                return False
+            continue
+
+        if result.get("type") == "error":
+            print(f"  [FAIL] {filename}: {result['data']}")
+            stats.fail += 1
+            return False
+
+        model_rotator.mark_success(model)
+        break
+    else:
         stats.fail += 1
         return False
 

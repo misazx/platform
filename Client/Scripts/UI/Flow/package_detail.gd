@@ -162,6 +162,7 @@ func setup(package_id: String, package_data: Dictionary) -> void:
 	_populate_saves()
 	_populate_achievements()
 	_fetch_leaderboard_from_server()
+	_fetch_server_saves()
 
 func _populate_overview() -> void:
 	for child in _overview_tab.get_children():
@@ -305,6 +306,17 @@ func _create_save_slot(slot: Dictionary) -> PanelContainer:
 			continue_game_requested.emit(_package_id, slot.get("slot_id", 1))
 		)
 		hbox.add_child(continue_btn)
+
+		var upload_btn := Button.new()
+		upload_btn.text = "☁️ 上传"
+		upload_btn.custom_minimum_size = Vector2(80, 36)
+		upload_btn.mouse_filter = Control.MOUSE_FILTER_STOP
+		upload_btn.modulate = Color(0.3, 0.6, 0.9)
+		upload_btn.tooltip_text = "上传存档到服务器"
+		upload_btn.pressed.connect(func():
+			_upload_save_to_server(slot)
+		)
+		hbox.add_child(upload_btn)
 
 		var delete_btn := Button.new()
 		delete_btn.text = "🗑️"
@@ -551,6 +563,101 @@ func _update_leaderboard_status(text: String) -> void:
 			_leaderboard_status.modulate = Color.YELLOW
 		else:
 			_leaderboard_status.modulate = Color.GRAY
+
+func _upload_save_to_server(slot: Dictionary) -> void:
+	var auth_system = _get_auth_system()
+	if auth_system == null or not auth_system.IsAuthenticated:
+		print("[PackageDetail] 上传存档需要先登录")
+		return
+
+	var data: Dictionary = slot.get("data", {})
+	var save_data_json := JSON.stringify(data)
+
+	var request_body := {
+		"slotId": slot.get("slot_id", 1),
+		"saveData": save_data_json,
+		"characterId": data.get("character_id", ""),
+		"currentFloor": data.get("current_floor", 0),
+		"gold": data.get("gold", 0),
+		"currentHP": data.get("current_hp", 0),
+		"maxHP": data.get("max_hp", 0),
+		"isVictory": data.get("is_victory", false)
+	}
+
+	var http := HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(_on_save_uploaded)
+
+	var url := "http://127.0.0.1:5000/api/save/%s/upload" % _package_id
+	var token: String = auth_system.Token
+	var headers := ["Content-Type: application/json", "Authorization: Bearer %s" % token]
+	var body := JSON.stringify(request_body)
+	var err := http.request(url, headers, HTTPClient.METHOD_POST, body)
+	if err != Error.OK:
+		print("[PackageDetail] 上传存档请求失败: %s" % err)
+		http.queue_free()
+
+func _on_save_uploaded(result: int, code: int, _headers: PackedStringArray, _body: PackedByteArray) -> void:
+	var http_node := get_child(get_child_count() - 1) as HTTPRequest
+	if http_node != null:
+		http_node.queue_free()
+
+	if result == HTTPRequest.RESULT_SUCCESS and code == 200:
+		print("[PackageDetail] ✅ 存档已上传到服务器")
+	else:
+		print("[PackageDetail] ❌ 存档上传失败 (HTTP %d)" % code)
+
+func _fetch_server_saves() -> void:
+	var auth_system = _get_auth_system()
+	if auth_system == null or not auth_system.IsAuthenticated:
+		return
+
+	var http := HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(_on_server_saves_received)
+
+	var url := "http://127.0.0.1:5000/api/save/%s" % _package_id
+	var token: String = auth_system.Token
+	var headers := ["Authorization: Bearer %s" % token]
+	var err := http.request(url, headers)
+	if err != Error.OK:
+		http.queue_free()
+
+func _on_server_saves_received(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
+	var http_node := get_child(get_child_count() - 1) as HTTPRequest
+	if http_node != null:
+		http_node.queue_free()
+
+	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
+		return
+
+	var json := JSON.new()
+	if json.parse(body.get_string_from_utf8()) != Error.OK:
+		return
+
+	var data: Dictionary = json.data
+	if not data.get("success", false):
+		return
+
+	var server_saves: Array = data.get("data", [])
+	if server_saves.is_empty():
+		return
+
+	for sv in server_saves:
+		var slot_id: int = sv.get("slotId", 0)
+		var label_text := "☁️ 服务器存档 %d: %s | 层数:%d | 💰%d | %s" % [
+			slot_id,
+			sv.get("characterId", "???"),
+			sv.get("currentFloor", 0),
+			sv.get("gold", 0),
+			sv.get("savedAt", "").substr(0, 10)
+		]
+		var server_label := Label.new()
+		server_label.text = label_text
+		server_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		server_label.add_theme_font_size_override("font_size", 12)
+		server_label.modulate = Color(0.4, 0.7, 0.9)
+		_saves_tab.add_child(server_label)
 
 func _on_back_pressed() -> void:
 	print("[PackageDetail] Back pressed")

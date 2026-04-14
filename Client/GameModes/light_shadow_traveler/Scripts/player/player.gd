@@ -22,10 +22,10 @@ const MAX_FORM_ENERGY := 100.0
 const ENERGY_REGEN_RATE := 12.0
 const LIGHT_WALL_JUMP_FORCE := -350.0
 
-@export var light_speed := 250.0
-@export var light_jump_force := -420.0
-@export var shadow_speed := 320.0
-@export var shadow_jump_force := -500.0
+@export var light_speed := 280.0
+@export var light_jump_force := -550.0
+@export var shadow_speed := 350.0
+@export var shadow_jump_force := -620.0
 @export var shadow_glide_gravity := 200.0
 @export var shadow_glide_max_fall := 100.0
 @export var gravity := 980.0
