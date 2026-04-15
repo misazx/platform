@@ -612,7 +612,7 @@ func show_card_play_animation(card_data: Dictionary, target_enemy_index: int) ->
 	tween.tween_callback(card_bg.queue_free).set_delay(0.7)
 
 
-class BattleCharacterSprite extends Control
+class BattleCharacterSprite extends Control:
 
 var _character_id: String = ""
 var _is_player: bool = false
@@ -864,7 +864,7 @@ func update_intent(text: String, icon: String = "") -> void:
 	_intent_label.text = ("%s %s" % [icon, text]) if icon != "" else text
 
 
-class CardUI extends Control
+class CardUI extends Control:
 
 signal card_pressed(card_ui)
 
@@ -1016,7 +1016,7 @@ static func show_status(parent: Control, text: String, pos: Vector2) -> void:
 	parent.add_child(FloatingTextLabel.new(text, pos, Color(0.9, 0.7, 0.3)))
 
 
-class FloatingTextLabel extends Control
+class FloatingTextLabel extends Control:
 
 var _label: Label
 var _start_pos: Vector2
