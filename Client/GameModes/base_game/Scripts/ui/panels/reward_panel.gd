@@ -66,7 +66,7 @@ func set_rewards(rewards: Array, gold: int) -> void:
 			_: btn.text = r_name
 		btn.custom_minimum_size = Vector2(280, 40)
 		btn.mouse_filter = Control.MOUSE_FILTER_STOP
-		var reward_copy: Dictionary = reward.duplicate()
+		var reward_copy := reward.duplicate()
 		btn.pressed.connect(func(): reward_chosen.emit(r_type, reward_copy); visible = false)
 		container.add_child(btn)
 		container.move_child(btn, insert_idx)
