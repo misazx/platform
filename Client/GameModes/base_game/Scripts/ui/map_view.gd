@@ -116,8 +116,9 @@ func _on_save_pressed() -> void:
 
 func _on_back_pressed() -> void:
 	print("[MapView] Back pressed")
-	if Main.instance != null:
-		Main.instance.go_to_main_menu()
+	var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
+	if main_node != null and main_node.has_method("go_to_main_menu"):
+		main_node.call("go_to_main_menu")
 
 func _setup_signals() -> void:
 	pass
@@ -261,8 +262,8 @@ func set_map(map_data: Dictionary) -> void:
 		print("[MapView] Fresh init: start=%d, reachable=%s" % [start_node.id, str(_reachable_node_ids)])
 	
 	for node in map_data.nodes:
-		var is_reachable := node.id in _reachable_node_ids
-		var is_visited := node.id in _visited_node_ids
+		var is_reachable: bool = node.id in _reachable_node_ids
+		var is_visited: bool = node.id in _visited_node_ids
 		var node_ui := MapNodeUI.new(node, is_reachable, is_visited)
 		node_ui.node_clicked.connect(_on_node_clicked)
 		_node_uis.append(node_ui)
@@ -352,8 +353,8 @@ func _on_node_clicked(node_ui) -> void:
 
 func _update_node_visuals() -> void:
 	for n in _node_uis:
-		var is_reachable := n.node_data.id in _reachable_node_ids
-		var is_visited := n.node_data.id in _visited_node_ids
+		var is_reachable: bool = n.node_data.id in _reachable_node_ids
+		var is_visited: bool = n.node_data.id in _visited_node_ids
 		n.set_reachable_state(is_reachable, is_visited)
 
 func update_floor(f: int) -> void:
@@ -465,7 +466,7 @@ class MapNodeUI:
 		add_child(_icon_label)
 
 		_tooltip = Label.new()
-		_tooltip.text = _get_tooltip(node_data.type)
+		_tooltip.text = _get_node_tooltip(node_data.type)
 		_tooltip.visible = false
 		_tooltip.z_index = 200
 		_tooltip.position = Vector2(28, -50)
@@ -474,7 +475,7 @@ class MapNodeUI:
 		add_child(_tooltip)
 
 		gui_input.connect(_on_gui_input)
-		mouse_entered.connect(_on_mouse_entered)
+		mouse_entered.connect(_on_mouse_enter)
 		mouse_exited.connect(_on_mouse_exit)
 
 		_apply_initial_state()
@@ -528,7 +529,7 @@ class MapNodeUI:
 			6: return Color(1, 0.88, 0.3)
 			_: return Color(0.6, 0.6, 0.6)
 
-	func _get_tooltip(type_val: int) -> String:
+	func _get_node_tooltip(type_val: int) -> String:
 		match type_val:
 			1: return "普通敌人"
 			2: return "精英敌人"
