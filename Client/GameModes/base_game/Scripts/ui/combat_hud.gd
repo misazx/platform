@@ -13,7 +13,7 @@ var _energy_label: Label
 var _phase_label: Label
 var _battle_scene_area: Control
 var _enemy_sprites: Array = []
-var _player_sprite: Node2D = null
+var _player_sprite: Control = null
 var _enemy_status_area: Control
 var _enemies_ui: Array = []
 var _player_status_area: VBoxContainer
@@ -550,7 +550,7 @@ func show_enemy_hit_feedback(enemy_index: int) -> void:
 		_enemy_sprites[enemy_index].play_hit_animation()
 	if enemy_index >= 0 and enemy_index < _enemies_ui.size():
 		var enemy_ui = _enemies_ui[enemy_index]
-		var hit_tween := enemy_ui.create_tween()
+		var hit_tween: Tween = enemy_ui.create_tween()
 		hit_tween.tween_property(enemy_ui, "modulate", Color(1, 0.5, 0.5), 0.08)
 		hit_tween.tween_property(enemy_ui, "modulate", Color.WHITE, 0.15).set_delay(0.08)
 

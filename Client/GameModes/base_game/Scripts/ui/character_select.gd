@@ -114,8 +114,11 @@ func _on_back_pressed() -> void:
 	print("[CharacterSelect] Back pressed")
 	if AudioManager.instance != null:
 		AudioManager.instance.play_button_click()
-	if Main.instance != null:
-		Main.instance.go_to_main_menu()
+	var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
+	if main_node != null and main_node.has_method("go_to_main_menu"):
+		main_node.call("go_to_main_menu")
+	elif get_tree().current_scene != null:
+		get_tree().change_scene_to_file("res://Scenes/Main.tscn")
 
 func _get_class_display_name(char_class: int) -> String:
 	match char_class:

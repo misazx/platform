@@ -395,180 +395,181 @@ func on_hide() -> void:
 	visible = false
 
 
-class MapNodeUI extends Control:
+class MapNodeUI:
+	extends Control
 
-signal node_clicked(node_ui)
+	signal node_clicked(node_ui)
 
-var node_data: Dictionary
-var visited: bool = false:
-	set(value):
-		visited = value
-		_update_appearance()
-var highlighted: bool = false:
-	set(value):
-		highlighted = value
-		var s := 1.25 if value else (0.9 if visited else 1.0)
-		scale = Vector2(s, s)
+	var node_data: Dictionary
+	var visited: bool = false:
+		set(value):
+			visited = value
+			_update_appearance()
+	var highlighted: bool = false:
+		set(value):
+			highlighted = value
+			var s := 1.25 if value else (0.9 if visited else 1.0)
+			scale = Vector2(s, s)
 
-var _visited_internal: bool = false
-var _highlighted_internal: bool = false
-var _reachable: bool = false
-var _bg_rect: ColorRect
-var _icon_label: Label
-var _tooltip: Label
+	var _visited_internal: bool = false
+	var _highlighted_internal: bool = false
+	var _reachable: bool = false
+	var _bg_rect: ColorRect
+	var _icon_label: Label
+	var _tooltip: Label
 
-func _init(data: Dictionary, reachable: bool = false, visited: bool = false) -> void:
-	node_data = data
-	_reachable = reachable
-	_visited_internal = visited
+	func _init(data: Dictionary, reachable: bool = false, visited: bool = false) -> void:
+		node_data = data
+		_reachable = reachable
+		_visited_internal = visited
 
-func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_STOP
-	
-	var x: float = float(node_data.position.x)
-	var y: float = float(node_data.position.y)
-	position = Vector2(x, y)
-	size = Vector2(56, 56)
-	
-	var node_color := _get_color(node_data.type)
-	var border_color := node_color.lightened(0.3)
-	
-	_bg_rect = ColorRect.new()
-	_bg_rect.name = "BG"
-	_bg_rect.color = Color(0.15, 0.13, 0.10, 0.95)
-	_bg_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_bg_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(_bg_rect)
-	
-	var border_style := StyleBoxFlat.new()
-	border_style.bg_color = Color(0.15, 0.13, 0.10, 0.95)
-	border_style.corner_radius_top_left = 12
-	border_style.corner_radius_top_right = 12
-	border_style.corner_radius_bottom_left = 12
-	border_style.corner_radius_bottom_right = 12
-	border_style.border_width_left = 3
-	border_style.border_width_right = 3
-	border_style.border_width_top = 3
-	border_style.border_width_bottom = 3
-	border_style.border_color = border_color
-	add_theme_stylebox_override("panel", border_style)
-	
-	_icon_label = Label.new()
-	_icon_label.text = _get_icon_char(node_data.type)
-	_icon_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_icon_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_icon_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_icon_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_icon_label.add_theme_font_size_override("font_size", 22)
-	_icon_label.modulate = node_color
-	add_child(_icon_label)
-	
-	_tooltip = Label.new()
-	_tooltip.text = _get_tooltip(node_data.type)
-	_tooltip.visible = false
-	_tooltip.z_index = 200
-	_tooltip.position = Vector2(28, -50)
-	_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_tooltip.add_theme_font_size_override("font_size", 14)
-	add_child(_tooltip)
-	
-	gui_input.connect(_on_gui_input)
-	mouse_entered.connect(_on_mouse_entered)
-	mouse_exited.connect(_on_mouse_exit)
-	
-	_apply_initial_state()
-	
-	print("[MapNodeUI] Ready: type=%d pos=(%d,%d) color=%s reachable=%s visited=%s" % 
-		[node_data.type, node_data.position.x, node_data.position.y, node_color, _reachable, _visited_internal])
-
-func _apply_initial_state() -> void:
-	if _visited_internal:
-		_update_appearance()
-	elif _reachable:
-		modulate = Color(1, 1, 1, 1)
-	else:
-		modulate = Color(0.4, 0.4, 0.4, 0.6)
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-func set_reachable_state(reachable: bool, visited: bool) -> void:
-	_reachable = reachable
-	_visited_internal = visited
-	
-	if visited:
-		_update_appearance()
-	elif reachable:
-		modulate = Color(1, 1, 1, 1)
+	func _ready() -> void:
 		mouse_filter = Control.MOUSE_FILTER_STOP
-		scale = Vector2.ONE
-	else:
-		modulate = Color(0.4, 0.4, 0.4, 0.6)
-		mouse_filter = Control.MOUSE_FILTER_IGNORE
-		scale = Vector2.ONE
 
-func _get_icon_char(type_val: int) -> String:
-	match type_val:
-		1: return "⚔"
-		2: return "★"
-		7: return "👑"
-		4: return "?"
-		3: return "$"
-		5: return "♥"
-		6: return "◆"
-		_: return "●"
+		var x: float = float(node_data.position.x)
+		var y: float = float(node_data.position.y)
+		position = Vector2(x, y)
+		size = Vector2(56, 56)
 
-func _get_color(type_val: int) -> Color:
-	match type_val:
-		1: return Color(0.9, 0.35, 0.35)
-		2: return Color(1, 0.65, 0.2)
-		7: return Color(0.95, 0.2, 0.2)
-		4: return Color(0.55, 0.8, 0.35)
-		3: return Color(0.4, 0.7, 1)
-		5: return Color(0.35, 0.6, 0.35)
-		6: return Color(1, 0.88, 0.3)
-		_: return Color(0.6, 0.6, 0.6)
+		var node_color := _get_color(node_data.type)
+		var border_color := node_color.lightened(0.3)
 
-func _get_tooltip(type_val: int) -> String:
-	match type_val:
-		1: return "普通敌人"
-		2: return "精英敌人"
-		7: return "Boss"
-		4: return "事件"
-		3: return "商店"
-		5: return "休息点"
-		6: return "宝箱"
-		_: return "起点"
+		_bg_rect = ColorRect.new()
+		_bg_rect.name = "BG"
+		_bg_rect.color = Color(0.15, 0.13, 0.10, 0.95)
+		_bg_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_bg_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+		add_child(_bg_rect)
 
-func _update_appearance() -> void:
-	if not _visited_internal: return
-	var s := StyleBoxFlat.new()
-	s.bg_color = Color(0.15, 0.22, 0.15, 0.8)
-	s.corner_radius_top_left = 12
-	s.corner_radius_top_right = 12
-	s.corner_radius_bottom_left = 12
-	s.corner_radius_bottom_right = 12
-	s.border_width_left = 2
-	s.border_width_right = 2
-	s.border_width_top = 2
-	s.border_width_bottom = 2
-	s.border_color = Color(0.35, 0.5, 0.35, 0.7)
-	add_theme_stylebox_override("panel", s)
-	scale = Vector2(0.9, 0.9)
-	modulate = Color(0.8, 0.8, 0.8, 0.85)
+		var border_style := StyleBoxFlat.new()
+		border_style.bg_color = Color(0.15, 0.13, 0.10, 0.95)
+		border_style.corner_radius_top_left = 12
+		border_style.corner_radius_top_right = 12
+		border_style.corner_radius_bottom_left = 12
+		border_style.corner_radius_bottom_right = 12
+		border_style.border_width_left = 3
+		border_style.border_width_right = 3
+		border_style.border_width_top = 3
+		border_style.border_width_bottom = 3
+		border_style.border_color = border_color
+		add_theme_stylebox_override("panel", border_style)
 
-func _on_mouse_enter() -> void:
-	if not _reachable and not _visited_internal: return
-	_tooltip.visible = true
-	if not highlighted and not _visited_internal:
-		create_tween().tween_property(self, "scale", Vector2(1.15, 1.15), 0.1)
+		_icon_label = Label.new()
+		_icon_label.text = _get_icon_char(node_data.type)
+		_icon_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_icon_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_icon_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_icon_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_icon_label.add_theme_font_size_override("font_size", 22)
+		_icon_label.modulate = node_color
+		add_child(_icon_label)
 
-func _on_mouse_exit() -> void:
-	_tooltip.visible = false
-	if not highlighted and not _visited_internal and _reachable:
-		create_tween().tween_property(self, "scale", Vector2.ONE, 0.1)
+		_tooltip = Label.new()
+		_tooltip.text = _get_tooltip(node_data.type)
+		_tooltip.visible = false
+		_tooltip.z_index = 200
+		_tooltip.position = Vector2(28, -50)
+		_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_tooltip.add_theme_font_size_override("font_size", 14)
+		add_child(_tooltip)
 
-func _on_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		node_clicked.emit(self)
+		gui_input.connect(_on_gui_input)
+		mouse_entered.connect(_on_mouse_entered)
+		mouse_exited.connect(_on_mouse_exit)
 
-func get_center_position() -> Vector2:
-	return position + size / 2
+		_apply_initial_state()
+
+		print("[MapNodeUI] Ready: type=%d pos=(%d,%d) color=%s reachable=%s visited=%s" %
+			[node_data.type, node_data.position.x, node_data.position.y, node_color, _reachable, _visited_internal])
+
+	func _apply_initial_state() -> void:
+		if _visited_internal:
+			_update_appearance()
+		elif _reachable:
+			modulate = Color(1, 1, 1, 1)
+		else:
+			modulate = Color(0.4, 0.4, 0.4, 0.6)
+			mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func set_reachable_state(reachable: bool, visited: bool) -> void:
+		_reachable = reachable
+		_visited_internal = visited
+
+		if visited:
+			_update_appearance()
+		elif reachable:
+			modulate = Color(1, 1, 1, 1)
+			mouse_filter = Control.MOUSE_FILTER_STOP
+			scale = Vector2.ONE
+		else:
+			modulate = Color(0.4, 0.4, 0.4, 0.6)
+			mouse_filter = Control.MOUSE_FILTER_IGNORE
+			scale = Vector2.ONE
+
+	func _get_icon_char(type_val: int) -> String:
+		match type_val:
+			1: return "⚔"
+			2: return "★"
+			7: return "👑"
+			4: return "?"
+			3: return "$"
+			5: return "♥"
+			6: return "◆"
+			_: return "●"
+
+	func _get_color(type_val: int) -> Color:
+		match type_val:
+			1: return Color(0.9, 0.35, 0.35)
+			2: return Color(1, 0.65, 0.2)
+			7: return Color(0.95, 0.2, 0.2)
+			4: return Color(0.55, 0.8, 0.35)
+			3: return Color(0.4, 0.7, 1)
+			5: return Color(0.35, 0.6, 0.35)
+			6: return Color(1, 0.88, 0.3)
+			_: return Color(0.6, 0.6, 0.6)
+
+	func _get_tooltip(type_val: int) -> String:
+		match type_val:
+			1: return "普通敌人"
+			2: return "精英敌人"
+			7: return "Boss"
+			4: return "事件"
+			3: return "商店"
+			5: return "休息点"
+			6: return "宝箱"
+			_: return "起点"
+
+	func _update_appearance() -> void:
+		if not _visited_internal: return
+		var s := StyleBoxFlat.new()
+		s.bg_color = Color(0.15, 0.22, 0.15, 0.8)
+		s.corner_radius_top_left = 12
+		s.corner_radius_top_right = 12
+		s.corner_radius_bottom_left = 12
+		s.corner_radius_bottom_right = 12
+		s.border_width_left = 2
+		s.border_width_right = 2
+		s.border_width_top = 2
+		s.border_width_bottom = 2
+		s.border_color = Color(0.35, 0.5, 0.35, 0.7)
+		add_theme_stylebox_override("panel", s)
+		scale = Vector2(0.9, 0.9)
+		modulate = Color(0.8, 0.8, 0.8, 0.85)
+
+	func _on_mouse_enter() -> void:
+		if not _reachable and not _visited_internal: return
+		_tooltip.visible = true
+		if not highlighted and not _visited_internal:
+			create_tween().tween_property(self, "scale", Vector2(1.15, 1.15), 0.1)
+
+	func _on_mouse_exit() -> void:
+		_tooltip.visible = false
+		if not highlighted and not _visited_internal and _reachable:
+			create_tween().tween_property(self, "scale", Vector2.ONE, 0.1)
+
+	func _on_gui_input(event: InputEvent) -> void:
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			node_clicked.emit(self)
+
+	func get_center_position() -> Vector2:
+		return position + size / 2
