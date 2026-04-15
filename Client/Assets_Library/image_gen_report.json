@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-04-16T01:40:34.687602",
-  "document": "Client/Tools/doubao_image_gen_all.yaml",
+  "timestamp": "2026-04-15T02:24:06.561772",
+  "document": "Client/Tools/doubao_image_gen_lst.yaml",
   "stats": {
-    "total": 161,
-    "success": 161,
+    "total": 20,
+    "success": 20,
     "fail": 0,
     "skip": 0,
-    "elapsed_seconds": 351.7
+    "elapsed_seconds": 75.3
   },
   "model_rotator": {
     "models": [
@@ -16,12 +16,12 @@
       "doubao-seedream-4-0-250828"
     ],
     "fail_counts": {
-      "doubao-seedream-5-0-260128": 4,
+      "doubao-seedream-5-0-260128": 5,
       "doubao-seedream-5-0-lite-260128": 2
     },
     "cooldowns": {
-      "doubao-seedream-5-0-260128": 1776274603.4659982,
-      "doubao-seedream-5-0-lite-260128": 1776274603.791438
+      "doubao-seedream-5-0-260128": 1776191091.629515,
+      "doubao-seedream-5-0-lite-260128": 1776191091.7617111
     }
   }
 }

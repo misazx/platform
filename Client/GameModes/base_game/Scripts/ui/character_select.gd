@@ -94,17 +94,36 @@ func update_description(index: int) -> void:
 		return
 
 	var character = _characters[index]
+	var char_name: String = ""
+	var char_desc: String = ""
+	var char_class: int = 0
+
+	if character is Dictionary:
+		char_name = character.get("name", "")
+		char_desc = character.get("description", "")
+		char_class = character.get("class", 0)
+	else:
+		if "name" in character: char_name = str(character.name)
+		if "description" in character: char_desc = str(character.description)
+		if "character" in character: char_class = int(character.character)
 
 	if _name_label != null:
-		_name_label.text = character.name
+		_name_label.text = char_name
 	if _class_label != null:
-		_class_label.text = _get_class_display_name(character.character)
+		_class_label.text = _get_class_display_name(char_class)
 	if _desc_label != null:
-		_desc_label.text = "%s\n\n%s\n\n难度: 简单" % [character.name, character.description]
+		_desc_label.text = "%s\n\n%s\n\n难度: 简单" % [char_name, char_desc]
 
 func _on_confirm_pressed() -> void:
 	if _selected_index >= 0 and _selected_index < _characters.size():
-		var character_id: String = _characters[_selected_index].id if _characters[_selected_index].has("id") else str(_selected_index)
+		var selected_char = _characters[_selected_index]
+		var character_id: String = ""
+		if selected_char is Dictionary:
+			character_id = selected_char.get("id", str(_selected_index))
+		elif "id" in selected_char:
+			character_id = str(selected_char.id)
+		else:
+			character_id = str(_selected_index)
 		print("[CharacterSelect] Confirming character: %s" % character_id)
 		if AudioManager.instance != null:
 			AudioManager.instance.play_button_click()
