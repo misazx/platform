@@ -97,7 +97,7 @@ func set_shop_items(items: Array) -> void:
 		btn.custom_minimum_size = Vector2(500, 44)
 		btn.mouse_filter = Control.MOUSE_FILTER_STOP
 		btn.disabled = i_cost > _player_gold
-		var item_copy := item.duplicate()
+		var item_copy: Dictionary = item.duplicate()
 		btn.pressed.connect(func(): _on_item_bought(item_copy))
 		scroll_vbox.add_child(btn)
 		_item_buttons.append(btn)
