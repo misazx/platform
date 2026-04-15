@@ -212,7 +212,8 @@ static func show_rewards(parent: Control, cards: Array, relics: Array, gold: int
 	return screen
 
 
-class ShopScreen extends Control
+class ShopScreen:
+	extends Control
 
 signal card_purchased(card_data, price: int)
 signal relic_purchased(relic_data, price: int)

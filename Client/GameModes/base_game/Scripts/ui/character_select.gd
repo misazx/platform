@@ -126,7 +126,8 @@ func _get_class_display_name(char_class: int) -> String:
 		_: return "未知"
 
 
-class CharacterCardControl extends PanelContainer
+class CharacterCardControl:
+	extends PanelContainer
 
 signal card_clicked(index: int)
 
