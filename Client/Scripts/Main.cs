@@ -10,6 +10,7 @@ using RoguelikeGame.UI;
 using RoguelikeGame.UI.Panels;
 using RoguelikeGame.Generation;
 using RoguelikeGame.Packages;
+using RoguelikeGame.Combat;
 
 namespace RoguelikeGame
 {
@@ -19,7 +20,6 @@ namespace RoguelikeGame
         private Node _currentScene;
         private Control _settingsPanel;
         private bool _combatActive = false;
-        private int _currentGoldReward = 20;
         private Generation.NodeType _lastClickedNodeType = Generation.NodeType.Monster;
 
         public void SetLastClickedNodeType(Generation.NodeType type) => _lastClickedNodeType = type;
@@ -190,20 +190,8 @@ namespace RoguelikeGame
 
             if (packageId == "base_game")
             {
-                var saveSlot = EnhancedSaveSystem.Instance?.LoadGame(slotId);
-                if (saveSlot != null)
-                {
-                    GD.Print($"[Main] Loaded save: {saveSlot.CharacterId} at floor {saveSlot.CurrentFloor}");
-                    MapView.ResetPersistentState();
-                    if (GameManager.Instance != null)
-                        GameManager.Instance.StartNewRun(saveSlot.CharacterId);
-                    GoToMap();
-                }
-                else
-                {
-                    GD.Print("[Main] No save found, starting new game");
-                    GoToCharacterSelect();
-                }
+                GD.Print("[Main] Loading save game via GDScript");
+                GoToMap();
             }
             else
             {
@@ -352,34 +340,17 @@ namespace RoguelikeGame
             GD.Print("[Main] Loading CharacterSelect...");
             ClearCurrentScene();
 
-            var charSelect = LoadScene("res://GameModes/base_game/Scenes/CharacterSelect.tscn");
-            if (charSelect is CharacterSelect cs)
+            var charSelectScene = LoadScene("res://GameModes/base_game/Scenes/CharacterSelect.tscn");
+            if (charSelectScene != null)
             {
-                _currentScene = charSelect;
-                _currentSceneContainer.AddChild(charSelect);
-                
-                cs.CharacterSelected += OnCharacterSelected;
-                
-                GD.Print("[Main] CharacterSelect loaded and signals connected");
+                _currentScene = charSelectScene;
+                _currentSceneContainer.AddChild(charSelectScene);
+                GD.Print("[Main] CharacterSelect loaded");
             }
             else
             {
                 GD.PushError("[Main] Failed to load CharacterSelect!");
             }
-        }
-
-        private void OnCharacterSelected(string characterId)
-        {
-            GD.Print($"[Main] CharacterSelected signal received: {characterId}");
-            
-            MapView.ResetPersistentState();
-            
-            if (GameManager.Instance != null)
-            {
-                GameManager.Instance.StartNewRun(characterId);
-            }
-            
-            GoToMap();
         }
 
         public void GoToMap()
@@ -416,9 +387,7 @@ namespace RoguelikeGame
             {
                 _currentScene = combatScene;
                 _currentSceneContainer.AddChild(combatScene);
-                GD.Print("[Main] Combat loaded");
-
-                InitializeCombatSystem(combatScene, enemyId);
+                GD.Print("[Main] Combat scene loaded - GDScript will handle initialization");
             }
         }
 
@@ -427,10 +396,12 @@ namespace RoguelikeGame
             GD.Print("[Main] Loading Shop...");
             ClearCurrentScene();
 
-            var shopPanel = new ShopPanel();
-            _currentScene = shopPanel;
-            _currentSceneContainer.AddChild(shopPanel);
-            shopPanel.Closed += GoToMap;
+            var shopScene = LoadScene("res://GameModes/base_game/Scenes/ShopPanel.tscn");
+            if (shopScene != null)
+            {
+                _currentScene = shopScene;
+                _currentSceneContainer.AddChild(shopScene);
+            }
         }
 
         public void GoToRest()
@@ -438,10 +409,12 @@ namespace RoguelikeGame
             GD.Print("[Main] Loading Rest Site...");
             ClearCurrentScene();
 
-            var restPanel = new RestSitePanel();
-            _currentScene = restPanel;
-            _currentSceneContainer.AddChild(restPanel);
-            restPanel.Closed += GoToMap;
+            var restScene = LoadScene("res://GameModes/base_game/Scenes/RestSitePanel.tscn");
+            if (restScene != null)
+            {
+                _currentScene = restScene;
+                _currentSceneContainer.AddChild(restScene);
+            }
         }
 
         public void GoToEvent()
@@ -449,10 +422,12 @@ namespace RoguelikeGame
             GD.Print("[Main] Loading Event...");
             ClearCurrentScene();
 
-            var eventPanel = new EventPanel();
-            _currentScene = eventPanel;
-            _currentSceneContainer.AddChild(eventPanel);
-            eventPanel.Closed += GoToMap;
+            var eventScene = LoadScene("res://GameModes/base_game/Scenes/EventPanel.tscn");
+            if (eventScene != null)
+            {
+                _currentScene = eventScene;
+                _currentSceneContainer.AddChild(eventScene);
+            }
         }
 
         public void GoToTreasure()
@@ -460,389 +435,24 @@ namespace RoguelikeGame
             GD.Print("[Main] Loading Treasure...");
             ClearCurrentScene();
 
-            var treasurePanel = new TreasurePanel();
-            _currentScene = treasurePanel;
-            _currentSceneContainer.AddChild(treasurePanel);
-            treasurePanel.Closed += GoToMap;
-        }
-
-        private void InitializeCombatSystem(Node combatScene, string enemyId)
-        {
-            GD.Print($"[Main] Initializing STS combat system for enemy: {enemyId}");
-
-            var combatHUD = combatScene as CombatHUD;
-            if (combatHUD == null)
+            var treasureScene = LoadScene("res://GameModes/base_game/Scenes/TreasurePanel.tscn");
+            if (treasureScene != null)
             {
-                GD.PushError("[Main] CombatScene is not a CombatHUD instance!");
-                return;
-            }
-
-            int floor = GameManager.Instance?.CurrentRun?.CurrentFloor ?? 1;
-            NodeType nodeType = GetLastClickedNodeType();
-
-            var encounter = EncounterGenerator.GenerateEncounter(enemyId, nodeType, floor);
-            GD.Print($"[Main] Encounter: {encounter.Description}, {encounter.Enemies.Count} enemies");
-
-            uint seed = (uint)DateTime.Now.Ticks;
-
-            var engine = new StsCombatEngine();
-            AddChild(engine);
-            engine.InitializeCombat(encounter.Enemies, seed);
-
-            foreach (var enemy in encounter.Enemies)
-            {
-                int idx = 0;
-                for (int i = 0; i < encounter.Enemies.Count; i++)
-                    if (encounter.Enemies[i] == enemy) { idx = i; break; }
-                combatHUD.AddEnemy(enemy.Name, enemy.MaxHp);
-                if (enemy.CurrentIntent != null)
-                    combatHUD.UpdateEnemyIntent(idx, enemy.CurrentIntent.Description, enemy.CurrentIntent.Icon);
-            }
-
-            ConnectStsSignals(combatHUD, engine);
-            UpdateUIFromEngine(combatHUD, engine);
-
-            _currentGoldReward = encounter.GoldReward;
-
-            combatHUD.ShowPileViewRequested += (pileType) =>
-            {
-                List<CardData> cards = new();
-                if (pileType == "抽牌堆")
-                {
-                    foreach (var c in engine.Player.DrawPile)
-                        cards.Add(ConvertToCardData(c));
-                }
-                else
-                {
-                    foreach (var c in engine.Player.DiscardPile)
-                        cards.Add(ConvertToCardData(c));
-                }
-
-                var pileView = new PileViewPanel(pileType, cards);
-                AddChild(pileView);
-                pileView.Closed += () => { RemoveChild(pileView); pileView.QueueFree(); };
-            };
-
-            GD.Print("[Main] STS combat system initialized successfully");
-        }
-
-        private void ConnectStsSignals(CombatHUD hud, StsCombatEngine engine)
-        {
-            hud.CardPlayed += (cardId) =>
-            {
-                if (!_combatActive || !IsInstanceValid(engine)) return;
-                if (!engine.IsPlayerTurn || engine.IsCombatOver) return;
-
-                GD.Print($"[Main] 🃏 Card played: {cardId}");
-
-                var card = engine.Player.Hand.Find(c => c.Id == cardId);
-                if (card != null && engine.CanPlayCard(card))
-                {
-                    var result = engine.PlayCard(card);
-
-                    UpdateEnemyHealthFromEngine(hud, engine);
-                    UpdateUIFromEngine(hud, engine);
-                }
-            };
-
-            hud.CardPlayedWithTarget += (cardId, targetIndex) =>
-            {
-                if (!_combatActive || !IsInstanceValid(engine)) return;
-                if (!engine.IsPlayerTurn || engine.IsCombatOver) return;
-
-                GD.Print($"[Main] 🃏 Card played with target: {cardId} → enemy {targetIndex}");
-
-                var card = engine.Player.Hand.Find(c => c.Id == cardId);
-                if (card != null && engine.CanPlayCard(card))
-                {
-                    var result = engine.PlayCard(card, targetIndex);
-
-                    UpdateEnemyHealthFromEngine(hud, engine);
-                    UpdateUIFromEngine(hud, engine);
-                }
-            };
-
-            hud.EndTurn += () =>
-            {
-                if (!_combatActive || !IsInstanceValid(engine)) return;
-                if (engine.IsCombatOver) return;
-
-                GD.Print("[Main] ⚔️ End turn - enemy phase starting");
-                hud.SetPhase(false);
-
-                CallDeferred(nameof(ExecuteEnemyTurn), hud, engine);
-            };
-
-            engine.OnDamageDealt += (targetIndex, targetName, damage) =>
-            {
-                if (!_combatActive) return;
-
-                bool isPlayer = targetIndex < 0;
-                Vector2 pos = isPlayer ? new Vector2(150, 350) : new Vector2(600 + targetIndex * 180, 180);
-                FloatingText.ShowDamage(hud, damage, pos, isPlayer);
-                AudioManager.Instance?.PlaySFX("hit");
-
-                if (isPlayer)
-                    hud.ShowPlayerHitFeedback();
-                else if (targetIndex >= 0)
-                    hud.ShowEnemyHitFeedback(targetIndex);
-            };
-
-            engine.OnBlockGained += (amount, totalBlock) =>
-            {
-                if (!_combatActive) return;
-                FloatingText.ShowBlock(hud, amount, new Vector2(150, 380));
-            };
-
-            engine.OnStatusApplied += (targetName, effect) =>
-            {
-                if (!_combatActive) return;
-                GD.Print($"[Main] ✨ Status applied to {targetName}: {effect.Name} +{effect.Stacks}");
-                FloatingText.ShowStatus(hud, $"{effect.Name} +{effect.Stacks}", new Vector2(600, 250));
-            };
-
-            engine.OnTurnStarted += (turn) =>
-            {
-                if (!_combatActive || !IsInstanceValid(engine)) return;
-                if (engine.IsCombatOver) return;
-
-                GD.Print($"[Main] 🔄 Turn {turn} started - player phase");
-                hud.SetPhase(true);
-                UpdateUIFromEngine(hud, engine);
-                UpdateEnemyIntentsFromEngine(hud, engine);
-            };
-
-            engine.OnCombatWon += () =>
-            {
-                if (!_combatActive) return;
-                _combatActive = false;
-
-                GD.Print("[Main] 🏆 VICTORY!");
-                hud.SetPhase(false);
-                UpdateEnemyHealthFromEngine(hud, engine);
-                FloatingText.ShowStatus(hud, "🏆 胜利!", new Vector2(600, 300));
-                AudioManager.Instance?.PlayBGM("victory_fanfare");
-
-                var run = GameManager.Instance?.CurrentRun;
-                if (run != null)
-                {
-                    run.TotalEnemiesDefeated++;
-                    run.EndTime = DateTime.Now;
-                }
-
-                GameManager.Instance?.EndCombat(true);
-
-                AchievementManager.Instance?.UpdateProgress("kill_100_enemies", 1);
-                AchievementManager.Instance?.UpdateProgress("first_victory", 1);
-                EnhancedSaveSystem.Instance?.SaveGame(1, run);
-
-                SubmitRunToServer(run, true);
-
-                bool isBoss = engine.Enemies.Any(e => e.IsDead && (e.Id?.Contains("Guardian") == true || e.Id?.Contains("Collector") == true || e.Id?.Contains("Automaton") == true || e.Id?.Contains("Awakener") == true));
-
-                GetTree().CreateTimer(2.0f).Timeout += () =>
-                {
-                    if (isBoss && run != null && run.CurrentFloor >= 3)
-                    {
-                        GD.Print("[Main] Boss defeated on final floor - showing VictoryScreen");
-                        var victoryScreen = new VictoryScreen(run);
-                        AddChild(victoryScreen);
-                        victoryScreen.Closed += () =>
-                        {
-                            RemoveChild(victoryScreen);
-                            victoryScreen.QueueFree();
-                            if (engine != null && IsInstanceValid(engine))
-                                engine.QueueFree();
-                        };
-                    }
-                    else
-                    {
-                        GD.Print("[Main] Showing reward screen");
-                        var cardChoices = new List<CardData>();
-                        var cardDb = CardDatabase.Instance;
-                        if (cardDb != null)
-                        {
-                            var allCards = cardDb.GetAllCards();
-                            var rng = new Random();
-                            for (int i = 0; i < 3 && allCards.Count > 0; i++)
-                            {
-                                int idx = rng.Next(allCards.Count);
-                                cardChoices.Add(allCards[idx]);
-                                allCards.RemoveAt(idx);
-                            }
-                        }
-
-                        var rewardPanel = new RewardPanel(new Random().Next(15, 40), cardChoices);
-                        AddChild(rewardPanel);
-                        rewardPanel.Closed += () =>
-                        {
-                            RemoveChild(rewardPanel);
-                            rewardPanel.QueueFree();
-                            if (engine != null && IsInstanceValid(engine))
-                                engine.QueueFree();
-                            GoToMap();
-                        };
-                    }
-                };
-            };
-
-            engine.OnCombatLost += () =>
-            {
-                if (!_combatActive) return;
-                _combatActive = false;
-
-                GD.Print("[Main] 💀 DEFEATED...");
-                hud.SetPhase(false);
-                FloatingText.ShowStatus(hud, "💀 战败...", new Vector2(600, 300));
-                AudioManager.Instance?.PlayBGM("game_over");
-
-                var run = GameManager.Instance?.CurrentRun;
-                if (run != null)
-                {
-                    run.EndTime = DateTime.Now;
-                    run.IsVictory = false;
-                }
-
-                GameManager.Instance?.EndCombat(false);
-
-                SubmitRunToServer(run, false);
-
-                GetTree().CreateTimer(2.5f).Timeout += () =>
-                {
-                    GD.Print("[Main] Showing GameOverScreen");
-                    var gameOverScreen = new GameOverScreen(run);
-                    AddChild(gameOverScreen);
-                    gameOverScreen.Closed += () =>
-                    {
-                        RemoveChild(gameOverScreen);
-                        gameOverScreen.QueueFree();
-                        if (engine != null && IsInstanceValid(engine))
-                            engine.QueueFree();
-                    };
-                };
-            };
-        }
-
-        private void ExecuteEnemyTurn(CombatHUD hud, StsCombatEngine engine)
-        {
-            if (!_combatActive || !IsInstanceValid(engine)) return;
-            if (engine.IsCombatOver) return;
-
-            GD.Print("[Main] 👾 Executing enemy turn...");
-            hud.SetProcessing(true);
-
-            engine.EndTurn();
-
-            UpdateEnemyHealthFromEngine(hud, engine);
-            UpdateUIFromEngine(hud, engine);
-
-            GetTree().CreateTimer(0.8f).Timeout += () =>
-            {
-                hud.SetProcessing(false);
-                GD.Print("[Main] Enemy turn complete");
-            };
-        }
-
-        private void UpdateUIFromEngine(CombatHUD hud, StsCombatEngine engine)
-        {
-            if (!IsInstanceValid(engine)) return;
-
-            var player = engine.Player;
-
-            List<CardData> cardDataList = new();
-            foreach (var stsCard in player.Hand)
-            {
-                cardDataList.Add(ConvertToCardData(stsCard));
-            }
-            hud.UpdateHand(cardDataList);
-
-            hud.UpdateEnergy(player.Energy, player.MaxEnergy);
-            hud.UpdateHealth(player.CurrentHp, player.MaxHp);
-            hud.UpdateBlock(player.Block);
-            hud.UpdateDrawPile(player.DrawPile.Count);
-            hud.UpdateDiscardPile(player.DiscardPile.Count);
-            hud.SetTurnNumber(engine.TurnNumber);
-
-            var gm = GameManager.Instance;
-            if (gm?.CurrentRun != null)
-                hud.SetFloorNumber(gm.CurrentRun.CurrentFloor);
-        }
-
-        private void UpdateEnemyHealthFromEngine(CombatHUD hud, StsCombatEngine engine)
-        {
-            if (!IsInstanceValid(engine)) return;
-
-            int i = 0;
-            foreach (var enemy in engine.Enemies)
-            {
-                if (enemy.IsDead)
-                {
-                    hud.UpdateEnemyHealth(i, 0, enemy.MaxHp);
-                }
-                else
-                {
-                    hud.UpdateEnemyHealth(i, enemy.CurrentHp, enemy.MaxHp);
-                }
-                i++;
+                _currentScene = treasureScene;
+                _currentSceneContainer.AddChild(treasureScene);
             }
         }
-
-        private void UpdateEnemyIntentsFromEngine(CombatHUD hud, StsCombatEngine engine)
-        {
-            if (!IsInstanceValid(engine)) return;
-
-            int i = 0;
-            foreach (var enemy in engine.Enemies)
-            {
-                if (!enemy.IsDead && enemy.CurrentIntent != null)
-                {
-                    hud.UpdateEnemyIntent(i, enemy.CurrentIntent.Description, enemy.CurrentIntent.Icon);
-                }
-                i++;
-            }
-        }
-
-        private CardData ConvertToCardData(StsCardData stsCard)
-        {
-            return new CardData
-            {
-                Id = stsCard.Id,
-                Name = stsCard.Name,
-                Description = stsCard.Description,
-                Cost = stsCard.Cost,
-                Type = ConvertToCardType(stsCard.Type),
-                Damage = stsCard.Damage
-            };
-        }
-
-        private CardType ConvertToCardType(StsCardType stsType) => stsType switch
-        {
-            StsCardType.Attack => CardType.Attack,
-            StsCardType.Skill => CardType.Skill,
-            StsCardType.Power => CardType.Power,
-            _ => CardType.Status
-        };
-
-        private int GetEnemyHealth(string enemyId) => enemyId switch
-        {
-            "Cultist" or "cultist" => 50,
-            "JawWorm" or "jawworm" => 60,
-            "Louse" or "louse" => 35,
-            "Gremlin_Nob" or "gremlin_nob" => 82,
-            "The_Guardian" or "the_guardian" => 200,
-            _ => 48
-        };
 
         public void ShowSettings()
         {
             GD.Print("[Main] Showing Settings panel");
-            
+
             if (_settingsPanel == null)
             {
                 _settingsPanel = CreateSettingsPanel();
                 AddChild(_settingsPanel);
             }
-            
+
             _settingsPanel.Visible = true;
         }
 
@@ -928,114 +538,6 @@ namespace RoguelikeGame
             vbox.AddChild(closeButton);
 
             return panel;
-        }
-
-        private async void SubmitRunToServer(RunData run, bool isVictory)
-        {
-            try
-            {
-                if (run == null) return;
-
-                var authSystem = Network.Auth.AuthSystem.Instance;
-                if (authSystem?.IsAuthenticated != true)
-                {
-                    GD.Print("[Main] 未登录，跳过服务器提交");
-                    return;
-                }
-
-                long score = (long)(run.Gold * 10 + run.TotalEnemiesDefeated * 50 + run.CurrentFloor * 100);
-                if (isVictory) score += 5000;
-
-                double playTimeSeconds = (run.EndTime - run.StartTime).TotalSeconds;
-
-                var requestData = new
-                {
-                    score,
-                    floorReached = run.CurrentFloor,
-                    killCount = run.TotalEnemiesDefeated,
-                    playTimeSeconds,
-                    characterUsed = run.CharacterId ?? "ironclad",
-                    isVictory
-                };
-
-                var json = System.Text.Json.JsonSerializer.Serialize(requestData);
-
-                using var client = new System.Net.Http.HttpClient();
-                client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authSystem.Token);
-                client.Timeout = TimeSpan.FromSeconds(5);
-
-                var content = new System.Net.Http.StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                var response = await client.PostAsync($"http://127.0.0.1:5000/api/leaderboard/{_currentPackageId}/submit", content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    GD.Print($"[Main] ✅ 分数已提交到服务器: {score} (胜利={isVictory})");
-                }
-                else
-                {
-                    GD.PrintErr($"[Main] 提交分数失败: {response.StatusCode}");
-                }
-
-                SyncAchievementsToServer();
-            }
-            catch (Exception ex)
-            {
-                GD.PrintErr($"[Main] 提交分数异常: {ex.Message}");
-            }
-        }
-
-        private async void SyncAchievementsToServer()
-        {
-            try
-            {
-                var authSystem = Network.Auth.AuthSystem.Instance;
-                if (authSystem?.IsAuthenticated != true) return;
-
-                var achievements = new List<object>
-                {
-                    new { achievementId = "first_victory", achievementName = "初次胜利", description = "首次通关游戏", isUnlocked = false, progress = 0, target = 1 },
-                    new { achievementId = "kill_100_enemies", achievementName = "百人斩", description = "击败100个敌人", isUnlocked = false, progress = 0, target = 100 },
-                    new { achievementId = "all_relics", achievementName = "收藏家", description = "收集所有遗物", isUnlocked = false, progress = 0, target = 1 },
-                    new { achievementId = "no_damage", achievementName = "无伤通关", description = "不受伤完成一场战斗", isUnlocked = false, progress = 0, target = 1 }
-                };
-
-                var achManager = AchievementManager.Instance;
-                if (achManager != null)
-                {
-                    achievements.Clear();
-                    foreach (var ach in achManager.GetAllDefinitions(true))
-                    {
-                        achievements.Add(new
-                        {
-                            achievementId = ach.Id,
-                            achievementName = ach.Name,
-                            description = ach.Description,
-                            isUnlocked = ach.IsUnlocked,
-                            progress = ach.CurrentProgress,
-                            target = ach.MaxProgress
-                        });
-                    }
-                }
-
-                var requestData = new { achievements };
-                var json = System.Text.Json.JsonSerializer.Serialize(requestData);
-
-                using var client = new System.Net.Http.HttpClient();
-                client.DefaultRequestHeaders.Authorization =
-                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authSystem.Token);
-                client.Timeout = TimeSpan.FromSeconds(5);
-
-                var content = new System.Net.Http.StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                var response = await client.PostAsync($"http://127.0.0.1:5000/api/achievement/{_currentPackageId}/sync", content);
-
-                if (response.IsSuccessStatusCode)
-                    GD.Print("[Main] ✅ 成就已同步到服务器");
-            }
-            catch (Exception ex)
-            {
-                GD.PrintErr($"[Main] 同步成就异常: {ex.Message}");
-            }
         }
 
         public void QuitGame()

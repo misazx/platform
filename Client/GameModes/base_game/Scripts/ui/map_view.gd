@@ -9,6 +9,7 @@ var _node_uis: Array = []
 var _current_map: Dictionary = {}
 var _visited_node_ids: Array = []
 var _reachable_node_ids: Array = []
+var _map_initialized: bool = false
 
 static var _persistent_visited: Array = []
 static var _persistent_reachable: Array = []
@@ -123,10 +124,25 @@ func _setup_signals() -> void:
 
 func _load_map_from_game_manager() -> void:
 	GD.print("---------- [MapView] LoadMapFromGameManager() START ----------")
-	
-	_generate_demo_map()
-	
+	if _map_initialized and not _current_map.is_empty():
+		GD.print("[MapView] Map already initialized, restoring persistent state")
+		_restore_persistent_state()
+	else:
+		_generate_demo_map()
+		_map_initialized = true
 	GD.print("---------- [MapView] LoadMapFromGameManager() END ----------")
+
+func _restore_persistent_state() -> void:
+	_visited_node_ids = _persistent_visited.duplicate()
+	_reachable_node_ids = _persistent_reachable.duplicate()
+	for node in _current_map.nodes:
+		if node.id in _visited_node_ids:
+			node["is_visited"] = true
+			node["status"] = 2
+		elif node.id in _reachable_node_ids:
+			node["status"] = 1
+	_update_node_visuals()
+	GD.print("[MapView] Restored state: visited=%s reachable=%s" % [str(_visited_node_ids), str(_reachable_node_ids)])
 
 func _generate_demo_map() -> void:
 	GD.print("[MapView] GenerateDemoMap() start")
@@ -217,8 +233,11 @@ func set_map(map_data: Dictionary) -> void:
 	
 	_visited_node_ids.clear()
 	_reachable_node_ids.clear()
-	_persistent_visited.clear()
-	_persistent_reachable.clear()
+	if _persistent_visited.is_empty() and _persistent_reachable.is_empty():
+		pass
+	else:
+		_visited_node_ids = _persistent_visited.duplicate()
+		_reachable_node_ids = _persistent_reachable.duplicate()
 	
 	var start_node = null
 	for node in map_data.nodes:
@@ -348,6 +367,25 @@ func visit_node(node_data) -> void:
 		if ui.node_data == node_data:
 			ui.visited = true
 			break
+
+func mark_node_completed(node_id: int) -> void:
+	if not node_id in _visited_node_ids:
+		_visited_node_ids.append(node_id)
+		_persistent_visited.append(node_id)
+	if node_id in _reachable_node_ids:
+		_reachable_node_ids.erase(node_id)
+		_persistent_reachable.erase(node_id)
+	for node in _current_map.nodes:
+		if node.id == node_id:
+			node["is_visited"] = true
+			node["status"] = 2
+			for cid in node.connected_nodes:
+				if not cid in _visited_node_ids and not cid in _reachable_node_ids:
+					_reachable_node_ids.append(cid)
+					_persistent_reachable.append(cid)
+			break
+	_update_node_visuals()
+	GD.print("[MapView] Node %d completed, visited=%s reachable=%s" % [node_id, str(_visited_node_ids), str(_reachable_node_ids)])
 
 func on_show() -> void:
 	visible = true

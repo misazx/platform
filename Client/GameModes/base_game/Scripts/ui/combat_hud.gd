@@ -977,16 +977,16 @@ func set_card_data(data: Dictionary) -> void:
 
 	var style := _create_card_style()
 	match type_val:
-		CardDatabase.CardType.ATTACK: style.border_color = Color(0.75, 0.25, 0.25, 0.95)
-		CardDatabase.CardType.SKILL: style.border_color = Color(0.25, 0.45, 0.8, 0.95)
-		CardDatabase.CardType.POWER: style.border_color = Color(0.8, 0.65, 0.2, 0.95)
+		0: style.border_color = Color(0.75, 0.25, 0.25, 0.95)
+		1: style.border_color = Color(0.25, 0.45, 0.8, 0.95)
+		2: style.border_color = Color(0.8, 0.65, 0.2, 0.95)
 	_card_body.add_theme_stylebox_override("panel", style)
 
 func _get_card_icon(type_val: int) -> String:
 	match type_val:
-		CardDatabase.CardType.ATTACK: return "res://GameModes/base_game/Resources/Icons/Cards/strike.png"
-		CardDatabase.CardType.SKILL: return "res://GameModes/base_game/Resources/Icons/Cards/defend.png"
-		CardDatabase.CardType.POWER: return "res://GameModes/base_game/Resources/Icons/Skills/fireball.png"
+		0: return "res://GameModes/base_game/Resources/Icons/Cards/strike.png"
+		1: return "res://GameModes/base_game/Resources/Icons/Cards/defend.png"
+		2: return "res://GameModes/base_game/Resources/Icons/Skills/fireball.png"
 		_: return "res://GameModes/base_game/Resources/Icons/Cards/card_0.png"
 
 func _on_mouse_enter() -> void:

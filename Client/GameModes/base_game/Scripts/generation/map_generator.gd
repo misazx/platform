@@ -70,13 +70,13 @@ func create_map_paths(dungeon_data: Dictionary) -> void:
 
 func get_node_icon(type_str: String) -> String:
 	match type_str:
-		"start": return "res://GameModes/base_game/Resources/Icons/Services/start.png"
-		"combat": return "res://GameModes/base_game/Resources/Icons/Skills/sword.png"
-		"event": return "res://GameModes/base_game/Resources/Icons/Items/question_mark.png"
-		"shop": return "res://GameModes/base_game/Resources/Icons/Services/shop.png"
-		"rest": return "res://GameModes/base_game/Resources/Icons/Rest/campfire.png"
-		"treasure": return "res://GameModes/base_game/Resources/Icons/Items/chest.png"
-		"boss": return "res://GameModes/base_game/Resources/Icons/Enemies/boss.png"
+		"start": return "res://GameModes/base_game/Resources/Icons/Rest/default.png"
+		"combat": return "res://GameModes/base_game/Resources/Icons/Cards/strike.png"
+		"event": return "res://GameModes/base_game/Resources/Icons/Rest/default.png"
+		"shop": return "res://GameModes/base_game/Resources/Icons/Rest/default.png"
+		"rest": return "res://GameModes/base_game/Resources/Icons/Rest/heal.png"
+		"treasure": return "res://GameModes/base_game/Resources/Icons/Rest/default.png"
+		"boss": return "res://GameModes/base_game/Resources/Icons/Enemies/cultist.png"
 		_: return ""
 
 func get_node_label(type_str: String, id: int) -> String:
