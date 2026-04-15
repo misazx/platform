@@ -83,8 +83,8 @@ func select_character(index: int) -> void:
 		card.set_selected(card.index == index)
 
 	update_description(index)
-	if AudioManager.instance != null:
-		AudioManager.instance.play_button_click()
+	if AudioManager.has_method("play_button_click"):
+		AudioManager.play_button_click()
 
 func update_description(index: int) -> void:
 	if index < 0 or index >= _characters.size():
@@ -125,14 +125,14 @@ func _on_confirm_pressed() -> void:
 		else:
 			character_id = str(_selected_index)
 		print("[CharacterSelect] Confirming character: %s" % character_id)
-		if AudioManager.instance != null:
-			AudioManager.instance.play_button_click()
+		if AudioManager.has_method("play_button_click"):
+			AudioManager.play_button_click()
 		character_selected.emit(character_id)
 
 func _on_back_pressed() -> void:
 	print("[CharacterSelect] Back pressed")
-	if AudioManager.instance != null:
-		AudioManager.instance.play_button_click()
+	if AudioManager.has_method("play_button_click"):
+		AudioManager.play_button_click()
 	var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
 	if main_node != null and main_node.has_method("go_to_main_menu"):
 		main_node.call("go_to_main_menu")

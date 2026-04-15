@@ -91,6 +91,8 @@ CardDatabase="*res://GameModes/base_game/Scripts/cards/card_database.gd"
 | **VBoxContainer不支持panel样式** | `vbox.add_theme_stylebox_override("panel", style)` | 使用`PanelContainer`包裹VBoxContainer，在PanelContainer上设置样式 |
 | **Tween类型需显式声明** | `var tween := create_tween()` | `var tween: Tween = create_tween()` |
 | **Texture2D类型需显式声明** | `var tex := load(path) as Texture2D` | `var tex: Texture2D = load(path) as Texture2D` |
+| **GDScript autoload无instance属性** | `AudioManager.instance.play_button_click()` | GDScript autoload直接用全局名调用: `AudioManager.play_button_click()` |
+| **Dictionary与自定义对象混用** | `character.character` (Dictionary无此key) | 先判断类型: `if character is Dictionary: character.get("class", 0) else: character.character` |
 
 ---
 
