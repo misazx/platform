@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://GameModes/base_game/Code/UI/Panels/TutorialOverlay.cs" id="1_tutorial"]
+[ext_resource type="Script" path="res://GameModes/base_game/Scripts/ui/panels/tutorial_overlay.gd" id="1_tutorial"]
 
 [node name="TutorialOverlay" type="Control"]
 layout_mode = 3

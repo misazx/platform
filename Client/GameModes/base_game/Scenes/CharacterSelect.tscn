@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://charselect001"]
 
-[ext_resource type="Script" path="res://GameModes/base_game/Code/UI/CharacterSelect.cs" id="1_charselect"]
+[ext_resource type="Script" path="res://GameModes/base_game/Scripts/ui/character_select.gd" id="1_charselect"]
 
 [node name="CharacterSelect" type="Control"]
 layout_mode = 3

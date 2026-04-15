@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="Script" path="res://GameModes/base_game/Code/UI/MapView.cs" id="1_mapview"]
+[ext_resource type="Script" path="res://GameModes/base_game/Scripts/ui/map_view.gd" id="1_mapview"]
 [ext_resource type="Texture2D" path="res://GameModes/base_game/Resources/Images/Backgrounds/overgrowth.png" id="2_bg"]
 
 [node name="MapView" type="Control"]
