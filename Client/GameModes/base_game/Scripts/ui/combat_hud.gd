@@ -468,36 +468,36 @@ func _on_card_pressed(card) -> void:
 		var type: int = card_data.get("type", 0)
 		var needs_target := type == 0
 		if needs_target and _enemies_ui.size() > 1:
-		var alive_count := 0
-		for eui in _enemies_ui:
-			if not eui.is_dead:
-				alive_count += 1
-		if alive_count <= 1:
-			var target_idx := _find_first_alive_enemy()
+			var alive_count := 0
+			for eui in _enemies_ui:
+				if not eui.is_dead:
+					alive_count += 1
+			if alive_count <= 1:
+				var target_idx := _find_first_alive_enemy()
+				if target_idx >= 0:
+					print("[CombatHUD] 🃏 出牌: %s (费用:%d) -> 敌人%d" % [card_data.get("name", ""), cost, target_idx])
+					show_card_play_animation(card_data, target_idx)
+					card_played_with_target.emit(card_data.get("id", ""), target_idx)
+				else:
+					print("[CombatHUD] ❌ 没有存活敌人")
+				return
+			_is_selecting_target = true
+			_pending_card = card
+			_phase_label.text = "选择目标"
+			_phase_label.modulate = Color(1, 0.5, 0.2)
+			_highlight_enemies(true)
+			print("[CombatHUD] 🎯 Select target for: %s" % card_data.get("name", ""))
+		else:
+			var target_idx := _find_first_alive_enemy() if needs_target else -1
+			if needs_target and target_idx < 0:
+				print("[CombatHUD] ❌ 没有存活敌人")
+				return
+			print("[CombatHUD] 🃏 出牌: %s (费用:%d)" % [card_data.get("name", ""), cost])
+			show_card_play_animation(card_data, target_idx)
 			if target_idx >= 0:
-				print("[CombatHUD] 🃏 出牌: %s (费用:%d) -> 敌人%d" % [card_data.get("name", ""), cost, target_idx])
-				show_card_play_animation(card_data, target_idx)
 				card_played_with_target.emit(card_data.get("id", ""), target_idx)
 			else:
-				print("[CombatHUD] ❌ 没有存活敌人")
-			return
-		_is_selecting_target = true
-		_pending_card = card
-		_phase_label.text = "选择目标"
-		_phase_label.modulate = Color(1, 0.5, 0.2)
-		_highlight_enemies(true)
-		print("[CombatHUD] 🎯 Select target for: %s" % card_data.get("name", ""))
-	else:
-		var target_idx := _find_first_alive_enemy() if needs_target else -1
-		if needs_target and target_idx < 0:
-			print("[CombatHUD] ❌ 没有存活敌人")
-			return
-		print("[CombatHUD] 🃏 出牌: %s (费用:%d)" % [card_data.get("name", ""), cost])
-		show_card_play_animation(card_data, target_idx)
-		if target_idx >= 0:
-			card_played_with_target.emit(card_data.get("id", ""), target_idx)
-		else:
-			card_played.emit(card_data.get("id", ""))
+				card_played.emit(card_data.get("id", ""))
 	else:
 		print("[CombatHUD] ❌ 能量不足: %s 需要%d点, 当前%d点" % [card_data.get("name", ""), cost, _current_energy])
 
