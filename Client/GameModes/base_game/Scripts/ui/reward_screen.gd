@@ -215,192 +215,192 @@ static func show_rewards(parent: Control, cards: Array, relics: Array, gold: int
 class ShopScreen:
 	extends Control
 
-signal card_purchased(card_data, price: int)
-signal relic_purchased(relic_data, price: int)
-signal shop_closed
+	signal card_purchased(card_data, price: int)
+	signal relic_purchased(relic_data, price: int)
+	signal shop_closed
 
-var _main_container: VBoxContainer
-var _gold_bar: HBoxContainer
-var _gold_label: Label
-var _card_row: HBoxContainer
-var _relic_row: HBoxContainer
-var _leave_button: Button
-var _player_gold: int = 99
+	var _shop_container: VBoxContainer
+	var _gold_bar: HBoxContainer
+	var _gold_label: Label
+	var _card_row: HBoxContainer
+	var _relic_row: HBoxContainer
+	var _leave_button: Button
+	var _player_gold: int = 99
 
-func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_STOP
-	_create_ui()
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_STOP
+		_create_ui()
 
-func _create_ui() -> void:
-	_main_container = VBoxContainer.new()
-	_main_container.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_main_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_main_container)
+	func _create_ui() -> void:
+		_shop_container = VBoxContainer.new()
+		_shop_container.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_shop_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(_shop_container)
 
-	_gold_bar = HBoxContainer.new()
-	_gold_bar.custom_minimum_size = Vector2(0, 50)
-	_gold_bar.alignment = BoxContainer.ALIGNMENT_END
-	_gold_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_main_container.add_child(_gold_bar)
+		_gold_bar = HBoxContainer.new()
+		_gold_bar.custom_minimum_size = Vector2(0, 50)
+		_gold_bar.alignment = BoxContainer.ALIGNMENT_END
+		_gold_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_shop_container.add_child(_gold_bar)
 
-	var gold_icon := Label.new()
-	gold_icon.text = "💰"
-	gold_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	gold_icon.add_theme_font_size_override("font_size", 24)
-	_gold_bar.add_child(gold_icon)
+		var gold_icon := Label.new()
+		gold_icon.text = "💰"
+		gold_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		gold_icon.add_theme_font_size_override("font_size", 24)
+		_gold_bar.add_child(gold_icon)
 
-	_gold_label = Label.new()
-	_gold_label.text = " 99"
-	_gold_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_gold_label.add_theme_font_size_override("font_size", 20)
-	_gold_label.modulate = Color(1, 0.9, 0.4)
-	_gold_bar.add_child(_gold_label)
+		_gold_label = Label.new()
+		_gold_label.text = " 99"
+		_gold_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_gold_label.add_theme_font_size_override("font_size", 20)
+		_gold_label.modulate = Color(1, 0.9, 0.4)
+		_gold_bar.add_child(_gold_label)
 
-	var title_lbl := Label.new()
-	title_lbl.text = "🏪 商店"
-	title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	title_lbl.add_theme_font_size_override("font_size", 32)
-	_main_container.add_child(title_lbl)
+		var title_lbl := Label.new()
+		title_lbl.text = "🏪 商店"
+		title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		title_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		title_lbl.add_theme_font_size_override("font_size", 32)
+		_shop_container.add_child(title_lbl)
 
-	var card_lbl := Label.new()
-	card_lbl.text = "卡牌 (点击购买)"
-	card_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	card_lbl.add_theme_font_size_override("font_size", 18)
-	_main_container.add_child(card_lbl)
+		var card_lbl := Label.new()
+		card_lbl.text = "卡牌 (点击购买)"
+		card_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		card_lbl.add_theme_font_size_override("font_size", 18)
+		_shop_container.add_child(card_lbl)
 
-	_card_row = HBoxContainer.new()
-	_card_row.custom_minimum_size = Vector2(0, 200)
-	_card_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	_card_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_main_container.add_child(_card_row)
+		_card_row = HBoxContainer.new()
+		_card_row.custom_minimum_size = Vector2(0, 200)
+		_card_row.alignment = BoxContainer.ALIGNMENT_CENTER
+		_card_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_shop_container.add_child(_card_row)
 
-	var relic_lbl := Label.new()
-	relic_lbl.text = "遗物"
-	relic_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	relic_lbl.add_theme_font_size_override("font_size", 18)
-	_main_container.add_child(relic_lbl)
+		var relic_lbl := Label.new()
+		relic_lbl.text = "遗物"
+		relic_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		relic_lbl.add_theme_font_size_override("font_size", 18)
+		_shop_container.add_child(relic_lbl)
 
-	_relic_row = HBoxContainer.new()
-	_relic_row.custom_minimum_size = Vector2(0, 120)
-	_relic_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	_relic_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_main_container.add_child(_relic_row)
+		_relic_row = HBoxContainer.new()
+		_relic_row.custom_minimum_size = Vector2(0, 120)
+		_relic_row.alignment = BoxContainer.ALIGNMENT_CENTER
+		_relic_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_shop_container.add_child(_relic_row)
 
-	_leave_button = Button.new()
-	_leave_button.text = "离开商店"
-	_leave_button.custom_minimum_size = Vector2(200, 50)
-	_leave_button.pressed.connect(func(): shop_closed.emit())
-	_main_container.add_child(_leave_button)
+		_leave_button = Button.new()
+		_leave_button.text = "离开商店"
+		_leave_button.custom_minimum_size = Vector2(200, 50)
+		_leave_button.pressed.connect(func(): shop_closed.emit())
+		_shop_container.add_child(_leave_button)
 
-func setup_shop(player_gold: int) -> void:
-	_player_gold = player_gold
-	_update_gold_display()
-	_generate_shop_items()
+	func setup_shop(player_gold: int) -> void:
+		_player_gold = player_gold
+		_update_gold_display()
+		_generate_shop_items()
 
-func _update_gold_display() -> void:
-	_gold_label.text = " %d" % _player_gold
+	func _update_gold_display() -> void:
+		_gold_label.text = " %d" % _player_gold
 
-func _generate_shop_items() -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.randomize()
+	func _generate_shop_items() -> void:
+		var rng := RandomNumberGenerator.new()
+		rng.randomize()
 
-	var cards := []
-	var card_db_cards := CardDatabase.get_all_cards()
-	if card_db_cards.is_empty():
-		card_db_cards = StsCardDatabase.new().get_all_cards()
-	cards = card_db_cards.duplicate()
-	cards.shuffle()
-	var result_cards := []
-	for i in range(mini(5, cards.size())):
-		result_cards.append(cards[i])
-	for card in result_cards:
-		var price := 50
-		if card.has("rarity"):
-			match card.rarity:
-			StsCardDatabase.CardRarity.RARE: price = 150
-			StsCardDatabase.CardRarity.UNCOMMON: price = 100
-			CardDatabase.CardRarity.RARE: price = 150
-			CardDatabase.CardRarity.UNCOMMON: price = 100
-		var card_item := _create_shop_card(card, price)
-		_card_row.add_child(card_item)
+		var cards := []
+		var card_db_cards := CardDatabase.get_all_cards()
+		if card_db_cards.is_empty():
+			card_db_cards = StsCardDatabase.new().get_all_cards()
+		cards = card_db_cards.duplicate()
+		cards.shuffle()
+		var result_cards := []
+		for i in range(mini(5, cards.size())):
+			result_cards.append(cards[i])
+		for card in result_cards:
+			var price := 50
+			if card.has("rarity"):
+				match card.rarity:
+					StsCardDatabase.CardRarity.RARE: price = 150
+					StsCardDatabase.CardRarity.UNCOMMON: price = 100
+					CardDatabase.CardRarity.RARE: price = 150
+					CardDatabase.CardRarity.UNCOMMON: price = 100
+			var card_item := _create_shop_card(card, price)
+			_card_row.add_child(card_item)
 
-	var relics := []
-	var relic_db_relics := RelicDatabase.get_all_relics()
-	relics = relic_db_relics.duplicate()
-	relics.shuffle()
-	var result_relics := []
-	for i in range(mini(3, relics.size())):
-		result_relics.append(relics[i])
-	for relic in result_relics:
-		var price := 100
-		if relic.has("rarity"):
-			match relic.rarity:
-			StsRelicSystem.RelicRarity.RARE: price = 200
-			StsRelicSystem.RelicRarity.UNCOMMON: price = 150
-			RelicDatabase.RelicTier.RARE: price = 200
-			RelicDatabase.RelicTier.UNCOMMON: price = 150
-		var relic_item := _create_shop_relic(relic, price)
-		_relic_row.add_child(relic_item)
+		var relics := []
+		var relic_db_relics := RelicDatabase.get_all_relics()
+		relics = relic_db_relics.duplicate()
+		relics.shuffle()
+		var result_relics := []
+		for i in range(mini(3, relics.size())):
+			result_relics.append(relics[i])
+		for relic in result_relics:
+			var price := 100
+			if relic.has("rarity"):
+				match relic.rarity:
+					StsRelicSystem.RelicRarity.RARE: price = 200
+					StsRelicSystem.RelicRarity.UNCOMMON: price = 150
+					RelicDatabase.RelicTier.RARE: price = 200
+					RelicDatabase.RelicTier.UNCOMMON: price = 150
+			var relic_item := _create_shop_relic(relic, price)
+			_relic_row.add_child(relic_item)
 
-func _create_shop_card(card, price: int) -> VBoxContainer:
-	var container := VBoxContainer.new()
-	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	func _create_shop_card(card, price: int) -> VBoxContainer:
+		var container := VBoxContainer.new()
+		container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	var btn := Button.new()
-	btn.custom_minimum_size = Vector2(140, 180)
-	btn.text = "%s\n%d费\n%s" % [card.name, card.cost, card.description]
+		var btn := Button.new()
+		btn.custom_minimum_size = Vector2(140, 180)
+		btn.text = "%s\n%d费\n%s" % [card.name, card.cost, card.description]
 
-	btn.pressed.connect(func():
-		if _player_gold >= price:
-			_player_gold -= price
-			_update_gold_display()
-			card_purchased.emit(card, price)
-			btn.disabled = true
-			btn.modulate = Color(0.5, 0.5, 0.5)
-	)
+		btn.pressed.connect(func():
+			if _player_gold >= price:
+				_player_gold -= price
+				_update_gold_display()
+				card_purchased.emit(card, price)
+				btn.disabled = true
+				btn.modulate = Color(0.5, 0.5, 0.5)
+			)
 
-	container.add_child(btn)
+		container.add_child(btn)
 
-	var price_label := Label.new()
-	price_label.text = "💰 %d" % price
-	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	price_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	price_label.modulate = Color(1, 0.9, 0.4)
-	container.add_child(price_label)
+		var price_label := Label.new()
+		price_label.text = "💰 %d" % price
+		price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		price_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		price_label.modulate = Color(1, 0.9, 0.4)
+		container.add_child(price_label)
 
-	return container
+		return container
 
-func _create_shop_relic(relic, price: int) -> VBoxContainer:
-	var container := VBoxContainer.new()
-	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	func _create_shop_relic(relic, price: int) -> VBoxContainer:
+		var container := VBoxContainer.new()
+		container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	var btn := Button.new()
-	btn.custom_minimum_size = Vector2(140, 80)
-	btn.text = "💎 %s\n%s" % [relic.name, relic.description]
+		var btn := Button.new()
+		btn.custom_minimum_size = Vector2(140, 80)
+		btn.text = "💎 %s\n%s" % [relic.name, relic.description]
 
-	btn.pressed.connect(func():
-		if _player_gold >= price:
-			_player_gold -= price
-			_update_gold_display()
-			relic_purchased.emit(relic, price)
-			btn.disabled = true
-			btn.modulate = Color(0.5, 0.5, 0.5)
-	)
+		btn.pressed.connect(func():
+			if _player_gold >= price:
+				_player_gold -= price
+				_update_gold_display()
+				relic_purchased.emit(relic, price)
+				btn.disabled = true
+				btn.modulate = Color(0.5, 0.5, 0.5)
+			)
 
-	container.add_child(btn)
+		container.add_child(btn)
 
-	var price_label := Label.new()
-	price_label.text = "💰 %d" % price
-	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	price_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	price_label.modulate = Color(1, 0.9, 0.4)
-	container.add_child(price_label)
+		var price_label := Label.new()
+		price_label.text = "💰 %d" % price
+		price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		price_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		price_label.modulate = Color(1, 0.9, 0.4)
+		container.add_child(price_label)
 
-	return container
+		return container
 
-static func show_shop(parent: Control, player_gold: int) -> ShopScreen:
-	var screen := ShopScreen.new()
-	screen.setup_shop(player_gold)
-	parent.add_child(screen)
-	return screen
+	static func show_shop(parent: Control, player_gold: int) -> ShopScreen:
+		var screen := ShopScreen.new()
+		screen.setup_shop(player_gold)
+		parent.add_child(screen)
+		return screen

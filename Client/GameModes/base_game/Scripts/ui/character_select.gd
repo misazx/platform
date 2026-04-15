@@ -129,89 +129,89 @@ func _get_class_display_name(char_class: int) -> String:
 class CharacterCardControl:
 	extends PanelContainer
 
-signal card_clicked(index: int)
+	signal card_clicked(index: int)
 
-var index: int
-var data: Dictionary
-var _selected: bool = false
-var _portrait_rect: TextureRect
-var _name_lbl: Label
+	var index: int
+	var data: Dictionary
+	var _selected: bool = false
+	var _portrait_rect: TextureRect
+	var _name_lbl: Label
 
-func _init(p_index: int, p_data: Dictionary) -> void:
-	index = p_index
-	data = p_data
+	func _init(p_index: int, p_data: Dictionary) -> void:
+		index = p_index
+		data = p_data
 
-func _ready() -> void:
-	custom_minimum_size = Vector2(150, 180)
-	mouse_filter = Control.MOUSE_FILTER_STOP
+	func _ready() -> void:
+		custom_minimum_size = Vector2(150, 180)
+		mouse_filter = Control.MOUSE_FILTER_STOP
 
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.1, 0.08)
-	style.content_margin_left = 10
-	style.content_margin_right = 10
-	style.content_margin_top = 10
-	style.content_margin_bottom = 10
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_left = 8
-	style.corner_radius_bottom_right = 8
-	style.border_width_left = 2
-	style.border_width_right = 2
-	style.border_width_top = 2
-	style.border_width_bottom = 2
-	style.border_color = data.get("color", Color.WHITE)
-	add_theme_stylebox_override("panel", style)
+		var style := StyleBoxFlat.new()
+		style.bg_color = Color(0.12, 0.1, 0.08)
+		style.content_margin_left = 10
+		style.content_margin_right = 10
+		style.content_margin_top = 10
+		style.content_margin_bottom = 10
+		style.corner_radius_top_left = 8
+		style.corner_radius_top_right = 8
+		style.corner_radius_bottom_left = 8
+		style.corner_radius_bottom_right = 8
+		style.border_width_left = 2
+		style.border_width_right = 2
+		style.border_width_top = 2
+		style.border_width_bottom = 2
+		style.border_color = data.get("color", Color.WHITE)
+		add_theme_stylebox_override("panel", style)
 
-	var vbox := VBoxContainer.new()
-	add_child(vbox)
+		var vbox := VBoxContainer.new()
+		add_child(vbox)
 
-	_portrait_rect = TextureRect.new()
-	_portrait_rect.custom_minimum_size = Vector2(130, 110)
-	_portrait_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-	_portrait_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_portrait_rect.modulate = Color(0.5, 0.5, 0.5)
-	
-	var portrait_path: String = data.get("portrait_path", "")
-	if portrait_path != "" and ResourceLoader.exists(portrait_path):
-		_portrait_rect.texture = load(portrait_path)
-		_portrait_rect.modulate = Color.WHITE
-	vbox.add_child(_portrait_rect)
+		_portrait_rect = TextureRect.new()
+		_portrait_rect.custom_minimum_size = Vector2(130, 110)
+		_portrait_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		_portrait_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_portrait_rect.modulate = Color(0.5, 0.5, 0.5)
 
-	_name_lbl = Label.new()
-	_name_lbl.text = data.get("name", "")
-	_name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_name_lbl.modulate = Color.WHITE
-	vbox.add_child(_name_lbl)
+		var portrait_path: String = data.get("portrait_path", "")
+		if portrait_path != "" and ResourceLoader.exists(portrait_path):
+			_portrait_rect.texture = load(portrait_path)
+			_portrait_rect.modulate = Color.WHITE
+		vbox.add_child(_portrait_rect)
 
-	gui_input.connect(_on_gui_input)
-	mouse_entered.connect(_on_mouse_entered)
-	mouse_exited.connect(_on_mouse_exited)
+		_name_lbl = Label.new()
+		_name_lbl.text = data.get("name", "")
+		_name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_name_lbl.modulate = Color.WHITE
+		vbox.add_child(_name_lbl)
 
-func set_selected(selected: bool) -> void:
-	_selected = selected
-	
-	var style = get_theme_stylebox("panel") as StyleBoxFlat
-	if style != null:
-		var border_width := 4 if selected else 2
-		style.border_width_left = border_width
-		style.border_width_right = border_width
-		style.border_width_top = border_width
-		style.border_width_bottom = border_width
-		style.border_color = Color.GOLD if selected else data.get("color", Color.WHITE)
+		gui_input.connect(_on_gui_input)
+		mouse_entered.connect(_on_mouse_entered)
+		mouse_exited.connect(_on_mouse_exited)
 
-	if selected:
-		create_tween().tween_property(self, "scale", Vector2(1.05, 1.05), 0.1)
-	else:
-		create_tween().tween_property(self, "scale", Vector2.ONE, 0.1)
+	func set_selected(selected: bool) -> void:
+		_selected = selected
 
-func _on_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		card_clicked.emit(index)
+		var style = get_theme_stylebox("panel") as StyleBoxFlat
+		if style != null:
+			var border_width := 4 if selected else 2
+			style.border_width_left = border_width
+			style.border_width_right = border_width
+			style.border_width_top = border_width
+			style.border_width_bottom = border_width
+			style.border_color = Color.GOLD if selected else data.get("color", Color.WHITE)
 
-func _on_mouse_entered() -> void:
-	if not _selected:
-		create_tween().tween_property(self, "scale", Vector2(1.02, 1.02), 0.1)
+		if selected:
+			create_tween().tween_property(self, "scale", Vector2(1.05, 1.05), 0.1)
+		else:
+			create_tween().tween_property(self, "scale", Vector2.ONE, 0.1)
 
-func _on_mouse_exited() -> void:
-	if not _selected:
-		create_tween().tween_property(self, "scale", Vector2.ONE, 0.1)
+	func _on_gui_input(event: InputEvent) -> void:
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			card_clicked.emit(index)
+
+	func _on_mouse_entered() -> void:
+		if not _selected:
+			create_tween().tween_property(self, "scale", Vector2(1.02, 1.02), 0.1)
+
+	func _on_mouse_exited() -> void:
+		if not _selected:
+			create_tween().tween_property(self, "scale", Vector2.ONE, 0.1)

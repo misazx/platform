@@ -615,394 +615,394 @@ func show_card_play_animation(card_data: Dictionary, target_enemy_index: int) ->
 class BattleCharacterSprite:
 	extends Control
 
-var _character_id: String = ""
-var _is_player: bool = false
-var _sprite_display: TextureRect
-var _sprite_frame: PanelContainer
-var _name_overlay: Label
+	var _character_id: String = ""
+	var _is_player: bool = false
+	var _sprite_display: TextureRect
+	var _sprite_frame: PanelContainer
+	var _name_overlay: Label
 
-func _init(character_id: String = "", is_player: bool = false) -> void:
-	_character_id = character_id.to_lower().replace("_pack", "").replace("_", " ")
-	_is_player = is_player
+	func _init(character_id: String = "", is_player: bool = false) -> void:
+		_character_id = character_id.to_lower().replace("_pack", "").replace("_", " ")
+		_is_player = is_player
 
-func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	_sprite_frame = PanelContainer.new()
-	_sprite_frame.custom_minimum_size = Vector2(130, 160) if _is_player else Vector2(150, 190)
-	_sprite_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_sprite_frame = PanelContainer.new()
+		_sprite_frame.custom_minimum_size = Vector2(130, 160) if _is_player else Vector2(150, 190)
+		_sprite_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	var frame_style := StyleBoxFlat.new()
-	frame_style.bg_color = Color(0.08, 0.06, 0.05, 0.7)
-	frame_style.corner_radius_top_left = 12
-	frame_style.corner_radius_top_right = 12
-	frame_style.corner_radius_bottom_left = 12
-	frame_style.corner_radius_bottom_right = 12
-	frame_style.border_width_left = 2
-	frame_style.border_width_right = 2
-	frame_style.border_width_top = 2
-	frame_style.border_width_bottom = 2
-	frame_style.border_color = Color(0.25, 0.4, 0.7, 0.8) if _is_player else Color(0.7, 0.25, 0.25, 0.85)
-	_sprite_frame.add_theme_stylebox_override("panel", frame_style)
-	add_child(_sprite_frame)
+		var frame_style := StyleBoxFlat.new()
+		frame_style.bg_color = Color(0.08, 0.06, 0.05, 0.7)
+		frame_style.corner_radius_top_left = 12
+		frame_style.corner_radius_top_right = 12
+		frame_style.corner_radius_bottom_left = 12
+		frame_style.corner_radius_bottom_right = 12
+		frame_style.border_width_left = 2
+		frame_style.border_width_right = 2
+		frame_style.border_width_top = 2
+		frame_style.border_width_bottom = 2
+		frame_style.border_color = Color(0.25, 0.4, 0.7, 0.8) if _is_player else Color(0.7, 0.25, 0.25, 0.85)
+		_sprite_frame.add_theme_stylebox_override("panel", frame_style)
+		add_child(_sprite_frame)
 
-	var vbox := VBoxContainer.new()
-	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
-	vbox.add_theme_constant_override("separation", 3)
-	_sprite_frame.add_child(vbox)
+		var vbox := VBoxContainer.new()
+		vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+		vbox.add_theme_constant_override("separation", 3)
+		_sprite_frame.add_child(vbox)
 
-	_name_overlay = Label.new()
-	_name_overlay.text = "铁甲战士" if _is_player else _character_id
-	_name_overlay.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_name_overlay.modulate = Color(0.6, 0.8, 1) if _is_player else Color(1, 0.5, 0.4)
-	_name_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_name_overlay.add_theme_font_size_override("font_size", 12)
-	vbox.add_child(_name_overlay)
+		_name_overlay = Label.new()
+		_name_overlay.text = "铁甲战士" if _is_player else _character_id
+		_name_overlay.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_name_overlay.modulate = Color(0.6, 0.8, 1) if _is_player else Color(1, 0.5, 0.4)
+		_name_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_name_overlay.add_theme_font_size_override("font_size", 12)
+		vbox.add_child(_name_overlay)
 
-	_sprite_display = TextureRect.new()
-	_sprite_display.custom_minimum_size = Vector2(0, 110) if _is_player else Vector2(0, 130)
-	_sprite_display.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_sprite_display.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_sprite_display.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		_sprite_display = TextureRect.new()
+		_sprite_display.custom_minimum_size = Vector2(0, 110) if _is_player else Vector2(0, 130)
+		_sprite_display.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_sprite_display.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_sprite_display.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
-	var sprite_path := _get_character_sprite_path()
-	var texture := load(sprite_path) as Texture2D
-	if texture != null:
-		_sprite_display.texture = texture
-	else:
-		_sprite_display.texture = _generate_placeholder_sprite()
-	vbox.add_child(_sprite_display)
+		var sprite_path := _get_character_sprite_path()
+		var texture := load(sprite_path) as Texture2D
+		if texture != null:
+			_sprite_display.texture = texture
+		else:
+			_sprite_display.texture = _generate_placeholder_sprite()
+		vbox.add_child(_sprite_display)
 
-func _get_character_sprite_path() -> String:
-	if _is_player:
-		return "res://GameModes/base_game/Resources/Icons/Items/iron_sword.png"
-	match _character_id.to_lower():
-		"cultist", "jaw worm", "jawworm":
-			return "res://GameModes/base_game/Resources/Icons/Enemies/jawworm.png"
-		"lagavulin":
-			return "res://GameModes/base_game/Resources/Icons/Enemies/lagavulin.png"
-		"theguardian", "the guardian", "guardian":
-			return "res://GameModes/base_game/Resources/Icons/Enemies/theguardian.png"
-		_:
-			return "res://GameModes/base_game/Resources/Icons/Enemies/cultist.png"
+	func _get_character_sprite_path() -> String:
+		if _is_player:
+			return "res://GameModes/base_game/Resources/Icons/Items/iron_sword.png"
+		match _character_id.to_lower():
+			"cultist", "jaw worm", "jawworm":
+				return "res://GameModes/base_game/Resources/Icons/Enemies/jawworm.png"
+			"lagavulin":
+				return "res://GameModes/base_game/Resources/Icons/Enemies/lagavulin.png"
+			"theguardian", "the guardian", "guardian":
+				return "res://GameModes/base_game/Resources/Icons/Enemies/theguardian.png"
+			_:
+				return "res://GameModes/base_game/Resources/Icons/Enemies/cultist.png"
 
-func _generate_placeholder_sprite() -> ImageTexture:
-	var img := Image.create_empty(128, 128, false, Image.FORMAT_RGBA8)
-	img.fill(Color(0.2, 0.3, 0.5, 1) if _is_player else Color(0.5, 0.2, 0.2, 1))
-	return ImageTexture.create_from_image(img)
+	func _generate_placeholder_sprite() -> ImageTexture:
+		var img := Image.create_empty(128, 128, false, Image.FORMAT_RGBA8)
+		img.fill(Color(0.2, 0.3, 0.5, 1) if _is_player else Color(0.5, 0.2, 0.2, 1))
+		return ImageTexture.create_from_image(img)
 
-func play_attack_animation(target_pos: Vector2) -> void:
-	var orig_pos := position
-	var direction := (target_pos - position).normalized()
-	var tween := create_tween()
-	tween.tween_property(self, "position", orig_pos + direction * 50, 0.15).set_ease(Tween.EASE_OUT)
-	tween.parallel().tween_property(self, "scale", Vector2(1.15, 1.15), 0.1)
-	tween.tween_property(self, "position", orig_pos, 0.15).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(self, "scale", Vector2.ONE, 0.15)
+	func play_attack_animation(target_pos: Vector2) -> void:
+		var orig_pos := position
+		var direction := (target_pos - position).normalized()
+		var tween := create_tween()
+		tween.tween_property(self, "position", orig_pos + direction * 50, 0.15).set_ease(Tween.EASE_OUT)
+		tween.parallel().tween_property(self, "scale", Vector2(1.15, 1.15), 0.1)
+		tween.tween_property(self, "position", orig_pos, 0.15).set_ease(Tween.EASE_IN)
+		tween.parallel().tween_property(self, "scale", Vector2.ONE, 0.15)
 
-func play_hit_animation() -> void:
-	var orig_pos := position
-	var tween := create_tween()
-	tween.tween_property(_sprite_frame, "modulate", Color(2, 0.5, 0.5, 1), 0.06)
-	tween.parallel().tween_property(self, "position:x", orig_pos.x - 8, 0.04)
-	tween.tween_property(self, "position:x", orig_pos.x + 6, 0.04)
-	tween.tween_property(self, "position:x", orig_pos.x - 4, 0.04)
-	tween.tween_property(self, "position", orig_pos, 0.06)
-	tween.parallel().tween_property(_sprite_frame, "modulate", Color.WHITE, 0.15)
+	func play_hit_animation() -> void:
+		var orig_pos := position
+		var tween := create_tween()
+		tween.tween_property(_sprite_frame, "modulate", Color(2, 0.5, 0.5, 1), 0.06)
+		tween.parallel().tween_property(self, "position:x", orig_pos.x - 8, 0.04)
+		tween.tween_property(self, "position:x", orig_pos.x + 6, 0.04)
+		tween.tween_property(self, "position:x", orig_pos.x - 4, 0.04)
+		tween.tween_property(self, "position", orig_pos, 0.06)
+		tween.parallel().tween_property(_sprite_frame, "modulate", Color.WHITE, 0.15)
 
-func play_death_animation() -> void:
-	var tween := create_tween()
-	tween.tween_property(self, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.5).set_ease(Tween.EASE_IN)
+	func play_death_animation() -> void:
+		var tween := create_tween()
+		tween.tween_property(self, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN)
+		tween.tween_property(self, "scale", Vector2(0.8, 0.8), 0.5).set_ease(Tween.EASE_IN)
 
 
 class EnemyUnitUI:
 	extends Control
 
-signal enemy_clicked(index: int)
+	signal enemy_clicked(index: int)
 
-var _name: String = ""
-var _max_hp: int = 0
-var _current_hp: int = 0
-var _enemy_index: int = -1
-var _body: PanelContainer
-var _health_bar: ProgressBar
-var _health_text: Label
-var _intent_label: Label
-var _is_selectable: bool = false
+	var _name: String = ""
+	var _max_hp: int = 0
+	var _current_hp: int = 0
+	var _enemy_index: int = -1
+	var _body: PanelContainer
+	var _health_bar: ProgressBar
+	var _health_text: Label
+	var _intent_label: Label
+	var _is_selectable: bool = false
 
-var is_dead: bool:
-	get: return _current_hp <= 0
+	var is_dead: bool:
+		get: return _current_hp <= 0
 
-func _init(p_name: String = "", p_max_hp: int = 0) -> void:
-	_name = p_name.replace("_pack", "").replace("_", " ")
-	_max_hp = p_max_hp
-	_current_hp = p_max_hp
-	custom_minimum_size = Vector2(135, 60)
+	func _init(p_name: String = "", p_max_hp: int = 0) -> void:
+		_name = p_name.replace("_pack", "").replace("_", " ")
+		_max_hp = p_max_hp
+		_current_hp = p_max_hp
+		custom_minimum_size = Vector2(135, 60)
 
-func set_enemy_index(index: int) -> void:
-	_enemy_index = index
+	func set_enemy_index(index: int) -> void:
+		_enemy_index = index
 
-func set_selectable(selectable: bool) -> void:
-	_is_selectable = selectable
-	mouse_filter = Control.MOUSE_FILTER_STOP if selectable else Control.MOUSE_FILTER_IGNORE
-	if _body != null:
-		var style = _body.get_theme_stylebox("panel") as StyleBoxFlat
-		if style != null:
-			style.border_color = Color(1, 0.8, 0.2, 1) if selectable else Color(0.65, 0.22, 0.22, 0.88)
-			var border_w := 3 if selectable else 2
-			style.border_width_left = border_w
-			style.border_width_right = border_w
-			style.border_width_top = border_w
-			style.border_width_bottom = border_w
+	func set_selectable(selectable: bool) -> void:
+		_is_selectable = selectable
+		mouse_filter = Control.MOUSE_FILTER_STOP if selectable else Control.MOUSE_FILTER_IGNORE
+		if _body != null:
+			var style = _body.get_theme_stylebox("panel") as StyleBoxFlat
+			if style != null:
+				style.border_color = Color(1, 0.8, 0.2, 1) if selectable else Color(0.65, 0.22, 0.22, 0.88)
+				var border_w := 3 if selectable else 2
+				style.border_width_left = border_w
+				style.border_width_right = border_w
+				style.border_width_top = border_w
+				style.border_width_bottom = border_w
 
-func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	_body = PanelContainer.new()
-	_body.custom_minimum_size = Vector2(130, 55)
-	_body.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_body = PanelContainer.new()
+		_body.custom_minimum_size = Vector2(130, 55)
+		_body.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	var body_style := StyleBoxFlat.new()
-	body_style.bg_color = Color(0.1, 0.08, 0.07, 0.92)
-	body_style.corner_radius_top_left = 8
-	body_style.corner_radius_top_right = 8
-	body_style.corner_radius_bottom_left = 8
-	body_style.corner_radius_bottom_right = 8
-	body_style.border_width_left = 2
-	body_style.border_width_right = 2
-	body_style.border_width_top = 2
-	body_style.border_width_bottom = 2
-	body_style.border_color = Color(0.65, 0.22, 0.22, 0.88)
-	_body.add_theme_stylebox_override("panel", body_style)
-	add_child(_body)
+		var body_style := StyleBoxFlat.new()
+		body_style.bg_color = Color(0.1, 0.08, 0.07, 0.92)
+		body_style.corner_radius_top_left = 8
+		body_style.corner_radius_top_right = 8
+		body_style.corner_radius_bottom_left = 8
+		body_style.corner_radius_bottom_right = 8
+		body_style.border_width_left = 2
+		body_style.border_width_right = 2
+		body_style.border_width_top = 2
+		body_style.border_width_bottom = 2
+		body_style.border_color = Color(0.65, 0.22, 0.22, 0.88)
+		_body.add_theme_stylebox_override("panel", body_style)
+		add_child(_body)
 
-	var vbox := VBoxContainer.new()
-	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
-	vbox.add_theme_constant_override("separation", 1)
-	_body.add_child(vbox)
+		var vbox := VBoxContainer.new()
+		vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+		vbox.add_theme_constant_override("separation", 1)
+		_body.add_child(vbox)
 
-	var top_row := HBoxContainer.new()
-	top_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	vbox.add_child(top_row)
+		var top_row := HBoxContainer.new()
+		top_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		vbox.add_child(top_row)
 
-	_health_text = Label.new()
-	_health_text.text = "%d/%d" % [_current_hp, _max_hp]
-	_health_text.modulate = Color.LIGHT_GRAY
-	_health_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_health_text.add_theme_font_size_override("font_size", 10)
-	top_row.add_child(_health_text)
+		_health_text = Label.new()
+		_health_text.text = "%d/%d" % [_current_hp, _max_hp]
+		_health_text.modulate = Color.LIGHT_GRAY
+		_health_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_health_text.add_theme_font_size_override("font_size", 10)
+		top_row.add_child(_health_text)
 
-	_intent_label = Label.new()
-	_intent_label.text = ""
-	_intent_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_intent_label.modulate = Color(1, 0.78, 0.18)
-	_intent_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_intent_label.add_theme_font_size_override("font_size", 10)
-	top_row.add_child(_intent_label)
+		_intent_label = Label.new()
+		_intent_label.text = ""
+		_intent_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		_intent_label.modulate = Color(1, 0.78, 0.18)
+		_intent_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_intent_label.add_theme_font_size_override("font_size", 10)
+		top_row.add_child(_intent_label)
 
-	_health_bar = ProgressBar.new()
-	_health_bar.max_value = _max_hp
-	_health_bar.value = _current_hp
-	_health_bar.custom_minimum_size = Vector2(120, 14)
-	_health_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var health_style := StyleBoxFlat.new()
-	health_style.bg_color = Color(0.8, 0.2, 0.2)
-	health_style.corner_radius_top_left = 3
-	health_style.corner_radius_top_right = 3
-	health_style.corner_radius_bottom_left = 3
-	health_style.corner_radius_bottom_right = 3
-	_health_bar.add_theme_stylebox_override("fill", health_style)
-	vbox.add_child(_health_bar)
+		_health_bar = ProgressBar.new()
+		_health_bar.max_value = _max_hp
+		_health_bar.value = _current_hp
+		_health_bar.custom_minimum_size = Vector2(120, 14)
+		_health_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var health_style := StyleBoxFlat.new()
+		health_style.bg_color = Color(0.8, 0.2, 0.2)
+		health_style.corner_radius_top_left = 3
+		health_style.corner_radius_top_right = 3
+		health_style.corner_radius_bottom_left = 3
+		health_style.corner_radius_bottom_right = 3
+		_health_bar.add_theme_stylebox_override("fill", health_style)
+		vbox.add_child(_health_bar)
 
-	gui_input.connect(_on_enemy_gui_input)
+		gui_input.connect(_on_enemy_gui_input)
 
-func _on_enemy_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and _is_selectable:
-		enemy_clicked.emit(_enemy_index)
+	func _on_enemy_gui_input(event: InputEvent) -> void:
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and _is_selectable:
+			enemy_clicked.emit(_enemy_index)
 
-func update_health(current: int, max_val: int) -> void:
-	_current_hp = current
-	_max_hp = max_val
-	_health_bar.max_value = max_val
-	_health_bar.value = current
-	_health_text.text = "%d/%d" % [current, max_val]
-	if current <= 0:
-		set_dead()
-		return
-	if float(current) / max_val <= 0.3:
-		var low_health_style := StyleBoxFlat.new()
-		low_health_style.bg_color = Color(0.55, 0.12, 0.12)
-		low_health_style.corner_radius_top_left = 3
-		low_health_style.corner_radius_top_right = 3
-		low_health_style.corner_radius_bottom_left = 3
-		low_health_style.corner_radius_bottom_right = 3
-		_health_bar.add_theme_stylebox_override("fill", low_health_style)
+	func update_health(current: int, max_val: int) -> void:
+		_current_hp = current
+		_max_hp = max_val
+		_health_bar.max_value = max_val
+		_health_bar.value = current
+		_health_text.text = "%d/%d" % [current, max_val]
+		if current <= 0:
+			set_dead()
+			return
+		if float(current) / max_val <= 0.3:
+			var low_health_style := StyleBoxFlat.new()
+			low_health_style.bg_color = Color(0.55, 0.12, 0.12)
+			low_health_style.corner_radius_top_left = 3
+			low_health_style.corner_radius_top_right = 3
+			low_health_style.corner_radius_bottom_left = 3
+			low_health_style.corner_radius_bottom_right = 3
+			_health_bar.add_theme_stylebox_override("fill", low_health_style)
 
-func set_dead() -> void:
-	_is_selectable = false
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_intent_label.text = ""
-	var dead_style := StyleBoxFlat.new()
-	dead_style.bg_color = Color(0.05, 0.05, 0.05, 0.6)
-	dead_style.corner_radius_top_left = 8
-	dead_style.corner_radius_top_right = 8
-	dead_style.corner_radius_bottom_left = 8
-	dead_style.corner_radius_bottom_right = 8
-	dead_style.border_width_left = 1
-	dead_style.border_width_right = 1
-	dead_style.border_width_top = 1
-	dead_style.border_width_bottom = 1
-	dead_style.border_color = Color(0.3, 0.3, 0.3, 0.5)
-	_body.add_theme_stylebox_override("panel", dead_style)
-	var tween := create_tween()
-	tween.tween_property(self, "modulate", Color(0.4, 0.4, 0.4, 0.3), 0.6).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(self, "scale", Vector2(0.85, 0.85), 0.6).set_ease(Tween.EASE_IN)
-	tween.tween_callback(func(): _health_text.text = "💀")
+	func set_dead() -> void:
+		_is_selectable = false
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_intent_label.text = ""
+		var dead_style := StyleBoxFlat.new()
+		dead_style.bg_color = Color(0.05, 0.05, 0.05, 0.6)
+		dead_style.corner_radius_top_left = 8
+		dead_style.corner_radius_top_right = 8
+		dead_style.corner_radius_bottom_left = 8
+		dead_style.corner_radius_bottom_right = 8
+		dead_style.border_width_left = 1
+		dead_style.border_width_right = 1
+		dead_style.border_width_top = 1
+		dead_style.border_width_bottom = 1
+		dead_style.border_color = Color(0.3, 0.3, 0.3, 0.5)
+		_body.add_theme_stylebox_override("panel", dead_style)
+		var tween := create_tween()
+		tween.tween_property(self, "modulate", Color(0.4, 0.4, 0.4, 0.3), 0.6).set_ease(Tween.EASE_IN)
+		tween.parallel().tween_property(self, "scale", Vector2(0.85, 0.85), 0.6).set_ease(Tween.EASE_IN)
+		tween.tween_callback(func(): _health_text.text = "💀")
 
-func update_intent(text: String, icon: String = "") -> void:
-	_intent_label.text = ("%s %s" % [icon, text]) if icon != "" else text
+	func update_intent(text: String, icon: String = "") -> void:
+		_intent_label.text = ("%s %s" % [icon, text]) if icon != "" else text
 
 
 class CardUI:
 	extends Control
 
-signal card_pressed(card_ui)
+	signal card_pressed(card_ui)
 
-var hand_index: int
-var card_data: Dictionary = {}
-var _card_body: PanelContainer
-var _name_label: Label
-var _cost_label: Label
-var _desc_label: Label
-var _icon_rect: TextureRect
-var _base_position: Vector2
-var _is_hovered: bool = false
+	var hand_index: int
+	var card_data: Dictionary = {}
+	var _card_body: PanelContainer
+	var _name_label: Label
+	var _cost_label: Label
+	var _desc_label: Label
+	var _icon_rect: TextureRect
+	var _base_position: Vector2
+	var _is_hovered: bool = false
 
-func _init(p_hand_index: int = 0) -> void:
-	hand_index = p_hand_index
+	func _init(p_hand_index: int = 0) -> void:
+		hand_index = p_hand_index
 
-func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_STOP
-	custom_minimum_size = Vector2(105, 130)
-	_base_position = position
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_STOP
+		custom_minimum_size = Vector2(105, 130)
+		_base_position = position
 
-	_card_body = PanelContainer.new()
-	_card_body.custom_minimum_size = Vector2(100, 125)
-	_card_body.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var style := _create_card_style()
-	_card_body.add_theme_stylebox_override("panel", style)
-	add_child(_card_body)
+		_card_body = PanelContainer.new()
+		_card_body.custom_minimum_size = Vector2(100, 125)
+		_card_body.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var style := _create_card_style()
+		_card_body.add_theme_stylebox_override("panel", style)
+		add_child(_card_body)
 
-	var main_vbox := VBoxContainer.new()
-	main_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_card_body.add_child(main_vbox)
+		var main_vbox := VBoxContainer.new()
+		main_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_card_body.add_child(main_vbox)
 
-	var header_hbox := HBoxContainer.new()
-	header_hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	main_vbox.add_child(header_hbox)
+		var header_hbox := HBoxContainer.new()
+		header_hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		main_vbox.add_child(header_hbox)
 
-	_name_label = Label.new()
-	_name_label.text = "卡牌"
-	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_name_label.modulate = Color.WHITE
-	_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_name_label.add_theme_font_size_override("font_size", 11)
-	header_hbox.add_child(_name_label)
+		_name_label = Label.new()
+		_name_label.text = "卡牌"
+		_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_name_label.modulate = Color.WHITE
+		_name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_name_label.add_theme_font_size_override("font_size", 11)
+		header_hbox.add_child(_name_label)
 
-	_cost_label = Label.new()
-	_cost_label.text = "0"
-	_cost_label.modulate = Color(1, 0.85, 0.2)
-	_cost_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_cost_label.add_theme_font_size_override("font_size", 12)
-	header_hbox.add_child(_cost_label)
+		_cost_label = Label.new()
+		_cost_label.text = "0"
+		_cost_label.modulate = Color(1, 0.85, 0.2)
+		_cost_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_cost_label.add_theme_font_size_override("font_size", 12)
+		header_hbox.add_child(_cost_label)
 
-	_icon_rect = TextureRect.new()
-	_icon_rect.custom_minimum_size = Vector2(0, 40)
-	_icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	main_vbox.add_child(_icon_rect)
+		_icon_rect = TextureRect.new()
+		_icon_rect.custom_minimum_size = Vector2(0, 40)
+		_icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		main_vbox.add_child(_icon_rect)
 
-	_desc_label = Label.new()
-	_desc_label.text = ""
-	_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_desc_label.custom_minimum_size = Vector2(90, 32)
-	_desc_label.add_theme_font_size_override("font_size", 8)
-	main_vbox.add_child(_desc_label)
+		_desc_label = Label.new()
+		_desc_label.text = ""
+		_desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_desc_label.custom_minimum_size = Vector2(90, 32)
+		_desc_label.add_theme_font_size_override("font_size", 8)
+		main_vbox.add_child(_desc_label)
 
-	mouse_entered.connect(_on_mouse_enter)
-	mouse_exited.connect(_on_mouse_exit)
-	gui_input.connect(_on_gui_input)
+		mouse_entered.connect(_on_mouse_enter)
+		mouse_exited.connect(_on_mouse_exit)
+		gui_input.connect(_on_gui_input)
 
-func _create_card_style() -> StyleBoxFlat:
-	var s := StyleBoxFlat.new()
-	s.bg_color = Color(0.15, 0.12, 0.1, 0.98)
-	s.corner_radius_top_left = 7
-	s.corner_radius_top_right = 7
-	s.corner_radius_bottom_left = 7
-	s.corner_radius_bottom_right = 7
-	s.border_width_left = 2
-	s.border_width_right = 2
-	s.border_width_top = 2
-	s.border_width_bottom = 2
-	s.border_color = Color(0.55, 0.42, 0.25, 0.9)
-	return s
+	func _create_card_style() -> StyleBoxFlat:
+		var s := StyleBoxFlat.new()
+		s.bg_color = Color(0.15, 0.12, 0.1, 0.98)
+		s.corner_radius_top_left = 7
+		s.corner_radius_top_right = 7
+		s.corner_radius_bottom_left = 7
+		s.corner_radius_bottom_right = 7
+		s.border_width_left = 2
+		s.border_width_right = 2
+		s.border_width_top = 2
+		s.border_width_bottom = 2
+		s.border_color = Color(0.55, 0.42, 0.25, 0.9)
+		return s
 
-func set_card_data(data: Dictionary) -> void:
-	card_data = data
-	_name_label.text = data.get("name", "")
-	_cost_label.text = str(data.get("cost", 0))
-	_desc_label.text = data.get("description", "")
+	func set_card_data(data: Dictionary) -> void:
+		card_data = data
+		_name_label.text = data.get("name", "")
+		_cost_label.text = str(data.get("cost", 0))
+		_desc_label.text = data.get("description", "")
 
-	var type_val: int = data.get("type", 0)
-	match type_val:
-		0:
-			_cost_label.modulate = Color(1, 0.35, 0.35)
-		1:
-			_cost_label.modulate = Color(0.35, 0.6, 1)
-		2:
-			_cost_label.modulate = Color(0.9, 0.75, 0.3)
-		_:
-			_cost_label.modulate = Color(1, 0.85, 0.2)
+		var type_val: int = data.get("type", 0)
+		match type_val:
+			0:
+				_cost_label.modulate = Color(1, 0.35, 0.35)
+			1:
+				_cost_label.modulate = Color(0.35, 0.6, 1)
+			2:
+				_cost_label.modulate = Color(0.9, 0.75, 0.3)
+			_:
+				_cost_label.modulate = Color(1, 0.85, 0.2)
 
-	var icon_path: String = data.get("icon_path", "")
-	if icon_path == "":
-		icon_path = _get_card_icon(type_val)
-	var icon_tex := load(icon_path) as Texture2D
-	if icon_tex != null:
-		_icon_rect.texture = icon_tex
+		var icon_path: String = data.get("icon_path", "")
+		if icon_path == "":
+			icon_path = _get_card_icon(type_val)
+		var icon_tex := load(icon_path) as Texture2D
+		if icon_tex != null:
+			_icon_rect.texture = icon_tex
 
-	_cost_label.modulate = Color(0.4, 0.85, 0.4) if data.get("cost", 1) == 0 else Color(1, 0.85, 0.2)
+		_cost_label.modulate = Color(0.4, 0.85, 0.4) if data.get("cost", 1) == 0 else Color(1, 0.85, 0.2)
 
-	var style := _create_card_style()
-	match type_val:
-		0: style.border_color = Color(0.75, 0.25, 0.25, 0.95)
-		1: style.border_color = Color(0.25, 0.45, 0.8, 0.95)
-		2: style.border_color = Color(0.8, 0.65, 0.2, 0.95)
-	_card_body.add_theme_stylebox_override("panel", style)
+		var style := _create_card_style()
+		match type_val:
+			0: style.border_color = Color(0.75, 0.25, 0.25, 0.95)
+			1: style.border_color = Color(0.25, 0.45, 0.8, 0.95)
+			2: style.border_color = Color(0.8, 0.65, 0.2, 0.95)
+		_card_body.add_theme_stylebox_override("panel", style)
 
-func _get_card_icon(type_val: int) -> String:
-	match type_val:
-		0: return "res://GameModes/base_game/Resources/Icons/Cards/strike.png"
-		1: return "res://GameModes/base_game/Resources/Icons/Cards/defend.png"
-		2: return "res://GameModes/base_game/Resources/Icons/Skills/fireball.png"
-		_: return "res://GameModes/base_game/Resources/Icons/Cards/card_0.png"
+	func _get_card_icon(type_val: int) -> String:
+		match type_val:
+			0: return "res://GameModes/base_game/Resources/Icons/Cards/strike.png"
+			1: return "res://GameModes/base_game/Resources/Icons/Cards/defend.png"
+			2: return "res://GameModes/base_game/Resources/Icons/Skills/fireball.png"
+			_: return "res://GameModes/base_game/Resources/Icons/Cards/card_0.png"
 
-func _on_mouse_enter() -> void:
-	_is_hovered = true
-	create_tween().tween_property(self, "position:y", _base_position.y - 20, 0.1).set_ease(Tween.EASE_OUT)
+	func _on_mouse_enter() -> void:
+		_is_hovered = true
+		create_tween().tween_property(self, "position:y", _base_position.y - 20, 0.1).set_ease(Tween.EASE_OUT)
 
-func _on_mouse_exit() -> void:
-	_is_hovered = false
-	create_tween().tween_property(self, "position:y", _base_position.y, 0.1).set_ease(Tween.EASE_OUT)
+	func _on_mouse_exit() -> void:
+		_is_hovered = false
+		create_tween().tween_property(self, "position:y", _base_position.y, 0.1).set_ease(Tween.EASE_OUT)
 
-func _on_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		card_pressed.emit(self)
+	func _on_gui_input(event: InputEvent) -> void:
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			card_pressed.emit(self)
 
 
 static func show_damage(parent: Control, amount: int, pos: Vector2, is_player: bool) -> void:
@@ -1022,27 +1022,27 @@ static func show_status(parent: Control, text: String, pos: Vector2) -> void:
 class FloatingTextLabel:
 	extends Control
 
-var _label: Label
-var _start_pos: Vector2
+	var _label: Label
+	var _start_pos: Vector2
 
-func _init(text: String, position: Vector2, color: Color) -> void:
-	_start_pos = position
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	func _init(text: String, position: Vector2, color: Color) -> void:
+		_start_pos = position
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	_label = Label.new()
-	_label.text = text
-	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_label.modulate = color
-	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_label.add_theme_font_size_override("font_size", 22)
+		_label = Label.new()
+		_label.text = text
+		_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_label.modulate = color
+		_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_label.add_theme_font_size_override("font_size", 22)
 
-func _ready() -> void:
-	position = _start_pos
-	add_child(_label)
+	func _ready() -> void:
+		position = _start_pos
+		add_child(_label)
 
-	var tween := create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(self, "position:y", _start_pos.y - 70, 0.9).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "modulate:a", 0.0, 1.3).set_delay(0.4)
+		var tween := create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(self, "position:y", _start_pos.y - 70, 0.9).set_ease(Tween.EASE_OUT)
+		tween.tween_property(self, "modulate:a", 0.0, 1.3).set_delay(0.4)
 
-	get_tree().create_timer(1.8).timeout.connect(queue_free)
+		get_tree().create_timer(1.8).timeout.connect(queue_free)
