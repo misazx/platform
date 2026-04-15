@@ -215,8 +215,6 @@ namespace RoguelikeGame.UI.Panels
     public partial class EventPanel : Control { }
     public partial class TreasurePanel : Control { }
     public partial class RewardPanel : Control { }
-    public partial class VictoryScreen : Control { }
-    public partial class GameOverScreen : Control { }
 }
 
 namespace RoguelikeGame.Packages

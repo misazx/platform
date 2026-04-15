@@ -4,7 +4,6 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="GameModes\base_game\Code\Tests\**" />
     <Compile Remove="Scripts\Tests\**" />
     <Compile Remove="Scripts\Packages\Samples\SampleExtensions.cs" />
   </ItemGroup>

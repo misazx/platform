@@ -20,24 +20,31 @@ func _ready() -> void:
 	_create_ui()
 
 func _create_ui() -> void:
+	var bg := ColorRect.new()
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.color = Color(0, 0, 0, 0.7)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(bg)
+	var panel := PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.custom_minimum_size = Vector2(800, 600)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.08, 0.06, 0.1, 0.95)
+	panel_style.corner_radius_top_left = 12
+	panel_style.corner_radius_top_right = 12
+	panel_style.corner_radius_bottom_left = 12
+	panel_style.corner_radius_bottom_right = 12
+	panel_style.border_width_left = 3
+	panel_style.border_width_right = 3
+	panel_style.border_width_top = 3
+	panel_style.border_width_bottom = 3
+	panel_style.border_color = Color(1, 0.85, 0.3, 0.6)
+	panel.add_theme_stylebox_override("panel", panel_style)
+	add_child(panel)
 	_main_container = VBoxContainer.new()
-	_main_container.set_anchors_preset(Control.PRESET_CENTER)
-	_main_container.custom_minimum_size = Vector2(800, 600)
 	_main_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.08, 0.06, 0.1, 0.95)
-	style.corner_radius_top_left = 12
-	style.corner_radius_top_right = 12
-	style.corner_radius_bottom_left = 12
-	style.corner_radius_bottom_right = 12
-	style.border_width_left = 3
-	style.border_width_right = 3
-	style.border_width_top = 3
-	style.border_width_bottom = 3
-	style.border_color = Color(1, 0.85, 0.3, 0.6)
-	_main_container.add_theme_stylebox_override("panel", style)
-	add_child(_main_container)
+	panel.add_child(_main_container)
 
 	_title_label = Label.new()
 	_title_label.text = "🎉 战斗胜利！"

@@ -42,7 +42,9 @@ func _create_layout() -> void:
 	container.add_child(btn)
 
 func set_victory_stats(stats_data: Dictionary) -> void:
-	var container: VBoxContainer = get_child(1) as VBoxContainer
+	var panel_node: PanelContainer = get_child(1) as PanelContainer
+	if panel_node == null: return
+	var container: VBoxContainer = panel_node.get_child(0) as VBoxContainer
 	if container == null: return
 	var stats_label: Label = container.get_child(1) as Label
 	if stats_label != null:

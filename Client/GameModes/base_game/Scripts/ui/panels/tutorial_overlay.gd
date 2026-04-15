@@ -48,7 +48,9 @@ func _show_step(index: int) -> void:
 		tutorial_completed.emit()
 		visible = false
 		return
-	var container: VBoxContainer = get_child(1) as VBoxContainer
+	var panel_node: PanelContainer = get_child(1) as PanelContainer
+	if panel_node == null: return
+	var container: VBoxContainer = panel_node.get_child(0) as VBoxContainer
 	if container == null: return
 	for label in _step_labels:
 		label.queue_free()
@@ -57,7 +59,7 @@ func _show_step(index: int) -> void:
 	var title_label := Label.new()
 	title_label.text = step.get("title", "")
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title_label.add_theme_font_size_override("font_size", 16)
+	title_label.add_theme_font_size_override("font_size", 18)
 	title_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	container.add_child(title_label)
 	container.move_child(title_label, 1)
@@ -65,7 +67,7 @@ func _show_step(index: int) -> void:
 	var desc_label := Label.new()
 	desc_label.text = step.get("description", "")
 	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	desc_label.custom_minimum_size = Vector2(350, 80)
+	desc_label.custom_minimum_size = Vector2(460, 100)
 	desc_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	container.add_child(desc_label)
 	container.move_child(desc_label, 2)

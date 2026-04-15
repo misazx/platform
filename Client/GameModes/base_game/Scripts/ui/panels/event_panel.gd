@@ -43,18 +43,24 @@ func set_event(event_data: Dictionary) -> void:
 	for btn in _choice_buttons:
 		btn.queue_free()
 	_choice_buttons.clear()
-	var container: VBoxContainer = get_child(1) as VBoxContainer
-	if container == null: return
-	var title_label: Label = container.get_child(0) as Label
+	var panel_node: PanelContainer = get_child(1) as PanelContainer
+	if panel_node == null: return
+	var main_vbox: VBoxContainer = panel_node.get_child(0) as VBoxContainer
+	if main_vbox == null: return
+	var title_label: Label = main_vbox.get_child(0) as Label
 	if title_label != null:
 		title_label.text = event_data.get("title", "❓ 事件")
+	var scroll: ScrollContainer = main_vbox.get_child(1) as ScrollContainer
+	if scroll == null: return
+	var scroll_vbox: VBoxContainer = scroll.get_child(0) as VBoxContainer
+	if scroll_vbox == null: return
 	var choices: Array = event_data.get("choices", [])
 	for i in range(choices.size()):
 		var btn := Button.new()
 		btn.text = choices[i].get("text", "选项 %d" % (i + 1))
-		btn.custom_minimum_size = Vector2(300, 36)
+		btn.custom_minimum_size = Vector2(460, 44)
 		btn.mouse_filter = Control.MOUSE_FILTER_STOP
 		var idx := i
 		btn.pressed.connect(func(): choice_made.emit(idx); visible = false)
-		container.add_child(btn)
+		scroll_vbox.add_child(btn)
 		_choice_buttons.append(btn)
