@@ -87,6 +87,10 @@ CardDatabase="*res://GameModes/base_game/Scripts/cards/card_database.gd"
 | **Dictionary返回null** | `func f() -> Dictionary:\n\treturn null` | `return {}` |
 | **方法名错误** | `CardDatabase.get_total_cards()` | `CardDatabase.total_cards()` |
 | **slice()参数错误** | `arr.slice(start, count)` | `arr.slice(start)` 或 `arr.slice(start, start+count)` |
+| **C# partial class与GDScript class_name同名** | C#端声明`partial class GameOverScreen : Control`，GDScript端声明`class_name GameOverScreen` | GameModes下不允许C#代码，C#端不应声明与GDScript class_name同名的partial class |
+| **VBoxContainer不支持panel样式** | `vbox.add_theme_stylebox_override("panel", style)` | 使用`PanelContainer`包裹VBoxContainer，在PanelContainer上设置样式 |
+| **Tween类型需显式声明** | `var tween := create_tween()` | `var tween: Tween = create_tween()` |
+| **Texture2D类型需显式声明** | `var tex := load(path) as Texture2D` | `var tex: Texture2D = load(path) as Texture2D` |
 
 ---
 
