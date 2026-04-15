@@ -14,8 +14,9 @@ func create_pool(pool_name: String, scene: PackedScene, initial_size: int = 5) -
 		"in_use": []
 	}
 	for i: int in range(initial_size):
-		var instance: Node = scene.instantiate()
-		instance.visible = false
+		var instance: CanvasItem = scene.instantiate() as CanvasItem
+		if instance != null:
+			instance.visible = false
 		instance.process_mode = Node.PROCESS_MODE_DISABLED
 		pool["available"].append(instance)
 	_pools[pool_name] = pool
@@ -31,7 +32,9 @@ func get_object(pool_name: String) -> Node:
 		obj = pool["available"].pop_back()
 	else:
 		obj = pool["scene"].instantiate()
-	obj.visible = true
+	var obj_ci: CanvasItem = obj as CanvasItem
+	if obj_ci != null:
+		obj_ci.visible = true
 	obj.process_mode = Node.PROCESS_MODE_INHERIT
 	pool["in_use"].append(obj)
 	return obj
@@ -43,7 +46,9 @@ func return_object(pool_name: String, obj: Node) -> void:
 	var idx: int = pool["in_use"].find(obj)
 	if idx >= 0:
 		pool["in_use"].remove_at(idx)
-	obj.visible = false
+	var obj_ci: CanvasItem = obj as CanvasItem
+	if obj_ci != null:
+		obj_ci.visible = false
 	obj.process_mode = Node.PROCESS_MODE_DISABLED
 	pool["available"].append(obj)
 
@@ -72,8 +77,9 @@ func warmup_pool(pool_name: String, count: int) -> void:
 		return
 	var pool: Dictionary = _pools[pool_name]
 	while pool["available"].size() < count:
-		var obj: Node = pool["scene"].instantiate()
-		obj.visible = false
+		var obj: CanvasItem = pool["scene"].instantiate() as CanvasItem
+		if obj != null:
+			obj.visible = false
 		obj.process_mode = Node.PROCESS_MODE_DISABLED
 		pool["available"].append(obj)
 	print("[ObjectPoolManager] Warmed up pool '%s' to %d objects" % [pool_name, count])

@@ -284,7 +284,7 @@ class EventData:
 		}
 
 	static func get_random_events(count: int, rng: RandomNumberGenerator) -> Array:
-		var all_events := [create_big_fish(), create_the_cleric(), create_goldin_shrine(),
+		var all_events := [create_big_fish(), create_the_cleric(), create_golden_shrine(),
 			create_dead_adventurer(), create_the_mushrooms()]
 		all_events.shuffle()
 		var result := []

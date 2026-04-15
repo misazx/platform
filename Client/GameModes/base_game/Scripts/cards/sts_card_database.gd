@@ -1,3 +1,4 @@
+class_name StsCardDatabase extends RefCounted
 
 enum CardType { ATTACK, SKILL, POWER }
 enum CardRarity { BASIC, COMMON, UNCOMMON, RARE, SPECIAL }

@@ -45,7 +45,15 @@ func load_characters() -> void:
 		push_error("[CharacterSelect] CharacterDatabase instance is null!")
 		return
 
-	_characters = StsExpansionSystem.get_all_characters()
+	_characters = CharacterDatabase.get_all_characters()
+	if _characters.is_empty():
+		var all_chars := [
+			StsExpansionSystem.CharacterData.create_ironclad(),
+			StsExpansionSystem.CharacterData.create_silent(),
+			StsExpansionSystem.CharacterData.create_defect(),
+			StsExpansionSystem.CharacterData.create_watcher()
+		]
+		_characters = all_chars
 	print("[CharacterSelect] Loaded %d characters" % _characters.size())
 
 	for child in _character_grid.get_children():
@@ -96,7 +104,7 @@ func update_description(index: int) -> void:
 
 func _on_confirm_pressed() -> void:
 	if _selected_index >= 0 and _selected_index < _characters.size():
-		var character_id: String = _characters[_selected_index].id if _characters[_selected_id].has("id") else str(_selected_index)
+		var character_id: String = _characters[_selected_index].id if _characters[_selected_index].has("id") else str(_selected_index)
 		print("[CharacterSelect] Confirming character: %s" % character_id)
 		if AudioManager.instance != null:
 			AudioManager.instance.play_button_click()

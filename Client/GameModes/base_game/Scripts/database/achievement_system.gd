@@ -149,7 +149,7 @@ func record_run(run_stats: Dictionary) -> void:
 
 func get_run_history(count: int = 10) -> Array:
 	var start: int = maxi(0, _run_history.size() - count)
-	return _run_history.slice(start, mini(count, _run_history.size() - start))
+	return _run_history.slice(start)
 
 func get_total_runs() -> int:
 	return _run_history.size()

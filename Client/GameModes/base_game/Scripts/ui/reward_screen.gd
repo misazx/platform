@@ -144,6 +144,8 @@ func _create_card_button(card) -> Button:
 		match card.rarity:
 			StsCardDatabase.CardRarity.RARE: rarity_color = Color(1, 0.6, 0.2)
 			StsCardDatabase.CardRarity.UNCOMMON: rarity_color = Color(0.3, 0.7, 1)
+			CardDatabase.CardRarity.RARE: rarity_color = Color(1, 0.6, 0.2)
+			CardDatabase.CardRarity.UNCOMMON: rarity_color = Color(0.3, 0.7, 1)
 
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.15, 0.12, 0.1)
@@ -191,6 +193,8 @@ func _create_relic_button(relic) -> Button:
 		match relic.rarity:
 			StsRelicSystem.RelicRarity.RARE: rarity_color = Color(1, 0.6, 0.2)
 			StsRelicSystem.RelicRarity.UNCOMMON: rarity_color = Color(0.3, 0.7, 1)
+			RelicDatabase.RelicTier.RARE: rarity_color = Color(1, 0.6, 0.2)
+			RelicDatabase.RelicTier.UNCOMMON: rarity_color = Color(0.3, 0.7, 1)
 
 	btn.modulate = rarity_color
 
@@ -300,23 +304,41 @@ func _generate_shop_items() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
 
-	var cards = StsCardDatabase.get_random_reward_cards(5, rng)
-	for card in cards:
+	var cards := []
+	var card_db_cards := CardDatabase.get_all_cards()
+	if card_db_cards.is_empty():
+		card_db_cards = StsCardDatabase.new().get_all_cards()
+	cards = card_db_cards.duplicate()
+	cards.shuffle()
+	var result_cards := []
+	for i in range(mini(5, cards.size())):
+		result_cards.append(cards[i])
+	for card in result_cards:
 		var price := 50
 		if card.has("rarity"):
 			match card.rarity:
-				StsCardDatabase.CardRarity.RARE: price = 150
-				StsCardDatabase.CardRarity.UNCOMMON: price = 100
+			StsCardDatabase.CardRarity.RARE: price = 150
+			StsCardDatabase.CardRarity.UNCOMMON: price = 100
+			CardDatabase.CardRarity.RARE: price = 150
+			CardDatabase.CardRarity.UNCOMMON: price = 100
 		var card_item := _create_shop_card(card, price)
 		_card_row.add_child(card_item)
 
-	var relics = RelicManager.get_random_relics(3, rng)
-	for relic in relics:
+	var relics := []
+	var relic_db_relics := RelicDatabase.get_all_relics()
+	relics = relic_db_relics.duplicate()
+	relics.shuffle()
+	var result_relics := []
+	for i in range(mini(3, relics.size())):
+		result_relics.append(relics[i])
+	for relic in result_relics:
 		var price := 100
 		if relic.has("rarity"):
 			match relic.rarity:
-				StsRelicSystem.RelicRarity.RARE: price = 200
-				StsRelicSystem.RelicRarity.UNCOMMON: price = 150
+			StsRelicSystem.RelicRarity.RARE: price = 200
+			StsRelicSystem.RelicRarity.UNCOMMON: price = 150
+			RelicDatabase.RelicTier.RARE: price = 200
+			RelicDatabase.RelicTier.UNCOMMON: price = 150
 		var relic_item := _create_shop_relic(relic, price)
 		_relic_row.add_child(relic_item)
 

@@ -682,7 +682,7 @@ func _get_character_sprite_path() -> String:
 		"lagavulin":
 			return "res://GameModes/base_game/Resources/Icons/Enemies/lagavulin.png"
 		"theguardian", "the guardian", "guardian":
-			return "res://GameModes/base_game/Resources/Icons/Enemies/theguardian.png":
+			return "res://GameModes/base_game/Resources/Icons/Enemies/theguardian.png"
 		_:
 			return "res://GameModes/base_game/Resources/Icons/Enemies/cultist.png"
 

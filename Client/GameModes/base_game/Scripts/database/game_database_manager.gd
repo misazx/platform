@@ -63,7 +63,7 @@ func generate_database_report() -> String:
 		lines.append("  - %s (%d)" % [char_data["name"], char_data["class"]])
 	lines.append("")
 	lines.append("--- 卡牌系统 ---")
-	lines.append("总卡牌数: %d" % CardDatabase.get_total_cards())
+	lines.append("总卡牌数: %d" % CardDatabase.total_cards())
 	lines.append("")
 	lines.append("--- 敌人系统 ---")
 	lines.append("总敌人数: %d" % EnemyDatabase.get_total_enemies())

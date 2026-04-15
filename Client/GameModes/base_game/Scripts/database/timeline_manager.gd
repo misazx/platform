@@ -67,7 +67,7 @@ func get_entries_by_type(type_val: int) -> Array:
 
 func get_recent_entries(count: int = 20) -> Array:
 	var start: int = maxi(0, _timeline.size() - count)
-	return _timeline.slice(start, mini(count, _timeline.size() - start))
+	return _timeline.slice(start)
 
 func get_floor_timeline(floor: int) -> Array:
 	var result: Array = []

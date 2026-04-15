@@ -85,7 +85,7 @@ func generate_loot(table_id: String, luck_modifier: float = 0.0) -> Array:
 
 func select_weighted_entry(entries: Array, total_weight: float) -> Dictionary:
 	if entries.is_empty():
-		return null
+		return {}
 	var roll := randf() * total_weight
 	for e in entries:
 		if roll <= e["cumulative_weight"]:
@@ -106,5 +106,8 @@ func drop_loot_at_position(table_id: String, position: Vector2, luck_modifier: f
 func drop_loot_from_enemy(table_id: String, enemy: Node, luck_modifier: float = 0.0) -> void:
 	if enemy == null:
 		return
-	var pos: Vector2 = enemy.global_position if enemy.has_method("get_global_position") else Vector2.ZERO
+	var pos: Vector2 = Vector2.ZERO
+	var enemy_2d: Node2D = enemy as Node2D
+	if enemy_2d != null:
+		pos = enemy_2d.global_position
 	drop_loot_at_position(table_id, pos, luck_modifier)
