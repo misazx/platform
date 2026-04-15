@@ -1,4 +1,4 @@
-class_name TutorialManager extends Node
+extends Node
 
 signal tutorial_step_changed(step_id: String)
 signal tutorial_completed(tutorial_id: String)
@@ -46,18 +46,18 @@ func load_tutorials() -> void:
 		]
 	}
 
-	GD.print("[TutorialManager] Loaded %d tutorials" % _tutorials.size())
+	print("[TutorialManager] Loaded %d tutorials" % _tutorials.size())
 
 func start_tutorial(tutorial_id: String) -> bool:
 	if not _tutorials.has(tutorial_id):
-		GD.printerr("[TutorialManager] Tutorial not found: %s" % tutorial_id)
+		push_error("[TutorialManager] Tutorial not found: %s" % tutorial_id)
 		return false
 	if tutorial_id in _completed_tutorials:
 		return false
 	_current_tutorial = tutorial_id
 	_current_step_index = 0
 	tutorial_step_changed.emit(get_current_step()["id"])
-	GD.print("[TutorialManager] Started tutorial: %s" % tutorial_id)
+	print("[TutorialManager] Started tutorial: %s" % tutorial_id)
 	return true
 
 func next_step() -> Dictionary:
@@ -68,7 +68,7 @@ func next_step() -> Dictionary:
 	if _current_step_index >= steps.size():
 		complete_tutorial(_current_tutorial)
 		return {}
-	var step := steps[_current_step_index]
+	var step: Dictionary = steps[_current_step_index]
 	tutorial_step_changed.emit(step["id"])
 	return step
 
@@ -79,7 +79,7 @@ func previous_step() -> Dictionary:
 		return {}
 	_current_step_index -= 1
 	var steps: Array = _tutorials[_current_tutorial]["steps"]
-	var step := steps[_current_step_index]
+	var step: Dictionary = steps[_current_step_index]
 	tutorial_step_changed.emit(step["id"])
 	return step
 
@@ -95,7 +95,7 @@ func complete_tutorial(tutorial_id: String) -> void:
 	tutorial_completed.emit(tutorial_id)
 	_current_tutorial = ""
 	_current_step_index = 0
-	GD.print("[TutorialManager] Completed tutorial: %s" % tutorial_id)
+	print("[TutorialManager] Completed tutorial: %s" % tutorial_id)
 
 func get_current_step() -> Dictionary:
 	if _current_tutorial == "":
@@ -108,7 +108,7 @@ func get_current_step() -> Dictionary:
 func get_tutorial_progress(tutorial_id: String) -> Dictionary:
 	if not _tutorials.has(tutorial_id):
 		return {"total": 0, "current": 0, "completed": tutorial_id in _completed_tutorials}
-	var tut := _tutorials[tutorial_id]
+	var tut: Dictionary = _tutorials[tutorial_id]
 	return {
 		"total": tut["steps"].size(),
 		"current": _current_step_index if _current_tutorial == tutorial_id else tut["steps"].size(),

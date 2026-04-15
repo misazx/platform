@@ -1,6 +1,6 @@
+extends Node
 enum DungeonLayout { LINEAR, BRANCHING, LOOP, GRID }
 
-class_name DungeonGenerator extends Node
 
 signal dungeon_generated(dungeon_json: String)
 
@@ -16,7 +16,7 @@ var _current_dungeon: Dictionary
 func _ready() -> void:
 	pass
 
-func generate_dungeon(floor: int, seed_val: uint) -> Dictionary:
+func generate_dungeon(floor: int, seed_val: int) -> Dictionary:
 	_rng = RandomNumberGenerator.new()
 	_rng.seed = seed_val + floor
 
@@ -32,7 +32,7 @@ func generate_dungeon(floor: int, seed_val: uint) -> Dictionary:
 	}
 
 	var room_count := _rng.randi_range(min_rooms, max_rooms + 1)
-	GD.print("[DungeonGenerator] Generating floor %d with %d rooms" % [floor, room_count])
+	print("[DungeonGenerator] Generating floor %d with %d rooms" % [floor, room_count])
 
 	generate_rooms(room_count)
 	connect_rooms()
@@ -40,7 +40,7 @@ func generate_dungeon(floor: int, seed_val: uint) -> Dictionary:
 
 	var json_str := JSON.stringify(_current_dungeon, "\t")
 	dungeon_generated.emit(json_str)
-	GD.print("[DungeonGenerator] Floor %d generated successfully" % floor)
+	print("[DungeonGenerator] Floor %d generated successfully" % floor)
 	return _current_dungeon
 
 func choose_layout(floor: int) -> int:

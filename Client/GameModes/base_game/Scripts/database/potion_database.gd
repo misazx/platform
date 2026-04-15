@@ -1,6 +1,6 @@
+extends Node
 enum PotionType { ATTACK, DEFENSE, UTILITY, SPECIAL }
 
-class_name PotionDatabase extends Node
 
 signal potion_used(potion_id: String)
 
@@ -13,7 +13,7 @@ func _ready() -> void:
 func load_potions_from_config() -> void:
 	var config := ConfigLoader.load_config("potions")
 	if config.is_empty():
-		GD.printerr("[PotionDatabase] Failed to load potions config!")
+		push_error("[PotionDatabase] Failed to load potions config!")
 		return
 
 	if not config.has("potions"):
@@ -23,7 +23,7 @@ func load_potions_from_config() -> void:
 		var potion_data := convert_config_to_data(potion_cfg)
 		register_potion(potion_data)
 
-	GD.print("[PotionDatabase] Loaded %d potions from config (version: %s)" % [_potions.size(), config.get("version", "")])
+	print("[PotionDatabase] Loaded %d potions from config (version: %s)" % [_potions.size(), config.get("version", "")])
 
 func convert_config_to_data(cfg: Dictionary) -> Dictionary:
 	return {

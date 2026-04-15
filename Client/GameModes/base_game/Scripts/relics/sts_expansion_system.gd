@@ -1,4 +1,4 @@
-class_name StsExpansionSystem
+class_name StsExpansionSystem extends RefCounted
 
 enum Character { IRONCLAD, SILENT, DEFECT, WATCHER }
 

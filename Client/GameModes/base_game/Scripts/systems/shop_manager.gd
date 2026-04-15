@@ -1,6 +1,6 @@
+extends Node
 enum ShopItemType { CARD, RELIC, POTION, CARD_REMOVAL, CARD_UPGRADE }
 
-class_name ShopManager extends Node
 
 signal item_purchased(item_id: String)
 signal shop_entered()
@@ -42,7 +42,7 @@ func generate_shop_inventory(character_id: String, floor: int) -> Array:
 			_current_items.append(create_potion_item(potion))
 
 	shop_entered.emit()
-	GD.print("[ShopManager] Generated %d shop items for floor %d" % [_current_items.size(), floor])
+	print("[ShopManager] Generated %d shop items for floor %d" % [_current_items.size(), floor])
 	return _current_items.duplicate()
 
 func generate_card_offer(character_id: String) -> Dictionary:
@@ -107,7 +107,7 @@ func purchase_item(item_id: String) -> bool:
 		if item["id"] == item_id and not item["is_purchased"]:
 			item["is_purchased"] = true
 			item_purchased.emit(item_id)
-			GD.print("[ShopManager] Purchased item: %s" % item_id)
+			print("[ShopManager] Purchased item: %s" % item_id)
 			return true
 	return false
 

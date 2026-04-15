@@ -19,25 +19,25 @@ signal node_selected(node_data)
 static func reset_persistent_state() -> void:
 	_persistent_visited.clear()
 	_persistent_reachable.clear()
-	GD.print("[MapView] Persistent state reset for new game")
+	print("[MapView] Persistent state reset for new game")
 
 func _ready() -> void:
-	GD.print("========== [MapView] _Ready() START ==========")
+	print("========== [MapView] _Ready() START ==========")
 	
 	_setup_node_references()
 	_setup_signals()
 	
-	GD.print("[MapView] Creating immediate test visuals...")
+	print("[MapView] Creating immediate test visuals...")
 	_create_test_visuals()
 	
-	GD.print("[MapView] Scheduling map load via CallDeferred...")
+	print("[MapView] Scheduling map load via CallDeferred...")
 	call_deferred("_load_map_from_game_manager")
 	
-	GD.print("========== [MapView] _Ready() END ==========")
+	print("========== [MapView] _Ready() END ==========")
 
 func _create_test_visuals() -> void:
 	if _node_layer == null:
-		GD.push_error("[MapView] CreateTestVisuals: _node_layer is NULL!")
+		push_error("[MapView] CreateTestVisuals: _node_layer is NULL!")
 		return
 
 	var test_rect := ColorRect.new()
@@ -47,7 +47,7 @@ func _create_test_visuals() -> void:
 	test_rect.size = Vector2(80, 80)
 	test_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_node_layer.add_child(test_rect)
-	GD.print("[MapView] Test rect added at %s, size %s" % [test_rect.position, test_rect.size])
+	print("[MapView] Test rect added at %s, size %s" % [test_rect.position, test_rect.size])
 
 	var test_label := Label.new()
 	test_label.text = "MAP NODES HERE"
@@ -62,26 +62,26 @@ func _setup_node_references() -> void:
 	var map_container = get_node_or_null("MapContainer")
 	
 	if map_container != null:
-		GD.print("[MapView] MapContainer FOUND: %s, size=%s" % [map_container.name, map_container.size])
+		print("[MapView] MapContainer FOUND: %s, size=%s" % [map_container.name, map_container.size])
 		
 		_node_layer = map_container.get_node_or_null("NodeLayer")
 		if _node_layer == null:
-			GD.push_warning("[MapView] NodeLayer not found, creating...")
+			push_warning("[MapView] NodeLayer not found, creating...")
 			_node_layer = Control.new()
 			_node_layer.name = "NodeLayer"
 			_node_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			map_container.add_child(_node_layer)
 		_node_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
-		GD.print("[MapView] NodeLayer ready: %s" % _node_layer.name)
+		print("[MapView] NodeLayer ready: %s" % _node_layer.name)
 		
 		_connection_layer = map_container.get_node_or_null("ConnectionLayer")
 		if _connection_layer == null:
 			_connection_layer = Node2D.new()
 			_connection_layer.name = "ConnectionLayer"
 			map_container.add_child(_connection_layer)
-		GD.print("[MapView] ConnectionLayer ready: %s" % _connection_layer.name)
+		print("[MapView] ConnectionLayer ready: %s" % _connection_layer.name)
 	else:
-		GD.push_error("[MapView] CRITICAL: MapContainer NOT found!")
+		push_error("[MapView] CRITICAL: MapContainer NOT found!")
 		_node_layer = Control.new()
 		_node_layer.name = "NodeLayer"
 		_node_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -107,15 +107,15 @@ func _setup_node_references() -> void:
 		save_btn.position = Vector2(400, 5)
 		save_btn.pressed.connect(_on_save_pressed)
 		header_bar.add_child(save_btn)
-		GD.print("[MapView] SaveButton added to HeaderBar")
+		print("[MapView] SaveButton added to HeaderBar")
 	
-	GD.print("[MapView] Setup done - Layer:%s BackBtn:%s" % [_node_layer != null, _back_button != null])
+	print("[MapView] Setup done - Layer:%s BackBtn:%s" % [_node_layer != null, _back_button != null])
 
 func _on_save_pressed() -> void:
-	GD.print("[MapView] Quick save pressed")
+	print("[MapView] Quick save pressed")
 
 func _on_back_pressed() -> void:
-	GD.print("[MapView] Back pressed")
+	print("[MapView] Back pressed")
 	if Main.instance != null:
 		Main.instance.go_to_main_menu()
 
@@ -123,14 +123,14 @@ func _setup_signals() -> void:
 	pass
 
 func _load_map_from_game_manager() -> void:
-	GD.print("---------- [MapView] LoadMapFromGameManager() START ----------")
+	print("---------- [MapView] LoadMapFromGameManager() START ----------")
 	if _map_initialized and not _current_map.is_empty():
-		GD.print("[MapView] Map already initialized, restoring persistent state")
+		print("[MapView] Map already initialized, restoring persistent state")
 		_restore_persistent_state()
 	else:
 		_generate_demo_map()
 		_map_initialized = true
-	GD.print("---------- [MapView] LoadMapFromGameManager() END ----------")
+	print("---------- [MapView] LoadMapFromGameManager() END ----------")
 
 func _restore_persistent_state() -> void:
 	_visited_node_ids = _persistent_visited.duplicate()
@@ -142,10 +142,10 @@ func _restore_persistent_state() -> void:
 		elif node.id in _reachable_node_ids:
 			node["status"] = 1
 	_update_node_visuals()
-	GD.print("[MapView] Restored state: visited=%s reachable=%s" % [str(_visited_node_ids), str(_reachable_node_ids)])
+	print("[MapView] Restored state: visited=%s reachable=%s" % [str(_visited_node_ids), str(_reachable_node_ids)])
 
 func _generate_demo_map() -> void:
-	GD.print("[MapView] GenerateDemoMap() start")
+	print("[MapView] GenerateDemoMap() start")
 	
 	var demo_map := {
 		"floor_number": 1,
@@ -219,16 +219,16 @@ func _generate_demo_map() -> void:
 	update_floor(1)
 	update_gold(99)
 	
-	GD.print("[MapView] Demo map created with %d nodes" % demo_map.nodes.size())
+	print("[MapView] Demo map created with %d nodes" % demo_map.nodes.size())
 
 func set_map(map_data: Dictionary) -> void:
-	GD.print("[MapView] SetMap() called, nodes: %d" % map_data.nodes.size() if map_data.has("nodes") else 0)
+	print("[MapView] SetMap() called, nodes: %d" % map_data.nodes.size() if map_data.has("nodes") else 0)
 	
 	_current_map = map_data
 	_clear_nodes()
 	
 	if not map_data.has("nodes") or map_data.nodes.is_empty():
-		GD.push_warning("[MapView] SetMap: empty/null node list!")
+		push_warning("[MapView] SetMap: empty/null node list!")
 		return
 	
 	_visited_node_ids.clear()
@@ -258,7 +258,7 @@ func set_map(map_data: Dictionary) -> void:
 					if connected.id == cid:
 						connected["status"] = 1
 						break
-		GD.print("[MapView] Fresh init: start=%d, reachable=%s" % [start_node.id, str(_reachable_node_ids)])
+		print("[MapView] Fresh init: start=%d, reachable=%s" % [start_node.id, str(_reachable_node_ids)])
 	
 	for node in map_data.nodes:
 		var is_reachable := node.id in _reachable_node_ids
@@ -267,11 +267,11 @@ func set_map(map_data: Dictionary) -> void:
 		node_ui.node_clicked.connect(_on_node_clicked)
 		_node_uis.append(node_ui)
 		_node_layer.add_child(node_ui)
-		GD.print("[MapView] +Node %d (%d) at (%d,%d) reachable=%s visited=%s" % 
+		print("[MapView] +Node %d (%d) at (%d,%d) reachable=%s visited=%s" % 
 			[node.id, node.type, node.position.x, node.position.y, is_reachable, is_visited])
 	
 	_draw_connections()
-	GD.print("[MapView] SetMap complete: %d nodes rendered" % _node_uis.size())
+	print("[MapView] SetMap complete: %d nodes rendered" % _node_uis.size())
 
 func _clear_nodes() -> void:
 	for n in _node_uis:
@@ -303,15 +303,15 @@ func _draw_connections() -> void:
 
 func _on_node_clicked(node_ui) -> void:
 	var node_data = node_ui.node_data
-	GD.print("[MapView] Clicked: type=%d id=%d reachable=%s visited=%s" % 
+	print("[MapView] Clicked: type=%d id=%d reachable=%s visited=%s" % 
 		[node_data.type, node_data.id, node_data.id in _reachable_node_ids, node_data.id in _visited_node_ids])
 	
 	if node_data.id in _visited_node_ids:
-		GD.print("[MapView] Node already visited, ignoring")
+		print("[MapView] Node already visited, ignoring")
 		return
 	
 	if not node_data.id in _reachable_node_ids:
-		GD.print("[MapView] Node not reachable, ignoring")
+		print("[MapView] Node not reachable, ignoring")
 		return
 	
 	_visited_node_ids.append(node_data.id)
@@ -348,7 +348,7 @@ func _on_node_clicked(node_ui) -> void:
 		6:
 			pass
 		_:
-			GD.print("[MapView] Node type %d not implemented yet" % node_data.type)
+			print("[MapView] Node type %d not implemented yet" % node_data.type)
 
 func _update_node_visuals() -> void:
 	for n in _node_uis:
@@ -385,7 +385,7 @@ func mark_node_completed(node_id: int) -> void:
 					_persistent_reachable.append(cid)
 			break
 	_update_node_visuals()
-	GD.print("[MapView] Node %d completed, visited=%s reachable=%s" % [node_id, str(_visited_node_ids), str(_reachable_node_ids)])
+	print("[MapView] Node %d completed, visited=%s reachable=%s" % [node_id, str(_visited_node_ids), str(_reachable_node_ids)])
 
 func on_show() -> void:
 	visible = true
@@ -395,7 +395,7 @@ func on_hide() -> void:
 	visible = false
 
 
-class MapNodeUI extends Control
+class MapNodeUI extends Control:
 
 signal node_clicked(node_ui)
 
@@ -478,7 +478,7 @@ func _ready() -> void:
 	
 	_apply_initial_state()
 	
-	GD.print("[MapNodeUI] Ready: type=%d pos=(%d,%d) color=%s reachable=%s visited=%s" % 
+	print("[MapNodeUI] Ready: type=%d pos=(%d,%d) color=%s reachable=%s visited=%s" % 
 		[node_data.type, node_data.position.x, node_data.position.y, node_color, _reachable, _visited_internal])
 
 func _apply_initial_state() -> void:

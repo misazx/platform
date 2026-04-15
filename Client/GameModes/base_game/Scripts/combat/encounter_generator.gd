@@ -137,7 +137,7 @@ func generate_encounter(enemy_encounter_id: String, node_type: int, floor_number
 	var floor_in_act: int = get_floor_in_act(floor_number)
 	var hp_scale: float = act.hp_multiplier * (1.0 + (floor_in_act - 1) * 0.1)
 	var dmg_scale: float = act.dmg_multiplier * (1.0 + (floor_in_act - 1) * 0.06)
-	GD.print("[EncounterGenerator] Act %s: %s, Floor %d/%d, Type=%d" % [get_act_for_floor(floor_number), act.name, floor_in_act, act.floors, node_type])
+	print("[EncounterGenerator] Act %s: %s, Floor %d/%d, Type=%d" % [get_act_for_floor(floor_number), act.name, floor_in_act, act.floors, node_type])
 	match node_type:
 		NodeType.BOSS:
 			return _generate_boss_encounter(act, floor_in_act, hp_scale, dmg_scale, rng)

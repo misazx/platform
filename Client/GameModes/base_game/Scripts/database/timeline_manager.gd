@@ -1,6 +1,6 @@
-enum TimelineEventType { COMBAT_START, COMBAT_END, CARD_PLAYED, RELIC_OBTAINED, POTION_USED, EVENT_TRIGGERED, SHOP_VISIT, REST_USED, BOSS_DEFEATED, DEATH, VICTORY, LEVEL_UP, CUSTOM }
+extends Node
 
-class_name TimelineManager extends Node
+enum TimelineEventType { COMBAT_START, COMBAT_END, CARD_PLAYED, RELIC_OBTAINED, POTION_USED, EVENT_TRIGGERED, SHOP_VISIT, REST_USED, BOSS_DEFEATED, DEATH, VICTORY, LEVEL_UP, CUSTOM }
 
 signal timeline_entry_added(entry_id: String)
 
@@ -11,7 +11,7 @@ func _ready() -> void:
 	pass
 
 func add_entry(type_val: int, title: String, description: String = "", data: Dictionary = {}, floor: int = 0, room: int = 0) -> Dictionary:
-	var entry := {
+	var entry: Dictionary = {
 		"id": str(Time.get_ticks_msec()) + "_" + str(randi()),
 		"type": type_val,
 		"timestamp": Time.get_datetime_string_from_system(),
@@ -33,7 +33,7 @@ func add_combat_start(floor: int, room: int, enemies: Array) -> void:
 	add_entry(TimelineEventType.COMBAT_START, "战斗开始 - 第%d层 房间%d" % [floor, room], "遭遇敌人: %s" % [", ".join(enemies)], {"enemies": enemies}, floor, room)
 
 func add_combat_end(floor: int, room: int, victory: bool, damage_taken: int, damage_dealt: int) -> void:
-	var title := "战斗胜利" if victory else "战斗失败"
+	var title: String = "战斗胜利" if victory else "战斗失败"
 	add_entry(TimelineEventType.COMBAT_END, title, "造成 %d 点伤害，承受 %d 点伤害" % [damage_dealt, damage_taken], {"victory": victory, "damage_taken": damage_taken, "damage_dealt": damage_dealt}, floor, room)
 
 func add_card_played(card_name: String, cost: int, floor: int, room: int) -> void:
@@ -54,7 +54,7 @@ func add_boss_defeated(boss_name: String, floor: int) -> void:
 func add_death(floor: int, room: int, cause: String) -> void:
 	add_entry(TimelineEventType.DEATH, "死亡", "死亡原因: %s" % cause, {"cause": cause}, floor, room)
 
-func add_victory(seed: uint, total_damage: int, total_cards_played: int) -> void:
+func add_victory(seed: int, total_damage: int, total_cards_played: int) -> void:
 	add_entry(TimelineEventType.VICTORY, "游戏通关！", "种子: %d, 总伤害: %d, 出牌数: %d" % [seed, total_damage, total_cards_played], {"seed": seed, "total_damage": total_damage, "total_cards_played": total_cards_played})
 
 func get_all_entries() -> Array:
@@ -66,12 +66,12 @@ func get_entries_by_type(type_val: int) -> Array:
 	return []
 
 func get_recent_entries(count: int = 20) -> Array:
-	var start := maxi(0, _timeline.size() - count)
+	var start: int = maxi(0, _timeline.size() - count)
 	return _timeline.slice(start, mini(count, _timeline.size() - start))
 
 func get_floor_timeline(floor: int) -> Array:
-	var result := []
-	for entry in _timeline:
+	var result: Array = []
+	for entry: Dictionary in _timeline:
 		if entry["floor"] == floor:
 			result.append(entry)
 	return result
@@ -79,7 +79,7 @@ func get_floor_timeline(floor: int) -> Array:
 func clear_timeline() -> void:
 	_timeline.clear()
 	_typed_entries.clear()
-	GD.print("[TimelineManager] Timeline cleared")
+	print("[TimelineManager] Timeline cleared")
 
 func get_total_entries() -> int:
 	return _timeline.size()

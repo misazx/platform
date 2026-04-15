@@ -34,7 +34,7 @@ func get_enemies() -> Array:
 func get_turn_number() -> int:
 	return _turn_number
 
-func initialize_combat(enemies: Array, seed_val: uint) -> void:
+func initialize_combat(enemies: Array, seed_val: int) -> void:
 	_rng.seed = seed_val
 	_enemies = enemies
 	_player = _create_player_state()
@@ -45,7 +45,7 @@ func initialize_combat(enemies: Array, seed_val: uint) -> void:
 	_start_new_turn()
 	if _relic_manager:
 		_relic_manager.trigger_on_combat_start(self)
-	GD.print("[StsCombatEngine] Combat initialized with %d enemies" % _enemies.size())
+	print("[StsCombatEngine] Combat initialized with %d enemies" % _enemies.size())
 
 func _create_player_state() -> Dictionary:
 	return {
@@ -154,13 +154,13 @@ func draw_cards(count: int) -> void:
 		if not _player.draw_pile.is_empty():
 			var card = _player.draw_pile.pop_back()
 			_player.hand.append(card)
-	GD.print("[StsCombatEngine] Drew %d cards | Hand: %d" % [count, _player.hand.size()])
+	print("[StsCombatEngine] Drew %d cards | Hand: %d" % [count, _player.hand.size()])
 
 func _refill_draw_pile_from_discard() -> void:
 	_player.draw_pile.append_array(_player.discard_pile)
 	_player.discard_pile.clear()
 	_shuffle_draw_pile()
-	GD.print("[StsCombatEngine] Reshuffled discard pile into draw pile")
+	print("[StsCombatEngine] Reshuffled discard pile into draw pile")
 
 func can_play_card(card: Dictionary) -> bool:
 	if is_combat_over: return false
@@ -196,7 +196,7 @@ func play_card(card: Dictionary, target_index: int = -1) -> Dictionary:
 	_check_combat_end()
 	if _relic_manager:
 		_relic_manager.trigger_on_card_played(self, card)
-	GD.print("[StsCombatEngine] Played: %s | Result: %s" % [card.name, "Success" if result.success else result.reason])
+	print("[StsCombatEngine] Played: %s | Result: %s" % [card.name, "Success" if result.success else result.reason])
 	return result
 
 func _execute_card_effect(card: Dictionary, target_index: int, result: Dictionary) -> void:
@@ -520,7 +520,7 @@ func end_turn() -> void:
 	else:
 		is_combat_over = true
 		combat_lost.emit()
-		GD.print("[StsCombatEngine] Player defeated!")
+		print("[StsCombatEngine] Player defeated!")
 
 func _execute_enemy_turns() -> void:
 	for enemy in _enemies:
@@ -541,7 +541,7 @@ func _execute_enemy_action(enemy: Dictionary) -> void:
 			var damage: int = _calculate_enemy_damage_to_player(enemy.current_intent.value)
 			_apply_damage_to_player(damage)
 			damage_dealt.emit(-1, "玩家", damage)
-			GD.print("[StsCombatEngine] %s attacks for %d" % [enemy.name, damage])
+			print("[StsCombatEngine] %s attacks for %d" % [enemy.name, damage])
 		IntentType.ATTACK_DEBUFF:
 			var damage: int = _calculate_enemy_damage_to_player(enemy.current_intent.value)
 			_apply_damage_to_player(damage)
@@ -549,7 +549,7 @@ func _execute_enemy_action(enemy: Dictionary) -> void:
 			var debuff = _create_weak(enemy.current_intent.value2)
 			_add_status(_player, debuff)
 			status_applied.emit("玩家", debuff)
-			GD.print("[StsCombatEngine] %s attacks for %d and applies debuff" % [enemy.name, damage])
+			print("[StsCombatEngine] %s attacks for %d and applies debuff" % [enemy.name, damage])
 		IntentType.ATTACK_BUFF:
 			var damage: int = _calculate_enemy_damage_to_player(enemy.current_intent.value)
 			_apply_damage_to_player(damage)
@@ -557,11 +557,11 @@ func _execute_enemy_action(enemy: Dictionary) -> void:
 			var buff = _create_strength(enemy.current_intent.value2)
 			_add_status(enemy, buff)
 			status_applied.emit(enemy.name, buff)
-			GD.print("[StsCombatEngine] %s attacks for %d and buffs self" % [enemy.name, damage])
+			print("[StsCombatEngine] %s attacks for %d and buffs self" % [enemy.name, damage])
 		IntentType.DEFEND:
 			enemy.block = enemy.get("block", 0) + enemy.current_intent.value
 			block_gained.emit(enemy.current_intent.value, enemy.block)
-			GD.print("[StsCombatEngine] %s gains %d block" % [enemy.name, enemy.current_intent.value])
+			print("[StsCombatEngine] %s gains %d block" % [enemy.name, enemy.current_intent.value])
 		IntentType.DEFEND_BUFF:
 			enemy.block = enemy.get("block", 0) + enemy.current_intent.value
 			block_gained.emit(enemy.current_intent.value, enemy.block)
@@ -582,7 +582,7 @@ func _execute_enemy_action(enemy: Dictionary) -> void:
 				var buff = _create_strength(enemy.current_intent.value)
 				_add_status(enemy, buff)
 				status_applied.emit(enemy.name, buff)
-			GD.print("[StsCombatEngine] %s gains buff" % enemy.name)
+			print("[StsCombatEngine] %s gains buff" % enemy.name)
 		IntentType.DEBUFF, IntentType.STRONG_DEBUFF:
 			var debuff_name: String = enemy.current_intent.description
 			if "脆弱" in debuff_name:
@@ -593,13 +593,13 @@ func _execute_enemy_action(enemy: Dictionary) -> void:
 				var debuff = _create_weak(enemy.current_intent.value)
 				_add_status(_player, debuff)
 				status_applied.emit("玩家", debuff)
-			GD.print("[StsCombatEngine] Player receives debuff from %s" % enemy.name)
+			print("[StsCombatEngine] Player receives debuff from %s" % enemy.name)
 		IntentType.SLEEP:
-			GD.print("[StsCombatEngine] %s is sleeping" % enemy.name)
+			print("[StsCombatEngine] %s is sleeping" % enemy.name)
 		IntentType.MAGIC:
-			GD.print("[StsCombatEngine] %s uses magic" % enemy.name)
+			print("[StsCombatEngine] %s uses magic" % enemy.name)
 		IntentType.ESCAPE:
-			GD.print("[StsCombatEngine] %s tries to escape" % enemy.name)
+			print("[StsCombatEngine] %s tries to escape" % enemy.name)
 
 func _process_end_turn_status_effects(unit: Dictionary) -> void:
 	var effects: Array = unit.get("status_effects", [])
@@ -685,12 +685,12 @@ func _check_combat_end() -> void:
 		if _relic_manager:
 			_relic_manager.trigger_on_combat_end(self)
 		combat_won.emit()
-		GD.print("[StsCombatEngine] Victory!")
+		print("[StsCombatEngine] Victory!")
 		return
 	if _is_player_dead():
 		is_combat_over = true
 		combat_lost.emit()
-		GD.print("[StsCombatEngine] Player defeated!")
+		print("[StsCombatEngine] Player defeated!")
 
 func _is_enemy_dead(enemy: Dictionary) -> bool:
 	return enemy.current_hp <= 0

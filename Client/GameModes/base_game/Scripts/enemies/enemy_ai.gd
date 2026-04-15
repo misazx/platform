@@ -25,7 +25,7 @@ func initialize(enemy_id: String) -> void:
 				"summoner": _behavior = BehaviorType.SUMMONER
 				"boss": _behavior = BehaviorType.BOSS
 				_: _behavior = BehaviorType.AGGRESSIVE
-	GD.print("[EnemyAI] Initialized for %s (behavior: %d)" % [_enemy_data.get("name", enemy_id), _behavior])
+	print("[EnemyAI] Initialized for %s (behavior: %d)" % [_enemy_data.get("name", enemy_id), _behavior])
 
 func decide_action(player_hp: int, player_block: int, turn_number: int) -> Dictionary:
 	_turn_count = turn_number

@@ -1,4 +1,4 @@
-class_name MapGenerator extends Node
+extends Node
 
 signal map_generated(map_data: Dictionary)
 
@@ -27,7 +27,7 @@ func generate_map(dungeon_data: Dictionary) -> Dictionary:
 	create_map_paths(dungeon_data)
 
 	map_generated.emit(_current_map)
-	GD.print("[MapGenerator] Map generated with %d nodes, %d paths" % [_current_map["nodes"].size(), _current_map["paths"].size()])
+	print("[MapGenerator] Map generated with %d nodes, %d paths" % [_current_map["nodes"].size(), _current_map["paths"].size()])
 	return _current_map
 
 func create_map_nodes(dungeon_data: Dictionary) -> void:

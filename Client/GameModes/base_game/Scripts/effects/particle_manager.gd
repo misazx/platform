@@ -1,6 +1,6 @@
-class_name ParticleManager extends Node
+extends Node
 
-const MAX_PARTICLES := 500
+const MAX_PARTICLES: int = 500
 
 var _particles: Array = []
 var _particle_pool: Array = []
@@ -16,12 +16,12 @@ func emit(position: Vector2, config: Dictionary) -> void:
 	var spread: float = config.get("spread", 360.0)
 	var speed_range: Vector2 = config.get("speed_range", Vector2(50, 150))
 
-	for i in range(count):
-		var particle := create_particle(position, color, size_range, lifetime_range, spread, speed_range)
+	for i: int in range(count):
+		var particle: Dictionary = create_particle(position, color, size_range, lifetime_range, spread, speed_range)
 		_particles.append(particle)
 
 func create_particle(pos: Vector2, col: Color, size_rng: Vector2, life_rng: Vector2, spr: float, spd_rng: Vector2) -> Dictionary:
-	var particle := {
+	var particle: Dictionary = {
 		"node": null,
 		"position": pos,
 		"color": col,
@@ -64,12 +64,12 @@ func emit_block_effect(position: Vector2, amount: int) -> void:
 	})
 
 func _process(delta: float) -> void:
-	var i := 0
+	var i: int = 0
 	while i < _particles.size():
 		var p: Dictionary = _particles[i]
-		p["age"] += delta
-		p["position"] += p["velocity"] * delta
-		p["velocity"] *= 0.95
+		p["age"] = p["age"] + delta
+		p["position"] = p["position"] + p["velocity"] * delta
+		p["velocity"] = p["velocity"] * 0.95
 		if p["age"] >= p["lifetime"]:
 			_particles.remove_at(i)
 		else:

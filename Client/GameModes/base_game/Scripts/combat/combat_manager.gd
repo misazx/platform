@@ -1,7 +1,7 @@
+extends Node
 enum CombatPhase { PLAYER_TURN, ENEMY_TURN, CARD_SELECTION, TARGET_SELECTION, GAME_OVER, VICTORY }
 enum PlayerAction { PLAY_CARD, END_TURN, USE_POTION, CHECK_DECK, CHECK_DISCARD_PILE, NONE }
 
-class_name CombatManager extends Node
 
 signal turn_started(turn: int)
 signal turn_ended(turn: int)
@@ -22,7 +22,7 @@ var _player_deck: Array = []
 func _ready() -> void:
 	pass
 
-func initialize_combat(player: Node, enemies: Array, seed_val: uint) -> void:
+func initialize_combat(player: Node, enemies: Array, seed_val: int) -> void:
 	_player = player
 	_enemies = enemies if enemies else []
 	_rng = RandomNumberGenerator.new()
@@ -54,7 +54,7 @@ func initialize_combat(player: Node, enemies: Array, seed_val: uint) -> void:
 	_current_phase = CombatPhase.PLAYER_TURN
 	start_player_turn()
 
-	GD.print("[CombatManager] Combat initialized with %d enemies, %d cards in deck" % [_enemies.size(), _player_deck.size()])
+	print("[CombatManager] Combat initialized with %d enemies, %d cards in deck" % [_enemies.size(), _player_deck.size()])
 	phase_changed.emit(_current_phase)
 
 func start_player_turn() -> void:
@@ -63,7 +63,7 @@ func start_player_turn() -> void:
 	_state["has_acted"] = false
 	draw_cards(5)
 	turn_started.emit(_state["turn_number"])
-	GD.print("[CombatManager] Turn %d started (energy: %d)" % [_state["turn_number"], _state["current_energy"]])
+	print("[CombatManager] Turn %d started (energy: %d)" % [_state["turn_number"], _state["current_energy"]])
 
 func end_turn() -> void:
 	if _current_phase != CombatPhase.PLAYER_TURN:
@@ -108,7 +108,7 @@ func play_card(card_id: String, target_index: int = -1) -> bool:
 		_state["exhaust_pile"].append(card_data)
 
 	_state["has_acted"] = true
-	GD.print("[CombatManager] Played card: %s (cost: %d)" % [card_id, cost])
+	print("[CombatManager] Played card: %s (cost: %d)" % [card_id, cost])
 	return true
 
 func find_card_in_hand(card_id: String) -> Dictionary:
@@ -160,4 +160,4 @@ func end_combat(victory: bool) -> void:
 	else:
 		_current_phase = CombatPhase.GAME_OVER
 		combat_defeat.emit()
-	GD.print("[CombatManager] Combat ended: %s" % ("Victory" if victory else "Defeat"))
+	print("[CombatManager] Combat ended: %s" % ("Victory" if victory else "Defeat"))

@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RoguelikeGame.Core
 {
@@ -52,6 +53,8 @@ namespace RoguelikeGame.Core
         public bool IsVisited { get; set; } = false;
         public int Status { get; set; } = 0;
         public string EnemyEncounterId { get; set; } = "";
+        public string EventId { get; set; } = "";
+        public Dictionary<string, object> CustomData { get; set; } = new();
     }
 
     public class FloorMap
@@ -59,6 +62,48 @@ namespace RoguelikeGame.Core
         public List<MapNode> Nodes { get; set; } = new();
         public int CurrentNodeId { get; set; } = -1;
         public int StartNodeId { get; set; } = 0;
+    }
+
+    public class CharacterData
+    {
+        public string Id { get; set; } = "";
+        public string Name { get; set; } = "";
+        public int MaxHealth { get; set; } = 80;
+        public int StartingGold { get; set; } = 99;
+        public List<string> StartingCards { get; set; } = new();
+        public List<string> StartingRelics { get; set; } = new();
+        public string PortraitPath { get; set; } = "";
+    }
+
+    public class RelicData
+    {
+        public string Id { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public Database.RelicTier Tier { get; set; } = Database.RelicTier.Common;
+    }
+
+    public class PotionData
+    {
+        public string Id { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+    }
+
+    public class RunStatistics
+    {
+        public string CharacterId { get; set; } = "";
+        public int FloorReached { get; set; }
+        public int EnemiesDefeated { get; set; }
+        public int DamageDealt { get; set; }
+        public int CardsPlayed { get; set; }
+        public int RelicsCollected { get; set; }
+        public int GoldEarned { get; set; }
+        public bool Victory { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public uint Seed { get; set; }
+        public List<string> DeckComposition { get; set; } = new();
     }
 
     public class CardConfigData { }
@@ -81,27 +126,45 @@ namespace RoguelikeGame.Core
 namespace RoguelikeGame.Generation
 {
     public enum NodeType { Monster = 0, Elite = 1, Boss = 2, Rest = 3, Shop = 4, Event = 5, Treasure = 6 }
-    public partial class MapGenerator : Node { public static MapGenerator Instance => null; public void Initialize() {} public Godot.Collections.Dictionary GenerateFloor(int floor) => null; public void VisitNode(int nodeId) {} }
+    public enum MapNodeStatus { Unreachable = 0, Reachable = 1, Visited = 2, Current = 3 }
+
+    public partial class MapGenerator : Node
+    {
+        public static MapGenerator Instance => null;
+        public void Initialize(uint seed) {}
+        public Core.FloorMap GenerateFloor(int floor) => null;
+        public bool VisitNode(Core.FloorMap map, Core.MapNode node) => true;
+        public void VisitNode(int nodeId) {}
+    }
     public partial class DungeonGenerator : Node { public static DungeonGenerator Instance => null; }
-    public enum MapNodeStatus { Unreachable = 0, Reachable = 1, Visited = 2 }
 }
 
 namespace RoguelikeGame.Database
 {
     public enum RelicTier { Starter = 0, Common = 1, Uncommon = 2, Rare = 3, Boss = 4, Shop = 5, Special = 6 }
+
     public partial class CardDatabase : Node { public static CardDatabase Instance => null; public Core.CardData GetCard(string id) => null; }
-    public partial class CharacterDatabase : Node { public static CharacterDatabase Instance => null; public Godot.Collections.Dictionary GetCharacter(string id) => null; }
-    public partial class EnemyDatabase : Node { public static EnemyDatabase Instance => null; }
+    public partial class CharacterDatabase : Node { public static CharacterDatabase Instance => null; public Core.CharacterData GetCharacter(string id) => null; }
+    public partial class EnemyDatabase : Node { public static EnemyDatabase Instance => null; public Godot.Collections.Array GetEnemies() => null; }
     public partial class EventDatabase : Node { public static EventDatabase Instance => null; }
-    public partial class PotionDatabase : Node { public static PotionDatabase Instance => null; }
-    public partial class RelicDatabase : Node { public static RelicDatabase Instance => null; }
-    public partial class TimelineManager : Node { public static TimelineManager Instance => null; public void AddEventTriggered(string evt) {} public void AddCombatStart(string enemy) {} }
-    public partial class AchievementSystem : Node { public static AchievementSystem Instance => null; }
+    public partial class PotionDatabase : Node { public static PotionDatabase Instance => null; public Core.PotionData GetRandomPotion(RandomNumberGenerator rng) => null; }
+    public partial class RelicDatabase : Node { public static RelicDatabase Instance => null; public Core.RelicData GetRandomRelic(RelicTier tier, RandomNumberGenerator rng) => null; }
+    public partial class TimelineManager : Node
+    {
+        public static TimelineManager Instance => null;
+        public void AddEventTriggered(string type, string desc = "", int floor = 0, int room = 0) {}
+        public void AddCombatStart(int floor, int room, List<string> enemies = null) {}
+        public void AddCombatEnd(int floor, int room, bool victory = true, int damageTaken = 0, int damageDealt = 0) {}
+        public void AddDeath(int floor, int room, string cause = "") {}
+        public void AddEventTriggered(string evt) {}
+        public void AddCombatStart(string enemy) {}
+    }
+    public partial class AchievementSystem : Node { public static AchievementSystem Instance => null; public void RecordRun(Core.RunStatistics stats) {} public void UpdateProgress(string achievementId, int amount) {} }
 }
 
 namespace RoguelikeGame.Systems
 {
-    public partial class ShopManager : Node { public static ShopManager Instance => null; public void Initialize() {} }
+    public partial class ShopManager : Node { public static ShopManager Instance => null; public void Initialize(uint seed) {} public Godot.Collections.Array GenerateShopInventory(string charId, int floor) => null; }
     public partial class WaveManager : Node { public static WaveManager Instance => null; }
     public partial class ItemManager : Node { public static ItemManager Instance => null; }
     public partial class UnitManager : Node { public static UnitManager Instance => null; }
@@ -138,11 +201,6 @@ namespace RoguelikeGame.UI
         public void ShowPlayerHitFeedback() {}
         public void ShowEnemyHitFeedback(int idx) {}
         public void ShowCardPlayAnimation(Godot.Collections.Dictionary cardData, int targetIdx) {}
-        public Godot.SignalAwaiter CardPlayed => null;
-        public Godot.SignalAwaiter CardPlayedWithTarget => null;
-        public Godot.SignalAwaiter EndTurnPressed => null;
-        public Godot.SignalAwaiter ShowPileViewRequested => null;
-        public Godot.SignalAwaiter EnemyClicked => null;
     }
 }
 
@@ -179,6 +237,6 @@ namespace RoguelikeGame.Combat
         public Godot.Collections.Array GetEnemies() => null;
         public int GetTurnNumber() => 0;
     }
-    public partial class CombatManager : Node { public static CombatManager Instance => null; }
+    public partial class CombatManager : Node { public static CombatManager Instance => null; public void SetPlayerDeck(List<Core.CardData> deck) {} }
     public partial class EncounterGenerator : Node { public static EncounterGenerator Instance => null; public Godot.Collections.Dictionary GenerateEncounter(string id, int nodeType, int floor) => null; public static int GetTotalFloors() => 12; }
 }

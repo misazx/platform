@@ -1,14 +1,14 @@
-class_name EnhancedSaveSystem extends Node
+extends Node
 
-const MAX_SLOTS := 3
-const SAVE_DIR := "user://saves/"
-const SCREENSHOT_DIR := "user://screenshots/"
+const MAX_SLOTS: int = 3
+const SAVE_DIR: String = "user://saves/"
+const SCREENSHOT_DIR: String = "user://screenshots/"
 
 func _ready() -> void:
 	_ensure_directories_exist()
 
 func _ensure_directories_exist() -> void:
-	var dir := DirAccess.open("user://")
+	var dir: DirAccess = DirAccess.open("user://")
 	if dir != null:
 		dir.make_dir_recursive("saves")
 		dir.make_dir_recursive("screenshots")
@@ -17,7 +17,7 @@ func has_save(slot_id: int) -> bool:
 	return FileAccess.file_exists(_get_save_path(slot_id))
 
 func save_game(slot_id: int, run_data: Dictionary) -> Dictionary:
-	var slot := {
+	var slot: Dictionary = {
 		"slot_id": slot_id,
 		"save_time": Time.get_datetime_string_from_system(),
 		"character_id": run_data.get("character_id", ""),
@@ -35,53 +35,53 @@ func save_game(slot_id: int, run_data: Dictionary) -> Dictionary:
 		"screenshot_path": ""
 	}
 
-	var path := _get_save_path(slot_id)
-	var json_str := JSON.stringify(slot, "\t")
-	var file := FileAccess.open(path, FileAccess.WRITE)
+	var path: String = _get_save_path(slot_id)
+	var json_str: String = JSON.stringify(slot, "\t")
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
-		GD.printerr("[EnhancedSaveSystem] Failed to save slot %d" % slot_id)
+		push_error("[EnhancedSaveSystem] Failed to save slot %d" % slot_id)
 		return {}
 	file.store_string(json_str)
 	file.close()
-	GD.print("[EnhancedSaveSystem] Saved slot %d" % slot_id)
+	print("[EnhancedSaveSystem] Saved slot %d" % slot_id)
 	return slot
 
 func load_game(slot_id: int) -> Dictionary:
-	var path := _get_save_path(slot_id)
+	var path: String = _get_save_path(slot_id)
 	if not FileAccess.file_exists(path):
 		return {}
-	var file := FileAccess.open(path, FileAccess.READ)
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		return {}
-	var json_str := file.get_as_text()
+	var json_str: String = file.get_as_text()
 	file.close()
-	var json := JSON.new()
+	var json: JSON = JSON.new()
 	json.parse(json_str)
-	var data := json.get_data()
-	GD.print("[EnhancedSaveSystem] Loaded slot %d" % slot_id)
+	var data: Variant = json.get_data()
+	print("[EnhancedSaveSystem] Loaded slot %d" % slot_id)
 	return data if data else {}
 
 func delete_save(slot_id: int) -> bool:
-	var path := _get_save_path(slot_id)
+	var path: String = _get_save_path(slot_id)
 	if FileAccess.file_exists(path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 		return true
 	return false
 
 func get_all_save_slots() -> Array:
-	var slots := []
-	for i in range(MAX_SLOTS):
-		var info := {"slot_id": i, "has_data": has_save(i)}
+	var slots: Array = []
+	for i: int in range(MAX_SLOTS):
+		var info: Dictionary = {"slot_id": i, "has_data": has_save(i)}
 		if has_save(i):
-			var data := load_game(i)
+			var data: Dictionary = load_game(i)
 			info.merge(data)
 		slots.append(info)
 	return slots
 
 func clear_all_saves() -> void:
-	for i in range(MAX_SLOTS):
+	for i: int in range(MAX_SLOTS):
 		delete_save(i)
-	GD.print("[EnhancedSaveSystem] All saves cleared")
+	print("[EnhancedSaveSystem] All saves cleared")
 
 func _get_save_path(slot_id: int) -> String:
 	return SAVE_DIR + "slot_%d.json" % slot_id

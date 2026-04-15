@@ -17,7 +17,7 @@ func _ready() -> void:
 	_setup_node_references()
 	_setup_signals()
 	load_characters()
-	GD.print("[CharacterSelect] Ready")
+	print("[CharacterSelect] Ready")
 
 func _setup_node_references() -> void:
 	_character_grid = get_node_or_null("CharGrid")
@@ -28,9 +28,9 @@ func _setup_node_references() -> void:
 	_back_button = get_node_or_null("HeaderBar/BackButton")
 
 	if _character_grid == null:
-		GD.push_error("[CharacterSelect] CharGrid not found")
+		push_error("[CharacterSelect] CharGrid not found")
 	if _desc_label == null:
-		GD.push_error("[CharacterSelect] DescLabel not found")
+		push_error("[CharacterSelect] DescLabel not found")
 
 func _setup_signals() -> void:
 	if _confirm_button != null:
@@ -42,11 +42,11 @@ func _setup_signals() -> void:
 func load_characters() -> void:
 	var db = CharacterDatabase
 	if db == null:
-		GD.push_error("[CharacterSelect] CharacterDatabase instance is null!")
+		push_error("[CharacterSelect] CharacterDatabase instance is null!")
 		return
 
 	_characters = StsExpansionSystem.get_all_characters()
-	GD.print("[CharacterSelect] Loaded %d characters" % _characters.size())
+	print("[CharacterSelect] Loaded %d characters" % _characters.size())
 
 	for child in _character_grid.get_children():
 		child.queue_free()
@@ -62,7 +62,7 @@ func load_characters() -> void:
 	update_description(-1)
 
 func _on_card_clicked(index: int) -> void:
-	GD.print("[CharacterSelect] Card clicked: %d" % index)
+	print("[CharacterSelect] Card clicked: %d" % index)
 	select_character(index)
 
 func select_character(index: int) -> void:
@@ -97,13 +97,13 @@ func update_description(index: int) -> void:
 func _on_confirm_pressed() -> void:
 	if _selected_index >= 0 and _selected_index < _characters.size():
 		var character_id: String = _characters[_selected_index].id if _characters[_selected_id].has("id") else str(_selected_index)
-		GD.print("[CharacterSelect] Confirming character: %s" % character_id)
+		print("[CharacterSelect] Confirming character: %s" % character_id)
 		if AudioManager.instance != null:
 			AudioManager.instance.play_button_click()
 		character_selected.emit(character_id)
 
 func _on_back_pressed() -> void:
-	GD.print("[CharacterSelect] Back pressed")
+	print("[CharacterSelect] Back pressed")
 	if AudioManager.instance != null:
 		AudioManager.instance.play_button_click()
 	if Main.instance != null:

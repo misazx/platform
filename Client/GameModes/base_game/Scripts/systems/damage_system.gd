@@ -1,6 +1,6 @@
+extends Node
 enum DamageType { PHYSICAL, MAGICAL, FIRE, ICE, LIGHTNING, POISON, TRUE }
 
-class_name DamageSystem extends Node
 
 signal damage_dealt(source: Node, target: Node, amount: int)
 signal damage_taken(target: Node, amount: int)
@@ -62,12 +62,12 @@ func calculate_damage(info: Dictionary) -> Dictionary:
 func apply_damage(info: Dictionary) -> Dictionary:
 	var target: Node = info.get("target")
 	if target == null:
-		GD.printerr("[DamageSystem] Target is null")
+		push_error("[DamageSystem] Target is null")
 		return {"original_damage": 0, "final_damage": 0, "damage_blocked": 0, "was_critical": false, "was_dodged": false, "killed_target": false, "modifiers": {}}
 
 	var result := calculate_damage(info)
 	if result["was_dodged"]:
-		GD.print("[DamageSystem] Attack dodged!")
+		print("[DamageSystem] Attack dodged!")
 		return result
 
 	if target.has_method("take_damage"):
@@ -87,7 +87,7 @@ func apply_damage(info: Dictionary) -> Dictionary:
 	if result["was_critical"]:
 		critical_hit.emit(info.get("source"), target, result["final_damage"])
 
-	GD.print("[DamageSystem] %d -> %d damage (blocked: %d, crit: %s)" % [result["original_damage"], result["final_damage"], result["damage_blocked"], result["was_critical"]])
+	print("[DamageSystem] %d -> %d damage (blocked: %d, crit: %s)" % [result["original_damage"], result["final_damage"], result["damage_blocked"], result["was_critical"]])
 	return result
 
 func create_damage_info(amount: int, type_val: int = DamageType.PHYSICAL, source: Node = null) -> Dictionary:
@@ -105,11 +105,11 @@ func create_damage_info(amount: int, type_val: int = DamageType.PHYSICAL, source
 func add_damage_modifier(modifier_id: String) -> void:
 	if modifier_id not in _damage_modifiers:
 		_damage_modifiers.append(modifier_id)
-		GD.print("[DamageSystem] Added damage modifier: %s" % modifier_id)
+		print("[DamageSystem] Added damage modifier: %s" % modifier_id)
 
 func remove_damage_modifier(modifier_id: String) -> void:
 	_damage_modifiers.erase(modifier_id)
-	GD.print("[DamageSystem] Removed damage modifier: %s" % modifier_id)
+	print("[DamageSystem] Removed damage modifier: %s" % modifier_id)
 
 func get_damage_multiplier(type_val: int) -> float:
 	return 1.0

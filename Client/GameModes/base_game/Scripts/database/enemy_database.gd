@@ -1,7 +1,7 @@
+extends Node
 enum EnemyType { NORMAL, ELITE, BOSS }
 enum EnemyBehavior { AGGRESSIVE, DEFENSIVE, SUPPORT, SUMMONER }
 
-class_name EnemyDatabase extends Node
 
 signal enemy_registered(enemy_id: String)
 
@@ -14,7 +14,7 @@ func _ready() -> void:
 func load_enemies_from_config() -> void:
 	var config := ConfigLoader.load_config("enemies")
 	if config.is_empty():
-		GD.printerr("[EnemyDatabase] Failed to load enemies config!")
+		push_error("[EnemyDatabase] Failed to load enemies config!")
 		return
 
 	if not config.has("enemies"):
@@ -24,7 +24,7 @@ func load_enemies_from_config() -> void:
 		var enemy_data := convert_config_to_data(enemy_cfg)
 		register_enemy(enemy_data)
 
-	GD.print("[EnemyDatabase] Loaded %d enemies from config (version: %s)" % [_enemies.size(), config.get("version", "")])
+	print("[EnemyDatabase] Loaded %d enemies from config (version: %s)" % [_enemies.size(), config.get("version", "")])
 
 func convert_config_to_data(cfg: Dictionary) -> Dictionary:
 	return {

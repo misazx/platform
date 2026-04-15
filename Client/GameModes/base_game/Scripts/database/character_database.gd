@@ -1,7 +1,7 @@
+extends Node
 enum CharacterClass { IRONCLAD, SILENT, DEFECT, WATCHER, NECROMANCER, HEIR }
 enum PlayStyle { AGGRESSIVE, DEFENSIVE, HYBRID, COMBO, CONTROL }
 
-class_name CharacterDatabase extends Node
 
 signal character_selected(character_id: String)
 
@@ -14,7 +14,7 @@ func _ready() -> void:
 func load_characters_from_config() -> void:
 	var config := ConfigLoader.load_config("characters")
 	if config.is_empty():
-		GD.printerr("[CharacterDatabase] Failed to load characters config!")
+		push_error("[CharacterDatabase] Failed to load characters config!")
 		return
 
 	if not config.has("characters"):
@@ -24,7 +24,7 @@ func load_characters_from_config() -> void:
 		var char_data := convert_config_to_data(char_cfg)
 		register_character(char_data)
 
-	GD.print("[CharacterDatabase] Loaded %d characters from config (version: %s)" % [_characters.size(), config.get("version", "")])
+	print("[CharacterDatabase] Loaded %d characters from config (version: %s)" % [_characters.size(), config.get("version", "")])
 
 func convert_config_to_data(cfg: Dictionary) -> Dictionary:
 	return {
@@ -68,7 +68,7 @@ func parse_play_style(style_str: String) -> int:
 func register_character(char_data: Dictionary) -> void:
 	_characters[char_data["id"]] = char_data
 	_playable_characters.append(char_data)
-	GD.print("[CharacterDatabase] Registered character: %s" % char_data["name"])
+	print("[CharacterDatabase] Registered character: %s" % char_data["name"])
 
 func get_character(character_id: String) -> Dictionary:
 	if _characters.has(character_id):

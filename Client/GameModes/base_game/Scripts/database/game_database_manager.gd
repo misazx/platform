@@ -1,21 +1,20 @@
-class_name GameDatabaseManager extends Node
-
+extends Node
 signal database_initialized()
 
 func _ready() -> void:
 	initialize_all_databases()
 
 func initialize_all_databases() -> void:
-	GD.print("[GameDatabaseManager] Initializing all databases...")
+	print("[GameDatabaseManager] Initializing all databases...")
 
 	call_deferred("_on_initialization_complete")
-	GD.print("[GameDatabaseManager] All databases initialized via autoload!")
+	print("[GameDatabaseManager] All databases initialized via autoload!")
 
 func _on_initialization_complete() -> void:
 	database_initialized.emit()
 
 	var report := generate_database_report()
-	GD.print(report)
+	print(report)
 
 func get_character(id: String) -> Dictionary:
 	return CharacterDatabase.get_character(id)

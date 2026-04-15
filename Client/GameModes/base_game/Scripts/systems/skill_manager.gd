@@ -1,7 +1,7 @@
+extends Node
 enum SkillType { ACTIVE, PASSIVE, TOGGLE }
 enum TargetType { SELF, SINGLE_ENEMY, AREA_OF_EFFECT, DIRECTION, POSITION }
 
-class_name SkillManager extends Node
 
 signal skill_learned(skill_id: String)
 signal skill_used(skill_id: String)
@@ -90,14 +90,14 @@ func initialize_default_skills() -> void:
 		"tags": ["healing"]
 	})
 
-	GD.print("[SkillManager] Initialized with %d skills" % _skills.size())
+	print("[SkillManager] Initialized with %d skills" % _skills.size())
 
 func register_skill(skill: Dictionary) -> void:
 	_skills[skill["id"]] = skill
 
 func learn_skill(skill_id: String) -> bool:
 	if not _skills.has(skill_id):
-		GD.printerr("[SkillManager] Unknown skill: %s" % skill_id)
+		push_error("[SkillManager] Unknown skill: %s" % skill_id)
 		return false
 	if _skill_instances.has(skill_id):
 		return false
@@ -110,44 +110,44 @@ func learn_skill(skill_id: String) -> bool:
 		"is_active": false
 	}
 	skill_learned.emit(skill_id)
-	GD.print("[SkillManager] Learned skill: %s" % skill_id)
+	print("[SkillManager] Learned skill: %s" % skill_id)
 	return true
 
 func use_skill(skill_id: String, caster: Node, target: Node = null) -> bool:
 	if not _skill_instances.has(skill_id):
 		return false
 
-	var inst := _skill_instances[skill_id]
+	var inst: Dictionary = _skill_instances[skill_id]
 	if inst["current_cooldown"] > 0 or not inst["is_unlocked"]:
 		return false
 
 	inst["current_cooldown"] = _skills[skill_id]["cooldown"]
 	skill_used.emit(skill_id)
-	GD.print("[SkillManager] Used skill: %s (level %d)" % [skill_id, inst["level"]])
+	print("[SkillManager] Used skill: %s (level %d)" % [skill_id, inst["level"]])
 	return true
 
 func level_up_skill(skill_id: String) -> bool:
 	if not _skill_instances.has(skill_id):
 		return false
-	var inst := _skill_instances[skill_id]
+	var inst: Dictionary = _skill_instances[skill_id]
 	var max_level: int = _skills[skill_id]["max_level"]
 	if inst["level"] >= max_level:
 		return false
 	inst["level"] += 1
 	skill_leveled_up.emit(skill_id, inst["level"])
-	GD.print("[SkillManager] Skill leveled up: %s -> level %d" % [skill_id, inst["level"]])
+	print("[SkillManager] Skill leveled up: %s -> level %d" % [skill_id, inst["level"]])
 	return true
 
 func update_delta(delta: float) -> void:
 	for skill_id in _skill_instances:
-		var inst := _skill_instances[skill_id]
+		var inst: Dictionary = _skill_instances[skill_id]
 		if inst["current_cooldown"] > 0:
 			inst["current_cooldown"] -= delta
 
 func is_skill_ready(skill_id: String) -> bool:
 	if not _skill_instances.has(skill_id):
 		return false
-	var inst := _skill_instances[skill_id]
+	var inst: Dictionary = _skill_instances[skill_id]
 	return inst["current_cooldown"] <= 0 and inst["is_unlocked"]
 
 func get_all_skills() -> Dictionary:
@@ -159,6 +159,6 @@ func get_learned_skills() -> Dictionary:
 func get_skill_level_stats(skill_id: String, level: int) -> Dictionary:
 	if not _skills.has(skill_id):
 		return {}
-	var skill := _skills[skill_id]
+	var skill: Dictionary = _skills[skill_id]
 	var stats: Dictionary = skill.get("level_stats", {})
 	return stats.get(level, {})

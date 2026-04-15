@@ -1,4 +1,4 @@
-class_name AchievementManager extends Node
+extends Node
 
 signal achievement_unlocked(achievement_id: String)
 signal achievement_progress_updated(achievement_id: String, progress: float)
@@ -62,7 +62,7 @@ func initialize_achievements() -> void:
 		"completion_progress": 0.0
 	})
 
-	GD.print("[AchievementManager] Initialized with %d achievements" % _achievements.size())
+	print("[AchievementManager] Initialized with %d achievements" % _achievements.size())
 
 func register_achievement(ach: Dictionary) -> void:
 	_achievements[ach["id"]] = ach
@@ -70,7 +70,7 @@ func register_achievement(ach: Dictionary) -> void:
 func update_progress(achievement_id: String, value: int) -> void:
 	if not _achievements.has(achievement_id):
 		return
-	var ach := _achievements[achievement_id]
+	var ach: Dictionary = _achievements[achievement_id]
 	ach["current_value"] += value
 	if ach["target_value"] > 0:
 		ach["completion_progress"] = float(ach["current_value"]) / float(ach["target_value"])
@@ -83,13 +83,13 @@ func update_progress(achievement_id: String, value: int) -> void:
 func unlock_achievement(achievement_id: String) -> void:
 	if not _achievements.has(achievement_id):
 		return
-	var ach := _achievements[achievement_id]
+	var ach: Dictionary = _achievements[achievement_id]
 	if ach["is_unlocked"]:
 		return
 	ach["is_unlocked"] = true
 	_unlocked_ids.append(achievement_id)
 	achievement_unlocked.emit(achievement_id)
-	GD.print("[AchievementManager] Unlocked: %s" % ach["name"])
+	print("[AchievementManager] Unlocked: %s" % ach["name"])
 
 func is_unlocked(achievement_id: String) -> bool:
 	return achievement_id in _unlocked_ids

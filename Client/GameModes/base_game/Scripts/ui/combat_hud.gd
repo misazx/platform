@@ -385,19 +385,19 @@ func _connect_signals() -> void:
 	pass
 
 func _on_draw_pile_clicked() -> void:
-	GD.print("[CombatHUD] 📥 抽牌堆点击")
+	print("[CombatHUD] 📥 抽牌堆点击")
 	show_pile_view_requested.emit("抽牌堆")
 
 func _on_discard_pile_clicked() -> void:
-	GD.print("[CombatHUD] 📤 弃牌堆点击")
+	print("[CombatHUD] 📤 弃牌堆点击")
 	show_pile_view_requested.emit("弃牌堆")
 
 func _on_end_turn_clicked() -> void:
 	if _is_processing or not _is_player_turn:
-		GD.print("[CombatHUD] ⏳ 无法操作 - 正在处理中")
+		print("[CombatHUD] ⏳ 无法操作 - 正在处理中")
 		return
 
-	GD.print("[CombatHUD] ⚔️ 结束回合按钮点击")
+	print("[CombatHUD] ⚔️ 结束回合按钮点击")
 	set_phase(false)
 	end_turn.emit()
 
@@ -457,7 +457,7 @@ func set_floor_number(floor_num: int) -> void:
 
 func _on_card_pressed(card) -> void:
 	if _is_processing or not _is_player_turn:
-		GD.print("[CombatHUD] ⏳ 无法出牌 - 不是你的回合")
+		print("[CombatHUD] ⏳ 无法出牌 - 不是你的回合")
 		return
 
 	var card_data = card.card_data if card.has_method("get") else null
@@ -466,8 +466,8 @@ func _on_card_pressed(card) -> void:
 	var cost: int = card_data.get("cost", 1)
 	if _current_energy >= cost:
 		var type: int = card_data.get("type", 0)
-	var needs_target := type == 0
-	if needs_target and _enemies_ui.size() > 1:
+		var needs_target := type == 0
+		if needs_target and _enemies_ui.size() > 1:
 		var alive_count := 0
 		for eui in _enemies_ui:
 			if not eui.is_dead:
@@ -475,36 +475,36 @@ func _on_card_pressed(card) -> void:
 		if alive_count <= 1:
 			var target_idx := _find_first_alive_enemy()
 			if target_idx >= 0:
-				GD.print("[CombatHUD] 🃏 出牌: %s (费用:%d) -> 敌人%d" % [card_data.get("name", ""), cost, target_idx])
+				print("[CombatHUD] 🃏 出牌: %s (费用:%d) -> 敌人%d" % [card_data.get("name", ""), cost, target_idx])
 				show_card_play_animation(card_data, target_idx)
 				card_played_with_target.emit(card_data.get("id", ""), target_idx)
 			else:
-				GD.print("[CombatHUD] ❌ 没有存活敌人")
+				print("[CombatHUD] ❌ 没有存活敌人")
 			return
 		_is_selecting_target = true
 		_pending_card = card
 		_phase_label.text = "选择目标"
 		_phase_label.modulate = Color(1, 0.5, 0.2)
 		_highlight_enemies(true)
-		GD.print("[CombatHUD] 🎯 Select target for: %s" % card_data.get("name", ""))
+		print("[CombatHUD] 🎯 Select target for: %s" % card_data.get("name", ""))
 	else:
 		var target_idx := _find_first_alive_enemy() if needs_target else -1
 		if needs_target and target_idx < 0:
-			GD.print("[CombatHUD] ❌ 没有存活敌人")
+			print("[CombatHUD] ❌ 没有存活敌人")
 			return
-		GD.print("[CombatHUD] 🃏 出牌: %s (费用:%d)" % [card_data.get("name", ""), cost])
+		print("[CombatHUD] 🃏 出牌: %s (费用:%d)" % [card_data.get("name", ""), cost])
 		show_card_play_animation(card_data, target_idx)
 		if target_idx >= 0:
 			card_played_with_target.emit(card_data.get("id", ""), target_idx)
 		else:
 			card_played.emit(card_data.get("id", ""))
 	else:
-		GD.print("[CombatHUD] ❌ 能量不足: %s 需要%d点, 当前%d点" % [card_data.get("name", ""), cost, _current_energy])
+		print("[CombatHUD] ❌ 能量不足: %s 需要%d点, 当前%d点" % [card_data.get("name", ""), cost, _current_energy])
 
 func _on_enemy_clicked(enemy_index: int) -> void:
 	if _is_selecting_target and _pending_card != null:
 		if enemy_index >= 0 and enemy_index < _enemies_ui.size() and _enemies_ui[enemy_index].is_dead:
-			GD.print("[CombatHUD] ❌ 不能选择已死亡的敌人")
+			print("[CombatHUD] ❌ 不能选择已死亡的敌人")
 			return
 		var card = _pending_card
 		_is_selecting_target = false
@@ -512,7 +512,7 @@ func _on_enemy_clicked(enemy_index: int) -> void:
 		_highlight_enemies(false)
 		_phase_label.text = "你的回合"
 		_phase_label.modulate = Color(0.5, 0.9, 0.5)
-		GD.print("[CombatHUD] 🎯 Target selected: enemy %d" % enemy_index)
+		print("[CombatHUD] 🎯 Target selected: enemy %d" % enemy_index)
 		var card_data = card.card_data if card.card_data else {}
 		show_card_play_animation(card_data, enemy_index)
 		card_played_with_target.emit(card_data.get("id", "") if card.card_data else "", enemy_index)

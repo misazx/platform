@@ -1,4 +1,4 @@
-class_name CardDatabase extends Node
+extends Node
 
 enum CardType { ATTACK, SKILL, POWER, STATUS, CURSE }
 enum CardRarity { BASIC, COMMON, UNCOMMON, RARE, SPECIAL }
@@ -9,7 +9,7 @@ signal card_registered(card_id: String)
 var _cards: Dictionary = {}
 var _character_cards: Dictionary = {}
 var _type_cards: Dictionary = {}
-static var instance: CardDatabase = null
+static var instance: Node = null
 
 func _ready() -> void:
 	if instance != null and instance != self:
@@ -21,14 +21,14 @@ func _ready() -> void:
 func _load_cards_from_config() -> void:
 	var config := ConfigLoader.load_config("cards")
 	if config == null or not config.has("cards"):
-		GD.printerr("[CardDatabase] Failed to load cards config!")
+		push_error("[CardDatabase] Failed to load cards config!")
 		return
 	
 	for card_config in config.cards:
 		var card_data := _convert_config_to_data(card_config)
 		register_card(card_data)
 	
-	GD.print("[CardDatabase] Loaded %d cards from config" % _cards.size())
+	print("[CardDatabase] Loaded %d cards from config" % _cards.size())
 
 func _convert_config_to_data(config: Dictionary) -> Dictionary:
 	return {

@@ -1,7 +1,7 @@
+extends Node
 enum RelicTier { STARTER, COMMON, UNCOMMON, RARE, BOSS, SPECIAL, SHOP }
 enum RelicType { PASSIVE, ACTIVE, CONSUMABLE }
 
-class_name RelicDatabase extends Node
 
 signal relic_collected(relic_id: String)
 
@@ -14,7 +14,7 @@ func _ready() -> void:
 func load_relics_from_config() -> void:
 	var config := ConfigLoader.load_config("relics")
 	if config.is_empty():
-		GD.printerr("[RelicDatabase] Failed to load relics config!")
+		push_error("[RelicDatabase] Failed to load relics config!")
 		return
 
 	if not config.has("relics"):
@@ -24,7 +24,7 @@ func load_relics_from_config() -> void:
 		var relic_data := convert_config_to_data(relic_cfg)
 		register_relic(relic_data)
 
-	GD.print("[RelicDatabase] Loaded %d relics from config (version: %s)" % [_relics.size(), config.get("version", "")])
+	print("[RelicDatabase] Loaded %d relics from config (version: %s)" % [_relics.size(), config.get("version", "")])
 
 func convert_config_to_data(cfg: Dictionary) -> Dictionary:
 	return {

@@ -1,5 +1,4 @@
-class_name LootSystem extends Node
-
+extends Node
 signal loot_dropped(position: Vector2, item_ids: PackedStringArray)
 
 @export var global_drop_chance: float = 0.3
@@ -47,7 +46,7 @@ func load_loot_tables() -> void:
 		]
 	})
 
-	GD.print("[LootSystem] Loaded %d loot tables" % _loot_tables.size())
+	print("[LootSystem] Loaded %d loot tables" % _loot_tables.size())
 
 func register_loot_table(table: Dictionary) -> void:
 	_loot_tables[table["id"]] = table
@@ -60,7 +59,7 @@ func get_loot_table(table_id: String) -> Dictionary:
 func generate_loot(table_id: String, luck_modifier: float = 0.0) -> Array:
 	var table := get_loot_table(table_id)
 	if table.is_empty():
-		GD.printerr("[LootSystem] Loot table not found: %s" % table_id)
+		push_error("[LootSystem] Loot table not found: %s" % table_id)
 		return []
 
 	var drops := []
@@ -81,7 +80,7 @@ func generate_loot(table_id: String, luck_modifier: float = 0.0) -> Array:
 		var count := randi_range(selected.get("min_count", 1), selected.get("max_count", 1))
 		drops.append({"item_id": selected["item_id"], "count": count})
 
-	GD.print("[LootSystem] Generated %d items from %s" % [drops.size(), table_id])
+	print("[LootSystem] Generated %d items from %s" % [drops.size(), table_id])
 	return drops
 
 func select_weighted_entry(entries: Array, total_weight: float) -> Dictionary:
@@ -102,7 +101,7 @@ func drop_loot_at_position(table_id: String, position: Vector2, luck_modifier: f
 			drop_ids.append(drop["item_id"])
 
 	loot_dropped.emit(position, drop_ids)
-	GD.print("[LootSystem] Dropped %d items at %s" % [drops.size(), position])
+	print("[LootSystem] Dropped %d items at %s" % [drops.size(), position])
 
 func drop_loot_from_enemy(table_id: String, enemy: Node, luck_modifier: float = 0.0) -> void:
 	if enemy == null:

@@ -1,7 +1,7 @@
+extends Node
+
 enum ItemRarity { COMMON, UNCOMMON, RARE, EPIC, LEGENDARY }
 enum ItemType { WEAPON, ARMOR, CONSUMABLE, PASSIVE, ACTIVE }
-
-class_name ItemManager extends Node
 
 signal item_obtained(item_id: String)
 signal item_used(item_id: String)
@@ -21,27 +21,27 @@ func initialize_item_pool() -> void:
 		{"id": "steel_armor", "name": "钢甲", "type": ItemType.ARMOR, "rarity": ItemRarity.RARE, "icon_path": ""},
 		{"id": "legendary_weapon", "name": "传说武器", "type": ItemType.WEAPON, "rarity": ItemRarity.LEGENDARY, "icon_path": ""}
 	]
-	GD.print("[ItemManager] Initialized with %d items in pool" % _item_pool.size())
+	print("[ItemManager] Initialized with %d items in pool" % _item_pool.size())
 
 func get_item_data(item_id: String) -> Dictionary:
-	for item in _item_pool:
+	for item: Dictionary in _item_pool:
 		if item["id"] == item_id:
 			return item
 	return {}
 
 func spawn_item(item_id: String, position: Vector2) -> void:
-	var data := get_item_data(item_id)
+	var data: Dictionary = get_item_data(item_id)
 	if not data.is_empty():
 		item_obtained.emit(item_id)
-		GD.print("[ItemManager] Spawned item: %s at %s" % [item_id, position])
+		print("[ItemManager] Spawned item: %s at %s" % [item_id, position])
 
 func add_item_to_inventory(item_id: String) -> bool:
-	var data := get_item_data(item_id)
+	var data: Dictionary = get_item_data(item_id)
 	if data.is_empty():
 		return false
 	_items[item_id] = data
 	item_obtained.emit(item_id)
-	GD.print("[ItemManager] Added to inventory: %s" % item_id)
+	print("[ItemManager] Added to inventory: %s" % item_id)
 	return true
 
 func remove_item(item_id: String) -> void:
@@ -54,8 +54,8 @@ func has_item(item_id: String) -> bool:
 	return _items.has(item_id)
 
 func get_random_item(rarity: int = -1) -> Dictionary:
-	var candidates := []
-	for item in _item_pool:
+	var candidates: Array = []
+	for item: Dictionary in _item_pool:
 		if rarity < 0 or item["rarity"] == rarity:
 			candidates.append(item)
 	if candidates.is_empty():

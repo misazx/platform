@@ -1,6 +1,6 @@
-enum AchievementType { PROGRESSION, COMBAT, COLLECTION, CHALLENGE, SECRET }
+extends Node
 
-class_name AchievementSystem extends Node
+enum AchievementType { PROGRESSION, COMBAT, COLLECTION, CHALLENGE, SECRET }
 
 signal achievement_unlocked(achievement_id: String)
 signal achievement_progress_updated(achievement_id: String, progress: float)
@@ -78,7 +78,7 @@ func initialize_achievements() -> void:
 		"completion_progress": 0.0
 	})
 
-	GD.print("[AchievementSystem] Initialized with %d achievements" % _achievements.size())
+	print("[AchievementSystem] Initialized with %d achievements" % _achievements.size())
 
 func register_achievement(achievement: Dictionary) -> void:
 	_achievements[achievement["id"]] = achievement
@@ -96,15 +96,15 @@ func get_all_achievements() -> Array:
 	return _achievements.values()
 
 func get_unlocked_achievements() -> Array:
-	var result := []
-	for ach in _achievements.values():
+	var result: Array = []
+	for ach: Dictionary in _achievements.values():
 		if ach["is_unlocked"]:
 			result.append(ach)
 	return result
 
 func get_locked_achievements() -> Array:
-	var result := []
-	for ach in _achievements.values():
+	var result: Array = []
+	for ach: Dictionary in _achievements.values():
 		if not ach["is_unlocked"] and not ach["is_hidden"]:
 			result.append(ach)
 	return result
@@ -113,8 +113,8 @@ func update_progress(achievement_id: String, value: int) -> void:
 	if not _achievements.has(achievement_id):
 		return
 
-	var ach := _achievements[achievement_id]
-	ach["current_value"] += value
+	var ach: Dictionary = _achievements[achievement_id]
+	ach["current_value"] = ach["current_value"] + value
 	if ach["target_value"] > 0:
 		ach["completion_progress"] = float(ach["current_value"]) / float(ach["target_value"])
 	else:
@@ -129,14 +129,14 @@ func unlock_achievement(achievement_id: String) -> void:
 	if not _achievements.has(achievement_id):
 		return
 
-	var ach := _achievements[achievement_id]
+	var ach: Dictionary = _achievements[achievement_id]
 	if ach["is_unlocked"]:
 		return
 
 	ach["is_unlocked"] = true
 	ach["unlock_time"] = Time.get_datetime_string_from_system()
 	achievement_unlocked.emit(achievement_id)
-	GD.print("[AchievementSystem] Unlocked: %s" % ach["name"])
+	print("[AchievementSystem] Unlocked: %s" % ach["name"])
 
 func record_run(run_stats: Dictionary) -> void:
 	_run_history.append(run_stats)
@@ -148,7 +148,7 @@ func record_run(run_stats: Dictionary) -> void:
 	run_completed.emit(run_stats.get("character_id", ""))
 
 func get_run_history(count: int = 10) -> Array:
-	var start := maxi(0, _run_history.size() - count)
+	var start: int = maxi(0, _run_history.size() - count)
 	return _run_history.slice(start, mini(count, _run_history.size() - start))
 
 func get_total_runs() -> int:

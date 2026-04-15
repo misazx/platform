@@ -1,6 +1,6 @@
+extends Node
 enum EventType { CHOICE, COMBAT, SHOP, REST, TREASURE, SPECIAL, CURSE }
 
-class_name EventDatabase extends Node
 
 signal event_triggered(event_id: String)
 
@@ -13,7 +13,7 @@ func _ready() -> void:
 func load_events_from_config() -> void:
 	var config := ConfigLoader.load_config("events")
 	if config.is_empty():
-		GD.printerr("[EventDatabase] Failed to load events config!")
+		push_error("[EventDatabase] Failed to load events config!")
 		return
 
 	if not config.has("events"):
@@ -23,7 +23,7 @@ func load_events_from_config() -> void:
 		var event_data := convert_config_to_data(event_cfg)
 		register_event(event_data)
 
-	GD.print("[EventDatabase] Loaded %d events from config (version: %s)" % [_events.size(), config.get("version", "")])
+	print("[EventDatabase] Loaded %d events from config (version: %s)" % [_events.size(), config.get("version", "")])
 
 func convert_config_to_data(cfg: Dictionary) -> Dictionary:
 	var choices := []

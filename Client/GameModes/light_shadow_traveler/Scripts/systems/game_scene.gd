@@ -104,7 +104,7 @@ func _build_level(data: Dictionary) -> void:
 		level_root.add_child(enemy)
 	var fragments: Array = data.get("fragments", []) as Array
 	for i in range(fragments.size()):
-		var f_data := fragments[i] as Dictionary
+		var f_data: Dictionary = fragments[i] as Dictionary
 		var fragment := MemoryFragment.new()
 		fragment.position = Vector2(f_data.get("x", 0), f_data.get("y", 0))
 		fragment.fragment_id = level_root.name + "_frag_" + str(i)

@@ -1,4 +1,3 @@
-class_name StsCardDatabase
 
 enum CardType { ATTACK, SKILL, POWER }
 enum CardRarity { BASIC, COMMON, UNCOMMON, RARE, SPECIAL }
@@ -189,7 +188,7 @@ func get_starter_deck() -> Array:
 	return deck
 
 func get_random_reward_cards(count: int, rng: RandomNumberGenerator) -> Array:
-	var pool := _all_cards.values().duplicate()
+	var pool: Array = _all_cards.values().duplicate()
 	pool.shuffle()
 	var result := []
 	for i in range(mini(count, pool.size())):

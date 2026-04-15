@@ -21,7 +21,7 @@ var _dash_direction := Vector2.ZERO
 func _ready() -> void:
 	current_health = max_health
 	health_changed.emit(current_health, max_health)
-	GD.print("[Player] Ready with %d/%d HP" % [current_health, max_health])
+	print("[Player] Ready with %d/%d HP" % [current_health, max_health])
 
 func _physics_process(delta: float) -> void:
 	var dt := delta
@@ -67,14 +67,14 @@ func dash(direction: Vector2) -> void:
 	_dash_direction = direction.normalized()
 	_dash_timer = dash_duration
 	_dash_cooldown_timer = dash_cooldown
-	GD.print("[Player] Dashing!")
+	print("[Player] Dashing!")
 
 func take_damage(amount: int) -> void:
 	if is_invincible:
 		return
 	current_health = maxi(0, current_health - amount)
 	health_changed.emit(current_health, max_health)
-	GD.print("[Player] Took %d damage! HP: %d/%d" % [amount, current_health, max_health])
+	print("[Player] Took %d damage! HP: %d/%d" % [amount, current_health, max_health])
 	if current_health <= 0:
 		die()
 
@@ -84,7 +84,7 @@ func heal(amount: int) -> void:
 
 func die() -> void:
 	died.emit()
-	GD.print("[Player] Died!")
+	print("[Player] Died!")
 
 func get_defense() -> int:
 	return defense

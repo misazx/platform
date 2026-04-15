@@ -1,5 +1,4 @@
-class_name SaveSystem extends Node
-
+extends Node
 signal game_saved(slot: int)
 signal game_loaded(slot: int)
 
@@ -27,18 +26,18 @@ func save_game(slot: int, game_data: Dictionary) -> bool:
 	var json_str := JSON.stringify(game_data, "\t")
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
-		GD.printerr("[SaveSystem] Failed to open save file: %s" % path)
+		push_error("[SaveSystem] Failed to open save file: %s" % path)
 		return false
 	file.store_string(json_str)
 	file.close()
 	game_saved.emit(slot)
-	GD.print("[SaveSystem] Game saved to slot %d" % slot)
+	print("[SaveSystem] Game saved to slot %d" % slot)
 	return true
 
 func load_game(slot: int) -> Dictionary:
 	var path := SAVE_PATH + "save_%d.json" % slot
 	if not FileAccess.file_exists(path):
-		GD.printerr("[SaveSystem] Save file not found: %s" % path)
+		push_error("[SaveSystem] Save file not found: %s" % path)
 		return {}
 
 	var file := FileAccess.open(path, FileAccess.READ)
@@ -50,12 +49,12 @@ func load_game(slot: int) -> Dictionary:
 	var json := JSON.new()
 	var error := json.parse(json_str)
 	if error != OK:
-		GD.printerr("[SaveSystem] Error parsing save file: %s" % json.get_error_message())
+		push_error("[SaveSystem] Error parsing save file: %s" % json.get_error_message())
 		return {}
 
 	_current_game_data = json.get_data()
 	game_loaded.emit(slot)
-	GD.print("[SaveSystem] Game loaded from slot %d" % slot)
+	print("[SaveSystem] Game loaded from slot %d" % slot)
 	return _current_game_data
 
 func has_save(slot: int) -> bool:
@@ -65,7 +64,7 @@ func delete_save(slot: int) -> bool:
 	var path := SAVE_PATH + "save_%d.json" % slot
 	if FileAccess.file_exists(path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
-		GD.print("[SaveSystem] Deleted save slot %d" % slot)
+		print("[SaveSystem] Deleted save slot %d" % slot)
 		return true
 	return false
 

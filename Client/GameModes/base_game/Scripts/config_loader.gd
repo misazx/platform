@@ -1,4 +1,4 @@
-class_name ConfigLoader
+extends Node
 
 const CONFIG_DATA_PATH := "res://GameModes/base_game/Config/Data/"
 const CONFIG_COMPILED_PATH := "res://GameModes/base_game/Config/Compiled/"
@@ -35,12 +35,12 @@ static func load_config(config_name: String) -> Dictionary:
 static func load_from_json(config_name: String) -> Dictionary:
 	var path := CONFIG_DATA_PATH + config_name + JSON_EXTENSION
 	if not ResourceLoader.exists(path):
-		GD.printerr("[ConfigLoader] JSON config not found: %s" % path)
+		push_error("[ConfigLoader] JSON config not found: %s" % path)
 		return {}
 
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
-		GD.printerr("[ConfigLoader] Failed to open JSON file: %s" % path)
+		push_error("[ConfigLoader] Failed to open JSON file: %s" % path)
 		return {}
 
 	var json_content := file.get_as_text()
@@ -49,12 +49,12 @@ static func load_from_json(config_name: String) -> Dictionary:
 	var json := JSON.new()
 	var error := json.parse(json_content)
 	if error != OK:
-		GD.printerr("[ConfigLoader] Error parsing JSON config %s: %s" % [config_name, json.get_error_message()])
+		push_error("[ConfigLoader] Error parsing JSON config %s: %s" % [config_name, json.get_error_message()])
 		return {}
 
 	var data := json.get_data()
 	if data is Dictionary:
-		GD.print("[ConfigLoader] Loaded JSON config: %s" % config_name)
+		print("[ConfigLoader] Loaded JSON config: %s" % config_name)
 		return data
 
 	return {}
@@ -82,7 +82,7 @@ static func load_from_bytes(config_name: String) -> Dictionary:
 
 	var data := json.get_data()
 	if data is Dictionary:
-		GD.print("[ConfigLoader] Loaded bytes config: %s" % config_name)
+		print("[ConfigLoader] Loaded bytes config: %s" % config_name)
 		return data
 
 	return {}
@@ -92,7 +92,7 @@ static func compile_config_to_bytes(config_name: String) -> bool:
 	var bytes_path := CONFIG_COMPILED_PATH + config_name + BYTES_EXTENSION
 
 	if not ResourceLoader.exists(json_path):
-		GD.printerr("[ConfigLoader] Source JSON not found: %s" % json_path)
+		push_error("[ConfigLoader] Source JSON not found: %s" % json_path)
 		return false
 
 	var json_file := FileAccess.open(json_path, FileAccess.READ)
@@ -110,7 +110,7 @@ static func compile_config_to_bytes(config_name: String) -> bool:
 	bytes_file.store_buffer(compressed)
 	bytes_file.close()
 
-	GD.print("[ConfigLoader] Compiled config to bytes: %s (%d bytes)" % [config_name, compressed.size()])
+	print("[ConfigLoader] Compiled config to bytes: %s (%d bytes)" % [config_name, compressed.size()])
 	return true
 
 static func compile_all_configs() -> bool:
@@ -120,7 +120,7 @@ static func compile_all_configs() -> bool:
 		if compile_config_to_bytes(name):
 			success_count += 1
 
-	GD.print("[ConfigLoader] Compiled %d/%d configs" % [success_count, config_names.size()])
+	print("[ConfigLoader] Compiled %d/%d configs" % [success_count, config_names.size()])
 	return success_count == config_names.size()
 
 static func compress_string(text: String) -> PackedByteArray:
@@ -134,10 +134,10 @@ static func decompress_buffer(data: PackedByteArray) -> String:
 
 static func clear_cache() -> void:
 	_config_cache.clear()
-	GD.print("[ConfigLoader] Cache cleared")
+	print("[ConfigLoader] Cache cleared")
 
 static func validate_config(config: Dictionary) -> bool:
 	if config.is_empty():
-		GD.printerr("[ConfigLoader] Config validation failed: config is empty")
+		push_error("[ConfigLoader] Config validation failed: config is empty")
 		return false
 	return true

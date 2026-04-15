@@ -1,4 +1,4 @@
-class_name StsRelicSystem
+class_name StsRelicSystem extends Node
 
 enum RelicRarity { COMMON, UNCOMMON, RARE, BOSS, SPECIAL }
 enum RelicTrigger { ON_COMBAT_START, ON_COMBAT_END, ON_TURN_START, ON_TURN_END, ON_CARD_PLAYED, ON_ATTACK, ON_DAMAGE_DEALT, ON_DAMAGE_TAKEN, ON_KILL, ON_PICKUP, ON_REST, ON_CHEST_OPEN }
@@ -39,7 +39,7 @@ static func create_burning_blood() -> RelicData:
 	relic.on_combat_end = func(engine):
 		var heal := mini(6, engine.player.max_hp - engine.player.current_hp)
 		engine.player.current_hp += heal
-		GD.print("[Relic] Burning Blood healed %d HP" % heal)
+		print("[Relic] Burning Blood healed %d HP" % heal)
 	return relic
 
 static func create_anchor() -> RelicData:
@@ -47,7 +47,7 @@ static func create_anchor() -> RelicData:
 	relic.rarity = RelicRarity.COMMON
 	relic.on_combat_start = func(engine):
 		engine.player.block += 10
-		GD.print("[Relic] Anchor granted 10 block")
+		print("[Relic] Anchor granted 10 block")
 	return relic
 
 static func create_lantern() -> RelicData:
@@ -55,7 +55,7 @@ static func create_lantern() -> RelicData:
 	relic.rarity = RelicRarity.COMMON
 	relic.on_combat_start = func(engine):
 		engine.player.energy += 1
-		GD.print("[Relic] Lantern granted +1 energy")
+		print("[Relic] Lantern granted +1 energy")
 	return relic
 
 static func create_bag_of_preparation() -> RelicData:
@@ -64,7 +64,7 @@ static func create_bag_of_preparation() -> RelicData:
 	relic.on_turn_start = func(engine):
 		if engine.turn_number <= 2:
 			engine.draw_cards(2)
-			GD.print("[Relic] Bag of Preparation drew 2 extra cards")
+			print("[Relic] Bag of Preparation drew 2 extra cards")
 	return relic
 
 static func create_vajra() -> RelicData:
@@ -72,14 +72,14 @@ static func create_vajra() -> RelicData:
 	relic.rarity = RelicRarity.COMMON
 	relic.on_combat_start = func(engine):
 		engine.player.strength += 1
-		GD.print("[Relic] Vajra granted +1 Strength")
+		print("[Relic] Vajra granted +1 Strength")
 	return relic
 
 static func create_odd_mushroom() -> RelicData:
 	var relic := RelicData.new("Odd_Mushroom", "奇怪蘑菇", "受到的脆弱效果降低 25%（50% → 25%）。")
 	relic.rarity = RelicRarity.UNCOMMON
 	relic.on_damage_taken = func(engine, damage):
-		GD.print("[Relic] Odd Mushroom reduces Vulnerable damage")
+		print("[Relic] Odd Mushroom reduces Vulnerable damage")
 	return relic
 
 static func create_shuriken() -> RelicData:
@@ -87,7 +87,7 @@ static func create_shuriken() -> RelicData:
 	relic.rarity = RelicRarity.UNCOMMON
 	relic.on_card_played = func(engine, card):
 		if card.type == CardDatabase.CardType.ATTACK:
-			GD.print("[Relic] Shuriken tracks attack cards")
+			print("[Relic] Shuriken tracks attack cards")
 	return relic
 
 static func create_orichalcum() -> RelicData:
@@ -96,7 +96,7 @@ static func create_orichalcum() -> RelicData:
 	relic.on_turn_end = func(engine):
 		if engine.player.block == 0:
 			engine.player.block = 6
-			GD.print("[Relic] Orichalcum granted 6 block")
+			print("[Relic] Orichalcum granted 6 block")
 	return relic
 
 static func create_dead_branch() -> RelicData:
@@ -104,7 +104,7 @@ static func create_dead_branch() -> RelicData:
 	relic.rarity = RelicRarity.RARE
 	relic.on_card_played = func(engine, card):
 		if card.exhaust:
-			GD.print("[Relic] Dead Branch adds random card on Exhaust")
+			print("[Relic] Dead Branch adds random card on Exhaust")
 	return relic
 
 static func create_runic_cube() -> RelicData:
@@ -113,7 +113,7 @@ static func create_runic_cube() -> RelicData:
 	relic.on_damage_taken = func(engine, damage):
 		if damage > 0:
 			engine.draw_cards(1)
-			GD.print("[Relic] Runic Cube drew 1 card on damage")
+			print("[Relic] Runic Cube drew 1 card on damage")
 	return relic
 
 
@@ -151,14 +151,14 @@ func add_relic(id: String) -> void:
 	if relic != null and not _owned_relics.has(relic):
 		_owned_relics.append(relic)
 		relic_added.emit(id)
-		GD.print("[RelicManager] Acquired: %s" % relic.name)
+		print("[RelicManager] Acquired: %s" % relic.name)
 
 func remove_relic(id: String) -> void:
 	var relic := get_relic(id)
 	if relic != null:
 		_owned_relics.erase(relic)
 		relic_removed.emit(id)
-		GD.print("[RelicManager] Lost: %s" % relic.name)
+		print("[RelicManager] Lost: %s" % relic.name)
 
 func get_owned_relics() -> Array:
 	return _owned_relics.duplicate()
