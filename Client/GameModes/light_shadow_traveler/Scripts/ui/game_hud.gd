@@ -265,7 +265,9 @@ func _make_heart_texture(filled: bool) -> ImageTexture:
 	if ResourceLoader.exists(heart_path):
 		var tex: Texture2D = load(heart_path) as Texture2D
 		if tex:
-			return ImageTexture.create_from_image(tex.get_image())
+			var img: Image = tex.get_image()
+			img.resize(24, 24, Image.INTERPOLATE_LANCZOS)
+			return ImageTexture.create_from_image(img)
 	var img := Image.create(24, 24, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
 	var color: Color = Color(0.9, 0.2, 0.3) if filled else Color(0.3, 0.3, 0.3, 0.5)

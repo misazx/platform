@@ -132,6 +132,7 @@ func _create_player_sprite() -> void:
 		var tex: Texture2D = load(form_path) as Texture2D
 		if tex:
 			sprite.texture = tex
+			sprite.scale = Vector2(0.2, 0.2)
 			return
 	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
@@ -329,8 +330,8 @@ func _move(_delta: float) -> void:
 	var input_dir: float = Input.get_axis("move_left", "move_right")
 	velocity.x = input_dir * speed
 	if input_dir != 0:
-		sprite.flip_h = input_dir < 0
-		facing_right = input_dir > 0
+		sprite.flip_h = input_dir > 0
+		facing_right = input_dir < 0
 	move_and_slide()
 
 func _update_coyote_time() -> void:
@@ -372,6 +373,7 @@ func _create_glow_texture(color: Color) -> Texture2D:
 	return ImageTexture.create_from_image(img)
 
 func _update_visuals(delta: float) -> void:
+	modulate.a = 1.0
 	if is_invincible:
 		modulate.a = 0.5 + sin(Engine.get_frames_drawn() * 0.5) * 0.3
 	if is_glidering:
@@ -381,7 +383,7 @@ func _update_visuals(delta: float) -> void:
 	if glow and not is_stealthing:
 		glow.energy = (1.2 if current_form == Form.LIGHT else 0.6) + _glow_intensity * 0.5
 	if is_dashing:
-		modulate.a = 0.7
+		pass
 
 func _update_dash_trail(delta: float) -> void:
 	if not is_dashing:

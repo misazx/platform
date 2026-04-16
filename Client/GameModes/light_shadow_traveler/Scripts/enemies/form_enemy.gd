@@ -52,6 +52,8 @@ func _setup_visuals() -> void:
 		var tex: Texture2D = load(enemy_path) as Texture2D
 		if tex:
 			sprite.texture = tex
+			var target_size := 40.0 if is_boss else 32.0
+			sprite.scale = Vector2(target_size / tex.get_width(), target_size / tex.get_height())
 			return
 	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))

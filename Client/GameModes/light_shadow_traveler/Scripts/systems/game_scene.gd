@@ -199,8 +199,8 @@ func _build_level(data: Dictionary) -> void:
 		if ResourceLoader.exists(goal_path):
 			var goal_tex: Texture2D = load(goal_path) as Texture2D
 			if goal_tex:
-				goal_sprite.texture = goal_tex
-				goal_sprite.scale = Vector2(40.0 / goal_tex.get_width(), 60.0 / goal_tex.get_height())
+			goal_sprite.texture = goal_tex
+			goal_sprite.scale = Vector2(50.0 / goal_tex.get_width(), 70.0 / goal_tex.get_height())
 		if goal_sprite.texture == null:
 			var goal_img := Image.create(40, 60, false, Image.FORMAT_RGBA8)
 			goal_img.fill(Color(0, 0, 0, 0))

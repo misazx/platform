@@ -53,13 +53,17 @@ func _setup_platform() -> void:
 			_original_color = Color(0.25, 0.28, 0.5, 0.9)
 			plat_path = "res://GameModes/light_shadow_traveler/Resources/Platforms/shadow_platform.png"
 	if plat_path != "" and ResourceLoader.exists(plat_path):
-		var plat_sprite := Sprite2D.new()
-		plat_sprite.name = "PlatformSprite"
 		var tex: Texture2D = load(plat_path) as Texture2D
 		if tex:
-			plat_sprite.texture = tex
-			plat_sprite.scale = Vector2(platform_width / tex.get_width(), platform_height / tex.get_height())
-			add_child(plat_sprite)
+			tex.set_flags(Texture2D.FLAG_REPEAT)
+			var plat_visual := TextureRect.new()
+			plat_visual.name = "PlatformSprite"
+			plat_visual.texture = tex
+			plat_visual.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			plat_visual.size = Vector2(platform_width, platform_height)
+			plat_visual.position = Vector2(-platform_width / 2, -platform_height / 2)
+			plat_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			add_child(plat_visual)
 			visual.visible = false
 	if not glow:
 		glow = PointLight2D.new()
@@ -86,14 +90,14 @@ func _update_activity() -> void:
 	collision_shape.disabled = not is_active
 
 func _update_visuals() -> void:
-	var plat_sprite: Sprite2D = null
+	var plat_visual: TextureRect = null
 	for child in get_children():
-		if child is Sprite2D and child.name == "PlatformSprite":
-			plat_sprite = child as Sprite2D
+		if child is TextureRect and child.name == "PlatformSprite":
+			plat_visual = child as TextureRect
 			break
-	if plat_sprite:
-		plat_sprite.visible = is_active
-		plat_sprite.modulate.a = 1.0 if is_active else 0.3
+	if plat_visual:
+		plat_visual.visible = is_active
+		plat_visual.modulate.a = 1.0 if is_active else 0.3
 	if visual and visual.visible:
 		if is_active:
 			visual.color = _original_color

@@ -29,6 +29,7 @@ func _setup_visuals() -> void:
 		var tex: Texture2D = load(frag_path) as Texture2D
 		if tex:
 			sprite.texture = tex
+			sprite.scale = Vector2(0.5, 0.5)
 	else:
 		var img := Image.create(24, 24, false, Image.FORMAT_RGBA8)
 		img.fill(Color(0, 0, 0, 0))
