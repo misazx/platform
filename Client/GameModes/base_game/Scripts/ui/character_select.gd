@@ -118,16 +118,44 @@ func _on_confirm_pressed() -> void:
 	if _selected_index >= 0 and _selected_index < _characters.size():
 		var selected_char = _characters[_selected_index]
 		var character_id: String = ""
+		var character_name: String = ""
+		var max_hp: int = 80
+		var starting_gold: int = 99
+		var starting_deck: Array = []
+		var starting_relic: String = ""
+
 		if selected_char is Dictionary:
 			character_id = selected_char.get("id", str(_selected_index))
-		elif "id" in selected_char:
-			character_id = str(selected_char.id)
+			character_name = selected_char.get("name", "")
+			max_hp = int(selected_char.get("max_health", 80))
+			starting_gold = int(selected_char.get("starting_gold", 99))
+			starting_deck = selected_char.get("starting_cards", [])
+			starting_relic = selected_char.get("starting_relic_id", "")
 		else:
-			character_id = str(_selected_index)
-		print("[CharacterSelect] Confirming character: %s" % character_id)
+			if "id" in selected_char: character_id = str(selected_char.id)
+			if "name" in selected_char: character_name = str(selected_char.name)
+			if "max_hp" in selected_char: max_hp = int(selected_char.max_hp)
+			if "starting_gold" in selected_char: starting_gold = int(selected_char.starting_gold)
+			if "starting_deck" in selected_char: starting_deck = selected_char.starting_deck
+			if "starting_relic_id" in selected_char: starting_relic = str(selected_char.starting_relic_id)
+
+		print("[CharacterSelect] Confirming character: %s (%s)" % [character_id, character_name])
 		if AudioManager.has_method("play_button_click"):
 			AudioManager.play_button_click()
+
 		character_selected.emit(character_id)
+
+		var game_manager := get_tree().root.get_node_or_null("/root/Main") as Node
+		if game_manager != null:
+			var deck_strings: PackedStringArray = PackedStringArray()
+			for card_id: String in starting_deck:
+				deck_strings.append(card_id)
+			if game_manager.has_method("SetSelectedCharacter"):
+				game_manager.call("SetSelectedCharacter", character_id, character_name, max_hp, starting_gold, deck_strings, starting_relic)
+			if game_manager.has_method("GoToMap"):
+				game_manager.call("GoToMap")
+		else:
+			get_tree().change_scene_to_file("res://GameModes/base_game/Scenes/MapScene.tscn")
 
 func _on_back_pressed() -> void:
 	print("[CharacterSelect] Back pressed")
@@ -161,7 +189,26 @@ class CharacterCardControl:
 
 	func _init(p_index: int, p_data: Dictionary) -> void:
 		index = p_index
-		data = p_data
+		if p_data is Dictionary:
+			data = p_data
+		else:
+			data = _convert_to_dict(p_data)
+
+	func _convert_to_dict(obj) -> Dictionary:
+		var d: Dictionary = {}
+		if "id" in obj: d["id"] = str(obj.id) if obj.has("id") else str(index)
+		if "name" in obj: d["name"] = str(obj.name)
+		if "description" in obj: d["description"] = str(obj.description)
+		if "max_hp" in obj: d["max_health"] = int(obj.max_hp)
+		if "starting_gold" in obj: d["starting_gold"] = int(obj.starting_gold)
+		if "starting_deck" in obj: d["starting_cards"] = obj.starting_deck
+		if "starting_relic_id" in obj: d["starting_relic_id"] = str(obj.starting_relic_id)
+		if "portrait_path" in obj: d["portrait_path"] = str(obj.portrait_path)
+		if "color" in obj: d["color"] = obj.color
+		if "character" in obj: d["class"] = int(obj.character)
+		if d.is_empty():
+			d = {"id": str(index), "name": "Unknown"}
+		return d
 
 	func _ready() -> void:
 		custom_minimum_size = Vector2(150, 180)
@@ -181,7 +228,7 @@ class CharacterCardControl:
 		style.border_width_right = 2
 		style.border_width_top = 2
 		style.border_width_bottom = 2
-		style.border_color = data.get("color", Color.WHITE)
+		style.border_color = _get_data_color(data)
 		add_theme_stylebox_override("panel", style)
 
 		var vbox := VBoxContainer.new()
@@ -193,7 +240,7 @@ class CharacterCardControl:
 		_portrait_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		_portrait_rect.modulate = Color(0.5, 0.5, 0.5)
 
-		var portrait_path: String = data.get("portrait_path", "")
+		var portrait_path: String = _get_data_portrait(data)
 		if portrait_path != "" and ResourceLoader.exists(portrait_path):
 			_portrait_rect.texture = load(portrait_path)
 			_portrait_rect.modulate = Color.WHITE
@@ -219,7 +266,7 @@ class CharacterCardControl:
 			style.border_width_right = border_width
 			style.border_width_top = border_width
 			style.border_width_bottom = border_width
-			style.border_color = Color.GOLD if selected else data.get("color", Color.WHITE)
+			style.border_color = Color.GOLD if selected else _get_data_color(data)
 
 		if selected:
 			create_tween().tween_property(self, "scale", Vector2(1.05, 1.05), 0.1)
@@ -237,3 +284,22 @@ class CharacterCardControl:
 	func _on_mouse_exited() -> void:
 		if not _selected:
 			create_tween().tween_property(self, "scale", Vector2.ONE, 0.1)
+
+	func _get_data_portrait(d: Dictionary) -> String:
+		if d.has("portrait_path"):
+			var v = d["portrait_path"]
+			if v is String: return v
+		if d.has("portraitPath"):
+			var v2 = d["portraitPath"]
+			if v2 is String: return v2
+		return ""
+
+	func _get_data_color(d: Dictionary) -> Color:
+		if d.has("color"):
+			var v = d["color"]
+			if v is Color: return v
+		if d.has("background_color"):
+			var bg: String = str(d["background_color"])
+			if bg.begins_with("#"):
+				return Color.from_string(bg, Color.WHITE)
+		return Color.WHITE

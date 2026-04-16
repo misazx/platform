@@ -10,7 +10,7 @@
       "style": "Aggressive",
       "maxHealth": 80,
       "startingGold": 99,
-      "portraitPath": "res://Images/Characters/Ironclad.png",
+      "portraitPath": "res://GameModes/base_game/Resources/Images/Characters/Ironclad.png",
       "backgroundColor": "#FF4444",
       "startingCards": [
         "strike_ironclad",
@@ -47,7 +47,7 @@
       "style": "Combo",
       "maxHealth": 70,
       "startingGold": 99,
-      "portraitPath": "res://Images/Characters/Silent.png",
+      "portraitPath": "res://GameModes/base_game/Resources/Images/Characters/Silent.png",
       "backgroundColor": "#00AA00",
       "startingCards": [
         "strike_silent",
@@ -84,7 +84,7 @@
       "style": "Control",
       "maxHealth": 75,
       "startingGold": 99,
-      "portraitPath": "res://Images/Characters/Defect.png",
+      "portraitPath": "res://GameModes/base_game/Resources/Images/Characters/Defect.png",
       "backgroundColor": "#4444FF",
       "startingCards": [
         "strike_defect",
@@ -121,7 +121,7 @@
       "style": "Hybrid",
       "maxHealth": 72,
       "startingGold": 99,
-      "portraitPath": "res://Images/Characters/Watcher.png",
+      "portraitPath": "res://GameModes/base_game/Resources/Images/Characters/Watcher.png",
       "backgroundColor": "#AA44FF",
       "startingCards": [
         "strike_watcher",
@@ -158,7 +158,7 @@
       "style": "Aggressive",
       "maxHealth": 68,
       "startingGold": 99,
-      "portraitPath": "res://Images/Characters/Necromancer.png",
+      "portraitPath": "res://GameModes/base_game/Resources/Images/Characters/Necromancer.png",
       "backgroundColor": "#8844AA",
       "startingCards": [
         "strike_necromancer",

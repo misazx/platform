@@ -25,6 +25,31 @@ namespace RoguelikeGame
         public void SetLastClickedNodeType(Generation.NodeType type) => _lastClickedNodeType = type;
         public Generation.NodeType GetLastClickedNodeType() => _lastClickedNodeType;
 
+        private string _selectedCharacterId = "ironclad";
+        private string _selectedCharacterName = "铁甲战士";
+        private int _selectedCharacterMaxHp = 80;
+        private int _selectedCharacterGold = 99;
+        private string[] _selectedCharacterDeck = Array.Empty<string>();
+        private string _selectedCharacterRelic = "";
+
+        public void SetSelectedCharacter(string characterId, string characterName, int maxHp, int gold, string[] deck, string relic)
+        {
+            _selectedCharacterId = characterId;
+            _selectedCharacterName = characterName;
+            _selectedCharacterMaxHp = maxHp;
+            _selectedCharacterGold = gold;
+            _selectedCharacterDeck = deck;
+            _selectedCharacterRelic = relic;
+            GD.Print($"[Main] Selected character: {characterId} ({characterName}), HP={maxHp}, Gold={gold}, Relic={relic}");
+        }
+
+        public string GetSelectedCharacterId() => _selectedCharacterId;
+        public string GetSelectedCharacterName() => _selectedCharacterName;
+        public int GetSelectedCharacterMaxHp() => _selectedCharacterMaxHp;
+        public int GetSelectedCharacterGold() => _selectedCharacterGold;
+        public string[] GetSelectedCharacterDeck() => _selectedCharacterDeck;
+        public string GetSelectedCharacterRelic() => _selectedCharacterRelic;
+
         private Control _lobby;
         private Control _packageSelector;
         private Control _packageDetail;

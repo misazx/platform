@@ -10,6 +10,8 @@ class CharacterData:
 	var starting_relic_id: String = ""
 	var starting_deck: Array = []
 	var description: String = ""
+	var portrait_path: String = ""
+	var color: Color = Color.WHITE
 
 	static func create_ironclad() -> CharacterData:
 		var data := CharacterData.new()
@@ -19,6 +21,8 @@ class CharacterData:
 		data.starting_gold = 99
 		data.starting_relic_id = "Burning_Blood"
 		data.description = "红发的战士，擅长力量和生命回复"
+		data.portrait_path = "res://GameModes/base_game/Resources/Images/Characters/Ironclad.png"
+		data.color = Color(1, 0.27, 0.27)
 		data.starting_deck = ["Strike_R", "Strike_R", "Strike_R", "Strike_R", "Strike_R",
 			"Defend_R", "Defend_R", "Defend_R", "Defend_R", "Bash"]
 		return data
@@ -31,6 +35,8 @@ class CharacterData:
 		data.starting_gold = 99
 		data.starting_relic_id = "Snake_Ring"
 		data.description = "致命的猎人，擅长毒素和防御"
+		data.portrait_path = "res://GameModes/base_game/Resources/Images/Characters/Silent.png"
+		data.color = Color(0, 0.67, 0)
 		data.starting_deck = ["Strike_G", "Strike_G", "Strike_G", "Strike_G", "Strike_G",
 			"Defend_G", "Defend_G", "Defend_G", "Defend_G", "Defend_G", "Survivor"]
 		return data
@@ -43,6 +49,8 @@ class CharacterData:
 		data.starting_gold = 99
 		data.starting_relic_id = "Cracked_Core"
 		data.description = "觉醒的机器人，擅长充能和冰霜"
+		data.portrait_path = "res://GameModes/base_game/Resources/Images/Characters/Defect.png"
+		data.color = Color(0.27, 0.27, 1)
 		data.starting_deck = ["Strike_B", "Strike_B", "Strike_B", "Strike_B",
 			"Defend_B", "Defend_B", "Defend_B", "Defend_B", "Zap", "Dualcast"]
 		return data
@@ -55,6 +63,8 @@ class CharacterData:
 		data.starting_gold = 99
 		data.starting_relic_id = "Holy_Water"
 		data.description = "盲眼的圣女，擅长姿态和预见"
+		data.portrait_path = "res://GameModes/base_game/Resources/Images/Characters/Watcher.png"
+		data.color = Color(0.67, 0.27, 1)
 		data.starting_deck = ["Strike_P", "Strike_P", "Strike_P", "Strike_P",
 			"Defend_P", "Defend_P", "Defend_P", "Defend_P", "Eruption", "Vigilance"]
 		return data
