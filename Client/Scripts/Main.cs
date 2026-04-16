@@ -21,9 +21,11 @@ namespace RoguelikeGame
         private Control _settingsPanel;
         private bool _combatActive = false;
         private Generation.NodeType _lastClickedNodeType = Generation.NodeType.Monster;
-
+        private int _lastClickedNodeId = -1;
         public void SetLastClickedNodeType(Generation.NodeType type) => _lastClickedNodeType = type;
         public Generation.NodeType GetLastClickedNodeType() => _lastClickedNodeType;
+        public void SetLastClickedNodeId(int id) => _lastClickedNodeId = id;
+        public int GetLastClickedNodeId() => _lastClickedNodeId;
 
         private string _selectedCharacterId = "ironclad";
         private string _selectedCharacterName = "铁甲战士";
@@ -396,6 +398,27 @@ namespace RoguelikeGame
 
             _currentScene = mapScene;
             _currentSceneContainer.AddChild(mapScene);
+
+            if (_lastClickedNodeId >= 0)
+            {
+                if (mapScene.HasMethod("mark_node_completed"))
+                {
+                    mapScene.Call("mark_node_completed", _lastClickedNodeId);
+                }
+                else
+                {
+                    var childCount = mapScene.GetChildCount();
+                    for (int i = 0; i < childCount; i++)
+                    {
+                        var child = mapScene.GetChild(i);
+                        if (child.HasMethod("mark_node_completed"))
+                        {
+                            child.Call("mark_node_completed", _lastClickedNodeId);
+                            break;
+                        }
+                    }
+                }
+            }
 
             GD.Print($"[Main] MapScene added to container, child count: {_currentSceneContainer.GetChildCount()}");
             GD.Print("========== [Main] GoToMap() END ==========");

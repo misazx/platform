@@ -315,41 +315,40 @@ func _on_node_clicked(node_ui) -> void:
 		print("[MapView] Node not reachable, ignoring")
 		return
 	
-	_visited_node_ids.append(node_data.id)
-	_persistent_visited.append(node_data.id)
-	_reachable_node_ids.erase(node_data.id)
-	_persistent_reachable.erase(node_data.id)
-	node_data["is_visited"] = true
-	node_data["status"] = 2
-	
-	for cid in node_data.connected_nodes:
-		if not cid in _visited_node_ids:
-			_reachable_node_ids.append(cid)
-			_persistent_reachable.append(cid)
-			for connected in _current_map.nodes:
-				if connected.id == cid and connected.status == 0:
-					connected["status"] = 1
-					break
-	
-	_update_node_visuals()
-	
 	for n in _node_uis:
 		n.highlighted = (n == node_ui)
-	node_selected.emit(node_data)
 	
-	match node_data.type:
+	var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
+	if main_node == null:
+		push_error("[MapView] Main node not found!")
+		return
+	
+	var node_type: int = node_data.type
+	var enemy_id: String = node_data.get("enemy_id", "")
+	
+	main_node.call("SetLastClickedNodeType", node_type)
+	main_node.call("SetLastClickedNodeId", node_data.id)
+	
+	match node_type:
 		1, 2, 7:
-			pass
+			print("[MapView] Entering combat: enemy=%s type=%d" % [enemy_id, node_type])
+			main_node.call("GoToCombat", enemy_id)
 		3:
-			pass
+			print("[MapView] Entering shop")
+			main_node.call("GoToShop")
 		5:
-			pass
+			print("[MapView] Entering rest site")
+			main_node.call("GoToRest")
 		4:
-			pass
+			print("[MapView] Entering event")
+			main_node.call("GoToEvent")
 		6:
-			pass
+			print("[MapView] Entering treasure")
+			main_node.call("GoToTreasure")
 		_:
-			print("[MapView] Node type %d not implemented yet" % node_data.type)
+			print("[MapView] Node type %d not implemented yet" % node_type)
+	
+	node_selected.emit(node_data)
 
 func _update_node_visuals() -> void:
 	for n in _node_uis:
