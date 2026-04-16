@@ -55,7 +55,6 @@ func _setup_platform() -> void:
 	if plat_path != "" and ResourceLoader.exists(plat_path):
 		var tex: Texture2D = load(plat_path) as Texture2D
 		if tex:
-			tex.set_flags(Texture2D.FLAG_REPEAT)
 			var plat_visual := TextureRect.new()
 			plat_visual.name = "PlatformSprite"
 			plat_visual.texture = tex
