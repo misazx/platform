@@ -1,16 +1,20 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY ["RoguelikeGame.Server.csproj", "./"]
-RUN dotnet restore "RoguelikeGame.Server.csproj"
+COPY ["RoguelikeGame.Server/RoguelikeGame.Server.csproj", "RoguelikeGame.Server/"]
+COPY ["RoguelikeGame.Shared/RoguelikeGame.Shared.csproj", "RoguelikeGame.Shared/"]
+RUN dotnet restore "RoguelikeGame.Server/RoguelikeGame.Server.csproj"
 COPY . .
-RUN dotnet publish "RoguelikeGame.Server.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "RoguelikeGame.Server/RoguelikeGame.Server.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-EXPOSE 80
-EXPOSE 443
+EXPOSE 5000
+EXPOSE 5001
+
+ENV ASPNETCORE_URLS=http://0.0.0.0:5000
+ENV ASPNETCORE_ENVIRONMENT=Production
 
 ENTRYPOINT ["dotnet", "RoguelikeGame.Server.dll"]

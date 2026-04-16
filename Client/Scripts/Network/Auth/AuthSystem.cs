@@ -107,14 +107,25 @@ namespace RoguelikeGame.Network.Auth
 
 				var response = await _httpClient.PostAsync("/api/auth/register", content);
 				var responseString = await response.Content.ReadAsStringAsync();
-				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
 
-				bool success = result.GetProperty("success").GetBoolean();
-				string message = result.GetProperty("message").GetString() ?? "";
+				JsonElement result;
+				try
+				{
+					result = JsonSerializer.Deserialize<JsonElement>(responseString);
+				}
+				catch
+				{
+					GD.PrintErr($"[AuthSystem] 注册响应解析失败: {responseString}");
+					EmitSignal(SignalName.RegisterCompleted, false, "服务器响应格式错误");
+					return new AuthResult { Success = false, Message = "服务器响应格式错误" };
+				}
+
+				bool success = result.TryGetProperty("success", out var successEl) && successEl.GetBoolean();
+				string message = result.TryGetProperty("message", out var msgEl) ? (msgEl.GetString() ?? "") : "";
 
 				if (success)
 				{
-					string token = result.GetProperty("token").GetString() ?? "";
+					string token = result.TryGetProperty("token", out var tokenEl) ? (tokenEl.GetString() ?? "") : "";
 
 					GD.Print($"[AuthSystem] ✓ 注册成功: {username}");
 
@@ -165,15 +176,26 @@ namespace RoguelikeGame.Network.Auth
 
 				var response = await _httpClient.PostAsync("/api/auth/login", content);
 				var responseString = await response.Content.ReadAsStringAsync();
-				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
 
-				bool success = result.GetProperty("success").GetBoolean();
-				string message = result.GetProperty("message").GetString() ?? "";
+				JsonElement result;
+				try
+				{
+					result = JsonSerializer.Deserialize<JsonElement>(responseString);
+				}
+				catch
+				{
+					GD.PrintErr($"[AuthSystem] 登录响应解析失败: {responseString}");
+					EmitSignal(SignalName.LoginCompleted, false, "服务器响应格式错误");
+					return new AuthResult { Success = false, Message = "服务器响应格式错误" };
+				}
+
+				bool success = result.TryGetProperty("success", out var successEl) && successEl.GetBoolean();
+				string message = result.TryGetProperty("message", out var msgEl) ? (msgEl.GetString() ?? "") : "";
 
 				if (success)
 				{
-					string token = result.GetProperty("token").GetString() ?? "";
-					string userId = result.GetProperty("userId").GetString() ?? "";
+					string token = result.TryGetProperty("token", out var tokenEl) ? (tokenEl.GetString() ?? "") : "";
+					string userId = result.TryGetProperty("userId", out var userIdEl) ? (userIdEl.GetString() ?? "") : "";
 
 					await SetSession(token, userId);
 
@@ -226,19 +248,26 @@ namespace RoguelikeGame.Network.Auth
 
 				var response = await _httpClient.GetAsync("/api/auth/me");
 				var responseString = await response.Content.ReadAsStringAsync();
+
+				if (!response.IsSuccessStatusCode)
+				{
+					GD.PrintErr($"[AuthSystem] 获取用户信息失败: HTTP {response.StatusCode}");
+					return null;
+				}
+
 				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
 
-				if (result.TryGetProperty("user", out var userElement))
+				if (result.TryGetProperty("id", out var idEl))
 				{
 					_currentUser = new UserInfo
 					{
-						Id = userElement.GetProperty("id").GetString() ?? "",
-						Username = userElement.GetProperty("username").GetString() ?? "",
-						Email = userElement.GetProperty("email").GetString(),
-						Level = userElement.GetProperty("level").GetInt32(),
-						Experience = userElement.GetProperty("experience").GetInt32(),
-						TotalGamesPlayed = userElement.GetProperty("totalGamesPlayed").GetInt32(),
-						GamesWon = userElement.GetProperty("gamesWon").GetInt32()
+						Id = idEl.GetString() ?? "",
+						Username = result.TryGetProperty("username", out var unEl) ? (unEl.GetString() ?? "") : "",
+						Email = result.TryGetProperty("email", out var emEl) ? emEl.GetString() : null,
+						Level = result.TryGetProperty("level", out var lvEl) ? lvEl.GetInt32() : 1,
+						Experience = result.TryGetProperty("experience", out var expEl) ? expEl.GetInt32() : 0,
+						TotalGamesPlayed = result.TryGetProperty("totalGamesPlayed", out var tgpEl) ? tgpEl.GetInt32() : 0,
+						GamesWon = result.TryGetProperty("gamesWon", out var gwEl) ? gwEl.GetInt32() : 0
 					};
 
 					return _currentUser;

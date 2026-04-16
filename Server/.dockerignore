@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+**/logs/
+*.db
+*.db-shm
+*.db-wal
+.vs/
+.vscode/
+**/Properties/launchSettings.json
