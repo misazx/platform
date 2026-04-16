@@ -13,11 +13,17 @@ var active_switches: Dictionary = {}
 var environment: EnvironmentSystem
 var current_level_id := ""
 var current_chapter_id := ""
+var _nearby_light: MovableLightSource = null
 
 func _ready() -> void:
 	_setup_scene()
 	_setup_input_actions()
 	_load_and_build_level("ff_01")
+
+func _physics_process(_delta: float) -> void:
+	if not is_instance_valid(player) or player.is_dead:
+		return
+	_handle_push_light()
 
 func _setup_scene() -> void:
 	level_manager = LevelManager.new()
@@ -62,8 +68,31 @@ func _ensure_action(action_name: String, keycodes: Array) -> void:
 		InputMap.action_add_event(action_name, event)
 
 func _create_background() -> void:
+	_update_background("forgotten_forest")
+
+func _update_background(chapter_id: String) -> void:
+	for child in bg_parallax.get_children():
+		child.queue_free()
+	var bg_map: Dictionary = {
+		"forgotten_forest": "res://GameModes/light_shadow_traveler/Resources/Backgrounds/forest_bg.png",
+		"faded_studio": "res://GameModes/light_shadow_traveler/Resources/Backgrounds/studio_bg.png",
+		"silent_concert_hall": "res://GameModes/light_shadow_traveler/Resources/Backgrounds/concert_hall_bg.png",
+		"sleeping_library": "res://GameModes/light_shadow_traveler/Resources/Backgrounds/library_bg.png",
+		"light_shadow_temple": "res://GameModes/light_shadow_traveler/Resources/Backgrounds/temple_bg.png",
+	}
+	var bg_path: String = bg_map.get(chapter_id, "")
 	var layer := ParallaxLayer.new()
 	layer.motion_mirroring = Vector2(1280, 0)
+	if bg_path != "" and ResourceLoader.exists(bg_path):
+		var bg_tex: Texture2D = load(bg_path) as Texture2D
+		if bg_tex:
+			var bg_sprite := Sprite2D.new()
+			bg_sprite.texture = bg_tex
+			bg_sprite.scale = Vector2(1280.0 / bg_tex.get_width(), 720.0 / bg_tex.get_height())
+			bg_sprite.centered = false
+			layer.add_child(bg_sprite)
+			bg_parallax.add_child(layer)
+			return
 	var bg_rect := ColorRect.new()
 	bg_rect.size = Vector2(1280, 720)
 	bg_rect.color = Color(0.08, 0.12, 0.08)
@@ -84,6 +113,10 @@ func _on_level_loaded(level_id: String) -> void:
 	if data.is_empty():
 		push_error("[GameScene] No data for level: " + level_id)
 		return
+	var chapter_id: String = data.get("chapter_id", "")
+	if chapter_id != current_chapter_id:
+		current_chapter_id = chapter_id
+		_update_background(chapter_id)
 	_build_level(data)
 	_spawn_player(data)
 	_update_hud(data)
@@ -91,12 +124,31 @@ func _on_level_loaded(level_id: String) -> void:
 
 func _build_level(data: Dictionary) -> void:
 	var platforms: Array = data.get("platforms", []) as Array
+	var plat_idx := 0
 	for p_data in platforms:
 		var platform := FormPlatform.new()
 		platform.setup_from_data(p_data as Dictionary)
+		var p_id: String = p_data.get("id", "")
+		if p_id == "":
+			p_id = "sw_platform_" + str(plat_idx)
+		platform.platform_id = p_id
+		platform.name = p_id
 		if p_data.get("type", "normal") in ["shadow", "shadow_wall"]:
 			platform.add_to_group("shadow_platform")
 		level_root.add_child(platform)
+		plat_idx += 1
+	var moving_platforms: Array = data.get("movingPlatforms", []) as Array
+	var mp_idx := 0
+	for m_data in moving_platforms:
+		var mplatform := MovingPlatform.new()
+		mplatform.setup_from_data(m_data as Dictionary)
+		var m_id: String = m_data.get("id", "")
+		if m_id == "":
+			m_id = "moving_plat_" + str(mp_idx)
+		mplatform.platform_id = m_id
+		mplatform.name = m_id
+		level_root.add_child(mplatform)
+		mp_idx += 1
 	var enemies: Array = data.get("enemies", []) as Array
 	for e_data in enemies:
 		var enemy := FormEnemy.new()
@@ -115,11 +167,6 @@ func _build_level(data: Dictionary) -> void:
 		var light_source := MovableLightSource.new()
 		light_source.setup_from_data(l_data as Dictionary)
 		level_root.add_child(light_source)
-	var moving_platforms: Array = data.get("movingPlatforms", []) as Array
-	for m_data in moving_platforms:
-		var mplatform := MovingPlatform.new()
-		mplatform.setup_from_data(m_data as Dictionary)
-		level_root.add_child(mplatform)
 	var switches: Array = data.get("switches", []) as Array
 	for s_data in switches:
 		var sw := LightShadowSwitch.new()
@@ -148,6 +195,13 @@ func _build_level(data: Dictionary) -> void:
 		shape_node.shape = shape
 		goal.add_child(shape_node)
 		var goal_sprite := Sprite2D.new()
+	var goal_path := "res://GameModes/light_shadow_traveler/Resources/UI/goal_portal.png"
+	if ResourceLoader.exists(goal_path):
+		var goal_tex: Texture2D = load(goal_path) as Texture2D
+		if goal_tex:
+			goal_sprite.texture = goal_tex
+			goal_sprite.scale = Vector2(40.0 / goal_tex.get_width(), 60.0 / goal_tex.get_height())
+	if goal_sprite.texture == null:
 		var goal_img := Image.create(40, 60, false, Image.FORMAT_RGBA8)
 		goal_img.fill(Color(0, 0, 0, 0))
 		for dy in range(-25, 26):
@@ -290,6 +344,8 @@ func _respawn_at_checkpoint() -> void:
 	player.health_changed.connect(_on_health_changed)
 	player.player_died.connect(_on_player_died)
 	player.fragment_collected.connect(_on_fragment_count_changed)
+	player.energy_changed.connect(_on_energy_changed)
+	player.checkpoint_reached.connect(_on_checkpoint_activated)
 	level_root.add_child(player)
 	if is_instance_valid(camera) and camera.get_parent():
 		camera.get_parent().remove_child(camera)
@@ -302,6 +358,8 @@ func _respawn_at_checkpoint() -> void:
 	player.add_child(camera)
 	hud.update_health(player.max_health, player.max_health)
 	hud.update_form("light")
+	hud.update_energy(player.form_energy, PlayerCharacter.MAX_FORM_ENERGY)
+	hud.start_timer()
 	ParticleEffect.create_and_spawn(level_root, last_checkpoint_pos, ParticleEffect.EffectType.HEAL, 20)
 
 func _on_checkpoint_activated(checkpoint_id: String) -> void:
@@ -315,14 +373,20 @@ func _on_checkpoint_activated(checkpoint_id: String) -> void:
 func _on_switch_activated(switch_id: String) -> void:
 	active_switches[switch_id] = true
 	var target_id := ""
+	var target_type := ""
 	for child in level_root.get_children():
 		if child is LightShadowSwitch and child.switch_id == switch_id:
 			target_id = child.target_id
+			target_type = child.target_type
 			break
 	if target_id != "":
 		for child in level_root.get_children():
-			if child is FormPlatform and target_id.begins_with("sw_platform"):
-				child.set_active(true)
+			if child is FormPlatform:
+				if child.name == target_id or child.platform_id == target_id:
+					child.set_active(true)
+			elif child is MovingPlatform:
+				if child.name == target_id:
+					child.set_active(true)
 
 func _on_switch_deactivated(switch_id: String) -> void:
 	active_switches.erase(switch_id)
@@ -355,3 +419,42 @@ func set_difficulty(difficulty: String) -> void:
 			if player:
 				player.max_health = 3
 				player.current_health = 3
+
+func _handle_push_light() -> void:
+	if not Input.is_action_pressed("push_light"):
+		if _nearby_light != null:
+			_nearby_light.stop_push()
+			_nearby_light = null
+		return
+	if _nearby_light == null or not is_instance_valid(_nearby_light):
+		_nearby_light = _find_nearby_pushable_light()
+	if _nearby_light == null:
+		return
+	var push_dir: float = 0.0
+	if Input.is_action_pressed("move_left"):
+		push_dir = -1.0
+	elif Input.is_action_pressed("move_right"):
+		push_dir = 1.0
+	if push_dir != 0.0:
+		_nearby_light.start_push(push_dir)
+	else:
+		_nearby_light.stop_push()
+
+func _find_nearby_pushable_light() -> MovableLightSource:
+	var lights := get_tree().get_nodes_in_group("pushable_light")
+	if lights.is_empty():
+		for child in level_root.get_children():
+			if child is MovableLightSource:
+				if not child.is_in_group("pushable_light"):
+					child.add_to_group("pushable_light")
+				lights.append(child)
+	var closest: MovableLightSource = null
+	var closest_dist: float = 80.0
+	for light in lights:
+		var ml: MovableLightSource = light as MovableLightSource
+		if ml and ml.is_pushable:
+			var dist: float = player.global_position.distance_to(ml.global_position)
+			if dist < closest_dist:
+				closest_dist = dist
+				closest = ml
+	return closest

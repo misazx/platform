@@ -1,5 +1,5 @@
 class_name MovingPlatform
-extends StaticBody2D
+extends AnimatableBody2D
 
 enum MoveType { HORIZONTAL, VERTICAL, CIRCULAR, PATH }
 
@@ -11,6 +11,7 @@ enum MoveType { HORIZONTAL, VERTICAL, CIRCULAR, PATH }
 @export var platform_height := 20.0
 @export var is_light_platform := false
 @export var is_shadow_platform := false
+@export var platform_id := ""
 
 var start_position: Vector2
 var move_timer := 0.0
@@ -23,6 +24,14 @@ var visual: ColorRect
 func _ready() -> void:
 	start_position = global_position
 	_setup_platform()
+
+func set_active(active: bool) -> void:
+	if collision_shape:
+		collision_shape.disabled = not active
+	if visual:
+		visual.visible = active
+		visual.color = Color(0.7, 0.8, 0.7, 0.9) if active else Color(0.3, 0.3, 0.3, 0.3)
+	set_physics_process(active)
 
 func _setup_platform() -> void:
 	collision_shape = CollisionShape2D.new()

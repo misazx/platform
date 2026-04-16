@@ -67,6 +67,7 @@ var ray_wall_left: RayCast2D
 var ray_wall_right: RayCast2D
 var stealth_visual: ColorRect
 var dash_trail: Node2D
+var _attack_area: Area2D
 
 func _ready() -> void:
 	current_health = max_health
@@ -113,9 +114,25 @@ func _setup_visuals() -> void:
 	dash_trail = Node2D.new()
 	dash_trail.name = "DashTrail"
 	add_child(dash_trail)
+	_attack_area = Area2D.new()
+	_attack_area.name = "AttackArea"
+	var atk_shape := CollisionShape2D.new()
+	var atk_circle := CircleShape2D.new()
+	atk_circle.radius = 20.0
+	atk_shape.shape = atk_circle
+	_attack_area.add_child(atk_shape)
+	_attack_area.monitoring = false
+	_attack_area.body_entered.connect(_on_attack_body_entered)
+	add_child(_attack_area)
 	_create_player_sprite()
 
 func _create_player_sprite() -> void:
+	var form_path: String = "res://GameModes/light_shadow_traveler/Resources/Characters/light_form.png" if current_form == Form.LIGHT else "res://GameModes/light_shadow_traveler/Resources/Characters/shadow_form.png"
+	if ResourceLoader.exists(form_path):
+		var tex: Texture2D = load(form_path) as Texture2D
+		if tex:
+			sprite.texture = tex
+			return
 	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
 	var body_color: Color = _light_color if current_form == Form.LIGHT else _shadow_color
@@ -131,8 +148,7 @@ func _create_player_sprite() -> void:
 				img.set_pixel(16 + dx, 10 + dy, Color(1, 1, 1, 0.9))
 	img.set_pixel(14, 8, Color(0.1, 0.1, 0.2, 1.0))
 	img.set_pixel(18, 8, Color(0.1, 0.1, 0.2, 1.0))
-	var tex := ImageTexture.create_from_image(img)
-	sprite.texture = tex
+	sprite.texture = ImageTexture.create_from_image(img)
 	sprite.hframes = 1
 
 func _physics_process(delta: float) -> void:
@@ -173,6 +189,8 @@ func _update_timers(delta: float) -> void:
 		dash_timer -= delta
 		if dash_timer <= 0:
 			is_dashing = false
+	if _attack_area:
+		_attack_area.monitoring = false
 
 func _handle_input() -> void:
 	if Input.is_action_just_pressed("jump"):
@@ -206,6 +224,8 @@ func _switch_form() -> void:
 func _start_dash() -> void:
 	is_dashing = true
 	dash_timer = LIGHT_DASH_DURATION
+	if _attack_area:
+		_attack_area.monitoring = true
 	form_energy -= LIGHT_DASH_ENERGY
 	energy_changed.emit(form_energy, MAX_FORM_ENERGY)
 	velocity.y = 0.0
@@ -393,6 +413,14 @@ func take_damage(amount: int = 1) -> void:
 		invincible_timer = invincible_time
 		velocity.y = -200.0
 		velocity.x = -100.0 * (1 if facing_right else -1)
+
+func _on_attack_body_entered(body: Node2D) -> void:
+	if body is FormEnemy:
+		var enemy: FormEnemy = body as FormEnemy
+		if enemy.is_hostile:
+			enemy.take_damage(1)
+			var knockback_dir: float = 1.0 if enemy.global_position.x > global_position.x else -1.0
+			enemy.velocity = Vector2(knockback_dir * 200.0, -150.0)
 
 func die() -> void:
 	is_dead = true

@@ -17,6 +17,7 @@ var sprite: Sprite2D
 var interaction_area: Area2D
 
 func _ready() -> void:
+	add_to_group("pushable_light")
 	_setup_visuals()
 	_setup_light()
 	_setup_physics()

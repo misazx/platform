@@ -1,15 +1,18 @@
 class_name FormPlatform
-extends StaticBody2D
+extends AnimatableBody2D
 
 enum PlatformType { NORMAL, LIGHT, SHADOW, SHADOW_WALL }
 
 @export var platform_type: PlatformType = PlatformType.NORMAL
 @export var platform_width := 200.0
 @export var platform_height := 40.0
+@export var platform_id := ""
 
 var is_active := true
 var _original_color: Color
 var _inactive_color := Color(0.3, 0.3, 0.3, 0.3)
+var _light_glow_tex: Texture2D
+var _shadow_glow_tex: Texture2D
 
 var collision_shape: CollisionShape2D
 var visual: ColorRect
@@ -35,19 +38,33 @@ func _setup_platform() -> void:
 	visual.size = Vector2(platform_width, platform_height)
 	visual.position = Vector2(-platform_width / 2, -platform_height / 2)
 	visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var plat_path: String = ""
+	match platform_type:
+		PlatformType.NORMAL:
+			_original_color = Color(0.5, 0.5, 0.5, 1.0)
+			plat_path = "res://GameModes/light_shadow_traveler/Resources/Platforms/normal_platform.png"
+		PlatformType.LIGHT:
+			_original_color = Color(1.0, 0.95, 0.7, 0.9)
+			plat_path = "res://GameModes/light_shadow_traveler/Resources/Platforms/light_platform.png"
+		PlatformType.SHADOW:
+			_original_color = Color(0.3, 0.35, 0.6, 0.85)
+			plat_path = "res://GameModes/light_shadow_traveler/Resources/Platforms/shadow_platform.png"
+		PlatformType.SHADOW_WALL:
+			_original_color = Color(0.25, 0.28, 0.5, 0.9)
+			plat_path = "res://GameModes/light_shadow_traveler/Resources/Platforms/shadow_platform.png"
+	if plat_path != "" and ResourceLoader.exists(plat_path):
+		var plat_sprite := Sprite2D.new()
+		plat_sprite.name = "PlatformSprite"
+		var tex: Texture2D = load(plat_path) as Texture2D
+		if tex:
+			plat_sprite.texture = tex
+			plat_sprite.scale = Vector2(platform_width / tex.get_width(), platform_height / tex.get_height())
+			add_child(plat_sprite)
+			visual.visible = false
 	if not glow:
 		glow = PointLight2D.new()
 		glow.name = "PlatformGlow"
 		add_child(glow)
-	match platform_type:
-		PlatformType.NORMAL:
-			_original_color = Color(0.5, 0.5, 0.5, 1.0)
-		PlatformType.LIGHT:
-			_original_color = Color(1.0, 0.95, 0.7, 0.9)
-		PlatformType.SHADOW:
-			_original_color = Color(0.3, 0.35, 0.6, 0.85)
-		PlatformType.SHADOW_WALL:
-			_original_color = Color(0.25, 0.28, 0.5, 0.9)
 
 func _process(_delta: float) -> void:
 	_update_activity()
@@ -69,7 +86,15 @@ func _update_activity() -> void:
 	collision_shape.disabled = not is_active
 
 func _update_visuals() -> void:
-	if visual:
+	var plat_sprite: Sprite2D = null
+	for child in get_children():
+		if child is Sprite2D and child.name == "PlatformSprite":
+			plat_sprite = child as Sprite2D
+			break
+	if plat_sprite:
+		plat_sprite.visible = is_active
+		plat_sprite.modulate.a = 1.0 if is_active else 0.3
+	if visual and visual.visible:
 		if is_active:
 			visual.color = _original_color
 			visual.modulate.a = 1.0
@@ -82,15 +107,17 @@ func _update_visuals() -> void:
 				PlatformType.LIGHT:
 					glow.color = Color(1.0, 0.95, 0.7, 0.4)
 					glow.energy = 0.8
-					var tex := _make_glow_tex(Color(1.0, 0.95, 0.7))
-					if tex:
-						glow.texture = tex
+					if _light_glow_tex == null:
+						_light_glow_tex = _make_glow_tex(Color(1.0, 0.95, 0.7))
+					if _light_glow_tex:
+						glow.texture = _light_glow_tex
 				PlatformType.SHADOW, PlatformType.SHADOW_WALL:
 					glow.color = Color(0.3, 0.35, 0.7, 0.3)
 					glow.energy = 0.5
-					var tex := _make_glow_tex(Color(0.3, 0.35, 0.7))
-					if tex:
-						glow.texture = tex
+					if _shadow_glow_tex == null:
+						_shadow_glow_tex = _make_glow_tex(Color(0.3, 0.35, 0.7))
+					if _shadow_glow_tex:
+						glow.texture = _shadow_glow_tex
 				_:
 					glow.energy = 0.0
 		else:
@@ -111,6 +138,15 @@ func _get_player() -> PlayerCharacter:
 	if players.size() > 0:
 		return players[0] as PlayerCharacter
 	return null
+
+func set_active(active: bool) -> void:
+	is_active = active
+	if collision_shape:
+		collision_shape.disabled = not active
+	if active:
+		platform_type = PlatformType.NORMAL
+		_original_color = Color(0.7, 0.8, 0.7, 0.9)
+	_update_visuals()
 
 func setup_from_data(data: Dictionary) -> void:
 	position = Vector2(data.get("x", 0), data.get("y", 0))

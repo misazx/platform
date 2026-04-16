@@ -1,7 +1,7 @@
 class_name ParticleEffect
 extends Node2D
 
-enum EffectType { FORM_SWITCH_LIGHT, FORM_SWITCH_SHADOW, FRAGMENT_COLLECT, CHECKPOINT_ACTIVATE, DAMAGE_TAKEN, DEATH, HEAL }
+enum EffectType { FORM_SWITCH_LIGHT, FORM_SWITCH_SHADOW, FRAGMENT_COLLECT, CHECKPOINT_ACTIVATE, DAMAGE_TAKEN, DEATH, HEAL, ENEMY_DEATH }
 
 @export var effect_type: EffectType = EffectType.FORM_SWITCH_LIGHT
 @export var particle_count := 20
@@ -45,6 +45,9 @@ func _create_particle(index: int) -> Dictionary:
 		EffectType.HEAL:
 			color = Color(0.3, 1.0, 0.5, randf_range(0.5, 1.0))
 			speed = randf_range(30.0, 100.0)
+		EffectType.ENEMY_DEATH:
+			color = Color(0.9, 0.3, 0.2, randf_range(0.6, 1.0))
+			speed = randf_range(50.0, 150.0)
 	return {
 		"pos": Vector2.ZERO,
 		"vel": Vector2(cos(angle), sin(angle)) * speed,

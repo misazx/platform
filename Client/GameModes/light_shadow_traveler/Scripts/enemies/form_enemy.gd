@@ -24,18 +24,33 @@ var facing_right := true
 var sprite: Sprite2D
 var detection_area: Area2D
 var attack_area: Area2D
+var body_collision: CollisionShape2D
 var health_bar: ProgressBar
 
 func _ready() -> void:
+	add_to_group("enemies")
 	start_position = global_position
 	_setup_visuals()
 	_setup_areas()
 	_update_hostility()
+	_setup_health_bar()
 
 func _setup_visuals() -> void:
 	if not sprite:
 		sprite = Sprite2D.new()
 		add_child(sprite)
+	var enemy_path: String = ""
+	if is_boss:
+		enemy_path = "res://GameModes/light_shadow_traveler/Resources/Enemies/shadow_guardian.png"
+	elif attribute == EnemyAttribute.LIGHT:
+		enemy_path = "res://GameModes/light_shadow_traveler/Resources/Enemies/light_enemy.png"
+	else:
+		enemy_path = "res://GameModes/light_shadow_traveler/Resources/Enemies/shadow_enemy.png"
+	if ResourceLoader.exists(enemy_path):
+		var tex: Texture2D = load(enemy_path) as Texture2D
+		if tex:
+			sprite.texture = tex
+			return
 	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
 	var body_color := Color(1.0, 0.9, 0.7) if attribute == EnemyAttribute.LIGHT else Color(0.3, 0.35, 0.6)
@@ -65,6 +80,14 @@ func _setup_visuals() -> void:
 		sprite.texture = ImageTexture.create_from_image(img)
 
 func _setup_areas() -> void:
+	if not body_collision:
+		body_collision = CollisionShape2D.new()
+		body_collision.name = "BodyCollision"
+		var body_shape := CapsuleShape2D.new()
+		body_shape.radius = 10.0
+		body_shape.height = 24.0
+		body_collision.shape = body_shape
+		add_child(body_collision)
 	if not detection_area:
 		detection_area = Area2D.new()
 		detection_area.name = "DetectionArea"
@@ -74,6 +97,8 @@ func _setup_areas() -> void:
 		det_circle.radius = detection_range
 		det_shape.shape = det_circle
 		detection_area.add_child(det_shape)
+		detection_area.body_entered.connect(_on_detection_body_entered)
+		detection_area.body_exited.connect(_on_detection_body_exited)
 	if not attack_area:
 		attack_area = Area2D.new()
 		attack_area.name = "AttackArea"
@@ -83,6 +108,7 @@ func _setup_areas() -> void:
 		atk_circle.radius = attack_range
 		atk_shape.shape = atk_circle
 		attack_area.add_child(atk_shape)
+		attack_area.body_entered.connect(_on_attack_area_body_entered)
 
 func _physics_process(delta: float) -> void:
 	_update_hostility()
@@ -115,6 +141,38 @@ func _update_hostility() -> void:
 		modulate = Color(1.0, 0.7, 0.7, 1.0) if attribute == EnemyAttribute.SHADOW else Color(1.0, 1.0, 0.7, 1.0)
 	else:
 		modulate = Color(0.7, 0.7, 0.7, 0.6)
+
+func _setup_health_bar() -> void:
+	if health_bar:
+		return
+	health_bar = ProgressBar.new()
+	health_bar.name = "HealthBar"
+	health_bar.min_value = 0.0
+	health_bar.max_value = float(max_health)
+	health_bar.value = float(current_health)
+	health_bar.custom_minimum_size = Vector2(30, 4)
+	health_bar.position = Vector2(-15, -22)
+	health_bar.show_percentage = false
+	var bg_style := StyleBoxFlat.new()
+	bg_style.bg_color = Color(0.2, 0.2, 0.2, 0.8)
+	bg_style.set_corner_radius_all(2)
+	health_bar.add_theme_stylebox_override("background", bg_style)
+	var fill_style := StyleBoxFlat.new()
+	fill_style.bg_color = Color(0.9, 0.2, 0.2)
+	fill_style.set_corner_radius_all(2)
+	health_bar.add_theme_stylebox_override("fill", fill_style)
+	add_child(health_bar)
+
+func take_damage(amount: int) -> void:
+	current_health -= amount
+	if health_bar:
+		health_bar.value = float(current_health)
+	if current_health <= 0:
+		_die()
+
+func _die() -> void:
+	ParticleEffect.create_and_spawn(get_parent(), global_position, ParticleEffect.EffectType.ENEMY_DEATH, 15)
+	queue_free()
 
 func _patrol(_delta: float) -> void:
 	velocity.x = move_speed * patrol_direction
@@ -159,6 +217,18 @@ func _attack_player(player: PlayerCharacter) -> void:
 	state = EnemyState.IDLE
 	state_timer = 1.0
 
+func _on_attack_area_body_entered(body: Node2D) -> void:
+	if body is PlayerCharacter and is_hostile and state == EnemyState.CHASE:
+		_attack_player(body as PlayerCharacter)
+
+func _on_detection_body_entered(body: Node2D) -> void:
+	if body is PlayerCharacter and is_hostile:
+		state = EnemyState.CHASE
+
+func _on_detection_body_exited(body: Node2D) -> void:
+	if body is PlayerCharacter and state == EnemyState.CHASE:
+		state = EnemyState.PATROL
+
 func _get_player() -> PlayerCharacter:
 	var players := get_tree().get_nodes_in_group("player")
 	if players.size() > 0:
@@ -181,3 +251,5 @@ func setup_from_data(data: Dictionary) -> void:
 		detection_range = 350.0
 		damage = 2
 	_setup_visuals()
+	_setup_areas()
+	_setup_health_bar()
