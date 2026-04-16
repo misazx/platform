@@ -60,7 +60,7 @@ namespace RoguelikeGame.Network.Friends
 		{
 			_httpClient = new System.Net.Http.HttpClient
 			{
-				BaseAddress = new Uri("http://127.0.0.1:5000"),
+				BaseAddress = new Uri("http://127.0.0.1:5002"),
 				Timeout = TimeSpan.FromSeconds(15)
 			};
 		}

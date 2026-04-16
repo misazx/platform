@@ -23,7 +23,7 @@ namespace RoguelikeGame.UI.Panels
 
 		public event Action OnBack;
 
-		private string _baseUrl = "http://127.0.0.1:5000";
+		private string _baseUrl = "http://127.0.0.1:5002";
 		private System.Net.Http.HttpClient _httpClient;
 
 		public override void _Ready()

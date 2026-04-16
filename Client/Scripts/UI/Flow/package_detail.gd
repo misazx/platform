@@ -485,7 +485,7 @@ func _fetch_leaderboard_from_server() -> void:
 	add_child(http)
 	http.request_completed.connect(_on_leaderboard_received)
 
-	var url := "http://127.0.0.1:5000/api/leaderboard/%s/top?top=20" % _package_id
+	var url := "http://127.0.0.1:5002/api/leaderboard/%s/top?top=20" % _package_id
 	var err := http.request(url)
 	if err != Error.OK:
 		_update_leaderboard_status("❌ 无法连接服务器")
@@ -630,7 +630,7 @@ func _upload_save_to_server(slot: Dictionary) -> void:
 	add_child(http)
 	http.request_completed.connect(_on_save_uploaded)
 
-	var url := "http://127.0.0.1:5000/api/save/%s/upload" % _package_id
+	var url := "http://127.0.0.1:5002/api/save/%s/upload" % _package_id
 	var token: String = auth_system.Token
 	var headers := ["Content-Type: application/json", "Authorization: Bearer %s" % token]
 	var body := JSON.stringify(request_body)
@@ -658,7 +658,7 @@ func _fetch_server_saves() -> void:
 	add_child(http)
 	http.request_completed.connect(_on_server_saves_received)
 
-	var url := "http://127.0.0.1:5000/api/save/%s" % _package_id
+	var url := "http://127.0.0.1:5002/api/save/%s" % _package_id
 	var token: String = auth_system.Token
 	var headers := ["Authorization: Bearer %s" % token]
 	var err := http.request(url, headers)
@@ -810,7 +810,7 @@ func _download_save_from_server(slot_id: int) -> void:
 	add_child(http)
 	http.request_completed.connect(_on_save_downloaded)
 
-	var url := "http://127.0.0.1:5000/api/save/%s/download/%d" % [_package_id, slot_id]
+	var url := "http://127.0.0.1:5002/api/save/%s/download/%d" % [_package_id, slot_id]
 	var token: String = auth_system.Token
 	var headers := ["Authorization: Bearer %s" % token]
 	var err := http.request(url, headers)
@@ -873,7 +873,7 @@ func _delete_server_save(slot_id: int) -> void:
 	add_child(http)
 	http.request_completed.connect(_on_server_save_deleted)
 
-	var url := "http://127.0.0.1:5000/api/save/%s/delete/%d" % [_package_id, slot_id]
+	var url := "http://127.0.0.1:5002/api/save/%s/delete/%d" % [_package_id, slot_id]
 	var token: String = auth_system.Token
 	var headers := ["Authorization: Bearer %s" % token]
 	var err := http.request(url, headers, HTTPClient.METHOD_DELETE)
@@ -901,7 +901,7 @@ func _fetch_achievements_from_server() -> void:
 	add_child(http)
 	http.request_completed.connect(_on_server_achievements_received)
 
-	var url := "http://127.0.0.1:5000/api/achievement/%s?userId=%s" % [_package_id, _get_user_id()]
+	var url := "http://127.0.0.1:5002/api/achievement/%s?userId=%s" % [_package_id, _get_user_id()]
 	var token: String = auth_system.Token
 	var headers := ["Authorization: Bearer %s" % token]
 	var err := http.request(url, headers)

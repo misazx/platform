@@ -73,7 +73,7 @@ namespace RoguelikeGame.Network.Rooms
 		public static RoomManager Instance => _instance;
 
 		private System.Net.Http.HttpClient _httpClient;
-		private string _baseUrl = "http://127.0.0.1:5000";
+		private string _baseUrl = "http://127.0.0.1:5002";
 		private RoomInfo? _currentRoom;
 		private List<RoomInfo> _roomCache = new();
 		private DateTime _lastCacheUpdate = DateTime.MinValue;

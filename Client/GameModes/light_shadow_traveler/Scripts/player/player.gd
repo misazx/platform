@@ -330,8 +330,8 @@ func _move(_delta: float) -> void:
 	var input_dir: float = Input.get_axis("move_left", "move_right")
 	velocity.x = input_dir * speed
 	if input_dir != 0:
-		sprite.flip_h = input_dir > 0
-		facing_right = input_dir < 0
+		sprite.flip_h = input_dir < 0
+		facing_right = input_dir > 0
 	move_and_slide()
 
 func _update_coyote_time() -> void:

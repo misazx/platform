@@ -58,7 +58,7 @@ func _setup_platform() -> void:
 			var plat_visual := TextureRect.new()
 			plat_visual.name = "PlatformSprite"
 			plat_visual.texture = tex
-			plat_visual.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			plat_visual.stretch_mode = TextureRect.STRETCH_SCALE
 			plat_visual.size = Vector2(platform_width, platform_height)
 			plat_visual.position = Vector2(-platform_width / 2, -platform_height / 2)
 			plat_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
