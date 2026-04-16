@@ -178,7 +178,7 @@ func _setup_shortcut_panel() -> void:
 	_shortcut_panel.offset_right = -10
 	_shortcut_panel.offset_top = 10
 	_shortcut_panel.offset_bottom = 270
-	_shortcut_panel.grow_horizontal = Control.GROW_DIRECTION_LEFT
+	_shortcut_panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	_shortcut_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	var panel_style := StyleBoxFlat.new()
 	panel_style.bg_color = Color(0.0, 0.0, 0.0, 0.55)

@@ -13,6 +13,8 @@ enum EnemyState { PATROL, CHASE, IDLE, STUNNED }
 @export var knockback_force := 300.0
 @export var damage := 1
 @export var is_boss := false
+@export var max_health := 3
+var current_health := 3
 
 var state: EnemyState = EnemyState.PATROL
 var start_position: Vector2

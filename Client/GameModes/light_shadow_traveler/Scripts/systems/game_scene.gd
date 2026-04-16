@@ -195,21 +195,21 @@ func _build_level(data: Dictionary) -> void:
 		shape_node.shape = shape
 		goal.add_child(shape_node)
 		var goal_sprite := Sprite2D.new()
-	var goal_path := "res://GameModes/light_shadow_traveler/Resources/UI/goal_portal.png"
-	if ResourceLoader.exists(goal_path):
-		var goal_tex: Texture2D = load(goal_path) as Texture2D
-		if goal_tex:
-			goal_sprite.texture = goal_tex
-			goal_sprite.scale = Vector2(40.0 / goal_tex.get_width(), 60.0 / goal_tex.get_height())
-	if goal_sprite.texture == null:
-		var goal_img := Image.create(40, 60, false, Image.FORMAT_RGBA8)
-		goal_img.fill(Color(0, 0, 0, 0))
-		for dy in range(-25, 26):
-			for dx in range(-15, 16):
-				var dist: float = sqrt(dx * dx * 0.5 + dy * dy) / 25.0
-				if dist < 1.0:
-					goal_img.set_pixel(20 + dx, 30 + dy, Color(0.9, 0.85, 1.0, (1.0 - dist) * 0.7))
-		goal_sprite.texture = ImageTexture.create_from_image(goal_img)
+		var goal_path := "res://GameModes/light_shadow_traveler/Resources/UI/goal_portal.png"
+		if ResourceLoader.exists(goal_path):
+			var goal_tex: Texture2D = load(goal_path) as Texture2D
+			if goal_tex:
+				goal_sprite.texture = goal_tex
+				goal_sprite.scale = Vector2(40.0 / goal_tex.get_width(), 60.0 / goal_tex.get_height())
+		if goal_sprite.texture == null:
+			var goal_img := Image.create(40, 60, false, Image.FORMAT_RGBA8)
+			goal_img.fill(Color(0, 0, 0, 0))
+			for dy in range(-25, 26):
+				for dx in range(-15, 16):
+					var dist: float = sqrt(dx * dx * 0.5 + dy * dy) / 25.0
+					if dist < 1.0:
+						goal_img.set_pixel(20 + dx, 30 + dy, Color(0.9, 0.85, 1.0, (1.0 - dist) * 0.7))
+			goal_sprite.texture = ImageTexture.create_from_image(goal_img)
 		goal.add_child(goal_sprite)
 		var goal_glow := PointLight2D.new()
 		goal_glow.color = Color(0.9, 0.85, 1.0, 0.5)
