@@ -75,17 +75,27 @@ namespace RoguelikeGame.Network.Friends
 
 				var response = await _httpClient.GetAsync("/api/friends/list");
 				var content = await response.Content.ReadAsStringAsync();
-				var result = JsonSerializer.Deserialize<JsonElement>(content);
 
-				if (result.GetProperty("success").GetBoolean() && result.TryGetProperty("friends", out var friendsArray))
+				JsonElement result;
+				try
+				{
+					result = JsonSerializer.Deserialize<JsonElement>(content);
+				}
+				catch
+				{
+					GD.PrintErr($"[FriendManager] 获取好友列表响应解析失败");
+					return _friends;
+				}
+
+				if (result.TryGetProperty("success", out var successEl) && successEl.GetBoolean() && result.TryGetProperty("friends", out var friendsArray))
 				{
 					_friends.Clear();
 					foreach (var f in friendsArray.EnumerateArray())
 					{
 						_friends.Add(new FriendInfo
 						{
-							Id = f.GetProperty("id").GetString() ?? "",
-							Username = f.GetProperty("username").GetString() ?? "",
+							Id = f.TryGetProperty("id", out var idEl) ? (idEl.GetString() ?? "") : "",
+							Username = f.TryGetProperty("username", out var unEl) ? (unEl.GetString() ?? "") : "",
 							Level = f.TryGetProperty("level", out var lv) ? lv.GetInt32() : 1,
 							IsOnline = f.TryGetProperty("isOnline", out var online) && online.GetBoolean()
 						});
@@ -117,7 +127,7 @@ namespace RoguelikeGame.Network.Friends
 				var responseContent = await response.Content.ReadAsStringAsync();
 				var result = JsonSerializer.Deserialize<JsonElement>(responseContent);
 
-				bool success = result.GetProperty("success").GetBoolean();
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
 
 				if (success)
 				{
@@ -143,7 +153,7 @@ namespace RoguelikeGame.Network.Friends
 				var responseContent = await response.Content.ReadAsStringAsync();
 				var result = JsonSerializer.Deserialize<JsonElement>(responseContent);
 
-				bool success = result.GetProperty("success").GetBoolean();
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
 
 				if (success)
 				{
@@ -170,7 +180,7 @@ namespace RoguelikeGame.Network.Friends
 				var responseContent = await response.Content.ReadAsStringAsync();
 				var result = JsonSerializer.Deserialize<JsonElement>(responseContent);
 
-				bool success = result.GetProperty("success").GetBoolean();
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
 
 				if (success)
 				{

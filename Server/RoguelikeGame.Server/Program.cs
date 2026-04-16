@@ -103,6 +103,18 @@ try
     {
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         context.Database.EnsureCreated();
+        try
+        {
+            context.Database.ExecuteSqlRaw(
+                "CREATE TABLE IF NOT EXISTS Friendships (" +
+                "Id TEXT PRIMARY KEY, " +
+                "RequesterId TEXT NOT NULL, " +
+                "AddresseeId TEXT NOT NULL, " +
+                "Status INTEGER NOT NULL DEFAULT 0, " +
+                "CreatedAt TEXT NOT NULL, " +
+                "AcceptedAt TEXT NULL)");
+        }
+        catch { }
     }
 
     Log.Information("Server started successfully on port {Port}", 

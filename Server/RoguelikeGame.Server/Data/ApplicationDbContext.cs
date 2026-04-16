@@ -16,6 +16,7 @@ namespace RoguelikeGame.Server.Data
         public DbSet<LeaderboardEntry> LeaderboardEntries { get; set; }
         public DbSet<AchievementEntry> AchievementEntries { get; set; }
         public DbSet<SaveEntry> SaveEntries { get; set; }
+        public DbSet<Friendship> Friendships { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -62,6 +63,13 @@ namespace RoguelikeGame.Server.Data
             {
                 entity.HasIndex(e => new { e.UserId, e.PackageId, e.SlotId }).IsUnique();
                 entity.HasIndex(e => e.PackageId);
+            });
+
+            modelBuilder.Entity<Friendship>(entity =>
+            {
+                entity.HasIndex(e => new { e.RequesterId, e.AddresseeId }).IsUnique();
+                entity.HasIndex(e => e.RequesterId);
+                entity.HasIndex(e => e.AddresseeId);
             });
         }
     }

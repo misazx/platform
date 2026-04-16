@@ -86,6 +86,7 @@ namespace RoguelikeGame.Server.Controllers
 		}
 
 		[HttpGet("{packageId}/rank")]
+		[Authorize]
 		public async Task<IActionResult> GetUserRank(string packageId)
 		{
 			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

@@ -1,7 +1,6 @@
 会话时需要时刻注意调用mcp工具 tranycode-core对应mcp工具查看分析
 每个玩法包(GameModes文件夹下)里的代码不允许用c#代码
-新增或修改gdscript代码必须显式类型声明，必须参考gdscript_README.md文件
+不允许使用硬编码的字符串或数字等，必须使用变量或常量来代替
 每次会话完成后如果代码有修改，检查donet编译报错和godot的gdscript解释器编译报错
 每次会话完成提交当前会话修改的内容到git并推送，推送如果30s内没有完成，则取消推送
 如果需要查看文件修改记录和内容，直接查看git的提交记录
-会话中修复的gdscript代码的时候，需要在会话完成的时候将gdscript代码的易错写法合并进gdscript_README.md文件
