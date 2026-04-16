@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -97,10 +98,10 @@ namespace RoguelikeGame.Network.Auth
 				{
 					username,
 					password,
-					email = email ?? ""
+					email = string.IsNullOrEmpty(email) ? (string?)null : email
 				};
 
-				var json = JsonSerializer.Serialize(requestData);
+				var json = JsonSerializer.Serialize(requestData, new JsonSerializerOptions { DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull });
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 
 				GD.Print($"[AuthSystem] 正在注册用户: {username}");
@@ -126,6 +127,12 @@ namespace RoguelikeGame.Network.Auth
 				if (success)
 				{
 					string token = result.TryGetProperty("token", out var tokenEl) ? (tokenEl.GetString() ?? "") : "";
+					string userId = result.TryGetProperty("userId", out var userIdEl) ? (userIdEl.GetString() ?? "") : "";
+
+					if (!string.IsNullOrEmpty(token))
+					{
+						await SetSession(token, userId);
+					}
 
 					GD.Print($"[AuthSystem] ✓ 注册成功: {username}");
 
@@ -364,11 +371,11 @@ namespace RoguelikeGame.Network.Auth
 				var json = file.GetAsText();
 				var sessionData = JsonSerializer.Deserialize<JsonElement>(json);
 
-				string savedToken = sessionData.GetProperty("token").GetString() ?? "";
-				long expiryTicks = sessionData.GetProperty("expiryTicks").GetInt64();
+				string savedToken = sessionData.TryGetProperty("token", out var tEl) ? (tEl.GetString() ?? "") : "";
+				long expiryTicks = sessionData.TryGetProperty("expiryTicks", out var eEl) ? eEl.GetInt64() : 0;
 				var savedExpiry = new DateTime(expiryTicks);
 
-				if (DateTime.UtcNow < savedExpiry)
+				if (!string.IsNullOrEmpty(savedToken) && expiryTicks > 0 && DateTime.UtcNow < savedExpiry)
 				{
 					_currentToken = savedToken;
 					_tokenExpiry = savedExpiry;

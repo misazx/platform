@@ -167,12 +167,12 @@ namespace RoguelikeGame.Network.Rooms
 				var responseString = await response.Content.ReadAsStringAsync();
 				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
 
-				bool success = result.GetProperty("success").GetBoolean();
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
 
 				if (success)
 				{
-					string roomId = result.GetProperty("roomId").GetString() ?? "";
-					string seed = result.GetProperty("seed").GetString() ?? "";
+					string roomId = result.TryGetProperty("roomId", out var riEl) ? (riEl.GetString() ?? "") : "";
+					string seed = result.TryGetProperty("seed", out var sEl2) ? (sEl2.GetString() ?? "") : "";
 
 					_currentRoom = new RoomInfo
 					{
@@ -214,7 +214,7 @@ namespace RoguelikeGame.Network.Rooms
 				}
 				else
 				{
-					string message = result.GetProperty("message").GetString() ?? "创建失败";
+					string message = result.TryGetProperty("message", out var mEl) ? (mEl.GetString() ?? "创建失败") : "创建失败";
 					GD.PrintErr($"[RoomManager] ✗ 创建房间失败: {message}");
 
 					return new RoomResult { Success = false, Message = message };
@@ -245,7 +245,7 @@ namespace RoguelikeGame.Network.Rooms
 				var responseString = await response.Content.ReadAsStringAsync();
 				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
 
-				bool success = result.GetProperty("success").GetBoolean();
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
 
 				if (success && result.TryGetProperty("room", out var roomElement))
 				{
@@ -266,7 +266,7 @@ namespace RoguelikeGame.Network.Rooms
 				}
 				else
 				{
-					string message = result.GetProperty("message").GetString() ?? "加入失败";
+					string message = result.TryGetProperty("message", out var mEl) ? (mEl.GetString() ?? "加入失败") : "加入失败";
 					GD.PrintErr($"[RoomManager] ✗ 加入房间失败: {message}");
 
 					return new RoomResult { Success = false, Message = message };
@@ -330,7 +330,7 @@ namespace RoguelikeGame.Network.Rooms
 				var responseString = await response.Content.ReadAsStringAsync();
 				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
 
-				bool success = result.GetProperty("success").GetBoolean();
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
 
 				if (success && result.TryGetProperty("rooms", out var roomsArray))
 				{
@@ -372,7 +372,7 @@ namespace RoguelikeGame.Network.Rooms
 				var responseString = await response.Content.ReadAsStringAsync();
 				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
 
-				bool success = result.GetProperty("success").GetBoolean();
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
 
 				if (success && result.TryGetProperty("room", out var roomElement))
 				{
@@ -408,7 +408,7 @@ namespace RoguelikeGame.Network.Rooms
 				var responseString = await response.Content.ReadAsStringAsync();
 				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
 
-				bool success = result.GetProperty("success").GetBoolean();
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
 
 				if (success)
 				{
@@ -444,7 +444,7 @@ namespace RoguelikeGame.Network.Rooms
 				var responseString = await response.Content.ReadAsStringAsync();
 				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
 
-				bool success = result.GetProperty("success").GetBoolean();
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
 
 				if (success)
 				{
@@ -470,14 +470,14 @@ namespace RoguelikeGame.Network.Rooms
 		{
 			var room = new RoomInfo
 			{
-				Id = roomElement.GetProperty("id").GetString() ?? "",
-				Name = roomElement.GetProperty("name").GetString() ?? "",
-				HostId = roomElement.GetProperty("hostId").GetString() ?? "",
-				HostName = roomElement.TryGetProperty("host", out var hostEl) ? hostEl.GetProperty("username").GetString() ?? "" : "",
-				Status = Enum.Parse<RoomStatus>(
-					roomElement.GetProperty("status").GetString() ?? "Waiting"),
-				Mode = Enum.Parse<GameMode>(
-					roomElement.TryGetProperty("mode", out var modeEl) ? modeEl.GetString() ?? "PvP" : "PvP"),
+				Id = roomElement.TryGetProperty("id", out var idEl) ? (idEl.GetString() ?? "") : "",
+				Name = roomElement.TryGetProperty("name", out var nameEl) ? (nameEl.GetString() ?? "") : "",
+				HostId = roomElement.TryGetProperty("hostId", out var hidEl) ? (hidEl.GetString() ?? "") : "",
+				HostName = roomElement.TryGetProperty("hostName", out var hnEl) ? (hnEl.GetString() ?? "") : "",
+				Status = Enum.TryParse<RoomStatus>(
+					roomElement.TryGetProperty("status", out var stEl) ? stEl.GetString() ?? "Waiting" : "Waiting", out var status) ? status : RoomStatus.Waiting,
+				Mode = Enum.TryParse<GameMode>(
+					roomElement.TryGetProperty("mode", out var modeEl) ? modeEl.GetString() ?? "PvP" : "PvP", out var mode) ? mode : GameMode.PvP,
 				MaxPlayers = roomElement.TryGetProperty("maxPlayers", out var mpEl) ? mpEl.GetInt32() : 4,
 				CurrentPlayers = roomElement.TryGetProperty("currentPlayers", out var cpEl) ? cpEl.GetInt32() : 0,
 				HasPassword = roomElement.TryGetProperty("hasPassword", out var hpEl) && hpEl.GetBoolean(),
@@ -488,12 +488,13 @@ namespace RoguelikeGame.Network.Rooms
 			{
 				foreach (var playerEl in playersArray.EnumerateArray())
 				{
-					var userEl = playerEl.GetProperty("user");
+					var userId = playerEl.TryGetProperty("userId", out var uidEl) ? (uidEl.GetString() ?? "") : "";
+					var username = playerEl.TryGetProperty("username", out var unEl) ? (unEl.GetString() ?? "") : "";
 					room.Players.Add(new PlayerInfo
 					{
-						Id = playerEl.GetProperty("userId").GetString() ?? "",
-						Username = userEl.GetProperty("username").GetString() ?? "",
-						IsHost = room.HostId == playerEl.GetProperty("userId").GetString(),
+						Id = userId,
+						Username = username,
+						IsHost = room.HostId == userId,
 						IsReady = playerEl.TryGetProperty("isReady", out var readyEl) && readyEl.GetBoolean(),
 						Score = playerEl.TryGetProperty("score", out var scoreEl) ? scoreEl.GetInt32() : 0,
 						JoinedAt = DateTime.UtcNow

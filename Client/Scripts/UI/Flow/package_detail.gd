@@ -482,6 +482,7 @@ func _fetch_leaderboard_from_server() -> void:
 	_populate_leaderboard()
 
 	var http := HTTPRequest.new()
+	http.name = "HTTP_Leaderboard"
 	add_child(http)
 	http.request_completed.connect(_on_leaderboard_received)
 
@@ -491,10 +492,14 @@ func _fetch_leaderboard_from_server() -> void:
 		_update_leaderboard_status("❌ 无法连接服务器")
 		http.queue_free()
 
+func _find_and_free_http(name_prefix: String) -> void:
+	for child in get_children():
+		if child is HTTPRequest and child.name.begins_with(name_prefix):
+			child.queue_free()
+			return
+
 func _on_leaderboard_received(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
-	var http_node := get_child(get_child_count() - 1) as HTTPRequest
-	if http_node != null:
-		http_node.queue_free()
+	_find_and_free_http("HTTP_Leaderboard")
 
 	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
 		_update_leaderboard_status("❌ 加载失败 (HTTP %d)" % code)
@@ -627,6 +632,7 @@ func _upload_save_to_server(slot: Dictionary) -> void:
 	}
 
 	var http := HTTPRequest.new()
+	http.name = "HTTP_UploadSave"
 	add_child(http)
 	http.request_completed.connect(_on_save_uploaded)
 
@@ -640,9 +646,7 @@ func _upload_save_to_server(slot: Dictionary) -> void:
 		http.queue_free()
 
 func _on_save_uploaded(result: int, code: int, _headers: PackedStringArray, _body: PackedByteArray) -> void:
-	var http_node := get_child(get_child_count() - 1) as HTTPRequest
-	if http_node != null:
-		http_node.queue_free()
+	_find_and_free_http("HTTP_UploadSave")
 
 	if result == HTTPRequest.RESULT_SUCCESS and code == 200:
 		print("[PackageDetail] ✅ 存档已上传到服务器")
@@ -655,6 +659,7 @@ func _fetch_server_saves() -> void:
 		return
 
 	var http := HTTPRequest.new()
+	http.name = "HTTP_ServerSaves"
 	add_child(http)
 	http.request_completed.connect(_on_server_saves_received)
 
@@ -666,9 +671,7 @@ func _fetch_server_saves() -> void:
 		http.queue_free()
 
 func _on_server_saves_received(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
-	var http_node := get_child(get_child_count() - 1) as HTTPRequest
-	if http_node != null:
-		http_node.queue_free()
+	_find_and_free_http("HTTP_ServerSaves")
 
 	if _server_saves_container == null:
 		return
@@ -807,6 +810,7 @@ func _download_save_from_server(slot_id: int) -> void:
 		return
 
 	var http := HTTPRequest.new()
+	http.name = "HTTP_DownloadSave_%d" % slot_id
 	add_child(http)
 	http.request_completed.connect(_on_save_downloaded)
 
@@ -819,9 +823,7 @@ func _download_save_from_server(slot_id: int) -> void:
 		http.queue_free()
 
 func _on_save_downloaded(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
-	var http_node := get_child(get_child_count() - 1) as HTTPRequest
-	if http_node != null:
-		http_node.queue_free()
+	_find_and_free_http("HTTP_DownloadSave")
 
 	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
 		print("[PackageDetail] ❌ 下载存档失败 (HTTP %d)" % code)
@@ -870,6 +872,7 @@ func _delete_server_save(slot_id: int) -> void:
 		return
 
 	var http := HTTPRequest.new()
+	http.name = "HTTP_DeleteSave_%d" % slot_id
 	add_child(http)
 	http.request_completed.connect(_on_server_save_deleted)
 
@@ -882,9 +885,7 @@ func _delete_server_save(slot_id: int) -> void:
 		http.queue_free()
 
 func _on_server_save_deleted(result: int, code: int, _headers: PackedStringArray, _body: PackedByteArray) -> void:
-	var http_node := get_child(get_child_count() - 1) as HTTPRequest
-	if http_node != null:
-		http_node.queue_free()
+	_find_and_free_http("HTTP_DeleteSave")
 
 	if result == HTTPRequest.RESULT_SUCCESS and code == 200:
 		print("[PackageDetail] ✅ 服务器存档已删除")
@@ -898,6 +899,7 @@ func _fetch_achievements_from_server() -> void:
 		return
 
 	var http := HTTPRequest.new()
+	http.name = "HTTP_Achievements"
 	add_child(http)
 	http.request_completed.connect(_on_server_achievements_received)
 
@@ -909,9 +911,7 @@ func _fetch_achievements_from_server() -> void:
 		http.queue_free()
 
 func _on_server_achievements_received(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
-	var http_node := get_child(get_child_count() - 1) as HTTPRequest
-	if http_node != null:
-		http_node.queue_free()
+	_find_and_free_http("HTTP_Achievements")
 
 	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
 		return

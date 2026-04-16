@@ -213,7 +213,7 @@ namespace RoguelikeGame.UI.Panels
 
 				_rankList.Clear();
 
-				if (!result.GetProperty("success").GetBoolean())
+				if (!(result.TryGetProperty("success", out var sEl) && sEl.GetBoolean()))
 				{
 					_statusLabel.Text = "❌ 加载失败";
 					_statusLabel.Modulate = Colors.Red;
@@ -224,9 +224,9 @@ namespace RoguelikeGame.UI.Panels
 				{
 					foreach (var entry in dataArray.EnumerateArray())
 					{
-						int rank = entry.GetProperty("rank").GetInt32();
-						string username = entry.GetProperty("username").GetString() ?? "???";
-						long score = entry.GetProperty("score").GetInt64();
+						int rank = entry.TryGetProperty("rank", out var rEl) ? rEl.GetInt32() : 0;
+						string username = entry.TryGetProperty("username", out var unEl) ? (unEl.GetString() ?? "???") : "???";
+						long score = entry.TryGetProperty("score", out var scEl) ? scEl.GetInt64() : 0;
 						int floor = entry.TryGetProperty("floorReached", out var f) ? f.GetInt32() : 0;
 						int kills = entry.TryGetProperty("killCount", out var k) ? k.GetInt32() : 0;
 						int timeSec = entry.TryGetProperty("playTimeSeconds", out var t) ? t.GetInt32() : 0;

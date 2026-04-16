@@ -38,7 +38,11 @@ namespace RoguelikeGame.Server.Controllers
                 if (success)
                 {
                     _logger.LogInformation("用户注册成功: {Username}", request.Username);
-                    return Ok(new { success = true, token, message });
+
+                    var user = await _authService.GetUserByUsernameAsync(request.Username);
+                    var userId = user?.Id ?? "";
+
+                    return Ok(new { success = true, token, userId, message });
                 }
                 else
                 {

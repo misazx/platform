@@ -14,6 +14,7 @@ namespace RoguelikeGame.Server.Services
         Task<(bool Success, string Token, string Message)> RegisterAsync(string username, string password, string? email = null);
         Task<(bool Success, string Token, string UserId, string Message)> LoginAsync(string username, string password);
         Task<User?> GetUserByIdAsync(string userId);
+        Task<User?> GetUserByUsernameAsync(string username);
         Task<bool> ValidateTokenAsync(string token);
     }
 
@@ -93,6 +94,11 @@ namespace RoguelikeGame.Server.Services
         public async Task<User?> GetUserByIdAsync(string userId)
         {
             return await _context.Users.FindAsync(userId);
+        }
+
+        public async Task<User?> GetUserByUsernameAsync(string username)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         }
 
         public async Task<bool> ValidateTokenAsync(string token)
