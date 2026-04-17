@@ -1,5 +1,17 @@
 class_name GameLobby extends Control
 
+const GAME_TITLE: String = "杀戮尖塔 2"
+const GAME_SUBTITLE: String = "ROGUELIKE CARD GAME"
+const GAME_VERSION: String = "v0.2.0 Alpha"
+const BTN_PLAY: String = "🎮  选择玩法"
+const BTN_LEADERBOARD: String = "🏆  排行榜"
+const BTN_SETTINGS: String = "⚙️  设置"
+const BTN_QUIT: String = "🚪  退出游戏"
+const BTN_LOGIN: String = "🔐 登录 / 注册"
+const BTN_LOGOUT: String = "🚪 登出"
+const STATUS_OFFLINE: String = "未登录 - 单人模式可用，多人模式需登录"
+const STATUS_ONLINE_FMT: String = "👤 %s  |  Lv.%d  |  胜场: %d"
+
 signal open_package_selector()
 signal open_settings()
 signal open_login()
@@ -62,7 +74,7 @@ func _build_ui() -> void:
 	main_vbox.add_child(top_spacer)
 
 	_title_label = Label.new()
-	_title_label.text = "杀戮尖塔 2"
+	_title_label.text = GAME_TITLE
 	_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_title_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_title_label.add_theme_font_size_override("font_size", 52)
@@ -70,7 +82,7 @@ func _build_ui() -> void:
 	main_vbox.add_child(_title_label)
 
 	_subtitle_label = Label.new()
-	_subtitle_label.text = "ROGUELIKE CARD GAME"
+	_subtitle_label.text = GAME_SUBTITLE
 	_subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_subtitle_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_subtitle_label.add_theme_font_size_override("font_size", 14)
@@ -95,10 +107,10 @@ func _build_ui() -> void:
 	_menu_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	main_vbox.add_child(_menu_container)
 
-	_add_menu_button("🎮  选择玩法", _on_play_pressed, Color(0.2, 0.6, 0.3))
-	_add_menu_button("🏆  排行榜", _on_leaderboard_pressed, Color(0.7, 0.55, 0.15))
-	_add_menu_button("⚙️  设置", _on_settings_pressed, Color(0.3, 0.35, 0.5))
-	_add_menu_button("🚪  退出游戏", _on_quit_pressed, Color(0.5, 0.2, 0.2))
+	_add_menu_button(BTN_PLAY, _on_play_pressed, Color(0.2, 0.6, 0.3))
+	_add_menu_button(BTN_LEADERBOARD, _on_leaderboard_pressed, Color(0.7, 0.55, 0.15))
+	_add_menu_button(BTN_SETTINGS, _on_settings_pressed, Color(0.3, 0.35, 0.5))
+	_add_menu_button(BTN_QUIT, _on_quit_pressed, Color(0.5, 0.2, 0.2))
 
 	var bottom_spacer := Control.new()
 	bottom_spacer.custom_minimum_size = Vector2(0, 30)
@@ -106,7 +118,7 @@ func _build_ui() -> void:
 	main_vbox.add_child(bottom_spacer)
 
 	_version_label = Label.new()
-	_version_label.text = "v0.2.0 Alpha"
+	_version_label.text = GAME_VERSION
 	_version_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_version_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_version_label.add_theme_font_size_override("font_size", 11)
@@ -121,7 +133,7 @@ func _build_user_bar(parent: VBoxContainer) -> void:
 	parent.add_child(user_bar)
 
 	_user_status_label = Label.new()
-	_user_status_label.text = "未登录 - 单人模式可用"
+	_user_status_label.text = STATUS_OFFLINE
 	_user_status_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_user_status_label.add_theme_font_size_override("font_size", 13)
 	_user_status_label.modulate = Color(0.55, 0.58, 0.65)
@@ -134,7 +146,7 @@ func _build_user_bar(parent: VBoxContainer) -> void:
 	user_bar.add_child(spacer)
 
 	_auth_button = Button.new()
-	_auth_button.text = "🔐 登录 / 注册"
+	_auth_button.text = BTN_LOGIN
 	_auth_button.custom_minimum_size = Vector2(130, 32)
 	_auth_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	_auth_button.add_theme_font_size_override("font_size", 13)
@@ -147,13 +159,13 @@ func _update_auth_ui() -> void:
 		return
 
 	if auth_system.IsAuth():
-		_user_status_label.text = "👤 %s  |  Lv.%d  |  胜场: %d" % [auth_system.GetUsername(), auth_system.GetUserLevel(), auth_system.GetUserGamesWon()]
+		_user_status_label.text = STATUS_ONLINE_FMT % [auth_system.GetUsername(), auth_system.GetUserLevel(), auth_system.GetUserGamesWon()]
 		_user_status_label.modulate = Color(0.4, 0.9, 0.6)
-		_auth_button.text = "🚪 登出"
+		_auth_button.text = BTN_LOGOUT
 	else:
-		_user_status_label.text = "未登录 - 单人模式可用，多人模式需登录"
+		_user_status_label.text = STATUS_OFFLINE
 		_user_status_label.modulate = Color(0.55, 0.58, 0.65)
-		_auth_button.text = "🔐 登录 / 注册"
+		_auth_button.text = BTN_LOGIN
 
 func _get_auth_system():
 	var node = get_node_or_null("/root/AuthSystem")
@@ -241,9 +253,12 @@ func _create_gradient_bg() -> ImageTexture:
 	return ImageTexture.create_from_image(img)
 
 func update_player_info(playerName: String, gold: int) -> void:
-	for child in _player_info_bar.get_children():
-		if child is Label and child.text.begins_with("  "):
-			child.text = "  %s  |  💰 %d" % [playerName, gold]
+	if _user_status_label != null:
+		var auth_system = _get_auth_system()
+		if auth_system != null and auth_system.IsAuth():
+			_user_status_label.text = STATUS_ONLINE_FMT % [playerName, auth_system.GetUserLevel(), auth_system.GetUserGamesWon()]
+		else:
+			_user_status_label.text = "👤 %s  |  💰 %d" % [playerName, gold]
 
 func on_login_success() -> void:
 	_update_auth_ui()

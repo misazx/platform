@@ -33,6 +33,9 @@ namespace RoguelikeGame.UI.Panels
 		public event Action<string, string> OnChatMessage;
 		public event Action OnStartGame;
 		public event Action OnLeave;
+		public event Action OnRoomCreatedAndJoined;
+
+		private List<RoomInfo> _displayedRooms = new List<RoomInfo>();
 
 		public override void _Ready()
 		{
@@ -286,6 +289,7 @@ namespace RoguelikeGame.UI.Panels
 			try
 			{
 				_roomList.Clear();
+				_displayedRooms.Clear();
 
 				_roomList.AddItem("⏳ 正在加载房间列表...");
 
@@ -295,6 +299,8 @@ namespace RoguelikeGame.UI.Panels
 
 				if (result.Success && result.Rooms != null && result.Rooms.Count > 0)
 				{
+					_displayedRooms = result.Rooms;
+
 					foreach (var room in result.Rooms)
 					{
 						string statusIcon = room.Status switch
@@ -332,6 +338,7 @@ namespace RoguelikeGame.UI.Panels
 			{
 				GD.PrintErr($"[LobbyPanel] 加载房间列表失败: {ex.Message}");
 				_roomList.Clear();
+				_displayedRooms.Clear();
 				_roomList.AddItem($"❌ 加载失败: {ex.Message}");
 			}
 		}
@@ -340,9 +347,11 @@ namespace RoguelikeGame.UI.Panels
 		{
 			GD.Print($"[LobbyPanel] 选择房间索引: {index}");
 
-			if (index >= 0 && RoomManager.Instance?.CurrentRoom == null)
+			if (index >= 0 && index < _displayedRooms.Count && RoomManager.Instance?.CurrentRoom == null)
 			{
-				OnJoinRoom?.Invoke(null);
+				var selectedRoom = _displayedRooms[(int)index];
+				GD.Print($"[LobbyPanel] 选中房间: {selectedRoom.Name} ({selectedRoom.Id})");
+				OnJoinRoom?.Invoke(selectedRoom);
 			}
 		}
 
@@ -366,17 +375,19 @@ namespace RoguelikeGame.UI.Panels
 
 			GD.Print($"[LobbyPanel] 创建房间: {name}, 模式: {mode}, 最大人数: {maxPlayers}");
 
-			OnCreateRoom?.Invoke();
+			_createRoomButton.Disabled = true;
 
 			var result = await RoomManager.Instance.CreateRoomAsync(name, mode, maxPlayers);
 
 			if (result.Success)
 			{
 				AddSystemMessage($"✅ 房间 '{name}' 创建成功！");
+				OnRoomCreatedAndJoined?.Invoke();
 			}
 			else
 			{
 				AddSystemMessage($"❌ 创建失败: {result.Message}");
+				_createRoomButton.Disabled = false;
 			}
 		}
 

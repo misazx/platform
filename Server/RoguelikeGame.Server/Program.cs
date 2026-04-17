@@ -35,6 +35,7 @@ try
     builder.Services.AddScoped<IRoomService, RoomService>();
     builder.Services.AddScoped<IMatchmakingService, MatchmakingService>();
     builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
+    builder.Services.AddHostedService<RoomCleanupService>();
 
     builder.Services.AddAuthentication(options =>
     {

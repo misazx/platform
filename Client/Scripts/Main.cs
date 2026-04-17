@@ -355,10 +355,51 @@ namespace RoguelikeGame
                 _packageDetail = null;
             }
 
+            if (_lobby != null && IsInstanceValid(_lobby))
+            {
+                _lobby.Visible = false;
+            }
+
             var lobbyPanel = new LobbyPanel();
+            lobbyPanel.Name = "LobbyPanel";
             AddChild(lobbyPanel);
+
+            lobbyPanel.OnBackToMenu += () =>
+            {
+                RemoveChild(lobbyPanel);
+                lobbyPanel.QueueFree();
+                GoToLobby();
+            };
+
             lobbyPanel.OnLeave += () =>
             {
+                RemoveChild(lobbyPanel);
+                lobbyPanel.QueueFree();
+                GoToLobby();
+            };
+
+            lobbyPanel.OnCreateRoom += () =>
+            {
+                GD.Print("[Main] OnCreateRoom triggered from LobbyPanel");
+            };
+
+            lobbyPanel.OnRoomCreatedAndJoined += () =>
+            {
+                GD.Print("[Main] Room created and joined, opening RoomPanel");
+                RemoveChild(lobbyPanel);
+                lobbyPanel.QueueFree();
+                OpenRoomPanel();
+            };
+
+            lobbyPanel.OnJoinRoom += (roomInfo) =>
+            {
+                GD.Print($"[Main] OnJoinRoom triggered: {roomInfo?.Name}");
+                JoinRoomFromLobby(lobbyPanel, roomInfo);
+            };
+
+            lobbyPanel.OnLogout += () =>
+            {
+                Network.Auth.AuthSystem.Instance?.PerformLogout();
                 RemoveChild(lobbyPanel);
                 lobbyPanel.QueueFree();
                 GoToLobby();
@@ -381,13 +422,94 @@ namespace RoguelikeGame
                 _packageDetail = null;
             }
 
+            if (_lobby != null && IsInstanceValid(_lobby))
+            {
+                _lobby.Visible = false;
+            }
+
             var lobbyPanel = new LobbyPanel();
+            lobbyPanel.Name = "LobbyPanel";
             AddChild(lobbyPanel);
+
+            lobbyPanel.OnBackToMenu += () =>
+            {
+                RemoveChild(lobbyPanel);
+                lobbyPanel.QueueFree();
+                GoToLobby();
+            };
+
             lobbyPanel.OnLeave += () =>
             {
                 RemoveChild(lobbyPanel);
                 lobbyPanel.QueueFree();
                 GoToLobby();
+            };
+
+            lobbyPanel.OnRoomCreatedAndJoined += () =>
+            {
+                GD.Print("[Main] Room created and joined from join flow, opening RoomPanel");
+                RemoveChild(lobbyPanel);
+                lobbyPanel.QueueFree();
+                OpenRoomPanel();
+            };
+
+            lobbyPanel.OnJoinRoom += (roomInfo) =>
+            {
+                GD.Print($"[Main] OnJoinRoom triggered: {roomInfo?.Name}");
+                JoinRoomFromLobby(lobbyPanel, roomInfo);
+            };
+
+            lobbyPanel.OnLogout += () =>
+            {
+                Network.Auth.AuthSystem.Instance?.PerformLogout();
+                RemoveChild(lobbyPanel);
+                lobbyPanel.QueueFree();
+                GoToLobby();
+            };
+        }
+
+        private async void JoinRoomFromLobby(LobbyPanel lobbyPanel, Network.Rooms.RoomInfo roomInfo)
+        {
+            if (roomInfo == null)
+            {
+                GD.PrintErr("[Main] JoinRoomFromLobby: roomInfo is null");
+                return;
+            }
+
+            GD.Print($"[Main] Joining room: {roomInfo.Name} ({roomInfo.Id})");
+
+            var result = await Network.Rooms.RoomManager.Instance.JoinRoomAsync(roomInfo.Id);
+
+            if (result.Success)
+            {
+                RemoveChild(lobbyPanel);
+                lobbyPanel.QueueFree();
+                OpenRoomPanel();
+            }
+            else
+            {
+                GD.PrintErr($"[Main] 加入房间失败: {result.Message}");
+            }
+        }
+
+        private void OpenRoomPanel()
+        {
+            var roomPanel = new RoomPanel();
+            roomPanel.Name = "RoomPanel";
+            AddChild(roomPanel);
+
+            roomPanel.OnLeaveRoom += () =>
+            {
+                RemoveChild(roomPanel);
+                roomPanel.QueueFree();
+                GoToLobby();
+            };
+
+            roomPanel.OnGameStarted += () =>
+            {
+                RemoveChild(roomPanel);
+                roomPanel.QueueFree();
+                OnLaunchPackage(_currentPackageId);
             };
         }
 
