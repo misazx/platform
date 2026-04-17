@@ -613,7 +613,7 @@ func _update_leaderboard_status(text: String) -> void:
 
 func _upload_save_to_server(slot: Dictionary) -> void:
 	var auth_system = _get_auth_system()
-	if auth_system == null or not auth_system.IsAuthenticated:
+	if auth_system == null or not auth_system.IsAuth():
 		print("[PackageDetail] 上传存档需要先登录")
 		return
 
@@ -637,7 +637,7 @@ func _upload_save_to_server(slot: Dictionary) -> void:
 	http.request_completed.connect(_on_save_uploaded)
 
 	var url := "http://127.0.0.1:5002/api/save/%s/upload" % _package_id
-	var token: String = auth_system.Token
+	var token: String = auth_system.GetAuthToken()
 	var headers := ["Content-Type: application/json", "Authorization: Bearer %s" % token]
 	var body := JSON.stringify(request_body)
 	var err := http.request(url, headers, HTTPClient.METHOD_POST, body)
@@ -655,7 +655,7 @@ func _on_save_uploaded(result: int, code: int, _headers: PackedStringArray, _bod
 
 func _fetch_server_saves() -> void:
 	var auth_system = _get_auth_system()
-	if auth_system == null or not auth_system.IsAuthenticated:
+	if auth_system == null or not auth_system.IsAuth():
 		return
 
 	var http := HTTPRequest.new()
@@ -664,7 +664,7 @@ func _fetch_server_saves() -> void:
 	http.request_completed.connect(_on_server_saves_received)
 
 	var url := "http://127.0.0.1:5002/api/save/%s" % _package_id
-	var token: String = auth_system.Token
+	var token: String = auth_system.GetAuthToken()
 	var headers := ["Authorization: Bearer %s" % token]
 	var err := http.request(url, headers)
 	if err != Error.OK:
@@ -805,7 +805,7 @@ func _create_server_save_slot(sv: Dictionary) -> PanelContainer:
 
 func _download_save_from_server(slot_id: int) -> void:
 	var auth_system = _get_auth_system()
-	if auth_system == null or not auth_system.IsAuthenticated:
+	if auth_system == null or not auth_system.IsAuth():
 		print("[PackageDetail] 下载存档需要先登录")
 		return
 
@@ -815,7 +815,7 @@ func _download_save_from_server(slot_id: int) -> void:
 	http.request_completed.connect(_on_save_downloaded)
 
 	var url := "http://127.0.0.1:5002/api/save/%s/download/%d" % [_package_id, slot_id]
-	var token: String = auth_system.Token
+	var token: String = auth_system.GetAuthToken()
 	var headers := ["Authorization: Bearer %s" % token]
 	var err := http.request(url, headers)
 	if err != Error.OK:
@@ -867,7 +867,7 @@ func _on_save_downloaded(result: int, code: int, _headers: PackedStringArray, bo
 
 func _delete_server_save(slot_id: int) -> void:
 	var auth_system = _get_auth_system()
-	if auth_system == null or not auth_system.IsAuthenticated:
+	if auth_system == null or not auth_system.IsAuth():
 		print("[PackageDetail] 删除存档需要先登录")
 		return
 
@@ -877,7 +877,7 @@ func _delete_server_save(slot_id: int) -> void:
 	http.request_completed.connect(_on_server_save_deleted)
 
 	var url := "http://127.0.0.1:5002/api/save/%s/delete/%d" % [_package_id, slot_id]
-	var token: String = auth_system.Token
+	var token: String = auth_system.GetAuthToken()
 	var headers := ["Authorization: Bearer %s" % token]
 	var err := http.request(url, headers, HTTPClient.METHOD_DELETE)
 	if err != Error.OK:
@@ -895,7 +895,7 @@ func _on_server_save_deleted(result: int, code: int, _headers: PackedStringArray
 
 func _fetch_achievements_from_server() -> void:
 	var auth_system = _get_auth_system()
-	if auth_system == null or not auth_system.IsAuthenticated:
+	if auth_system == null or not auth_system.IsAuth():
 		return
 
 	var http := HTTPRequest.new()
@@ -904,7 +904,7 @@ func _fetch_achievements_from_server() -> void:
 	http.request_completed.connect(_on_server_achievements_received)
 
 	var url := "http://127.0.0.1:5002/api/achievement/%s?userId=%s" % [_package_id, _get_user_id()]
-	var token: String = auth_system.Token
+	var token: String = auth_system.GetAuthToken()
 	var headers := ["Authorization: Bearer %s" % token]
 	var err := http.request(url, headers)
 	if err != Error.OK:
@@ -951,13 +951,10 @@ func _on_server_achievements_received(result: int, code: int, _headers: PackedSt
 		_achievements_tab.add_child(ach_panel)
 
 func _get_user_id() -> String:
-	var auth_system = _get_auth_system()
-	if auth_system != null and auth_system.IsAuthenticated:
-		var user = auth_system.CurrentUser
-		if user != null:
-			return str(user.Id)
-	return ""
-
+var auth_system = _get_auth_system()
+if auth_system != null and auth_system.IsAuth():
+return auth_system.GetUserId()
+return ""
 func _on_back_pressed() -> void:
 	print("[PackageDetail] Back pressed")
 	back_pressed.emit()
@@ -1047,7 +1044,7 @@ func _show_mode_select() -> void:
 	vbox.add_child(join_btn)
 
 	var auth_system = _get_auth_system()
-	if auth_system == null or not auth_system.IsAuthenticated:
+	if auth_system == null or not auth_system.IsAuth():
 		create_btn.disabled = true
 		join_btn.disabled = true
 		create_btn.tooltip_text = "需要先登录"

@@ -146,9 +146,8 @@ func _update_auth_ui() -> void:
 	if auth_system == null:
 		return
 
-	if auth_system.IsAuthenticated and auth_system.CurrentUser != null:
-		var user = auth_system.CurrentUser
-		_user_status_label.text = "👤 %s  |  Lv.%d  |  胜场: %d" % [user.Username, user.Level, user.GamesWon]
+	if auth_system.IsAuth():
+		_user_status_label.text = "👤 %s  |  Lv.%d  |  胜场: %d" % [auth_system.GetUsername(), auth_system.GetUserLevel(), auth_system.GetUserGamesWon()]
 		_user_status_label.modulate = Color(0.4, 0.9, 0.6)
 		_auth_button.text = "🚪 登出"
 	else:
@@ -219,7 +218,7 @@ func _on_quit_pressed() -> void:
 
 func _on_auth_pressed() -> void:
 	var auth_system = _get_auth_system()
-	if auth_system != null and auth_system.IsAuthenticated:
+	if auth_system != null and auth_system.IsAuth():
 		auth_system.PerformLogout()
 		_update_auth_ui()
 	else:

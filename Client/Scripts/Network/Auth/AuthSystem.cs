@@ -44,6 +44,14 @@ namespace RoguelikeGame.Network.Auth
 		public UserInfo? CurrentUser => _currentUser;
 		public string Token => _currentToken;
 
+		public bool IsAuth() => IsAuthenticated;
+		public string GetAuthToken() => _currentToken;
+		public string GetUserId() => _currentUser?.Id ?? "";
+		public string GetUsername() => _currentUser?.Username ?? "";
+		public int GetUserLevel() => _currentUser?.Level ?? 1;
+		public int GetUserExperience() => _currentUser?.Experience ?? 0;
+		public int GetUserGamesWon() => _currentUser?.GamesWon ?? 0;
+
 		[Signal]
 		public delegate void LoginCompletedEventHandler(bool success, string message);
 
