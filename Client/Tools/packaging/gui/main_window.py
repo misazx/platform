@@ -45,7 +45,7 @@ QCheckBox::indicator { width: 18px; height: 18px; border-radius: 4px; border: 2p
 QCheckBox::indicator:checked { background-color: #89b4fa; border-color: #89b4fa; }
 QCheckBox::indicator:unchecked { background-color: #313244; }
 QLineEdit { background-color: #313244; border: 1px solid #45475a; border-radius: 6px; padding: 6px 10px; font-size: 12px; color: #cdd6f4; }
-QTextEdit { background-color: #11111b; border: 1px solid #313244; border-radius: 6px; font-family: 'SF Mono', 'Menlo', monospace; font-size: 11px; color: #a6e3a1; padding: 4px; }
+QTextEdit { background-color: #11111b; border: 1px solid #313244; border-radius: 6px; font-family: 'Menlo', monospace; font-size: 11px; color: #a6e3a1; padding: 4px; }
 QProgressBar { background-color: #313244; border: none; border-radius: 4px; height: 20px; text-align: center; color: #cdd6f4; font-size: 11px; }
 QProgressBar::chunk { background-color: #89b4fa; border-radius: 4px; }
 QLabel#envOk { color: #a6e3a1; }
@@ -186,7 +186,7 @@ class MainWindow(QMainWindow):
         steps_layout = QVBoxLayout(steps_group)
         self.steps_label = QLabel(self._get_steps_text())
         self.steps_label.setWordWrap(True)
-        self.steps_label.setFont(QFont("SF Mono", 10))
+        self.steps_label.setFont(QFont("Menlo", 10))
         steps_layout.addWidget(self.steps_label)
         layout.addWidget(steps_group)
 

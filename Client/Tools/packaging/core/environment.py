@@ -180,18 +180,21 @@ class EnvironmentDetector:
 
         java_cmd = shutil.which("java")
         if java_cmd:
-            result.installed = True
-            result.path = java_cmd
             try:
                 r = subprocess.run(
                     ["java", "-version"],
                     capture_output=True, text=True, timeout=10,
                 )
                 output = r.stderr or r.stdout
-                first_line = output.strip().split("\n")[0] if output else ""
-                result.version = first_line
+                if "Unable to locate" in output or "No Java runtime" in output or r.returncode != 0:
+                    result.message = "Install: brew install openjdk@17"
+                else:
+                    result.installed = True
+                    result.path = java_cmd
+                    first_line = output.strip().split("\n")[0] if output else ""
+                    result.version = first_line
             except Exception:
-                result.version = "found"
+                result.message = "Install: brew install openjdk@17"
         else:
             result.message = "Install: brew install openjdk@17"
 

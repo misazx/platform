@@ -97,6 +97,14 @@ CardDatabase="*res://GameModes/base_game/Scripts/cards/card_database.gd"
 | **硬编码字符串** | `_title.text = "杀戮尖塔 2"` | 使用常量: `const GAME_TITLE: String = "杀戮尖塔 2"; _title.text = GAME_TITLE` |
 | **信号未声明** | `emit_signal("form_changed", new_form)` | 必须先声明: `signal form_changed(new_form: String)` |
 | **枚举值硬编码** | `match card.type: 0: _execute_attack()` | 使用枚举名: `match card.type: CardType.ATTACK: _execute_attack()` |
+| **Dictionary访问未用get** | `card.type` (Dictionary无type属性) | `card.get("type", 0)` 安全访问并设默认值 |
+| **逻辑条件反转** | `if _is_reviving and _partner_alive:` (应为not) | 仔细检查布尔条件语义: `if _is_reviving and not _partner_alive:` |
+| **C#事件未取消订阅** | C#面板订阅RoomManager事件后QueueFree未取消 | 必须在_ExitTree中-=取消订阅，否则已释放对象被回调崩溃 |
+| **HotPatchService引用方式** | `HotPatchService.instance.check_for_updates()` | GDScript autoload通过场景树: `get_node_or_null("/root/HotPatchService")` |
+| **热更新路径混用** | 直接写入`res://GameModes/xxx` | 热更新文件写入`user://hotfix/{pkg_id}/`，读取时先查hotfix再查res:// |
+| **HTTPRequest回调未释放** | `add_child(http)` 但不`queue_free()` | 必须在`request_completed`回调中调用`http.queue_free()` |
+| **ZIPReader未关闭** | `var r := ZIPReader.new(); r.open(p)` | 使用后必须`r.close()`，否则文件锁不释放 |
+| **FileAccess写入res://** | `FileAccess.open("res://xxx", WRITE)` | `res://`在发布后只读，热更新只能写入`user://` |
 
 ---
 
@@ -130,6 +138,8 @@ if some_node.has_method("some_method"):
 |------|------|------|
 | `ConfigLoader` | `config_loader.gd` | JSON/Bytes配置加载 |
 | `PackageUIRegistry` | `package_ui_provider.gd` | UI包注册 |
+| `PackageService` | `Scripts/Services/package_service.gd` | 包管理服务 |
+| `HotPatchService` | `Scripts/Services/hot_patch_service.gd` | 热更新服务 |
 | `EventBus` | `Core/EventBus.cs` | 全局事件总线(C#) |
 
 如需新增 autoload，在 `project.godot` 的 `[autoload]` 段添加。
