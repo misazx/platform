@@ -31,6 +31,9 @@ namespace RoguelikeGame.Network.Rooms
 		public string Username { get; set; } = "";
 		public bool IsHost { get; set; }
 		public bool IsReady { get; set; }
+		public bool IsBot { get; set; }
+		public string? BotName { get; set; }
+		public string? BotDifficulty { get; set; }
 		public string? CharacterId { get; set; }
 		public int Score { get; set; }
 		public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
@@ -466,6 +469,98 @@ namespace RoguelikeGame.Network.Rooms
 			}
 		}
 
+		public async Task<RoomResult> AddBotAsync(string difficulty = "Normal")
+		{
+			if (_currentRoom == null || !IsHost)
+			{
+				return new RoomResult { Success = false, Message = "仅房主可添加机器人" };
+			}
+
+			try
+			{
+				var requestData = new { difficulty };
+				var request = CreateAuthorizedRequest(HttpMethod.Post, $"/api/rooms/{_currentRoom.Id}/add-bot", requestData);
+				var response = await _httpClient.SendAsync(request);
+				var responseString = await response.Content.ReadAsStringAsync();
+				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
+
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
+
+				if (success)
+				{
+					string botName = result.TryGetProperty("bot", out var botEl) &&
+						botEl.TryGetProperty("botName", out var bnEl) ? (bnEl.GetString() ?? "Bot") : "Bot";
+
+					GD.Print($"[RoomManager] 🤖 机器人 {botName} 已加入");
+
+					await RefreshCurrentRoomAsync();
+
+					return new RoomResult { Success = true, Message = $"机器人 {botName} 已加入" };
+				}
+				else
+				{
+					string message = result.TryGetProperty("message", out var mEl) ? (mEl.GetString() ?? "添加失败") : "添加失败";
+					return new RoomResult { Success = false, Message = message };
+				}
+			}
+			catch (Exception ex)
+			{
+				GD.PrintErr($"[RoomManager] 添加机器人异常: {ex.Message}");
+				return new RoomResult { Success = false, Message = $"网络错误: {ex.Message}" };
+			}
+		}
+
+		public async Task<RoomResult> RemoveBotAsync(string botId)
+		{
+			if (_currentRoom == null || !IsHost)
+			{
+				return new RoomResult { Success = false, Message = "仅房主可移除机器人" };
+			}
+
+			try
+			{
+				var requestData = new { botId };
+				var request = CreateAuthorizedRequest(HttpMethod.Post, $"/api/rooms/{_currentRoom.Id}/remove-bot", requestData);
+				var response = await _httpClient.SendAsync(request);
+				var responseString = await response.Content.ReadAsStringAsync();
+				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
+
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
+
+				if (success)
+				{
+					GD.Print("[RoomManager] 🤖 机器人已移除");
+
+					await RefreshCurrentRoomAsync();
+
+					string message = result.TryGetProperty("message", out var mEl) ? (mEl.GetString() ?? "已移除") : "已移除";
+					return new RoomResult { Success = true, Message = message };
+				}
+				else
+				{
+					string message = result.TryGetProperty("message", out var mEl) ? (mEl.GetString() ?? "移除失败") : "移除失败";
+					return new RoomResult { Success = false, Message = message };
+				}
+			}
+			catch (Exception ex)
+			{
+				GD.PrintErr($"[RoomManager] 移除机器人异常: {ex.Message}");
+				return new RoomResult { Success = false, Message = $"网络错误: {ex.Message}" };
+			}
+		}
+
+		private async Task RefreshCurrentRoomAsync()
+		{
+			if (_currentRoom == null) return;
+
+			var result = await GetRoomDetailsAsync(_currentRoom.Id);
+			if (result.Success && result.Room != null)
+			{
+				_currentRoom = result.Room;
+				EmitSignal(SignalName.RoomUpdated, _currentRoom.Id);
+			}
+		}
+
 		private RoomInfo ParseRoomFromJson(JsonElement roomElement)
 		{
 			var room = new RoomInfo
@@ -490,12 +585,24 @@ namespace RoguelikeGame.Network.Rooms
 				{
 					var userId = playerEl.TryGetProperty("userId", out var uidEl) ? (uidEl.GetString() ?? "") : "";
 					var username = playerEl.TryGetProperty("username", out var unEl) ? (unEl.GetString() ?? "") : "";
+					bool isBot = playerEl.TryGetProperty("isBot", out var ibEl) && ibEl.GetBoolean();
+					string botName = playerEl.TryGetProperty("botName", out var bnEl) ? (bnEl.GetString() ?? "") : "";
+					string botDiff = playerEl.TryGetProperty("botDifficulty", out var bdEl) ? (bdEl.GetString() ?? "") : "";
+
+					if (isBot && !string.IsNullOrEmpty(botName))
+					{
+						username = $"🤖 {botName}";
+					}
+
 					room.Players.Add(new PlayerInfo
 					{
 						Id = userId,
 						Username = username,
 						IsHost = room.HostId == userId,
 						IsReady = playerEl.TryGetProperty("isReady", out var readyEl) && readyEl.GetBoolean(),
+						IsBot = isBot,
+						BotName = botName,
+						BotDifficulty = botDiff,
 						Score = playerEl.TryGetProperty("score", out var scoreEl) ? scoreEl.GetInt32() : 0,
 						JoinedAt = DateTime.UtcNow
 					});

@@ -295,27 +295,34 @@ namespace RoguelikeGame.UI.Panels
                 child.QueueFree();
             }
 
+            bool isHost = RoomManager.Instance?.IsHost ?? false;
+
             foreach (var player in room.Players)
             {
                 var playerRow = new HBoxContainer();
                 playerRow.AddThemeConstantOverride("separation", 8);
                 playerRow.CustomMinimumSize = new Vector2(320, 36);
 
-                var hostIcon = new Label
+                var roleIcon = new Label
                 {
-                    Text = player.IsHost ? "👑" : "  ",
+                    Text = player.IsHost ? "👑" : (player.IsBot ? "🤖" : "  "),
                     CustomMinimumSize = new Vector2(24, 30)
                 };
-                hostIcon.AddThemeFontSizeOverride("font_size", 16);
-                playerRow.AddChild(hostIcon);
+                roleIcon.AddThemeFontSizeOverride("font_size", 16);
+                playerRow.AddChild(roleIcon);
 
                 var nameLabel = new Label
                 {
                     Text = player.Username,
-                    CustomMinimumSize = new Vector2(140, 30)
+                    CustomMinimumSize = new Vector2(120, 30)
                 };
                 nameLabel.AddThemeFontSizeOverride("font_size", 15);
-                nameLabel.Modulate = player.IsHost ? new Color(1f, 0.85f, 0.3f) : new Color(0.85f, 0.9f, 0.95f);
+                if (player.IsHost)
+                    nameLabel.Modulate = new Color(1f, 0.85f, 0.3f);
+                else if (player.IsBot)
+                    nameLabel.Modulate = new Color(0.6f, 0.8f, 1f);
+                else
+                    nameLabel.Modulate = new Color(0.85f, 0.9f, 0.95f);
                 playerRow.AddChild(nameLabel);
 
                 var spacer = new Control
@@ -334,9 +341,25 @@ namespace RoguelikeGame.UI.Panels
                 readyLabel.Modulate = player.IsReady ? new Color(0.4f, 0.9f, 0.5f) : new Color(0.6f, 0.6f, 0.6f);
                 playerRow.AddChild(readyLabel);
 
+                if (isHost && player.IsBot)
+                {
+                    var removeBtn = new Button
+                    {
+                        Text = "✕",
+                        CustomMinimumSize = new Vector2(28, 28)
+                    };
+                    removeBtn.AddThemeFontSizeOverride("font_size", 12);
+                    removeBtn.Modulate = new Color(0.9f, 0.4f, 0.4f);
+                    var botId = player.Id;
+                    removeBtn.Pressed += async () => await RemoveBot(botId);
+                    playerRow.AddChild(removeBtn);
+                }
+
                 var styleBox = new StyleBoxFlat
                 {
-                    BgColor = player.IsHost ? new Color(0.15f, 0.12f, 0.05f, 0.8f) : new Color(0.08f, 0.08f, 0.12f, 0.8f),
+                    BgColor = player.IsHost ? new Color(0.15f, 0.12f, 0.05f, 0.8f) :
+                              player.IsBot ? new Color(0.05f, 0.1f, 0.15f, 0.8f) :
+                              new Color(0.08f, 0.08f, 0.12f, 0.8f),
                     CornerRadiusTopLeft = 6,
                     CornerRadiusTopRight = 6,
                     CornerRadiusBottomLeft = 6,
@@ -353,6 +376,20 @@ namespace RoguelikeGame.UI.Panels
 
                 _playerListContainer.AddChild(panel);
             }
+        }
+
+        private async System.Threading.Tasks.Task RemoveBot(string botId)
+        {
+            var result = await Network.Rooms.RoomManager.Instance.RemoveBotAsync(botId);
+            if (result.Success)
+            {
+                AddSystemMessage($"🤖 {result.Message}");
+            }
+            else
+            {
+                AddSystemMessage($"❌ 移除机器人失败: {result.Message}");
+            }
+            RefreshRoomInfo();
         }
 
         private void UpdateButtonStates(RoomInfo room)
@@ -412,9 +449,23 @@ namespace RoguelikeGame.UI.Panels
             }
         }
 
-        private void OnAddBotPressed()
+        private async void OnAddBotPressed()
         {
-            AddSystemMessage("🤖 机器人功能开发中...");
+            _addBotButton.Disabled = true;
+
+            var result = await Network.Rooms.RoomManager.Instance.AddBotAsync("Normal");
+
+            if (result.Success)
+            {
+                AddSystemMessage($"🤖 {result.Message}");
+            }
+            else
+            {
+                AddSystemMessage($"❌ 添加机器人失败: {result.Message}");
+            }
+
+            _addBotButton.Disabled = false;
+            RefreshRoomInfo();
         }
 
         private async void OnLeavePressed()

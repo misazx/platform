@@ -19,6 +19,8 @@ namespace RoguelikeGame.Server.Services
         Task<bool> StartGameAsync(string roomId, string hostId);
         Task<bool> EndGameAsync(string roomId, bool victory);
         Task CleanupExpiredRoomsAsync();
+        Task<(bool Success, RoomPlayer? BotPlayer, string Message)> AddBotAsync(string roomId, string hostId, string difficulty = "Normal");
+        Task<(bool Success, string Message)> RemoveBotAsync(string roomId, string hostId, string botId);
     }
 
     public class RoomService : IRoomService
@@ -216,6 +218,104 @@ namespace RoguelikeGame.Server.Services
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        private static readonly string[] BOT_NAMES = {
+            "AI-Alpha", "AI-Bravo", "AI-Charlie", "AI-Delta",
+            "AI-Echo", "AI-Foxtrot", "AI-Golf", "AI-Hotel"
+        };
+
+        private static int _botNameIndex;
+
+        public async Task<(bool Success, RoomPlayer? BotPlayer, string Message)> AddBotAsync(string roomId, string hostId, string difficulty = "Normal")
+        {
+            var room = await _context.Rooms
+                .Include(r => r.Players)
+                .FirstOrDefaultAsync(r => r.Id == roomId);
+
+            if (room == null)
+            {
+                return (false, null, "房间不存在");
+            }
+
+            if (room.HostId != hostId)
+            {
+                return (false, null, "仅房主可添加机器人");
+            }
+
+            if (room.CurrentPlayers >= room.MaxPlayers)
+            {
+                return (false, null, "房间已满");
+            }
+
+            if (room.Status != RoomStatus.Waiting && room.Status != RoomStatus.Full)
+            {
+                return (false, null, "房间状态不允许添加机器人");
+            }
+
+            var botName = BOT_NAMES[_botNameIndex % BOT_NAMES.Length];
+            _botNameIndex++;
+
+            var botUserId = $"bot_{Guid.NewGuid():N}";
+
+            var botPlayer = new RoomPlayer
+            {
+                RoomId = roomId,
+                UserId = botUserId,
+                IsBot = true,
+                BotName = botName,
+                BotDifficulty = difficulty,
+                IsReady = true,
+                JoinedAt = DateTime.UtcNow
+            };
+
+            _context.RoomPlayers.Add(botPlayer);
+            room.CurrentPlayers++;
+
+            if (room.CurrentPlayers >= room.MaxPlayers)
+            {
+                room.Status = RoomStatus.Full;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return (true, botPlayer, $"机器人 {botName} 已加入");
+        }
+
+        public async Task<(bool Success, string Message)> RemoveBotAsync(string roomId, string hostId, string botId)
+        {
+            var room = await _context.Rooms.FindAsync(roomId);
+            if (room == null)
+            {
+                return (false, "房间不存在");
+            }
+
+            if (room.HostId != hostId)
+            {
+                return (false, "仅房主可移除机器人");
+            }
+
+            var botPlayer = await _context.RoomPlayers
+                .FirstOrDefaultAsync(p => p.Id == botId && p.RoomId == roomId && p.IsBot);
+
+            if (botPlayer == null)
+            {
+                return (false, "机器人不存在");
+            }
+
+            var botName = botPlayer.BotName ?? "Bot";
+
+            _context.RoomPlayers.Remove(botPlayer);
+            room.CurrentPlayers--;
+
+            if (room.Status == RoomStatus.Full)
+            {
+                room.Status = RoomStatus.Waiting;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return (true, $"机器人 {botName} 已移除");
         }
     }
 }

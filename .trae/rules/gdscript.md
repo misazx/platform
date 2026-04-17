@@ -1,2 +1,3 @@
 新增或修改gdscript代码必须显式类型声明，必须参考gdscript_README.md文件
 会话中修复的gdscript代码的时候，需要在会话完成的时候将gdscript代码的易错写法合并进gdscript_README.md文件
+gdscript代码必须检查信号是否存在，不存在则需要添加信号

@@ -250,6 +250,58 @@ namespace RoguelikeGame.Server.Controllers
                 return BadRequest(new { success = false, message = "无法开始游戏（需要房主权限或所有玩家未就绪）" });
             }
         }
+
+        [HttpPost("{roomId}/add-bot")]
+        public async Task<IActionResult> AddBot(string roomId, [FromBody] AddBotRequest? request = null)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized();
+
+            var difficulty = request?.Difficulty ?? "Normal";
+            var (success, botPlayer, message) = await _roomService.AddBotAsync(roomId, userId, difficulty);
+
+            if (success && botPlayer != null)
+            {
+                _logger.LogInformation("机器人加入房间: {BotName} -> {RoomId}", botPlayer.BotName, roomId);
+                return Ok(new
+                {
+                    success = true,
+                    bot = new
+                    {
+                        botPlayer.Id,
+                        botPlayer.UserId,
+                        botName = botPlayer.BotName,
+                        botDifficulty = botPlayer.BotDifficulty,
+                        botPlayer.IsReady,
+                        botPlayer.IsBot
+                    },
+                    message
+                });
+            }
+            else
+            {
+                return BadRequest(new { success = false, message });
+            }
+        }
+
+        [HttpPost("{roomId}/remove-bot")]
+        public async Task<IActionResult> RemoveBot(string roomId, [FromBody] RemoveBotRequest request)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized();
+
+            var (success, message) = await _roomService.RemoveBotAsync(roomId, userId, request.BotId);
+
+            if (success)
+            {
+                _logger.LogInformation("机器人移出房间: {BotId} <- {RoomId}", request.BotId, roomId);
+                return Ok(new { success = true, message });
+            }
+            else
+            {
+                return BadRequest(new { success = false, message });
+            }
+        }
     }
 
     public class CreateRoomRequest
@@ -276,5 +328,16 @@ namespace RoguelikeGame.Server.Controllers
     public class ReadyRequest
     {
         public bool IsReady { get; set; } = true;
+    }
+
+    public class AddBotRequest
+    {
+        public string? Difficulty { get; set; }
+    }
+
+    public class RemoveBotRequest
+    {
+        [Required]
+        public string BotId { get; set; } = "";
     }
 }

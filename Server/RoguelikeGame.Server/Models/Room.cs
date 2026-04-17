@@ -71,6 +71,9 @@ namespace RoguelikeGame.Server.Models
         public User? User { get; set; }
 
         public bool IsReady { get; set; } = false;
+        public bool IsBot { get; set; } = false;
+        public string? BotName { get; set; }
+        public string? BotDifficulty { get; set; }
         public string? CharacterId { get; set; }
         public int Score { get; set; } = 0;
 
