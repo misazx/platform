@@ -225,5 +225,121 @@ namespace RoguelikeGame.Server.Hubs
                 timestamp = DateTime.UtcNow
             });
         }
+
+        public async Task SendCoopCardPlay(string roomId, int playerIndex, object cardData, int targetIndex)
+        {
+            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) throw new HubException("未认证");
+
+            await Clients.OthersInGroup(roomId).SendAsync("CoopCardPlayed", new
+            {
+                playerIndex,
+                cardData,
+                targetIndex,
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        public async Task SendCoopTurnEnd(string roomId, int playerIndex)
+        {
+            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) throw new HubException("未认证");
+
+            await Clients.OthersInGroup(roomId).SendAsync("CoopTurnEnded", new
+            {
+                playerIndex,
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        public async Task SendRacePosition(string roomId, string racerId, double x, double y, string form)
+        {
+            await Clients.OthersInGroup(roomId).SendAsync("RacePositionUpdate", new
+            {
+                racerId,
+                x,
+                y,
+                form,
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        public async Task SendRaceCheckpoint(string roomId, string racerId, string checkpointId)
+        {
+            await Clients.Group(roomId).SendAsync("RaceCheckpointReached", new
+            {
+                racerId,
+                checkpointId,
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        public async Task SendRaceFinish(string roomId, string racerId, double finishTime)
+        {
+            await Clients.Group(roomId).SendAsync("RaceFinished", new
+            {
+                racerId,
+                finishTime,
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        public async Task SendCoopPosition(string roomId, double x, double y, string form)
+        {
+            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) throw new HubException("未认证");
+
+            await Clients.OthersInGroup(roomId).SendAsync("CoopPositionUpdate", new
+            {
+                userId,
+                x,
+                y,
+                form,
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        public async Task SendCoopSwitch(string roomId, string switchId, bool activated)
+        {
+            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) throw new HubException("未认证");
+
+            await Clients.OthersInGroup(roomId).SendAsync("CoopSwitchUpdate", new
+            {
+                userId,
+                switchId,
+                activated,
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        public async Task SendCoopPuzzleSolved(string roomId, string puzzleId)
+        {
+            await Clients.Group(roomId).SendAsync("CoopPuzzleSolved", new
+            {
+                puzzleId,
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        public async Task SendCoopPlayerDied(string roomId)
+        {
+            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) throw new HubException("未认证");
+
+            await Clients.OthersInGroup(roomId).SendAsync("CoopPlayerDied", new
+            {
+                userId,
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        public async Task SendCoopPlayerRevived(string roomId)
+        {
+            await Clients.Group(roomId).SendAsync("CoopPlayerRevived", new
+            {
+                timestamp = DateTime.UtcNow
+            });
+        }
     }
 }
