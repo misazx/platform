@@ -391,7 +391,7 @@ func _apply_update(package_id: String, manifest: Dictionary, temp_dir: String) -
 		applied_count += 1
 
 	if failed_count > 0:
-		_rollback_update(package_id)
+		_perform_rollback(package_id)
 		_status = UpdateStatus.ERROR
 		update_failed.emit(package_id, "%d个文件应用失败，已回滚" % failed_count)
 		return
@@ -459,7 +459,7 @@ func _apply_update_from_zip(package_id: String, manifest: Dictionary, zip_path: 
 	reader.close()
 
 	if failed_count > 0:
-		_rollback_update(package_id)
+		_perform_rollback(package_id)
 		_status = UpdateStatus.ERROR
 		update_failed.emit(package_id, "%d个文件解压失败，已回滚" % failed_count)
 		return
@@ -564,6 +564,22 @@ func _cleanup_temp(package_id: String) -> void:
 	var temp_dir: String = HOTFIX_DIR + "temp/%s/" % package_id
 	if DirAccess.dir_exists_absolute(temp_dir):
 		_remove_directory(temp_dir)
+
+func _perform_rollback(package_id: String) -> void:
+	var backup_path: String = BACKUP_DIR + package_id + "/"
+	if not DirAccess.dir_exists_absolute(backup_path):
+		return
+
+	var hotfix_path: String = HOTFIX_DIR + package_id + "/"
+	if DirAccess.dir_exists_absolute(hotfix_path):
+		_remove_directory(hotfix_path)
+
+	_copy_directory(backup_path, hotfix_path)
+
+	_remove_directory(backup_path)
+	if _update_records.has(package_id):
+		_update_records[package_id]["backup_exists"] = false
+		_save_update_records()
 
 func rollback_update(package_id: String) -> bool:
 	if _status != UpdateStatus.IDLE:
@@ -685,7 +701,7 @@ func _compute_file_hash(file_path: String) -> String:
 		return ""
 	var data: PackedByteArray = file.get_buffer(file.get_length())
 	file.close()
-	return data.sha256_text()
+	return data.sha256_buffer().hex_encode()
 
 func _get_cdn_base_url() -> String:
 	var pkg_svc = get_node_or_null("/root/PackageService")

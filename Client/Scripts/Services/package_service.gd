@@ -107,7 +107,7 @@ func _register_builtin_packages() -> void:
 				"path": "res://GameModes/%s" % pid,
 				"last_played": "",
 			}
-	_print("[PackageService] Registered %d builtin packages" % _packages.size())
+	print("[PackageService] Registered %d builtin packages" % _packages.size())
 
 func get_package(package_id: String) -> Dictionary:
 	return _packages.get(package_id, {})
