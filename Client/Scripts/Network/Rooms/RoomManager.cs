@@ -28,6 +28,7 @@ namespace RoguelikeGame.Network.Rooms
 	public class PlayerInfo
 	{
 		public string Id { get; set; } = "";
+		public string UserId { get; set; } = "";
 		public string Username { get; set; } = "";
 		public bool IsHost { get; set; }
 		public bool IsReady { get; set; }
@@ -583,6 +584,7 @@ namespace RoguelikeGame.Network.Rooms
 			{
 				foreach (var playerEl in playersArray.EnumerateArray())
 				{
+					var playerPrimaryKey = playerEl.TryGetProperty("id", out var pkEl) ? (pkEl.GetString() ?? "") : "";
 					var userId = playerEl.TryGetProperty("userId", out var uidEl) ? (uidEl.GetString() ?? "") : "";
 					var username = playerEl.TryGetProperty("username", out var unEl) ? (unEl.GetString() ?? "") : "";
 					bool isBot = playerEl.TryGetProperty("isBot", out var ibEl) && ibEl.GetBoolean();
@@ -596,7 +598,8 @@ namespace RoguelikeGame.Network.Rooms
 
 					room.Players.Add(new PlayerInfo
 					{
-						Id = userId,
+						Id = playerPrimaryKey,
+						UserId = userId,
 						Username = username,
 						IsHost = room.HostId == userId,
 						IsReady = playerEl.TryGetProperty("isReady", out var readyEl) && readyEl.GetBoolean(),

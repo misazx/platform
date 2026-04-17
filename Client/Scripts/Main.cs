@@ -323,11 +323,15 @@ namespace RoguelikeGame
                 return;
             }
 
+            _currentPackageId = packageId;
+
             if (_packageDetail != null && IsInstanceValid(_packageDetail))
             {
                 _packageDetail.QueueFree();
                 _packageDetail = null;
             }
+
+            _currentScene = null;
 
             if (_lobby != null && IsInstanceValid(_lobby))
             {
@@ -390,11 +394,15 @@ namespace RoguelikeGame
                 return;
             }
 
+            _currentPackageId = packageId;
+
             if (_packageDetail != null && IsInstanceValid(_packageDetail))
             {
                 _packageDetail.QueueFree();
                 _packageDetail = null;
             }
+
+            _currentScene = null;
 
             if (_lobby != null && IsInstanceValid(_lobby))
             {
@@ -463,6 +471,7 @@ namespace RoguelikeGame
             else
             {
                 GD.PrintErr($"[Main] 加入房间失败: {result.Message}");
+                lobbyPanel.AddSystemMessage($"❌ 加入房间失败: {result.Message}");
             }
         }
 

@@ -93,6 +93,10 @@ CardDatabase="*res://GameModes/base_game/Scripts/cards/card_database.gd"
 | **Texture2D类型需显式声明** | `var tex := load(path) as Texture2D` | `var tex: Texture2D = load(path) as Texture2D` |
 | **GDScript autoload无instance属性** | `AudioManager.instance.play_button_click()` | GDScript autoload直接用全局名调用: `AudioManager.play_button_click()` |
 | **Dictionary与自定义对象混用** | `character.character` (Dictionary无此key) | 先判断类型: `if character is Dictionary: character.get("class", 0) else: character.character` |
+| **未初始化变量引用** | `func update_player_info(): _player_info_bar.get_children()` | 确保变量在_ready或_build_ui中初始化后再引用 |
+| **硬编码字符串** | `_title.text = "杀戮尖塔 2"` | 使用常量: `const GAME_TITLE: String = "杀戮尖塔 2"; _title.text = GAME_TITLE` |
+| **信号未声明** | `emit_signal("form_changed", new_form)` | 必须先声明: `signal form_changed(new_form: String)` |
+| **枚举值硬编码** | `match card.type: 0: _execute_attack()` | 使用枚举名: `match card.type: CardType.ATTACK: _execute_attack()` |
 
 ---
 

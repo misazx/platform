@@ -4,6 +4,10 @@ signal package_list_updated()
 signal package_activated(package_id: String)
 signal package_deactivated(package_id: String)
 signal package_error(package_id: String, error_msg: String)
+signal package_update_available(package_id: String, version: String, size: int)
+signal package_update_progress(package_id: String, progress: float)
+signal package_update_completed(package_id: String, version: String)
+signal package_update_failed(package_id: String, error: String)
 
 enum PackageStatus { UNAVAILABLE, AVAILABLE, DOWNLOADING, DOWNLOADED, INSTALLING, INSTALLED, ERROR }
 enum PackageType { BASE_GAME, EXPANSION, COMMUNITY, DLC }
@@ -129,7 +133,7 @@ func get_featured_packages() -> Array:
 	for pid in featured:
 		if _packages.has(pid):
 			result.append(_packages[pid])
-	return result []
+	return result
 
 func get_categories() -> Array:
 	return _registry.get("categories", [])
@@ -346,3 +350,99 @@ func _default_leaderboard() -> Array:
 		{"rank": 2, "name": "卡牌大师", "score": 85000, "floor": 45},
 		{"rank": 3, "name": "尖塔攀登者", "score": 72000, "floor": 40},
 	]
+
+func check_for_updates(cdn_base_url: String = "") -> void:
+	var hot_patch = get_node_or_null("/root/HotPatchService")
+	if hot_patch == null:
+		package_update_failed.emit("", "HotPatchService不可用")
+		return
+	if not hot_patch.update_available.is_connected(_on_hot_patch_update_available):
+		hot_patch.update_available.connect(_on_hot_patch_update_available)
+	if not hot_patch.update_progress.is_connected(_on_hot_patch_update_progress):
+		hot_patch.update_progress.connect(_on_hot_patch_update_progress)
+	if not hot_patch.update_completed.is_connected(_on_hot_patch_update_completed):
+		hot_patch.update_completed.connect(_on_hot_patch_update_completed)
+	if not hot_patch.update_failed.is_connected(_on_hot_patch_update_failed):
+		hot_patch.update_failed.connect(_on_hot_patch_update_failed)
+	hot_patch.check_for_updates(cdn_base_url)
+
+func check_package_update(package_id: String, cdn_base_url: String = "") -> void:
+	var hot_patch = get_node_or_null("/root/HotPatchService")
+	if hot_patch == null:
+		package_update_failed.emit(package_id, "HotPatchService不可用")
+		return
+	_connect_hot_patch_signals(hot_patch)
+	hot_patch.check_package_update(package_id, cdn_base_url)
+
+func apply_package_update(package_id: String, cdn_base_url: String = "") -> void:
+	var hot_patch = get_node_or_null("/root/HotPatchService")
+	if hot_patch == null:
+		package_update_failed.emit(package_id, "HotPatchService不可用")
+		return
+	_connect_hot_patch_signals(hot_patch)
+	hot_patch.download_and_apply_update(package_id, cdn_base_url)
+
+func rollback_package_update(package_id: String) -> bool:
+	var hot_patch = get_node_or_null("/root/HotPatchService")
+	if hot_patch == null:
+		return false
+	var success: bool = hot_patch.rollback_update(package_id)
+	if success:
+		_config_cache.erase(package_id)
+		_load_package_config(package_id)
+	return success
+
+func has_pending_update(package_id: String) -> bool:
+	var hot_patch = get_node_or_null("/root/HotPatchService")
+	if hot_patch == null:
+		return false
+	return hot_patch.has_pending_update(package_id)
+
+func get_pending_update_info(package_id: String) -> Dictionary:
+	var hot_patch = get_node_or_null("/root/HotPatchService")
+	if hot_patch == null:
+		return {}
+	return hot_patch.get_pending_update(package_id)
+
+func get_installed_version(package_id: String) -> String:
+	var hot_patch = get_node_or_null("/root/HotPatchService")
+	if hot_patch != null:
+		return hot_patch.get_installed_version(package_id)
+	if _states.has(package_id):
+		var s: Dictionary = _states[package_id]
+		return s.get("version", "")
+	var pkg: Dictionary = get_package(package_id)
+	return pkg.get("version", "1.0.0")
+
+func get_hotfix_script_path(package_id: String, relative_path: String) -> String:
+	var hot_patch = get_node_or_null("/root/HotPatchService")
+	if hot_patch == null:
+		return ""
+	return hot_patch.get_hotfix_path(package_id, relative_path)
+
+func _connect_hot_patch_signals(hot_patch: Node) -> void:
+	if not hot_patch.update_available.is_connected(_on_hot_patch_update_available):
+		hot_patch.update_available.connect(_on_hot_patch_update_available)
+	if not hot_patch.update_progress.is_connected(_on_hot_patch_update_progress):
+		hot_patch.update_progress.connect(_on_hot_patch_update_progress)
+	if not hot_patch.update_completed.is_connected(_on_hot_patch_update_completed):
+		hot_patch.update_completed.connect(_on_hot_patch_update_completed)
+	if not hot_patch.update_failed.is_connected(_on_hot_patch_update_failed):
+		hot_patch.update_failed.connect(_on_hot_patch_update_failed)
+
+func _on_hot_patch_update_available(package_id: String, version: String, size: int) -> void:
+	package_update_available.emit(package_id, version, size)
+
+func _on_hot_patch_update_progress(package_id: String, progress: float) -> void:
+	package_update_progress.emit(package_id, progress)
+
+func _on_hot_patch_update_completed(package_id: String, version: String) -> void:
+	if _states.has(package_id):
+		_states[package_id]["version"] = version
+		_save_states()
+	_config_cache.erase(package_id)
+	_load_package_config(package_id)
+	package_update_completed.emit(package_id, version)
+
+func _on_hot_patch_update_failed(package_id: String, error: String) -> void:
+	package_update_failed.emit(package_id, error)

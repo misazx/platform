@@ -1,0 +1,10 @@
+{
+	"cdn_base_url": "http://localhost:8080",
+	"auto_check_on_startup": true,
+	"check_interval_seconds": 3600,
+	"max_concurrent_downloads": 3,
+	"verify_file_hash": true,
+	"auto_rollback_on_failure": true,
+	"backup_enabled": true,
+	"max_backup_count": 3
+}

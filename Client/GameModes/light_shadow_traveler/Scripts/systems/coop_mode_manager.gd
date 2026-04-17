@@ -44,7 +44,7 @@ func _process(delta: float) -> void:
 		_sync_timer = 0.0
 		coop_state_synced.emit(get_sync_state())
 
-	if _is_reviving and _partner_alive:
+	if _is_reviving and not _partner_alive:
 		_revive_timer += delta
 		if _revive_timer >= REVIVE_TIME:
 			_is_reviving = false

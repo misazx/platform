@@ -11,4 +11,4 @@ elif [ -d "/opt/homebrew/share/dotnet" ]; then
 fi
 
 # 使用 Python 3.14 (非 Xcode 的 3.9)
-exec /Library/Frameworks/Python.framework/Versions/3.14/bin/python3 Client/Tools/build_gui.py "$@"
+exec /Library/Frameworks/Python.framework/Versions/3.14/bin/python3 Client/Tools/packaging/run.py "$@"

@@ -274,6 +274,16 @@ namespace RoguelikeGame.UI.Panels
 			}
 		}
 
+		public override void _ExitTree()
+		{
+			if (RoomManager.Instance != null)
+			{
+				RoomManager.Instance.RoomCreated -= OnRoomCreatedHandler;
+				RoomManager.Instance.RoomJoined -= OnRoomJoinedHandler;
+			}
+			base._ExitTree();
+		}
+
 		private void RefreshUserInfo()
 		{
 			if (AuthSystem.Instance?.CurrentUser != null)

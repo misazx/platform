@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 ConfigLoader="*res://GameModes/base_game/Scripts/config_loader.gd"
 PackageService="*res://Scripts/Services/package_service.gd"
+HotPatchService="*res://Scripts/Services/hot_patch_service.gd"
 EventBus="*res://Scripts/Core/EventBus.cs"
 ResourceManager="*res://Scripts/Core/ResourceManager.cs"
 CardDatabase="*res://GameModes/base_game/Scripts/cards/card_database.gd"

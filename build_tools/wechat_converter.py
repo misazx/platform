@@ -418,7 +418,7 @@ if (typeof XMLHttpRequest === 'undefined' && typeof wx !== 'undefined') {
         this.upload = {};
         this.onreadystatechange = null;
         this.onload = null;
-       .onerror = null;
+        this.onerror = null;
         this.ontimeout = null;
         this.onprogress = null;
         this._method = 'GET';

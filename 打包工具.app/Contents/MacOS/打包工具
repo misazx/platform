@@ -1,10 +1,8 @@
 #!/bin/bash
-# 杀戮尖塔2 打包工具 v3 - 使用 Python 3.14
+# Build Tool v2.0 - PyQt6
 
 PYTHON="/Library/Frameworks/Python.framework/Versions/3.14/bin/python3"
 
-# 设置 .NET 环境
-export DOTNET_ROOT=""
 if [ -d "/usr/local/share/dotnet" ]; then
     export DOTNET_ROOT="/usr/local/share/dotnet"
     export DOTNET_ROOT_ARM64="/usr/local/share/dotnet"
@@ -13,9 +11,8 @@ elif [ -d "/opt/homebrew/share/dotnet" ]; then
     export DOTNET_ROOT_ARM64="/opt/homebrew/share/dotnet"
 fi
 
-# 通过 Terminal 运行，继承完整 shell 环境
 osascript -e '
 tell application "Terminal"
     activate
-    set newWindow to do script "cd /Users/zhuyong/trae-game && export DOTNET_ROOT=/usr/local/share/dotnet && export DOTNET_ROOT_ARM64=/usr/local/share/dotnet && /Library/Frameworks/Python.framework/Versions/3.14/bin/python3 Client/Tools/build_gui.py; echo \"\"; echo \"按任意键退出...\"; read -n 1"
+    set newWindow to do script "cd /Users/zhuyong/trae-game && export DOTNET_ROOT=/usr/local/share/dotnet && export DOTNET_ROOT_ARM64=/usr/local/share/dotnet && /Library/Frameworks/Python.framework/Versions/3.14/bin/python3 Client/Tools/packaging/run.py; echo \"\"; echo \"Press any key to exit...\"; read -n 1"
 end tell'

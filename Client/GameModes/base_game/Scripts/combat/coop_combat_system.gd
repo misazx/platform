@@ -1,6 +1,9 @@
 class_name CoopCombatEngine extends Node
 
 enum CoopTurnPhase { PLAYER_1_TURN, PLAYER_2_TURN, PLAYER_3_TURN, PLAYER_4_TURN, ENEMY_TURN }
+enum CoopCardType { ATTACK, SKILL, POWER }
+enum CoopCardTarget { ENEMY_SINGLE, ENEMY_ALL, SELF, ALL, NONE }
+enum CoopIntentType { ATTACK, ATTACK_DEBUFF, ATTACK_BUFF, DEFEND, DEFEND_BUFF, BUFF, DEBUFF, STRONG_DEBUFF, SLEEP, MAGIC, ESCAPE, UNKNOWN }
 
 const MAX_COOP_PLAYERS: int = 4
 const DEFAULT_ENERGY: int = 3
@@ -161,12 +164,13 @@ func play_card_coop(player_index: int, card: Dictionary, target_index: int = -1)
 
 func _execute_coop_card_effect(player_index: int, card: Dictionary, target_index: int, result: Dictionary) -> void:
 	var player: Dictionary = _players[player_index]
-	match card.type:
-		0:
+	var card_type: int = card.get("type", 0)
+	match card_type:
+		CoopCardType.ATTACK:
 			_execute_coop_attack(player_index, card, target_index, result)
-		1:
+		CoopCardType.SKILL:
 			_execute_coop_skill(player_index, card, result)
-		2:
+		CoopCardType.POWER:
 			_execute_coop_power(player_index, card, result)
 
 func _execute_coop_attack(player_index: int, card: Dictionary, target_index: int, result: Dictionary) -> void:
@@ -216,6 +220,16 @@ func _calculate_player_damage(player: Dictionary, base_damage: int) -> int:
 		damage *= 0.75
 	return maxi(0, int(damage))
 
+func _apply_damage_to_enemy(enemy: Dictionary, damage: int) -> void:
+	if enemy.block > 0:
+		if damage >= enemy.block:
+			damage -= enemy.block
+			enemy.block = 0
+		else:
+			enemy.block -= damage
+			damage = 0
+	enemy.current_hp -= damage
+
 func end_coop_player_turn(player_index: int) -> void:
 	if _current_player_index != player_index: return
 	if _is_combat_over: return
@@ -262,23 +276,23 @@ func _execute_coop_enemy_action(enemy: Dictionary) -> void:
 	var target_player_index: int = _select_target_player(enemy)
 
 	match enemy.current_intent.type:
-		0:
+		CoopIntentType.ATTACK:
 			var damage: int = _calculate_enemy_damage(enemy.current_intent.value)
 			_apply_damage_to_coop_player(target_player_index, damage)
 			coop_damage_dealt.emit(-1, _players[target_player_index].name, damage, -1)
-		1:
+		CoopIntentType.ATTACK_DEBUFF:
 			var damage: int = _calculate_enemy_damage(enemy.current_intent.value)
 			_apply_damage_to_coop_player(target_player_index, damage)
 			coop_damage_dealt.emit(-1, _players[target_player_index].name, damage, -1)
 			var debuff := _create_weak(enemy.current_intent.value2)
 			_add_status(_players[target_player_index], debuff)
-		5:
+		CoopIntentType.BUFF:
 			var buff = _create_strength(enemy.current_intent.value)
 			_add_status(enemy, buff)
-		6, 7:
+		CoopIntentType.DEBUFF, CoopIntentType.STRONG_DEBUFF:
 			var debuff := _create_weak(enemy.current_intent.value)
 			_add_status(_players[target_player_index], debuff)
-		3:
+		CoopIntentType.DEFEND, CoopIntentType.DEFEND_BUFF:
 			enemy.block = enemy.get("block", 0) + enemy.current_intent.value
 
 func _select_target_player(enemy: Dictionary) -> int:
@@ -311,10 +325,11 @@ func _all_players_dead() -> bool:
 	return true
 
 func _has_valid_target(card: Dictionary) -> bool:
-	match card.target:
-		4, 2, 3:
+	var target: int = card.get("target", 0)
+	match target:
+		CoopCardTarget.ALL, CoopCardTarget.SELF, CoopCardTarget.NONE:
 			return true
-		0, 1:
+		CoopCardTarget.ENEMY_SINGLE, CoopCardTarget.ENEMY_ALL:
 			for e in _enemies:
 				if not _is_enemy_dead(e):
 					return true
@@ -325,7 +340,7 @@ func _has_valid_target(card: Dictionary) -> bool:
 func _get_targets(target: int, target_index: int) -> Array:
 	var targets: Array = []
 	match target:
-		0:
+		CoopCardTarget.ENEMY_SINGLE:
 			if target_index >= 0 and target_index < _enemies.size() and not _is_enemy_dead(_enemies[target_index]):
 				targets.append(_enemies[target_index])
 			else:
@@ -333,7 +348,7 @@ func _get_targets(target: int, target_index: int) -> Array:
 					if not _is_enemy_dead(e):
 						targets.append(e)
 						break
-		1:
+		CoopCardTarget.ENEMY_ALL:
 			for e in _enemies:
 				if not _is_enemy_dead(e):
 					targets.append(e)
@@ -347,13 +362,13 @@ func _generate_enemy_intent(enemy: Dictionary) -> void:
 	match base_id:
 		"Cultist":
 			if _turn_number % 3 == 0:
-				enemy.current_intent = {"type": 5, "value": 3, "value2": 0, "description": "仪式 +3", "icon": "⬆"}
+				enemy.current_intent = {"type": CoopIntentType.BUFF, "value": 3, "value2": 0, "description": "仪式 +3", "icon": "⬆"}
 			else:
 				var dmg: int = int((_rng.randi_range(6, 9)) * damage_scale)
-				enemy.current_intent = {"type": 0, "value": dmg, "value2": 0, "description": "攻击 %d" % dmg, "icon": "⚔"}
+				enemy.current_intent = {"type": CoopIntentType.ATTACK, "value": dmg, "value2": 0, "description": "攻击 %d" % dmg, "icon": "⚔"}
 		_:
 			var dmg: int = int((_rng.randi_range(5, 10)) * damage_scale)
-			enemy.current_intent = {"type": 0, "value": dmg, "value2": 0, "description": "攻击 %d" % dmg, "icon": "⚔"}
+			enemy.current_intent = {"type": CoopIntentType.ATTACK, "value": dmg, "value2": 0, "description": "攻击 %d" % dmg, "icon": "⚔"}
 
 func _get_card_status_effect(card: Dictionary) -> Dictionary:
 	var name_lower: String = card.name.to_lower()

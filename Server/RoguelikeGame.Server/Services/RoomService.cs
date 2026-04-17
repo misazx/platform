@@ -107,7 +107,9 @@ namespace RoguelikeGame.Server.Services
 
             if (player == null) return false;
 
-            var room = await _context.Rooms.FindAsync(roomId);
+            var room = await _context.Rooms
+                .Include(r => r.Players)
+                .FirstOrDefaultAsync(r => r.Id == roomId);
             if (room == null) return false;
 
             _context.RoomPlayers.Remove(player);
