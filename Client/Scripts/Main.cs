@@ -55,7 +55,6 @@ namespace RoguelikeGame
         private Control _lobby;
         private Control _packageSelector;
         private Control _packageDetail;
-        private Variant _packageRegistryData = new Variant();
         private string _currentPackageId = "base_game";
 
         protected override void OnInitialize()
@@ -64,49 +63,24 @@ namespace RoguelikeGame
             GetViewport().TransparentBg = false;
 
             SetupSceneContainer();
-            LoadPackageRegistry();
             GoToLobby();
 
             GD.Print("[Main] Game initialized with new Lobby flow");
         }
 
-        private void LoadPackageRegistry()
+        private Node GetPackageService()
         {
-            string configPath = "res://Config/Data/package_registry.json";
-            if (ResourceLoader.Exists(configPath))
-            {
-                var file = FileAccess.Open(configPath, FileAccess.ModeFlags.Read);
-                if (file != null)
-                {
-                    var json = new Json();
-                    var err = json.Parse(file.GetAsText());
-                    if (err == Error.Ok)
-                    {
-                        _packageRegistryData = json.Data;
-                        GD.Print("[Main] Package registry loaded");
-                    }
-                }
-            }
+            return GetNodeOrNull("/root/PackageService");
         }
 
         private Godot.Collections.Dictionary GetPackageData(string packageId)
         {
-            if (_packageRegistryData.VariantType == Variant.Type.Dictionary)
+            var svc = GetPackageService();
+            if (svc != null)
             {
-                var reg = _packageRegistryData.AsGodotDictionary();
-                if (reg.TryGetValue("packages", out var packagesVar) && packagesVar.VariantType == Variant.Type.Array)
-                {
-                    var packages = packagesVar.AsGodotArray();
-                    foreach (var pkgVar in packages)
-                    {
-                        if (pkgVar.VariantType == Variant.Type.Dictionary)
-                        {
-                            var pkg = pkgVar.AsGodotDictionary();
-                            if (pkg.TryGetValue("id", out var id) && id.AsString() == packageId)
-                                return pkg;
-                        }
-                    }
-                }
+                var result = svc.Call("get_package", packageId);
+                if (result.VariantType == Variant.Type.Dictionary)
+                    return result.AsGodotDictionary();
             }
             return new Godot.Collections.Dictionary();
         }

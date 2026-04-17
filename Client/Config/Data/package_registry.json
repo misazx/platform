@@ -31,6 +31,7 @@
       "includeInBuild": true,
       "supportsMultiplayer": true,
       "maxPlayers": 4,
+      "multiplayerModes": ["coop"],
       "hasLeaderboard": true,
       "leaderboardType": "score"
     },
@@ -56,8 +57,9 @@
       "rating": 4.2,
       "downloadCount": 500,
       "includeInBuild": true,
-      "supportsMultiplayer": false,
-      "maxPlayers": 1,
+      "supportsMultiplayer": true,
+      "maxPlayers": 2,
+      "multiplayerModes": ["race", "coop"],
       "hasLeaderboard": true,
       "leaderboardType": "time"
     }

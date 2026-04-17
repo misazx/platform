@@ -136,8 +136,16 @@ func _refresh_grid() -> void:
 		child.queue_free()
 	_package_cards.clear()
 
-	var registry := _get_package_registry()
-	var packages: Array = registry.get("packages", [])
+	var packages: Array = []
+	var svc := get_node_or_null("/root/PackageService")
+	if svc != null:
+		if _current_category == "all":
+			packages = svc.get_all_packages()
+		else:
+			packages = svc.get_packages_by_category(_current_category)
+	else:
+		var registry := _get_package_registry()
+		packages = registry.get("packages", [])
 
 	for pkg in packages:
 		if _current_category != "all":

@@ -18,7 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 ConfigLoader="*res://GameModes/base_game/Scripts/config_loader.gd"
-PackageUIRegistry="*res://Scripts/UI/Flow/package_ui_provider.gd"
+PackageService="*res://Scripts/Services/package_service.gd"
 EventBus="*res://Scripts/Core/EventBus.cs"
 ResourceManager="*res://Scripts/Core/ResourceManager.cs"
 CardDatabase="*res://GameModes/base_game/Scripts/cards/card_database.gd"
