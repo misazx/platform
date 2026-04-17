@@ -105,6 +105,10 @@ CardDatabase="*res://GameModes/base_game/Scripts/cards/card_database.gd"
 | **HTTPRequest回调未释放** | `add_child(http)` 但不`queue_free()` | 必须在`request_completed`回调中调用`http.queue_free()` |
 | **ZIPReader未关闭** | `var r := ZIPReader.new(); r.open(p)` | 使用后必须`r.close()`，否则文件锁不释放 |
 | **FileAccess写入res://** | `FileAccess.open("res://xxx", WRITE)` | `res://`在发布后只读，热更新只能写入`user://` |
+| **多人模式Seed未传递** | `dungeon_generator.generate_dungeon(floor, 0)` | 通过`MultiplayerSeedBridge.get_effective_seed()`获取多人种子 |
+| **存档路径不统一** | `user://saves/slot_1.json` vs `user://saves/base_game_slot_1.json` | 统一使用`{package_id}_slot_{slot}.json`格式 |
+| **服务器地址硬编码** | `"http://127.0.0.1:5002"` | 使用`ServerConfig.get_server_url()`从配置读取 |
+| **C#信号GDScript未监听** | C# `EmitSignal("MultiplayerSeedReceived", seed)` | GDScript需`session_manager.MultiplayerSeedReceived.connect(_on_seed)` |
 
 ---
 
@@ -141,6 +145,8 @@ if some_node.has_method("some_method"):
 | `PackageService` | `Scripts/Services/package_service.gd` | 包管理服务 |
 | `HotPatchService` | `Scripts/Services/hot_patch_service.gd` | 热更新服务 |
 | `EventBus` | `Core/EventBus.cs` | 全局事件总线(C#) |
+| `MultiplayerSeedBridge` | `Scripts/Network/multiplayer_seed_bridge.gd` | 多人游戏种子桥接 |
+| `ServerConfig` | `Scripts/Network/server_config.gd` | 服务器地址配置 |
 
 如需新增 autoload，在 `project.godot` 的 `[autoload]` 段添加。
 
