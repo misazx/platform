@@ -78,7 +78,7 @@ namespace RoguelikeGame.Network.Rooms
 		public static RoomManager Instance => _instance;
 
 		private System.Net.Http.HttpClient _httpClient;
-		private string _baseUrl = "http://127.0.0.1:5002";
+		private string _baseUrl = "";
 		private RoomInfo? _currentRoom;
 		private List<RoomInfo> _roomCache = new();
 		private DateTime _lastCacheUpdate = DateTime.MinValue;
@@ -116,9 +116,20 @@ namespace RoguelikeGame.Network.Rooms
 			_instance = this;
 			ProcessMode = ProcessModeEnum.Always;
 
+			_baseUrl = GetServerUrl();
 			InitializeHttpClient();
 
 			GD.Print("[RoomManager] 房间管理器已初始化");
+		}
+
+		private string GetServerUrl()
+		{
+			var configNode = GetNodeOrNull("/root/ServerConfig");
+			if (configNode != null && configNode.HasMethod("get_server_url"))
+			{
+				return configNode.Call("get_server_url").AsString();
+			}
+			return "http://127.0.0.1:5002";
 		}
 
 		private void InitializeHttpClient()

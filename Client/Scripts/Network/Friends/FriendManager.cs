@@ -58,9 +58,15 @@ namespace RoguelikeGame.Network.Friends
 
 		private void InitializeHttpClient()
 		{
+			var url = "http://127.0.0.1:5002";
+			var configNode = GetNodeOrNull("/root/ServerConfig");
+			if (configNode != null && configNode.HasMethod("get_server_url"))
+			{
+				url = configNode.Call("get_server_url").AsString();
+			}
 			_httpClient = new System.Net.Http.HttpClient
 			{
-				BaseAddress = new Uri("http://127.0.0.1:5002"),
+				BaseAddress = new Uri(url),
 				Timeout = TimeSpan.FromSeconds(15)
 			};
 		}

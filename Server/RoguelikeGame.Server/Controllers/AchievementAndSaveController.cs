@@ -174,6 +174,7 @@ namespace RoguelikeGame.Server.Controllers
 					existing.CurrentHP = request.CurrentHP;
 					existing.MaxHP = request.MaxHP;
 					existing.IsVictory = request.IsVictory;
+					existing.Seed = request.Seed;
 					existing.SavedAt = DateTime.UtcNow;
 					existing.DataSizeBytes = request.SaveData?.Length ?? 0;
 				}
@@ -191,6 +192,7 @@ namespace RoguelikeGame.Server.Controllers
 						CurrentHP = request.CurrentHP,
 						MaxHP = request.MaxHP,
 						IsVictory = request.IsVictory,
+						Seed = request.Seed,
 						SavedAt = DateTime.UtcNow,
 						DataSizeBytes = request.SaveData?.Length ?? 0
 					});

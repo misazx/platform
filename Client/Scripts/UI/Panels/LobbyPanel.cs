@@ -272,6 +272,14 @@ namespace RoguelikeGame.UI.Panels
 				RoomManager.Instance.RoomCreated += OnRoomCreatedHandler;
 				RoomManager.Instance.RoomJoined += OnRoomJoinedHandler;
 			}
+
+			var hubClient = Network.Realtime.GameHubClient.Instance;
+			if (hubClient != null)
+			{
+				hubClient.OnRoomChatMessage += OnHubLobbyChat;
+				hubClient.OnPlayerJoinedRoom += OnHubPlayerJoined;
+				hubClient.OnPlayerLeftRoom += OnHubPlayerLeft;
+			}
 		}
 
 		public override void _ExitTree()
@@ -281,7 +289,31 @@ namespace RoguelikeGame.UI.Panels
 				RoomManager.Instance.RoomCreated -= OnRoomCreatedHandler;
 				RoomManager.Instance.RoomJoined -= OnRoomJoinedHandler;
 			}
+
+			var hubClient = Network.Realtime.GameHubClient.Instance;
+			if (hubClient != null)
+			{
+				hubClient.OnRoomChatMessage -= OnHubLobbyChat;
+				hubClient.OnPlayerJoinedRoom -= OnHubPlayerJoined;
+				hubClient.OnPlayerLeftRoom -= OnHubPlayerLeft;
+			}
+
 			base._ExitTree();
+		}
+
+		private void OnHubLobbyChat(string senderId, string senderName, string message)
+		{
+			AddChatMessage(senderName, message, false);
+		}
+
+		private void OnHubPlayerJoined(string playerId, string playerName)
+		{
+			AddSystemMessage($"🟢 {playerName} 加入了房间");
+		}
+
+		private void OnHubPlayerLeft(string playerId, string playerName)
+		{
+			AddSystemMessage($"🔴 {playerName} 离开了房间");
 		}
 
 		private void RefreshUserInfo()

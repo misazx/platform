@@ -12,7 +12,7 @@ namespace RoguelikeGame.Network.Realtime
         public static GameHubClient Instance => _instance;
 
         private HubConnection _hubConnection;
-        private string _serverUrl = "http://127.0.0.1:5002";
+        private string _serverUrl = "";
         private string _currentRoomId = "";
         private bool _isConnecting;
 
@@ -43,6 +43,21 @@ namespace RoguelikeGame.Network.Realtime
             if (_instance != null && _instance != this) { QueueFree(); return; }
             _instance = this;
             ProcessMode = ProcessModeEnum.Always;
+
+            if (string.IsNullOrEmpty(_serverUrl))
+            {
+                _serverUrl = GetServerUrl();
+            }
+        }
+
+        private string GetServerUrl()
+        {
+            var configNode = GetNodeOrNull("/root/ServerConfig");
+            if (configNode != null && configNode.HasMethod("get_server_url"))
+            {
+                return configNode.Call("get_server_url").AsString();
+            }
+            return "http://127.0.0.1:5002";
         }
 
         public void SetServerUrl(string url)

@@ -83,5 +83,10 @@ func clear_all_saves() -> void:
 		delete_save(i)
 	print("[EnhancedSaveSystem] All saves cleared")
 
+var _package_id: String = "base_game"
+
+func set_package_id(pkg_id: String) -> void:
+	_package_id = pkg_id
+
 func _get_save_path(slot_id: int) -> String:
-	return SAVE_DIR + "slot_%d.json" % slot_id
+	return SAVE_DIR + "%s_slot_%d.json" % [_package_id, slot_id]

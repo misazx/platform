@@ -18,8 +18,16 @@ func ensure_save_directory() -> void:
 	if dir != null:
 		dir.make_dir_recursive("saves")
 
+var _package_id: String = "base_game"
+
+func set_package_id(pkg_id: String) -> void:
+	_package_id = pkg_id
+
+func _get_save_path(slot: int) -> String:
+	return SAVE_PATH + "%s_slot_%d.json" % [_package_id, slot]
+
 func save_game(slot: int, game_data: Dictionary) -> bool:
-	var path := SAVE_PATH + "save_%d.json" % slot
+	var path := _get_save_path(slot)
 	game_data["save_time"] = Time.get_datetime_string_from_system()
 	game_data["save_version"] = 1
 
@@ -35,7 +43,7 @@ func save_game(slot: int, game_data: Dictionary) -> bool:
 	return true
 
 func load_game(slot: int) -> Dictionary:
-	var path := SAVE_PATH + "save_%d.json" % slot
+	var path := _get_save_path(slot)
 	if not FileAccess.file_exists(path):
 		push_error("[SaveSystem] Save file not found: %s" % path)
 		return {}
@@ -58,10 +66,10 @@ func load_game(slot: int) -> Dictionary:
 	return _current_game_data
 
 func has_save(slot: int) -> bool:
-	return FileAccess.file_exists(SAVE_PATH + "save_%d.json" % slot)
+	return FileAccess.file_exists(_get_save_path(slot))
 
 func delete_save(slot: int) -> bool:
-	var path := SAVE_PATH + "save_%d.json" % slot
+	var path := _get_save_path(slot)
 	if FileAccess.file_exists(path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 		print("[SaveSystem] Deleted save slot %d" % slot)

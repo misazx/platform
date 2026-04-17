@@ -35,7 +35,7 @@ namespace RoguelikeGame.Network.Auth
 		public static AuthSystem Instance => _instance;
 
 		private System.Net.Http.HttpClient _httpClient;
-		private string _baseUrl = "http://127.0.0.1:5002";
+		private string _baseUrl = "";
 		private string _currentToken = "";
 		private UserInfo? _currentUser;
 		private DateTime _tokenExpiry = DateTime.MinValue;
@@ -75,10 +75,21 @@ namespace RoguelikeGame.Network.Auth
 			_instance = this;
 			ProcessMode = ProcessModeEnum.Always;
 
+			_baseUrl = GetServerUrl();
 			InitializeHttpClient();
 			LoadSavedSession();
 
 			GD.Print("[AuthSystem] 认证系统已初始化");
+		}
+
+		private string GetServerUrl()
+		{
+			var configNode = GetNodeOrNull("/root/ServerConfig");
+			if (configNode != null && configNode.HasMethod("get_server_url"))
+			{
+				return configNode.Call("get_server_url").AsString();
+			}
+			return "http://127.0.0.1:5002";
 		}
 
 		private void InitializeHttpClient()

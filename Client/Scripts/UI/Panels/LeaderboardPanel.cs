@@ -23,15 +23,26 @@ namespace RoguelikeGame.UI.Panels
 
 		public event Action OnBack;
 
-		private string _baseUrl = "http://127.0.0.1:5002";
+		private string _baseUrl = "";
 		private System.Net.Http.HttpClient _httpClient;
 
 		public override void _Ready()
 		{
+			_baseUrl = GetServerUrl();
 			_httpClient = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(10) };
 			CreateUI();
 			PopulatePackageSelector();
 			LoadLeaderboard();
+		}
+
+		private string GetServerUrl()
+		{
+			var configNode = GetNodeOrNull("/root/ServerConfig");
+			if (configNode != null && configNode.HasMethod("get_server_url"))
+			{
+				return configNode.Call("get_server_url").AsString();
+			}
+			return "http://127.0.0.1:5002";
 		}
 
 		private void CreateUI()
