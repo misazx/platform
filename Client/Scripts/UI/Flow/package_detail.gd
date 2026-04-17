@@ -951,10 +951,10 @@ func _on_server_achievements_received(result: int, code: int, _headers: PackedSt
 		_achievements_tab.add_child(ach_panel)
 
 func _get_user_id() -> String:
-var auth_system = _get_auth_system()
-if auth_system != null and auth_system.IsAuth():
-return auth_system.GetUserId()
-return ""
+	var auth_system = _get_auth_system()
+	if auth_system != null and auth_system.IsAuth():
+		return auth_system.GetUserId()
+	return ""
 func _on_back_pressed() -> void:
 	print("[PackageDetail] Back pressed")
 	back_pressed.emit()

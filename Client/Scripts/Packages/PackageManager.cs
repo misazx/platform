@@ -648,7 +648,7 @@ namespace RoguelikeGame.Packages
 			var extension = LoadPackageExtension(packageId);
 			extension?.OnLaunch();
 
-			EventBus.Instance.EmitSignal("StartGameRequeste", packageId, package.EntryScene);
+			EventBus.Instance.EmitSignal("StartGameRequested", packageId, package.EntryScene);
 		}
 
 		public PackageData GetPackage(string packageId)

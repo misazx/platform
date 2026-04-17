@@ -164,10 +164,37 @@ namespace RoguelikeGame
             GD.Print("[Main] Package Selector loaded");
         }
 
+        private void OnBackFromPackageDetail()
+        {
+            GD.Print("[Main] Back from Package Detail, returning to lobby");
+            ClearCurrentScene();
+
+            if (_packageDetail != null && IsInstanceValid(_packageDetail))
+            {
+                _packageDetail.QueueFree();
+                _packageDetail = null;
+            }
+
+            if (_lobby != null && IsInstanceValid(_lobby))
+            {
+                _lobby.Visible = true;
+                _currentScene = _lobby;
+            }
+            else
+            {
+                GoToLobby();
+            }
+        }
+
         private void OnPackageSelected(string packageId)
         {
             GD.Print($"[Main] Package selected: {packageId}");
             ClearCurrentScene();
+
+            if (_lobby != null && IsInstanceValid(_lobby))
+            {
+                _lobby.Visible = false;
+            }
 
             var pkgData = GetPackageData(packageId);
 
@@ -181,7 +208,7 @@ namespace RoguelikeGame
                 _packageDetail.Call("setup", packageId, pkgData);
                 _packageDetail.Connect("start_game_requested", Callable.From<string>(OnLaunchPackage));
                 _packageDetail.Connect("continue_game_requested", Callable.From<string, int>(OnContinueGame));
-                _packageDetail.Connect("back_pressed", Callable.From(OnOpenPackageSelector));
+                _packageDetail.Connect("back_pressed", Callable.From(OnBackFromPackageDetail));
                 _packageDetail.Connect("create_room_requested", Callable.From<string>(OnCreateRoomRequested));
                 _packageDetail.Connect("join_room_requested", Callable.From<string>(OnJoinRoomRequested));
             }
@@ -322,12 +349,19 @@ namespace RoguelikeGame
                 return;
             }
 
+            if (_packageDetail != null && IsInstanceValid(_packageDetail))
+            {
+                _packageDetail.QueueFree();
+                _packageDetail = null;
+            }
+
             var lobbyPanel = new LobbyPanel();
             AddChild(lobbyPanel);
             lobbyPanel.OnLeave += () =>
             {
                 RemoveChild(lobbyPanel);
                 lobbyPanel.QueueFree();
+                GoToLobby();
             };
         }
 
@@ -341,12 +375,19 @@ namespace RoguelikeGame
                 return;
             }
 
+            if (_packageDetail != null && IsInstanceValid(_packageDetail))
+            {
+                _packageDetail.QueueFree();
+                _packageDetail = null;
+            }
+
             var lobbyPanel = new LobbyPanel();
             AddChild(lobbyPanel);
             lobbyPanel.OnLeave += () =>
             {
                 RemoveChild(lobbyPanel);
                 lobbyPanel.QueueFree();
+                GoToLobby();
             };
         }
 

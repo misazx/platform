@@ -340,7 +340,7 @@ namespace RoguelikeGame.Network.Auth
 			DeleteSessionFromDisk();
 
 			if (NetworkManager.Instance?.State == NetworkState.Authenticated ||
-			    NetworkManager.Instance?.State == NetworkState.InLobby)
+				NetworkManager.Instance?.State == NetworkState.InLobby)
 			{
 				NetworkManager.Instance.UpdateState(NetworkState.Connected);
 			}
