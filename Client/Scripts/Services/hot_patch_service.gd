@@ -696,12 +696,7 @@ func _is_version_newer(remote: String, local: String) -> bool:
 func _compute_file_hash(file_path: String) -> String:
 	if not FileAccess.file_exists(file_path):
 		return ""
-	var file: FileAccess = FileAccess.open(file_path, FileAccess.READ)
-	if file == null:
-		return ""
-	var data: PackedByteArray = file.get_buffer(file.get_length())
-	file.close()
-	return data.sha256_buffer().hex_encode()
+	return FileAccess.get_sha256(file_path)
 
 func _get_cdn_base_url() -> String:
 	var pkg_svc = get_node_or_null("/root/PackageService")

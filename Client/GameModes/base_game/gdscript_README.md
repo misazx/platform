@@ -108,6 +108,9 @@ CardDatabase="*res://GameModes/base_game/Scripts/cards/card_database.gd"
 | **多人模式Seed未传递** | `dungeon_generator.generate_dungeon(floor, 0)` | 通过`MultiplayerSeedBridge.get_effective_seed()`获取多人种子 |
 | **存档路径不统一** | `user://saves/slot_1.json` vs `user://saves/base_game_slot_1.json` | 统一使用`{package_id}_slot_{slot}.json`格式 |
 | **服务器地址硬编码** | `"http://127.0.0.1:5002"` | 使用`ServerConfig.get_server_url()`从配置读取 |
+| **PackedByteArray无sha256方法** | `data.sha256_text()` 或 `data.sha256_buffer().hex_encode()` | 使用`FileAccess.get_sha256(file_path)`直接计算文件哈希 |
+| **_print不存在** | `_print("msg")` | GDScript内置是`print("msg")`，无下划线前缀 |
+| **私有方法调用名不匹配** | `_rollback_update()` 但函数定义是`rollback_update()` | 内部回滚应提取为`_perform_rollback()`私有方法 |
 | **C#信号GDScript未监听** | C# `EmitSignal("MultiplayerSeedReceived", seed)` | GDScript需`session_manager.MultiplayerSeedReceived.connect(_on_seed)` |
 
 ---
