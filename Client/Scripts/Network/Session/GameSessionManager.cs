@@ -75,6 +75,8 @@ namespace RoguelikeGame.Network.Session
 		public delegate void TurnChangedEventHandler(int newTurn);
 		[Signal]
 		public delegate void PlayerActionReceivedEventHandler(string playerId, string actionType);
+		[Signal]
+		public delegate void MultiplayerSeedReceivedEventHandler(int seedValue);
 
 		public override void _Ready()
 		{
@@ -89,7 +91,52 @@ namespace RoguelikeGame.Network.Session
 
 			InitializeComponents();
 
+			var hubClient = Realtime.GameHubClient.Instance;
+			if (hubClient != null)
+			{
+				hubClient.OnGameStarting += OnHubGameStartingSeed;
+			}
+
 			GD.Print("[GameSessionManager] 游戏会话管理器已初始化");
+		}
+
+		private void OnHubGameStartingSeed(string seed, string roomId)
+		{
+			if (string.IsNullOrEmpty(seed)) return;
+
+			uint syncSeed = ConvertSeedToUint(seed);
+
+			if (_gameState != null)
+			{
+				_gameState.SyncSeed = syncSeed;
+			}
+
+			GD.Print($"[GameSessionManager] 从SignalR接收到Seed: {seed} -> {syncSeed}");
+
+			EmitSignal(SignalName.MultiplayerSeedReceived, (int)syncSeed);
+		}
+
+		private uint ConvertSeedToUint(string seed)
+		{
+			if (string.IsNullOrEmpty(seed))
+			{
+				return (uint)GD.Randi();
+			}
+
+			try
+			{
+				string cleaned = seed.Replace("-", "");
+				if (cleaned.Length < 8)
+				{
+					cleaned = cleaned.PadRight(8, '0');
+				}
+				string hexPart = cleaned.Substring(0, 8);
+				return uint.Parse(hexPart, System.Globalization.NumberStyles.HexNumber);
+			}
+			catch (Exception)
+			{
+				return (uint)seed.GetHashCode();
+			}
 		}
 
 		private void InitializeComponents()
@@ -121,11 +168,12 @@ namespace RoguelikeGame.Network.Session
 
 				_isHost = room.HostId == AuthSystem.Instance?.CurrentUser?.Id;
 
+				uint syncSeed = ConvertSeedToUint(room.Seed);
+
 				_gameState = new GameState
 				{
 					RoomId = room.Id,
-					SyncSeed = uint.Parse(room.Seed.Replace("-", "").Substring(0, 8),
-						System.Globalization.NumberStyles.HexNumber),
+					SyncSeed = syncSeed,
 					CurrentTurn = 0,
 					CurrentPhase = "setup"
 				};

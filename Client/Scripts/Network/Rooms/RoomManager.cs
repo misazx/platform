@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Godot;
 using RoguelikeGame.Network.Auth;
+using RoguelikeGame.Network.Realtime;
 
 namespace RoguelikeGame.Network.Rooms
 {
@@ -209,6 +210,8 @@ namespace RoguelikeGame.Network.Rooms
 
 					EmitSignal(SignalName.RoomCreated, _currentRoom?.Id ?? "", _currentRoom?.Name ?? "");
 
+					_ = ConnectHubAndJoinRoom(_currentRoom?.Id ?? "");
+
 					return new RoomResult
 					{
 						Success = true,
@@ -261,6 +264,8 @@ namespace RoguelikeGame.Network.Rooms
 
 					EmitSignal(SignalName.RoomJoined, _currentRoom?.Id ?? "", _currentRoom?.Name ?? "");
 
+					_ = ConnectHubAndJoinRoom(_currentRoom?.Id ?? "");
+
 					return new RoomResult
 					{
 						Success = true,
@@ -304,6 +309,12 @@ namespace RoguelikeGame.Network.Rooms
 				_currentRoom = null;
 
 				NetworkManager.Instance?.UpdateState(NetworkState.Authenticated);
+
+				var hubClient = Realtime.GameHubClient.Instance;
+				if (hubClient != null && hubClient.IsConnected)
+				{
+					await hubClient.LeaveRoomAsync(leftRoomId);
+				}
 
 				return new RoomResult { Success = true, Message = "已离开房间" };
 			}
@@ -613,6 +624,25 @@ namespace RoguelikeGame.Network.Rooms
 			}
 
 			return room;
+		}
+
+		private async Task ConnectHubAndJoinRoom(string roomId)
+		{
+			if (string.IsNullOrEmpty(roomId)) return;
+
+			var hubClient = GameHubClient.Instance;
+			if (hubClient == null) return;
+
+			var authToken = AuthSystem.Instance?.Token ?? "";
+			if (!hubClient.IsConnected)
+			{
+				await hubClient.ConnectAsync(authToken);
+			}
+
+			if (hubClient.IsConnected)
+			{
+				await hubClient.JoinRoomAsync(roomId);
+			}
 		}
 
 		public void ClearCache()

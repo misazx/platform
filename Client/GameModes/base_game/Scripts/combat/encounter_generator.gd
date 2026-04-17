@@ -132,7 +132,12 @@ func is_boss_floor(floor_num: int) -> bool:
 
 func generate_encounter(enemy_encounter_id: String, node_type: int, floor_number: int) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
-	rng.seed = hash(enemy_encounter_id + str(floor_number))
+	var bridge = get_node_or_null("/root/MultiplayerSeedBridge")
+	if bridge != null and bridge.is_multiplayer_game():
+		var mp_seed: int = bridge.get_multiplayer_seed()
+		rng.seed = hash(str(mp_seed) + enemy_encounter_id + str(floor_number))
+	else:
+		rng.seed = hash(enemy_encounter_id + str(floor_number))
 	var act: ActConfig = get_current_act(floor_number)
 	var floor_in_act: int = get_floor_in_act(floor_number)
 	var hp_scale: float = act.hp_multiplier * (1.0 + (floor_in_act - 1) * 0.1)

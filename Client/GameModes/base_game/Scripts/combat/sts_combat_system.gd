@@ -35,7 +35,11 @@ func get_turn_number() -> int:
 	return _turn_number
 
 func initialize_combat(enemies: Array, seed_val: int) -> void:
-	_rng.seed = seed_val
+	var effective_seed: int = seed_val
+	var bridge = get_node_or_null("/root/MultiplayerSeedBridge")
+	if bridge != null and bridge.is_multiplayer_game() and seed_val == 0:
+		effective_seed = bridge.get_effective_seed(0)
+	_rng.seed = effective_seed
 	_enemies = enemies
 	_player = _create_player_state()
 	_turn_number = 0

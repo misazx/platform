@@ -7,4 +7,7 @@
     <Compile Remove="Scripts\Tests\**" />
     <Compile Remove="Scripts\Packages\Samples\SampleExtensions.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.4" />
+  </ItemGroup>
 </Project>

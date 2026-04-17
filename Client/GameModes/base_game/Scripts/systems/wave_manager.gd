@@ -18,7 +18,11 @@ func _ready() -> void:
 	_rng = RandomNumberGenerator.new()
 
 func start_waves(seed: int) -> void:
-	_rng.seed = seed
+	var effective_seed: int = seed
+	var bridge = get_node_or_null("/root/MultiplayerSeedBridge")
+	if bridge != null and bridge.is_multiplayer_game() and seed == 0:
+		effective_seed = bridge.get_effective_seed(0)
+	_rng.seed = effective_seed
 	_current_wave = 0
 	_is_active = true
 	print("[WaveManager] Starting waves (max: %d)" % max_waves)

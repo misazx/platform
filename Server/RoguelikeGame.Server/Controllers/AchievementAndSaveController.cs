@@ -295,5 +295,6 @@ namespace RoguelikeGame.Server.Controllers
 		public int CurrentHP { get; set; }
 		public int MaxHP { get; set; }
 		public bool IsVictory { get; set; }
+		public string? Seed { get; set; }
 	}
 }

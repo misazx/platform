@@ -35,7 +35,11 @@ func _ready() -> void:
 	pass
 
 func initialize_coop_combat(enemies: Array, player_count: int, seed_val: int, local_index: int = 0) -> void:
-	_rng.seed = seed_val
+	var effective_seed: int = seed_val
+	var bridge = get_node_or_null("/root/MultiplayerSeedBridge")
+	if bridge != null and bridge.is_multiplayer_game() and seed_val == 0:
+		effective_seed = bridge.get_effective_seed(0)
+	_rng.seed = effective_seed
 	_enemies = enemies
 	_local_player_index = local_index
 	_turn_number = 0

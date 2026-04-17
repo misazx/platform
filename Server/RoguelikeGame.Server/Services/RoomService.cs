@@ -11,7 +11,7 @@ namespace RoguelikeGame.Server.Services
     public interface IRoomService
     {
         Task<Room> CreateRoomAsync(string hostId, string name, GameMode mode, int maxPlayers = 4, string? password = null);
-        Task<(bool Success, Room? Room, string Message)> JoinRoomAsync(string roomId, string userId);
+        Task<(bool Success, Room? Room, string Message)> JoinRoomAsync(string roomId, string userId, string? password = null);
         Task<bool> LeaveRoomAsync(string roomId, string userId);
         Task<List<Room>> GetPublicRoomsAsync(int page = 1, int pageSize = 20);
         Task<Room?> GetRoomByIdAsync(string roomId);
@@ -53,7 +53,7 @@ namespace RoguelikeGame.Server.Services
             return room;
         }
 
-        public async Task<(bool Success, Room? Room, string Message)> JoinRoomAsync(string roomId, string userId)
+        public async Task<(bool Success, Room? Room, string Message)> JoinRoomAsync(string roomId, string userId, string? password = null)
         {
             var room = await _context.Rooms
                 .Include(r => r.Players)
@@ -73,6 +73,14 @@ namespace RoguelikeGame.Server.Services
             if (room.CurrentPlayers >= room.MaxPlayers)
             {
                 return (false, null, "房间已满");
+            }
+
+            if (room.HasPassword && !string.IsNullOrEmpty(room.PasswordHash))
+            {
+                if (string.IsNullOrEmpty(password) || !BCrypt.Net.BCrypt.Verify(password, room.PasswordHash))
+                {
+                    return (false, null, "房间密码错误");
+                }
             }
 
             var alreadyInRoom = room.Players.Any(p => p.UserId == userId);

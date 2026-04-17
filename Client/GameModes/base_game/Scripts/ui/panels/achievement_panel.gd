@@ -21,12 +21,11 @@ func _create_layout() -> void:
 	container.add_theme_constant_override("separation", 10)
 	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(container)
-	var title := Label.new()
-	title.text = "🏆 成就"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 20)
-	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	container.add_child(title)
+	var title_row: HBoxContainer = UITheme.make_icon_label("icon_star", "成就", Vector2(20, 20))
+	title_row.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var title_label: Label = title_row.get_child(1) as Label
+	title_label.add_theme_font_size_override("font_size", 20)
+	container.add_child(title_row)
 	var scroll := ScrollContainer.new()
 	scroll.custom_minimum_size = Vector2(380, 400)
 	scroll.mouse_filter = Control.MOUSE_FILTER_STOP

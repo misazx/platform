@@ -57,6 +57,7 @@ OfflineModeManager="*res://Scripts/Network/OfflineModeManager.cs"
 GameSessionManager="*res://Scripts/Network/Session/GameSessionManager.cs"
 MultiProtocolManager="*res://Scripts/Network/MultiProtocolManager.cs"
 ConnectionManager="*res://Scripts/Network/Core/ConnectionManager.cs"
+MultiplayerSeedBridge="*res://Scripts/Network/multiplayer_seed_bridge.gd"
 
 [display]
 

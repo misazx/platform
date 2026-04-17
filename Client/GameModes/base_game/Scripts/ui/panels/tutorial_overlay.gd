@@ -25,16 +25,12 @@ func _create_layout() -> void:
 	container.add_theme_constant_override("separation", 12)
 	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(container)
-	var title := Label.new()
-	title.text = "📖 教程"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 20)
-	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	container.add_child(title)
-	var next_btn := Button.new()
-	next_btn.text = "下一步"
-	next_btn.custom_minimum_size = Vector2(120, 36)
-	next_btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	var title_row: HBoxContainer = UITheme.make_icon_label("icon_star", "教程", Vector2(20, 20))
+	title_row.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var title_label: Label = title_row.get_child(1) as Label
+	title_label.add_theme_font_size_override("font_size", 20)
+	container.add_child(title_row)
+	var next_btn: Button = UITheme.make_button("下一步", "", Vector2(120, 36))
 	next_btn.pressed.connect(_on_next_step)
 	container.add_child(next_btn)
 
@@ -48,9 +44,7 @@ func _show_step(index: int) -> void:
 		tutorial_completed.emit()
 		visible = false
 		return
-	var panel_node: PanelContainer = get_child(1) as PanelContainer
-	if panel_node == null: return
-	var container: VBoxContainer = panel_node.get_child(0) as VBoxContainer
+	var container: VBoxContainer = get_child(1) as VBoxContainer
 	if container == null: return
 	for label in _step_labels:
 		label.queue_free()

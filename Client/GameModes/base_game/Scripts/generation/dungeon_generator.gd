@@ -18,7 +18,11 @@ func _ready() -> void:
 
 func generate_dungeon(floor: int, seed_val: int) -> Dictionary:
 	_rng = RandomNumberGenerator.new()
-	_rng.seed = seed_val + floor
+	var effective_seed: int = seed_val
+	var bridge = get_node_or_null("/root/MultiplayerSeedBridge")
+	if bridge != null and bridge.is_multiplayer_game() and seed_val == 0:
+		effective_seed = bridge.get_effective_seed(0)
+	_rng.seed = effective_seed + floor
 
 	_current_dungeon = {
 		"floor": floor,

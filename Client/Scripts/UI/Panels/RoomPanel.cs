@@ -226,6 +226,18 @@ namespace RoguelikeGame.UI.Panels
                 RoomManager.Instance.PlayerReadyChanged += OnPlayerReadyChanged;
                 RoomManager.Instance.GameStarting += OnGameStarting;
             }
+
+            var hubClient = Network.Realtime.GameHubClient.Instance;
+            if (hubClient != null)
+            {
+                hubClient.OnPlayerJoinedRoom += OnHubPlayerJoined;
+                hubClient.OnPlayerLeftRoom += OnHubPlayerLeft;
+                hubClient.OnRoomChatMessage += OnHubChatMessage;
+                hubClient.OnPlayerReadyChanged += OnHubReadyChanged;
+                hubClient.OnGameStarting += OnHubGameStarting;
+                hubClient.OnBotAdded += OnHubBotAdded;
+                hubClient.OnBotRemoved += OnHubBotRemoved;
+            }
         }
 
         public override void _ExitTree()
@@ -237,6 +249,18 @@ namespace RoguelikeGame.UI.Panels
                 RoomManager.Instance.PlayerLeftRoom -= OnPlayerLeft;
                 RoomManager.Instance.PlayerReadyChanged -= OnPlayerReadyChanged;
                 RoomManager.Instance.GameStarting -= OnGameStarting;
+            }
+
+            var hubClient = Network.Realtime.GameHubClient.Instance;
+            if (hubClient != null)
+            {
+                hubClient.OnPlayerJoinedRoom -= OnHubPlayerJoined;
+                hubClient.OnPlayerLeftRoom -= OnHubPlayerLeft;
+                hubClient.OnRoomChatMessage -= OnHubChatMessage;
+                hubClient.OnPlayerReadyChanged -= OnHubReadyChanged;
+                hubClient.OnGameStarting -= OnHubGameStarting;
+                hubClient.OnBotAdded -= OnHubBotAdded;
+                hubClient.OnBotRemoved -= OnHubBotRemoved;
             }
 
             base._ExitTree();
@@ -499,6 +523,16 @@ namespace RoguelikeGame.UI.Panels
             string username = AuthSystem.Instance?.CurrentUser?.Username ?? "Unknown";
             AddChatMessage(username, message, true);
             _chatInput.Text = "";
+
+            var room = RoomManager.Instance?.CurrentRoom;
+            if (room != null)
+            {
+                var hubClient = Network.Realtime.GameHubClient.Instance;
+                if (hubClient != null && hubClient.IsConnected)
+                {
+                    _ = hubClient.SendRoomChatAsync(room.Id, message);
+                }
+            }
         }
 
         public void AddChatMessage(string sender, string message, bool isLocal = false)
@@ -546,6 +580,52 @@ namespace RoguelikeGame.UI.Panels
         {
             AddSystemMessage("🎮 游戏即将开始！");
             OnGameStarted?.Invoke();
+        }
+
+        private void OnHubPlayerJoined(string playerId, string playerName)
+        {
+            AddSystemMessage($"👤 {playerName} 加入了房间");
+            RefreshRoomInfo();
+        }
+
+        private void OnHubPlayerLeft(string playerId, string playerName)
+        {
+            AddSystemMessage($"👤 {playerName} 离开了房间");
+            RefreshRoomInfo();
+        }
+
+        private void OnHubChatMessage(string senderId, string senderName, string message)
+        {
+            string localUserId = AuthSystem.Instance?.CurrentUser?.Id ?? "";
+            if (senderId != localUserId)
+            {
+                AddChatMessage(senderName, message, false);
+            }
+        }
+
+        private void OnHubReadyChanged(string playerId, bool isReady)
+        {
+            string status = isReady ? "已准备" : "取消准备";
+            AddSystemMessage($"📋 玩家{status}");
+            RefreshRoomInfo();
+        }
+
+        private void OnHubGameStarting(string seed, string roomId)
+        {
+            AddSystemMessage($"🎮 游戏即将开始！Seed: {seed}");
+            OnGameStarted?.Invoke();
+        }
+
+        private void OnHubBotAdded(string botName)
+        {
+            AddSystemMessage($"🤖 机器人 {botName} 已加入");
+            RefreshRoomInfo();
+        }
+
+        private void OnHubBotRemoved(string botName)
+        {
+            AddSystemMessage($"🤖 机器人 {botName} 已移除");
+            RefreshRoomInfo();
         }
     }
 }

@@ -64,7 +64,7 @@ namespace RoguelikeGame.Server.Controllers
 
             try
             {
-                var (success, room, message) = await _roomService.JoinRoomAsync(roomId, userId);
+                var (success, room, message) = await _roomService.JoinRoomAsync(roomId, userId, request?.Password);
 
                 if (success && room != null)
                 {

@@ -23,12 +23,11 @@ func _create_layout() -> void:
 	container.add_theme_constant_override("separation", 12)
 	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(container)
-	var title := Label.new()
-	title.text = "💾 存档"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 20)
-	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	container.add_child(title)
+	var title_row: HBoxContainer = UITheme.make_icon_label("icon_coin", "存档", Vector2(20, 20))
+	title_row.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var title_label: Label = title_row.get_child(1) as Label
+	title_label.add_theme_font_size_override("font_size", 20)
+	container.add_child(title_row)
 	for i in range(3):
 		var slot_row := HBoxContainer.new()
 		slot_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -38,23 +37,14 @@ func _create_layout() -> void:
 		slot_label.custom_minimum_size = Vector2(200, 30)
 		slot_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		slot_row.add_child(slot_label)
-		var save_btn := Button.new()
-		save_btn.text = "保存"
-		save_btn.custom_minimum_size = Vector2(60, 28)
-		save_btn.mouse_filter = Control.MOUSE_FILTER_STOP
+		var save_btn: Button = UITheme.make_button("保存", "", Vector2(60, 28))
 		var idx := i
 		save_btn.pressed.connect(func(): save_requested.emit(idx))
 		slot_row.add_child(save_btn)
-		var load_btn := Button.new()
-		load_btn.text = "读取"
-		load_btn.custom_minimum_size = Vector2(60, 28)
-		load_btn.mouse_filter = Control.MOUSE_FILTER_STOP
+		var load_btn: Button = UITheme.make_button("读取", "", Vector2(60, 28))
 		load_btn.pressed.connect(func(): load_requested.emit(idx))
 		slot_row.add_child(load_btn)
-	var close_btn := Button.new()
-	close_btn.text = "关闭"
-	close_btn.custom_minimum_size = Vector2(100, 32)
-	close_btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	var close_btn: Button = UITheme.make_button("关闭", "", Vector2(100, 32))
 	close_btn.pressed.connect(func(): close_pressed.emit(); visible = false)
 	container.add_child(close_btn)
 

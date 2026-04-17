@@ -65,6 +65,8 @@ namespace RoguelikeGame.Server.Models
 
 		public bool IsVictory { get; set; } = false;
 
+		public string? Seed { get; set; }
+
 		public DateTime SavedAt { get; set; } = DateTime.UtcNow;
 
 		public long DataSizeBytes { get; set; } = 0;

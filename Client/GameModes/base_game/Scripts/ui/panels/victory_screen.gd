@@ -12,32 +12,32 @@ func _create_layout() -> void:
 	bg.color = Color(0, 0, 0, 0.8)
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(bg)
+	var panel := PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.offset_left = -250
+	panel.offset_top = -200
+	panel.offset_right = 250
+	panel.offset_bottom = 200
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_theme_stylebox_override("panel", UITheme.make_panel_bg(Color(1, 0.85, 0.2, 0.6)))
+	add_child(panel)
 	var container := VBoxContainer.new()
-	container.set_anchors_preset(Control.PRESET_CENTER)
-	container.offset_left = -150
-	container.offset_top = -100
-	container.offset_right = 150
-	container.offset_bottom = 100
 	container.add_theme_constant_override("separation", 20)
 	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(container)
-	var title := Label.new()
-	title.text = "🏆 胜利！"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 32)
-	title.modulate = Color(1, 0.85, 0.2)
-	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	container.add_child(title)
+	panel.add_child(container)
+	var title_row: HBoxContainer = UITheme.make_icon_label("icon_star", "胜利！", Vector2(28, 28))
+	title_row.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var title_label: Label = title_row.get_child(1) as Label
+	title_label.add_theme_font_size_override("font_size", 36)
+	title_label.modulate = Color(1, 0.85, 0.2)
+	container.add_child(title_row)
 	var stats := Label.new()
 	stats.text = "恭喜通关！"
 	stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	stats.add_theme_font_size_override("font_size", 16)
+	stats.add_theme_font_size_override("font_size", 18)
 	stats.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	container.add_child(stats)
-	var btn := Button.new()
-	btn.text = "继续"
-	btn.custom_minimum_size = Vector2(140, 44)
-	btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	var btn: Button = UITheme.make_button("继续", "", Vector2(200, 48))
 	btn.pressed.connect(func(): continue_pressed.emit())
 	container.add_child(btn)
 

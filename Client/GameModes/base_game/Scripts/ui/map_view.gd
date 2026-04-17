@@ -101,7 +101,7 @@ func _setup_node_references() -> void:
 	if header_bar != null and header_bar.get_node_or_null("SaveButton") == null:
 		var save_btn := Button.new()
 		save_btn.name = "SaveButton"
-		save_btn.text = "💾 存档"
+		save_btn.text = "存档"
 		save_btn.custom_minimum_size = Vector2(90, 36)
 		save_btn.mouse_filter = Control.MOUSE_FILTER_STOP
 		save_btn.position = Vector2(400, 5)
@@ -360,7 +360,7 @@ func update_floor(f: int) -> void:
 	if _floor_label != null: _floor_label.text = "第 %d 层" % f
 
 func update_gold(g: int) -> void:
-	if _gold_label != null: _gold_label.text = "💰 %d" % g
+	if _gold_label != null: _gold_label.text = "%d" % g
 
 func visit_node(node_data) -> void:
 	for ui in _node_uis:

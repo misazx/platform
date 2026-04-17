@@ -32,16 +32,13 @@ func _create_layout() -> void:
 	var hbox := HBoxContainer.new()
 	hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.add_child(hbox)
-	_icon_rect = TextureRect.new()
-	_icon_rect.custom_minimum_size = Vector2(32, 32)
-	_icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_icon_rect = UITheme.make_icon_rect("icon_star", Vector2(32, 32))
 	hbox.add_child(_icon_rect)
 	var vbox := VBoxContainer.new()
 	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hbox.add_child(vbox)
 	_title_label = Label.new()
-	_title_label.text = "🏆 成就解锁！"
+	_title_label.text = "成就解锁！"
 	_title_label.add_theme_font_size_override("font_size", 13)
 	_title_label.modulate = Color(1, 0.85, 0.2)
 	_title_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -53,7 +50,7 @@ func _create_layout() -> void:
 	vbox.add_child(_desc_label)
 
 func show_achievement(title: String, description: String, icon_path: String = "") -> void:
-	_title_label.text = "🏆 %s" % title
+	_title_label.text = "%s" % title
 	_desc_label.text = description
 	if icon_path != "":
 		var tex: Texture2D = load(icon_path) as Texture2D

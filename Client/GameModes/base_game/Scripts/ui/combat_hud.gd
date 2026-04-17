@@ -123,10 +123,11 @@ func _create_top_bar() -> void:
 	top_bar.add_child(_turn_label)
 
 	_energy_label = Label.new()
-	_energy_label.text = "⚡ 3/3"
+	_energy_label.text = "3/3"
 	_energy_label.modulate = Color(1, 0.85, 0.2)
 	_energy_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_energy_label.add_theme_font_size_override("font_size", 14)
+	top_bar.add_child(UITheme.make_icon_rect("icon_coin", Vector2(16, 16)))
 	top_bar.add_child(_energy_label)
 
 func _create_battle_scene_view() -> void:
@@ -322,7 +323,7 @@ func _create_bottom_buttons() -> void:
 	_root_container.add_child(bottom_bar)
 
 	_draw_pile_btn = Button.new()
-	_draw_pile_btn.text = "📥 抽牌堆 (45)"
+	_draw_pile_btn.text = "抽牌堆 (45)"
 	_draw_pile_btn.custom_minimum_size = Vector2(120, 34)
 	_draw_pile_btn.flat = true
 	_draw_pile_btn.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -362,7 +363,7 @@ func _create_bottom_buttons() -> void:
 	bottom_bar.add_child(_end_turn_btn)
 
 	_discard_pile_btn = Button.new()
-	_discard_pile_btn.text = "📤 弃牌堆 (0)"
+	_discard_pile_btn.text = "弃牌堆 (0)"
 	_discard_pile_btn.custom_minimum_size = Vector2(120, 34)
 	_discard_pile_btn.flat = true
 	_discard_pile_btn.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -431,7 +432,7 @@ func update_hand(cards: Array) -> void:
 func update_energy(current: int, max_val: int) -> void:
 	_current_energy = current
 	_max_energy = max_val
-	_energy_label.text = "⚡ %d/%d" % [current, max_val]
+	_energy_label.text = "%d/%d" % [current, max_val]
 
 func update_health(current: int, max_val: int) -> void:
 	_player_health_bar.max_value = max_val
@@ -441,13 +442,13 @@ func update_health(current: int, max_val: int) -> void:
 func update_block(block: int) -> void:
 	_player_block_bar.value = block
 	_player_block_bar.visible = block > 0
-	_player_block_text.text = "🛡️ %d" % block if block > 0 else ""
+	_player_block_text.text = "%d" % block if block > 0 else ""
 
 func update_draw_pile(count: int) -> void:
-	_draw_pile_btn.text = "📥 抽牌堆 (%d)" % count
+	_draw_pile_btn.text = "抽牌堆 (%d)" % count
 
 func update_discard_pile(count: int) -> void:
-	_discard_pile_btn.text = "📤 弃牌堆 (%d)" % count
+	_discard_pile_btn.text = "弃牌堆 (%d)" % count
 
 func set_turn_number(turn: int) -> void:
 	_turn_label.text = "回合 %d" % turn
@@ -860,7 +861,7 @@ class EnemyUnitUI:
 		var tween := create_tween()
 		tween.tween_property(self, "modulate", Color(0.4, 0.4, 0.4, 0.3), 0.6).set_ease(Tween.EASE_IN)
 		tween.parallel().tween_property(self, "scale", Vector2(0.85, 0.85), 0.6).set_ease(Tween.EASE_IN)
-		tween.tween_callback(func(): _health_text.text = "💀")
+		tween.tween_callback(func(): _health_text.text = "X")
 
 	func update_intent(text: String, icon: String = "") -> void:
 		_intent_label.text = ("%s %s" % [icon, text]) if icon != "" else text

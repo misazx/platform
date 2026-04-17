@@ -35,15 +35,33 @@ func _load_packages_from_config(path: String) -> Array:
 
 func _create_provider_from_config(pkg: Dictionary) -> Dictionary:
 	var provider := {}
-	provider["package_id"] = pkg.get("id", "")
+	var package_id: String = pkg.get("id", "")
+	provider["package_id"] = package_id
 	provider["package_name"] = pkg.get("name", "")
 	provider["entry_scene"] = pkg.get("entryScene", "")
 	provider["character_select_scene"] = pkg.get("characterSelectScene", "")
 	provider["map_scene"] = pkg.get("mapScene", "")
 	provider["is_builtin"] = pkg.get("isFree", true) and pkg.get("type", "") == "base_game"
-	if provider["package_id"] == "":
+	if package_id == "":
 		return {}
+	if PackageService.instance != null:
+		provider["save_slots"] = PackageService.instance.get_save_slots(package_id)
+		provider["save_save_slot"] = func(slot_id: int, save_data: Dictionary) -> void:
+			_save_slot_to_local(package_id, slot_id, save_data)
 	return provider
+
+func _save_slot_to_local(package_id: String, slot_id: int, save_data: Dictionary) -> void:
+	var save_dir := "user://saves"
+	if not DirAccess.dir_exists_absolute(save_dir):
+		DirAccess.make_dir_recursive_absolute(save_dir)
+	var save_path := "%s/%s_slot_%d.json" % [save_dir, package_id, slot_id]
+	var json_text := JSON.stringify(save_data, "\t")
+	var file := FileAccess.open(save_path, FileAccess.WRITE)
+	if file != null:
+		file.store_string(json_text)
+		print("[PackageUIRegistry] 存档已保存到本地: %s" % save_path)
+	else:
+		print("[PackageUIRegistry] 存档保存失败: %s" % save_path)
 
 func register_provider(provider: Dictionary) -> void:
 	_providers[provider["package_id"]] = provider

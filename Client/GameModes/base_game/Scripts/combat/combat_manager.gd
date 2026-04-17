@@ -26,7 +26,11 @@ func initialize_combat(player: Node, enemies: Array, seed_val: int) -> void:
 	_player = player
 	_enemies = enemies if enemies else []
 	_rng = RandomNumberGenerator.new()
-	_rng.seed = seed_val
+	var effective_seed: int = seed_val
+	var bridge = get_node_or_null("/root/MultiplayerSeedBridge")
+	if bridge != null and bridge.is_multiplayer_game() and seed_val == 0:
+		effective_seed = bridge.get_effective_seed(0)
+	_rng.seed = effective_seed
 
 	_state = {
 		"current_energy": 3,
