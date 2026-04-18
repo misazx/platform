@@ -135,11 +135,16 @@ try
             {
                 try
                 {
-                    context.Database.ExecuteSqlRaw(
-                        "ALTER TABLE \"{0}\" ADD COLUMN \"{1}\" {2}",
+                    var sql = string.Format(
+                        "ALTER TABLE [{0}] ADD COLUMN [{1}] {2}",
                         table, column, definition);
+                    context.Database.ExecuteSqlRaw(sql);
+                    Log.Information("Schema migration: added column {Table}.{Column}", table, column);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Log.Debug("Schema migration skipped {Table}.{Column}: {Message}", table, column, ex.Message);
+                }
             }
         }
         catch { }
