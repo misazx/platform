@@ -130,6 +130,7 @@ namespace RoguelikeGame.Server.Services
                 if (newHost != null)
                 {
                     room.HostId = newHost.UserId;
+                    newHost.IsReady = true;
                 }
             }
             else if (room.Players.Count() == 0 || room.HostId == userId)
