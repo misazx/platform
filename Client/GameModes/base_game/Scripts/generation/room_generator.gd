@@ -49,7 +49,7 @@ func has_connection(room_a: Dictionary, room_b: Dictionary) -> bool:
 	return int(room_b["id"]) in room_a["connections"]
 
 func get_distance(room_a: Dictionary, room_b: Dictionary) -> float:
-	return Vector2(float(room_a["x"]), float(room_a["y"])).distance_to(Vector2(float(room_b["x"]), float(room_b["y"]))
+	return Vector2(float(room_a["x"]), float(room_a["y"])).distance_to(Vector2(float(room_b["x"]), float(room_b["y"])))
 
 func get_room_type_color(type_str: String) -> Color:
 	match type_str:

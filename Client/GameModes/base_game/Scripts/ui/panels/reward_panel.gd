@@ -97,7 +97,7 @@ func set_rewards(rewards: Array, gold: int) -> void:
 			_:
 				btn_text = r_name
 		var btn := UITheme.make_button(btn_text, icon_name, Vector2(420, 44))
-		var reward_copy := reward.duplicate()
+		var reward_copy : Dictionary= reward.duplicate()
 		btn.pressed.connect(func(): reward_chosen.emit(r_type, reward_copy); visible = false)
 		scroll_vbox.add_child(btn)
 		_reward_buttons.append(btn)

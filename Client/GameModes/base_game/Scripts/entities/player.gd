@@ -35,12 +35,13 @@ func _physics_process(delta: float) -> void:
 			is_dashing = false
 			is_invincible = false
 
-	var velocity := Vector2.ZERO
+	var velocity: Vector2 = Vector2.ZERO
+	var input_dir: Vector2 = Vector2.ZERO
 
 	if is_dashing:
 		velocity = _dash_direction * dash_speed
 	else:
-		var input_dir := Vector2.ZERO
+		input_dir = Vector2.ZERO
 		if Input.is_action_pressed("ui_up"):
 			input_dir.y -= 1
 		if Input.is_action_pressed("ui_down"):
@@ -54,7 +55,7 @@ func _physics_process(delta: float) -> void:
 			input_dir = input_dir.normalized()
 			velocity = input_dir * speed
 
-	velocity = move_and_slide()
+	move_and_slide()
 
 	if Input.is_action_just_pressed("ui_accept") and _dash_cooldown_timer <= 0:
 		dash(input_dir)

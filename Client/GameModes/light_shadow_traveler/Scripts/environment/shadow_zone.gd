@@ -52,7 +52,9 @@ func _process(delta: float) -> void:
 		_dark_light.energy = -1.0 + sin(_pulse_time) * 0.2
 	for body in _bodies_in_zone:
 		if body is PlayerCharacter and body.is_shadow_form():
-			body.heal(1) if Engine.get_frames_drawn() % 60 == 0 else pass
+			body.heal(1) 
+			if Engine.get_frames_drawn() % 60 != 0 :
+				pass
 
 func _on_body_entered(body: Node2D) -> void:
 	if body is PlayerCharacter:
