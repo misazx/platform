@@ -185,13 +185,24 @@ namespace RoguelikeGame.UI.Panels
             chatHeader.AddThemeFontSizeOverride("font_size", 16);
             rightPanel.AddChild(chatHeader);
 
+            var chatScroll = new ScrollContainer
+            {
+                SizeFlagsVertical = Control.SizeFlags.ExpandFill,
+                HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
+                VerticalScrollMode = ScrollContainer.ScrollMode.Auto
+            };
+            rightPanel.AddChild(chatScroll);
+
             _chatOutput = new RichTextLabel
             {
                 CustomMinimumSize = new Vector2(0, 0),
                 SizeFlagsVertical = Control.SizeFlags.ExpandFill,
-                BbcodeEnabled = true
+                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+                BbcodeEnabled = true,
+                FitContent = true,
+                ScrollFollowing = true
             };
-            rightPanel.AddChild(_chatOutput);
+            chatScroll.AddChild(_chatOutput);
 
             var chatRow = new HBoxContainer();
             chatRow.AddThemeConstantOverride("separation", 8);
@@ -421,8 +432,10 @@ namespace RoguelikeGame.UI.Panels
             bool isHost = RoomManager.Instance?.IsHost ?? false;
             string currentUserId = AuthSystem.Instance?.CurrentUser?.Id ?? "";
 
-            _isReady = room.Players.Find(p => p.Id == currentUserId)?.IsReady ?? false;
+            var currentPlayer = room.Players.Find(p => p.Id == currentUserId);
+            _isReady = currentPlayer?.IsReady ?? false;
 
+            _readyButton.Visible = !isHost;
             _readyButton.Text = _isReady ? "❌ 取消准备" : "✋ 准备";
             _readyButton.Modulate = _isReady ? new Color(0.9f, 0.6f, 0.3f) : new Color(0.3f, 0.8f, 0.5f);
 
@@ -431,7 +444,7 @@ namespace RoguelikeGame.UI.Panels
 
             if (isHost)
             {
-                bool canStart = room.Status == RoomStatus.Ready || room.Status == RoomStatus.Full;
+                bool canStart = room.Players.Count >= 2 && room.Players.TrueForAll(p => p.IsReady || p.IsHost);
                 _startButton.Disabled = !canStart;
                 _startButton.Modulate = canStart ? new Color(0.3f, 0.9f, 0.5f) : new Color(0.4f, 0.4f, 0.4f);
             }

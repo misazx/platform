@@ -39,7 +39,7 @@ namespace RoguelikeGame.Server.Models
         public GameMode Mode { get; set; } = GameMode.PvP;
 
         public int MaxPlayers { get; set; } = 4;
-        public int CurrentPlayers { get; set; } = 1;
+        public int CurrentPlayers { get; set; } = 0;
 
         public bool HasPassword { get; set; } = false;
         public string? PasswordHash { get; set; }

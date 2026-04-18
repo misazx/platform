@@ -15,6 +15,23 @@ static func get_icon(name: String) -> Texture2D:
 		_cache[name] = tex
 	return tex
 
+static func _make_stylebox(tex_name: String, margin_left: int = 10, margin_right: int = 10, margin_top: int = 10, margin_bottom: int = 10, content_left: int = 8, content_right: int = 8, content_top: int = 6, content_bottom: int = 6) -> StyleBoxTexture:
+	var style := StyleBoxTexture.new()
+	var tex: Texture2D = get_icon(tex_name)
+	if tex != null:
+		style.texture = tex
+	style.texture_margin_left = margin_left
+	style.texture_margin_right = margin_right
+	style.texture_margin_top = margin_top
+	style.texture_margin_bottom = margin_bottom
+	style.content_margin_left = content_left
+	style.content_margin_right = content_right
+	style.content_margin_top = content_top
+	style.content_margin_bottom = content_bottom
+	style.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_TILE
+	style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE
+	return style
+
 static func make_icon_rect(name: String, size: Vector2 = Vector2(24, 24)) -> TextureRect:
 	var rect := TextureRect.new()
 	rect.texture = get_icon(name)
@@ -46,52 +63,52 @@ static func make_button(text: String, icon_name: String = "", min_size: Vector2 
 		btn.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		btn.expand_icon = true
 	btn.text = text
-	var normal_style := StyleBoxFlat.new()
-	normal_style.bg_color = Color(0.18, 0.14, 0.08, 0.95)
-	normal_style.corner_radius_top_left = 8
-	normal_style.corner_radius_top_right = 8
-	normal_style.corner_radius_bottom_left = 8
-	normal_style.corner_radius_bottom_right = 8
-	normal_style.border_width_left = 2
-	normal_style.border_width_right = 2
-	normal_style.border_width_top = 2
-	normal_style.border_width_bottom = 2
-	normal_style.border_color = Color(0.55, 0.45, 0.3, 0.8)
-	normal_style.content_margin_left = 8
-	normal_style.content_margin_right = 8
-	normal_style.content_margin_top = 4
-	normal_style.content_margin_bottom = 4
+	var normal_style: StyleBoxTexture = _make_stylebox("btn_wide_normal", 14, 14, 12, 12, 10, 10, 6, 6)
 	btn.add_theme_stylebox_override("normal", normal_style)
-	var hover_style := normal_style.duplicate() as StyleBoxFlat
-	hover_style.bg_color = Color(0.25, 0.2, 0.12, 0.95)
-	hover_style.border_color = Color(0.7, 0.6, 0.35, 1.0)
+	var hover_style: StyleBoxTexture = _make_stylebox("btn_wide_hover", 14, 14, 12, 12, 10, 10, 6, 6)
 	btn.add_theme_stylebox_override("hover", hover_style)
-	var pressed_style := normal_style.duplicate() as StyleBoxFlat
-	pressed_style.bg_color = Color(0.12, 0.1, 0.06, 0.95)
-	pressed_style.border_color = Color(0.4, 0.35, 0.2, 1.0)
+	var pressed_style: StyleBoxTexture = _make_stylebox("btn_wide_pressed", 14, 14, 12, 12, 10, 10, 6, 6)
 	btn.add_theme_stylebox_override("pressed", pressed_style)
-	var disabled_style := normal_style.duplicate() as StyleBoxFlat
-	disabled_style.bg_color = Color(0.1, 0.08, 0.06, 0.6)
-	disabled_style.border_color = Color(0.3, 0.25, 0.15, 0.4)
+	var disabled_style: StyleBoxTexture = _make_stylebox("btn_wide_disabled", 14, 14, 12, 12, 10, 10, 6, 6)
 	btn.add_theme_stylebox_override("disabled", disabled_style)
+	btn.add_theme_color_override("font_color", Color(0.95, 0.9, 0.8))
+	btn.add_theme_color_override("font_hover_color", Color(1, 1, 1))
+	btn.add_theme_color_override("font_pressed_color", Color(0.8, 0.75, 0.65))
+	btn.add_theme_color_override("font_disabled_color", Color(0.5, 0.45, 0.4, 0.6))
+	btn.add_theme_font_size_override("font_size", 14)
 	return btn
 
-static func make_panel_bg(border_color: Color = Color(0.55, 0.45, 0.3, 0.8)) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.09, 0.06, 0.95)
-	style.corner_radius_top_left = 12
-	style.corner_radius_top_right = 12
-	style.corner_radius_bottom_left = 12
-	style.corner_radius_bottom_right = 12
-	style.border_width_left = 3
-	style.border_width_right = 3
-	style.border_width_top = 3
-	style.border_width_bottom = 3
-	style.border_color = border_color
-	style.shadow_color = Color(0, 0, 0, 0.3)
-	style.shadow_size = 4
-	style.content_margin_left = 12
-	style.content_margin_right = 12
-	style.content_margin_top = 12
-	style.content_margin_bottom = 12
+static func make_small_button(text: String, icon_name: String = "", min_size: Vector2 = Vector2(80, 32)) -> Button:
+	var btn := Button.new()
+	btn.custom_minimum_size = min_size
+	btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	if icon_name != "":
+		btn.icon = get_icon(icon_name)
+		btn.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		btn.expand_icon = true
+	btn.text = text
+	var normal_style: StyleBoxTexture = _make_stylebox("btn_small_normal", 10, 10, 10, 10, 6, 6, 4, 4)
+	btn.add_theme_stylebox_override("normal", normal_style)
+	var hover_style: StyleBoxTexture = _make_stylebox("btn_small_hover", 10, 10, 10, 10, 6, 6, 4, 4)
+	btn.add_theme_stylebox_override("hover", hover_style)
+	var pressed_style: StyleBoxTexture = _make_stylebox("btn_small_pressed", 10, 10, 10, 10, 6, 6, 4, 4)
+	btn.add_theme_stylebox_override("pressed", pressed_style)
+	var disabled_style: StyleBoxTexture = _make_stylebox("btn_small_disabled", 10, 10, 10, 10, 6, 6, 4, 4)
+	btn.add_theme_stylebox_override("disabled", disabled_style)
+	btn.add_theme_color_override("font_color", Color(0.95, 0.9, 0.8))
+	btn.add_theme_color_override("font_hover_color", Color(1, 1, 1))
+	btn.add_theme_color_override("font_pressed_color", Color(0.8, 0.75, 0.65))
+	btn.add_theme_font_size_override("font_size", 12)
+	return btn
+
+static func make_panel_bg(border_color: Color = Color(0.55, 0.45, 0.3, 0.8)) -> StyleBoxTexture:
+	var style: StyleBoxTexture = _make_stylebox("panel_light", 16, 16, 16, 16, 14, 14, 14, 14)
+	return style
+
+static func make_dark_panel_bg() -> StyleBoxTexture:
+	var style: StyleBoxTexture = _make_stylebox("panel_dark", 16, 16, 16, 16, 14, 14, 14, 14)
+	return style
+
+static func make_wood_panel_bg() -> StyleBoxTexture:
+	var style: StyleBoxTexture = _make_stylebox("panel_wood", 16, 16, 16, 16, 14, 14, 14, 14)
 	return style

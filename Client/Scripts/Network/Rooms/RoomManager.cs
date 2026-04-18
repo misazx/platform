@@ -505,6 +505,13 @@ namespace RoguelikeGame.Network.Rooms
 				var request = CreateAuthorizedRequest(HttpMethod.Post, $"/api/rooms/{_currentRoom.Id}/add-bot", requestData);
 				var response = await _httpClient.SendAsync(request);
 				var responseString = await response.Content.ReadAsStringAsync();
+
+				if (!response.IsSuccessStatusCode)
+				{
+					GD.PrintErr($"[RoomManager] 添加机器人HTTP错误: {response.StatusCode} - {responseString.Substring(0, Math.Min(responseString.Length, 200))}");
+					return new RoomResult { Success = false, Message = $"服务器错误 ({(int)response.StatusCode})" };
+				}
+
 				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
 
 				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
