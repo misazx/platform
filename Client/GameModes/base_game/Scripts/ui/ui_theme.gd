@@ -63,13 +63,13 @@ static func make_button(text: String, icon_name: String = "", min_size: Vector2 
 		btn.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		btn.expand_icon = true
 	btn.text = text
-	var normal_style: StyleBoxTexture = _make_stylebox("btn_wide_normal", 14, 14, 12, 12, 10, 10, 6, 6)
+	var normal_style: StyleBoxTexture = _make_stylebox("btn_wide_normal", 10, 10, 8, 8, 8, 8, 4, 4)
 	btn.add_theme_stylebox_override("normal", normal_style)
-	var hover_style: StyleBoxTexture = _make_stylebox("btn_wide_hover", 14, 14, 12, 12, 10, 10, 6, 6)
+	var hover_style: StyleBoxTexture = _make_stylebox("btn_wide_hover", 10, 10, 8, 8, 8, 8, 4, 4)
 	btn.add_theme_stylebox_override("hover", hover_style)
-	var pressed_style: StyleBoxTexture = _make_stylebox("btn_wide_pressed", 14, 14, 12, 12, 10, 10, 6, 6)
+	var pressed_style: StyleBoxTexture = _make_stylebox("btn_wide_pressed", 10, 10, 8, 8, 8, 8, 4, 4)
 	btn.add_theme_stylebox_override("pressed", pressed_style)
-	var disabled_style: StyleBoxTexture = _make_stylebox("btn_wide_disabled", 14, 14, 12, 12, 10, 10, 6, 6)
+	var disabled_style: StyleBoxTexture = _make_stylebox("btn_wide_disabled", 10, 10, 8, 8, 8, 8, 4, 4)
 	btn.add_theme_stylebox_override("disabled", disabled_style)
 	btn.add_theme_color_override("font_color", Color(0.95, 0.9, 0.8))
 	btn.add_theme_color_override("font_hover_color", Color(1, 1, 1))
@@ -87,13 +87,13 @@ static func make_small_button(text: String, icon_name: String = "", min_size: Ve
 		btn.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		btn.expand_icon = true
 	btn.text = text
-	var normal_style: StyleBoxTexture = _make_stylebox("btn_small_normal", 10, 10, 10, 10, 6, 6, 4, 4)
+	var normal_style: StyleBoxTexture = _make_stylebox("btn_sq26_s1_normal", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("normal", normal_style)
-	var hover_style: StyleBoxTexture = _make_stylebox("btn_small_hover", 10, 10, 10, 10, 6, 6, 4, 4)
+	var hover_style: StyleBoxTexture = _make_stylebox("btn_sq26_s1_hover", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("hover", hover_style)
-	var pressed_style: StyleBoxTexture = _make_stylebox("btn_small_pressed", 10, 10, 10, 10, 6, 6, 4, 4)
+	var pressed_style: StyleBoxTexture = _make_stylebox("btn_sq26_s1_pressed", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("pressed", pressed_style)
-	var disabled_style: StyleBoxTexture = _make_stylebox("btn_small_disabled", 10, 10, 10, 10, 6, 6, 4, 4)
+	var disabled_style: StyleBoxTexture = _make_stylebox("btn_sq26_s1_disabled", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("disabled", disabled_style)
 	btn.add_theme_color_override("font_color", Color(0.95, 0.9, 0.8))
 	btn.add_theme_color_override("font_hover_color", Color(1, 1, 1))
@@ -102,27 +102,27 @@ static func make_small_button(text: String, icon_name: String = "", min_size: Ve
 	return btn
 
 static func make_panel_bg(border_color: Color = Color(0.55, 0.45, 0.3, 0.8)) -> StyleBoxTexture:
-	var style: StyleBoxTexture = _make_stylebox("panel_light", 16, 16, 16, 16, 14, 14, 14, 14)
+	var style: StyleBoxTexture = _make_stylebox("panel_light", 24, 24, 24, 24, 20, 20, 18, 18)
 	return style
 
 static func make_dark_panel_bg() -> StyleBoxTexture:
-	var style: StyleBoxTexture = _make_stylebox("panel_dark", 16, 16, 16, 16, 14, 14, 14, 14)
+	var style: StyleBoxTexture = _make_stylebox("dialog_box_big", 10, 10, 10, 10, 8, 8, 8, 8)
 	return style
 
 static func make_wood_panel_bg() -> StyleBoxTexture:
-	var style: StyleBoxTexture = _make_stylebox("panel_wood", 16, 16, 16, 16, 14, 14, 14, 14)
+	var style: StyleBoxTexture = _make_stylebox("panel_wood", 8, 8, 8, 8, 6, 6, 6, 6)
 	return style
 
 static func make_medium_panel_bg() -> StyleBoxTexture:
-	var style: StyleBoxTexture = _make_stylebox("panel_medium", 16, 16, 16, 16, 14, 14, 14, 14)
+	var style: StyleBoxTexture = _make_stylebox("panel_medium", 6, 6, 6, 6, 4, 4, 4, 4)
 	return style
 
 static func make_bar_bg_style() -> StyleBoxTexture:
-	var style: StyleBoxTexture = _make_stylebox("panel_dark", 4, 4, 4, 4, 2, 2, 2, 2)
+	var style: StyleBoxTexture = _make_stylebox("dialog_box_big", 10, 10, 10, 10, 2, 2, 2, 2)
 	return style
 
 static func make_card_panel_style() -> StyleBoxTexture:
-	var style: StyleBoxTexture = _make_stylebox("panel_medium", 8, 8, 8, 8, 6, 6, 6, 6)
+	var style: StyleBoxTexture = _make_stylebox("dialog_box_small", 10, 10, 10, 10, 6, 6, 6, 6)
 	return style
 
 static func make_icon_button(icon_name: String, min_size: Vector2 = Vector2(36, 36)) -> Button:
@@ -131,12 +131,12 @@ static func make_icon_button(icon_name: String, min_size: Vector2 = Vector2(36, 
 	btn.mouse_filter = Control.MOUSE_FILTER_STOP
 	btn.icon = get_icon(icon_name)
 	btn.expand_icon = true
-	var normal_style: StyleBoxTexture = _make_stylebox("btn_icon_normal", 8, 8, 8, 8, 4, 4, 4, 4)
+	var normal_style: StyleBoxTexture = _make_stylebox("btn_sq26_s2_normal", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("normal", normal_style)
-	var hover_style: StyleBoxTexture = _make_stylebox("btn_icon_hover", 8, 8, 8, 8, 4, 4, 4, 4)
+	var hover_style: StyleBoxTexture = _make_stylebox("btn_sq26_s2_hover", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("hover", hover_style)
-	var pressed_style: StyleBoxTexture = _make_stylebox("btn_icon_pressed", 8, 8, 8, 8, 4, 4, 4, 4)
+	var pressed_style: StyleBoxTexture = _make_stylebox("btn_sq26_s2_pressed", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("pressed", pressed_style)
-	var disabled_style: StyleBoxTexture = _make_stylebox("btn_icon_disabled", 8, 8, 8, 8, 4, 4, 4, 4)
+	var disabled_style: StyleBoxTexture = _make_stylebox("btn_sq26_s2_disabled", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("disabled", disabled_style)
 	return btn

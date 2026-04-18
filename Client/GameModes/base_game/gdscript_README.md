@@ -115,6 +115,16 @@ CardDatabase="*res://GameModes/base_game/Scripts/cards/card_database.gd"
 | **duplicate()返回Variant** | `var copy := dict.duplicate()` (Parse Error) | `duplicate()`返回Variant无法推断: `var copy: Dictionary = dict.duplicate()` |
 | **move_and_slide()返回bool** | `velocity = move_and_slide()` (类型不匹配) | Godot 4中返回bool: 直接调用`move_and_slide()`不赋值 |
 | **变量块级作用域** | `else: var x=0` 后在else外使用x(未声明) | 将变量声明提升到if/else之前的函数级作用域 |
+| **StaticBody2D不携带子对象** | `MovingPlatform extends StaticBody2D` 玩家站在上面不跟着移动 | 移动平台必须用`AnimatableBody2D`，Godot 4专门为移动平台设计 |
+| **Texture2D.FLAG_REPEAT不存在** | `tex.set_flags(Texture2D.FLAG_REPEAT)` | Godot 4中Texture2D无FLAG_REPEAT，纹理重复通过节点`texture_repeat`属性设置 |
+| **Control.GROW_DIRECTION_LEFT不存在** | `grow_horizontal = Control.GROW_DIRECTION_LEFT` | Godot 4中应为`Control.GROW_DIRECTION_BEGIN` |
+| **ImageTexture每帧创建导致null** | `_process`中每帧`ImageTexture.create_from_image(img)` | 缓存纹理到成员变量，只在首次创建，避免渲染器释放旧纹理时Parameter t null |
+| **豆包PNG无实际透明通道** | 直接load豆包生成的PNG显示白底 | 豆包生成PNG虽RGBA格式但alpha全255，需Python脚本批量去白底(亮度>threshold转透明) |
+| **Sprite2D缩放平台拉伸变形** | `Sprite2D.scale = Vector2(w/tex_w, h/tex_h)` | 平台用`TextureRect`+`STRETCH_SCALE`更好控制拉伸 |
+| **AI图片默认朝左需翻转** | `sprite.flip_h = input_dir < 0` (向右不翻转) | AI生成图片默认朝左，向右移动时需`flip_h = true`即`input_dir > 0` |
+| **PRESET_TOP_RIGHT代码设置无效** | `node.anchors_preset = Control.PRESET_TOP_RIGHT` | 代码中设置预设可能不生效，应手动设`anchor_left=1.0, anchor_right=1.0`+`grow_horizontal` |
+| **信号未连接导致功能缺失** | 定义signal并emit但忘记connect | 每个signal定义必须对应connect调用，建议用信号流图审查闭环 |
+| **modulate.a未重置** | 冲刺时设`modulate.a=0.7`但结束后不恢复 | 每帧先重置`modulate.a=1.0`再按条件修改，避免状态残留 |
 
 ---
 
