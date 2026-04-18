@@ -56,19 +56,10 @@ func populate_levels(lm: LevelManager) -> void:
 		var chapter_id: String = chapter_dict.get("id", "")
 		var chapter_name: String = chapter_dict.get("name", "")
 		var chapter_panel := PanelContainer.new()
-		var style := StyleBoxFlat.new()
-		style.bg_color = Color(0.08, 0.1, 0.18, 0.9)
-		style.corner_radius_top_left = 12
-		style.corner_radius_top_right = 12
-		style.corner_radius_bottom_left = 12
-		style.corner_radius_bottom_right = 12
-		style.border_width_left = 2
-		style.border_width_right = 2
-		style.border_width_top = 2
-		style.border_width_bottom = 2
+		var style: StyleBoxTexture = UITheme.make_dark_panel_bg()
 		var bg_color := Color(chapter_dict.get("bgColor", "#2D5A27"))
-		style.border_color = bg_color.lightened(0.3)
 		chapter_panel.add_theme_stylebox_override("panel", style)
+		chapter_panel.self_modulate = bg_color.lightened(0.3)
 		_chapter_container.add_child(chapter_panel)
 		var chapter_vbox := VBoxContainer.new()
 		chapter_vbox.add_theme_constant_override("separation", 8)

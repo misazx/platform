@@ -233,12 +233,10 @@ func _create_player_status_bar() -> void:
 	_player_health_bar.value = 80
 	_player_health_bar.custom_minimum_size = Vector2(210, 16)
 	_player_health_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_player_health_bar.add_theme_stylebox_override("background", UITheme.make_bar_bg_style())
 	var health_style := StyleBoxFlat.new()
 	health_style.bg_color = Color(0.85, 0.2, 0.2)
-	health_style.corner_radius_top_left = 4
-	health_style.corner_radius_top_right = 4
-	health_style.corner_radius_bottom_left = 4
-	health_style.corner_radius_bottom_right = 4
+	health_style.set_corner_radius_all(4)
 	_player_health_bar.add_theme_stylebox_override("fill", health_style)
 	_player_status_area.add_child(_player_health_bar)
 
@@ -259,12 +257,10 @@ func _create_player_status_bar() -> void:
 	_player_block_bar.custom_minimum_size = Vector2(140, 10)
 	_player_block_bar.visible = false
 	_player_block_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_player_block_bar.add_theme_stylebox_override("background", UITheme.make_bar_bg_style())
 	var block_style := StyleBoxFlat.new()
 	block_style.bg_color = Color(0.3, 0.5, 1, 0.9)
-	block_style.corner_radius_top_left = 3
-	block_style.corner_radius_top_right = 3
-	block_style.corner_radius_bottom_left = 3
-	block_style.corner_radius_bottom_right = 3
+	block_style.set_corner_radius_all(3)
 	_player_block_bar.add_theme_stylebox_override("fill", block_style)
 	block_row.add_child(_player_block_bar)
 
@@ -322,63 +318,18 @@ func _create_bottom_buttons() -> void:
 	bottom_bar.z_index = 10
 	_root_container.add_child(bottom_bar)
 
-	_draw_pile_btn = Button.new()
-	_draw_pile_btn.text = "抽牌堆 (45)"
-	_draw_pile_btn.custom_minimum_size = Vector2(120, 34)
-	_draw_pile_btn.flat = true
+	_draw_pile_btn = UITheme.make_small_button("抽牌堆 (45)", "", Vector2(120, 34))
 	_draw_pile_btn.mouse_filter = Control.MOUSE_FILTER_STOP
-	var draw_btn_style := StyleBoxFlat.new()
-	draw_btn_style.bg_color = Color(0.18, 0.28, 0.18)
-	draw_btn_style.corner_radius_top_left = 8
-	draw_btn_style.corner_radius_top_right = 8
-	draw_btn_style.corner_radius_bottom_left = 8
-	draw_btn_style.corner_radius_bottom_right = 8
-	draw_btn_style.border_width_left = 2
-	draw_btn_style.border_width_right = 2
-	draw_btn_style.border_width_top = 2
-	draw_btn_style.border_width_bottom = 2
-	draw_btn_style.border_color = Color(0.35, 0.45, 0.28)
-	_draw_pile_btn.add_theme_stylebox_override("normal", draw_btn_style)
 	_draw_pile_btn.pressed.connect(_on_draw_pile_clicked)
 	bottom_bar.add_child(_draw_pile_btn)
 
-	_end_turn_btn = Button.new()
-	_end_turn_btn.text = "⚔️ 结束回合"
-	_end_turn_btn.custom_minimum_size = Vector2(140, 38)
-	_end_turn_btn.flat = true
+	_end_turn_btn = UITheme.make_button("⚔ 结束回合", "", Vector2(140, 38))
 	_end_turn_btn.mouse_filter = Control.MOUSE_FILTER_STOP
-	var end_turn_style := StyleBoxFlat.new()
-	end_turn_style.bg_color = Color(0.4, 0.3, 0.1)
-	end_turn_style.corner_radius_top_left = 10
-	end_turn_style.corner_radius_top_right = 10
-	end_turn_style.corner_radius_bottom_left = 10
-	end_turn_style.corner_radius_bottom_right = 10
-	end_turn_style.border_width_left = 3
-	end_turn_style.border_width_right = 3
-	end_turn_style.border_width_top = 3
-	end_turn_style.border_width_bottom = 3
-	end_turn_style.border_color = Color(1, 0.75, 0.2, 0.95)
-	_end_turn_btn.add_theme_stylebox_override("normal", end_turn_style)
 	_end_turn_btn.pressed.connect(_on_end_turn_clicked)
 	bottom_bar.add_child(_end_turn_btn)
 
-	_discard_pile_btn = Button.new()
-	_discard_pile_btn.text = "弃牌堆 (0)"
-	_discard_pile_btn.custom_minimum_size = Vector2(120, 34)
-	_discard_pile_btn.flat = true
+	_discard_pile_btn = UITheme.make_small_button("弃牌堆 (0)", "", Vector2(120, 34))
 	_discard_pile_btn.mouse_filter = Control.MOUSE_FILTER_STOP
-	var discard_btn_style := StyleBoxFlat.new()
-	discard_btn_style.bg_color = Color(0.28, 0.18, 0.18)
-	discard_btn_style.corner_radius_top_left = 8
-	discard_btn_style.corner_radius_top_right = 8
-	discard_btn_style.corner_radius_bottom_left = 8
-	discard_btn_style.corner_radius_bottom_right = 8
-	discard_btn_style.border_width_left = 2
-	discard_btn_style.border_width_right = 2
-	discard_btn_style.border_width_top = 2
-	discard_btn_style.border_width_bottom = 2
-	discard_btn_style.border_color = Color(0.45, 0.3, 0.28)
-	_discard_pile_btn.add_theme_stylebox_override("normal", discard_btn_style)
 	_discard_pile_btn.pressed.connect(_on_discard_pile_clicked)
 	bottom_bar.add_child(_discard_pile_btn)
 
@@ -570,23 +521,13 @@ func show_card_play_animation(card_data: Dictionary, target_enemy_index: int) ->
 	card_bg.custom_minimum_size = Vector2(84, 114)
 	card_bg.z_index = 99
 	card_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var bg_style := StyleBoxFlat.new()
-	bg_style.bg_color = Color(0.12, 0.1, 0.08, 0.95)
-	bg_style.corner_radius_top_left = 6
-	bg_style.corner_radius_top_right = 6
-	bg_style.corner_radius_bottom_left = 6
-	bg_style.corner_radius_bottom_right = 6
-	bg_style.border_width_left = 2
-	bg_style.border_width_right = 2
-	bg_style.border_width_top = 2
-	bg_style.border_width_bottom = 2
+	card_bg.add_theme_stylebox_override("panel", UITheme.make_dark_panel_bg())
 	var type_val: int = card_data.get("type", 0)
 	match type_val:
-		0: bg_style.border_color = Color(0.8, 0.3, 0.3)
-		1: bg_style.border_color = Color(0.3, 0.5, 0.9)
-		2: bg_style.border_color = Color(0.9, 0.7, 0.2)
-		_: bg_style.border_color = Color(0.5, 0.5, 0.5)
-	card_bg.add_theme_stylebox_override("panel", bg_style)
+		0: card_bg.self_modulate = Color(1.0, 0.6, 0.6)
+		1: card_bg.self_modulate = Color(0.6, 0.7, 1.0)
+		2: card_bg.self_modulate = Color(1.0, 0.9, 0.6)
+		_: card_bg.self_modulate = Color.WHITE
 	var card_img := TextureRect.new()
 	card_img.texture = icon_tex
 	card_img.custom_minimum_size = Vector2(80, 110)
@@ -633,18 +574,8 @@ class BattleCharacterSprite:
 		_sprite_frame.custom_minimum_size = Vector2(130, 160) if _is_player else Vector2(150, 190)
 		_sprite_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-		var frame_style := StyleBoxFlat.new()
-		frame_style.bg_color = Color(0.08, 0.06, 0.05, 0.7)
-		frame_style.corner_radius_top_left = 12
-		frame_style.corner_radius_top_right = 12
-		frame_style.corner_radius_bottom_left = 12
-		frame_style.corner_radius_bottom_right = 12
-		frame_style.border_width_left = 2
-		frame_style.border_width_right = 2
-		frame_style.border_width_top = 2
-		frame_style.border_width_bottom = 2
-		frame_style.border_color = Color(0.25, 0.4, 0.7, 0.8) if _is_player else Color(0.7, 0.25, 0.25, 0.85)
-		_sprite_frame.add_theme_stylebox_override("panel", frame_style)
+		_sprite_frame.add_theme_stylebox_override("panel", UITheme.make_dark_panel_bg())
+		_sprite_frame.self_modulate = Color(0.6, 0.75, 1.0) if _is_player else Color(1.0, 0.55, 0.55)
 		add_child(_sprite_frame)
 
 		var vbox := VBoxContainer.new()
@@ -749,14 +680,7 @@ class EnemyUnitUI:
 		_is_selectable = selectable
 		mouse_filter = Control.MOUSE_FILTER_STOP if selectable else Control.MOUSE_FILTER_IGNORE
 		if _body != null:
-			var style = _body.get_theme_stylebox("panel") as StyleBoxFlat
-			if style != null:
-				style.border_color = Color(1, 0.8, 0.2, 1) if selectable else Color(0.65, 0.22, 0.22, 0.88)
-				var border_w := 3 if selectable else 2
-				style.border_width_left = border_w
-				style.border_width_right = border_w
-				style.border_width_top = border_w
-				style.border_width_bottom = border_w
+			_body.self_modulate = Color(1.0, 0.85, 0.3) if selectable else Color(1.0, 0.45, 0.45)
 
 	func _ready() -> void:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -765,18 +689,8 @@ class EnemyUnitUI:
 		_body.custom_minimum_size = Vector2(130, 55)
 		_body.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-		var body_style := StyleBoxFlat.new()
-		body_style.bg_color = Color(0.1, 0.08, 0.07, 0.92)
-		body_style.corner_radius_top_left = 8
-		body_style.corner_radius_top_right = 8
-		body_style.corner_radius_bottom_left = 8
-		body_style.corner_radius_bottom_right = 8
-		body_style.border_width_left = 2
-		body_style.border_width_right = 2
-		body_style.border_width_top = 2
-		body_style.border_width_bottom = 2
-		body_style.border_color = Color(0.65, 0.22, 0.22, 0.88)
-		_body.add_theme_stylebox_override("panel", body_style)
+		_body.add_theme_stylebox_override("panel", UITheme.make_dark_panel_bg())
+		_body.self_modulate = Color(1.0, 0.45, 0.45)
 		add_child(_body)
 
 		var vbox := VBoxContainer.new()
@@ -809,12 +723,10 @@ class EnemyUnitUI:
 		_health_bar.value = _current_hp
 		_health_bar.custom_minimum_size = Vector2(120, 14)
 		_health_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_health_bar.add_theme_stylebox_override("background", UITheme.make_bar_bg_style())
 		var health_style := StyleBoxFlat.new()
 		health_style.bg_color = Color(0.8, 0.2, 0.2)
-		health_style.corner_radius_top_left = 3
-		health_style.corner_radius_top_right = 3
-		health_style.corner_radius_bottom_left = 3
-		health_style.corner_radius_bottom_right = 3
+		health_style.set_corner_radius_all(3)
 		_health_bar.add_theme_stylebox_override("fill", health_style)
 		vbox.add_child(_health_bar)
 
@@ -836,28 +748,15 @@ class EnemyUnitUI:
 		if float(current) / max_val <= 0.3:
 			var low_health_style := StyleBoxFlat.new()
 			low_health_style.bg_color = Color(0.55, 0.12, 0.12)
-			low_health_style.corner_radius_top_left = 3
-			low_health_style.corner_radius_top_right = 3
-			low_health_style.corner_radius_bottom_left = 3
-			low_health_style.corner_radius_bottom_right = 3
+			low_health_style.set_corner_radius_all(3)
 			_health_bar.add_theme_stylebox_override("fill", low_health_style)
 
 	func set_dead() -> void:
 		_is_selectable = false
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_intent_label.text = ""
-		var dead_style := StyleBoxFlat.new()
-		dead_style.bg_color = Color(0.05, 0.05, 0.05, 0.6)
-		dead_style.corner_radius_top_left = 8
-		dead_style.corner_radius_top_right = 8
-		dead_style.corner_radius_bottom_left = 8
-		dead_style.corner_radius_bottom_right = 8
-		dead_style.border_width_left = 1
-		dead_style.border_width_right = 1
-		dead_style.border_width_top = 1
-		dead_style.border_width_bottom = 1
-		dead_style.border_color = Color(0.3, 0.3, 0.3, 0.5)
-		_body.add_theme_stylebox_override("panel", dead_style)
+		_body.add_theme_stylebox_override("panel", UITheme.make_dark_panel_bg())
+		_body.self_modulate = Color(0.4, 0.4, 0.4, 0.6)
 		var tween := create_tween()
 		tween.tween_property(self, "modulate", Color(0.4, 0.4, 0.4, 0.3), 0.6).set_ease(Tween.EASE_IN)
 		tween.parallel().tween_property(self, "scale", Vector2(0.85, 0.85), 0.6).set_ease(Tween.EASE_IN)
@@ -939,19 +838,8 @@ class CardUI:
 		mouse_exited.connect(_on_mouse_exit)
 		gui_input.connect(_on_gui_input)
 
-	func _create_card_style() -> StyleBoxFlat:
-		var s := StyleBoxFlat.new()
-		s.bg_color = Color(0.15, 0.12, 0.1, 0.98)
-		s.corner_radius_top_left = 7
-		s.corner_radius_top_right = 7
-		s.corner_radius_bottom_left = 7
-		s.corner_radius_bottom_right = 7
-		s.border_width_left = 2
-		s.border_width_right = 2
-		s.border_width_top = 2
-		s.border_width_bottom = 2
-		s.border_color = Color(0.55, 0.42, 0.25, 0.9)
-		return s
+	func _create_card_style() -> StyleBoxTexture:
+		return UITheme.make_card_panel_style()
 
 	func set_card_data(data: Dictionary) -> void:
 		card_data = data
@@ -978,13 +866,19 @@ class CardUI:
 			_icon_rect.texture = icon_tex
 
 		_cost_label.modulate = Color(0.4, 0.85, 0.4) if data.get("cost", 1) == 0 else Color(1, 0.85, 0.2)
-
-		var style := _create_card_style()
 		match type_val:
-			0: style.border_color = Color(0.75, 0.25, 0.25, 0.95)
-			1: style.border_color = Color(0.25, 0.45, 0.8, 0.95)
-			2: style.border_color = Color(0.8, 0.65, 0.2, 0.95)
-		_card_body.add_theme_stylebox_override("panel", style)
+			0:
+				_cost_label.modulate = Color(1, 0.35, 0.35)
+				_card_body.self_modulate = Color(1.0, 0.7, 0.7)
+			1:
+				_cost_label.modulate = Color(0.35, 0.6, 1)
+				_card_body.self_modulate = Color(0.7, 0.8, 1.0)
+			2:
+				_cost_label.modulate = Color(0.9, 0.75, 0.3)
+				_card_body.self_modulate = Color(1.0, 0.95, 0.7)
+			_:
+				_cost_label.modulate = Color(1, 0.85, 0.2)
+				_card_body.self_modulate = Color.WHITE
 
 	func _get_card_icon(type_val: int) -> String:
 		match type_val:

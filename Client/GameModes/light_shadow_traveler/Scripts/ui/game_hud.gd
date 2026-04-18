@@ -75,6 +75,7 @@ func _setup_hud() -> void:
 	_form_indicator.offset_left = 10
 	_form_indicator.offset_top = 48
 	_form_indicator.mouse_filter = Control.MOUSE_FILTER_STOP
+	_form_indicator.add_theme_stylebox_override("panel", UITheme.make_dark_panel_bg())
 	_form_indicator.gui_input.connect(_on_form_button_pressed)
 	add_child(_form_indicator)
 	_form_label = Label.new()
@@ -94,11 +95,10 @@ func _setup_hud() -> void:
 	_energy_bar.max_value = 100.0
 	_energy_bar.value = 100.0
 	_energy_bar.show_percentage = false
-	var style_bg := StyleBoxFlat.new()
-	style_bg.bg_color = Color(0.2, 0.2, 0.2, 0.8)
-	_energy_bar.add_theme_stylebox_override("background", style_bg)
+	_energy_bar.add_theme_stylebox_override("background", UITheme.make_bar_bg_style())
 	var style_fill := StyleBoxFlat.new()
 	style_fill.bg_color = Color(1.0, 0.95, 0.7, 0.9)
+	style_fill.set_corner_radius_all(2)
 	_energy_bar.add_theme_stylebox_override("fill", style_fill)
 	add_child(_energy_bar)
 	_energy_label = Label.new()
@@ -118,11 +118,10 @@ func _setup_hud() -> void:
 	_progress_bar.max_value = 100.0
 	_progress_bar.value = 0.0
 	_progress_bar.show_percentage = false
-	var prog_bg := StyleBoxFlat.new()
-	prog_bg.bg_color = Color(0.15, 0.15, 0.15, 0.8)
-	_progress_bar.add_theme_stylebox_override("background", prog_bg)
+	_progress_bar.add_theme_stylebox_override("background", UITheme.make_bar_bg_style())
 	var prog_fill := StyleBoxFlat.new()
 	prog_fill.bg_color = Color(0.5, 0.8, 0.5, 0.8)
+	prog_fill.set_corner_radius_all(2)
 	_progress_bar.add_theme_stylebox_override("fill", prog_fill)
 	add_child(_progress_bar)
 	_progress_label = Label.new()
@@ -180,12 +179,8 @@ func _setup_shortcut_panel() -> void:
 	_shortcut_panel.offset_bottom = 270
 	_shortcut_panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	_shortcut_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	var panel_style := StyleBoxFlat.new()
-	panel_style.bg_color = Color(0.0, 0.0, 0.0, 0.55)
-	panel_style.set_border_width_all(1)
-	panel_style.border_color = Color(1.0, 1.0, 1.0, 0.15)
-	panel_style.set_corner_radius_all(6)
-	_shortcut_panel.add_theme_stylebox_override("panel", panel_style)
+	_shortcut_panel.add_theme_stylebox_override("panel", UITheme.make_dark_panel_bg())
+	_shortcut_panel.self_modulate = Color(0.3, 0.3, 0.3, 0.7)
 	add_child(_shortcut_panel)
 	var main_vbox := VBoxContainer.new()
 	main_vbox.name = "MainVBox"
@@ -209,13 +204,11 @@ func _setup_shortcut_panel() -> void:
 	_shortcut_toggle_btn.add_theme_font_size_override("font_size", 11)
 	_shortcut_toggle_btn.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 0.8))
 	_shortcut_toggle_btn.add_theme_color_override("font_hover_color", Color(1.0, 0.95, 0.7))
-	var btn_normal := StyleBoxFlat.new()
-	btn_normal.bg_color = Color(1.0, 1.0, 1.0, 0.08)
-	btn_normal.set_corner_radius_all(3)
+	var btn_normal: StyleBoxTexture = UITheme.make_card_panel_style()
+	btn_normal.modulate_color = Color(1.0, 1.0, 1.0, 0.08)
 	_shortcut_toggle_btn.add_theme_stylebox_override("normal", btn_normal)
-	var btn_hover := StyleBoxFlat.new()
-	btn_hover.bg_color = Color(1.0, 1.0, 1.0, 0.15)
-	btn_hover.set_corner_radius_all(3)
+	var btn_hover: StyleBoxTexture = UITheme.make_card_panel_style()
+	btn_hover.modulate_color = Color(1.0, 1.0, 1.0, 0.15)
 	_shortcut_toggle_btn.add_theme_stylebox_override("hover", btn_hover)
 	_shortcut_toggle_btn.pressed.connect(_on_shortcut_toggle)
 	title_bar.add_child(_shortcut_toggle_btn)
@@ -317,9 +310,7 @@ func update_form(form_name: String) -> void:
 		"light":
 			_form_label.text = "☀ 光形态"
 			_form_label.add_theme_color_override("font_color", Color(1.0, 0.95, 0.8))
-			var style := _form_indicator.get_theme_stylebox("panel") as StyleBoxFlat
-			if style:
-				style.bg_color = Color(0.3, 0.28, 0.15, 0.8)
+			_form_indicator.self_modulate = Color(0.6, 0.55, 0.3, 0.9)
 			if _energy_bar:
 				var fill := _energy_bar.get_theme_stylebox("fill") as StyleBoxFlat
 				if fill:
@@ -327,9 +318,7 @@ func update_form(form_name: String) -> void:
 		"shadow":
 			_form_label.text = "☽ 影形态"
 			_form_label.add_theme_color_override("font_color", Color(0.5, 0.55, 0.8))
-			var style := _form_indicator.get_theme_stylebox("panel") as StyleBoxFlat
-			if style:
-				style.bg_color = Color(0.15, 0.15, 0.25, 0.8)
+			_form_indicator.self_modulate = Color(0.3, 0.3, 0.5, 0.9)
 			if _energy_bar:
 				var fill := _energy_bar.get_theme_stylebox("fill") as StyleBoxFlat
 				if fill:

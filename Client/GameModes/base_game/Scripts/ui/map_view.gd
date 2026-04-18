@@ -441,18 +441,9 @@ class MapNodeUI:
 		_bg_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 		add_child(_bg_rect)
 
-		var border_style := StyleBoxFlat.new()
-		border_style.bg_color = Color(0.15, 0.13, 0.10, 0.95)
-		border_style.corner_radius_top_left = 12
-		border_style.corner_radius_top_right = 12
-		border_style.corner_radius_bottom_left = 12
-		border_style.corner_radius_bottom_right = 12
-		border_style.border_width_left = 3
-		border_style.border_width_right = 3
-		border_style.border_width_top = 3
-		border_style.border_width_bottom = 3
-		border_style.border_color = border_color
+		var border_style: StyleBoxTexture = UITheme.make_dark_panel_bg()
 		add_theme_stylebox_override("panel", border_style)
+		self_modulate = border_color
 
 		_icon_label = Label.new()
 		_icon_label.text = _get_icon_char(node_data.type)
@@ -541,18 +532,8 @@ class MapNodeUI:
 
 	func _update_appearance() -> void:
 		if not _visited_internal: return
-		var s := StyleBoxFlat.new()
-		s.bg_color = Color(0.15, 0.22, 0.15, 0.8)
-		s.corner_radius_top_left = 12
-		s.corner_radius_top_right = 12
-		s.corner_radius_bottom_left = 12
-		s.corner_radius_bottom_right = 12
-		s.border_width_left = 2
-		s.border_width_right = 2
-		s.border_width_top = 2
-		s.border_width_bottom = 2
-		s.border_color = Color(0.35, 0.5, 0.35, 0.7)
-		add_theme_stylebox_override("panel", s)
+		add_theme_stylebox_override("panel", UITheme.make_dark_panel_bg())
+		self_modulate = Color(0.35, 0.5, 0.35, 0.7)
 		scale = Vector2(0.9, 0.9)
 		modulate = Color(0.8, 0.8, 0.8, 0.85)
 

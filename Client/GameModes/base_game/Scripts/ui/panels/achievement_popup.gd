@@ -16,17 +16,7 @@ func _create_layout() -> void:
 	panel.offset_right = 180
 	panel.offset_bottom = 100
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.15, 0.12, 0.08, 0.95)
-	style.corner_radius_top_left = 10
-	style.corner_radius_top_right = 10
-	style.corner_radius_bottom_left = 10
-	style.corner_radius_bottom_right = 10
-	style.border_width_left = 2
-	style.border_width_right = 2
-	style.border_width_top = 2
-	style.border_width_bottom = 2
-	style.border_color = Color(1, 0.85, 0.2)
+	var style: StyleBoxTexture = UITheme.make_wood_panel_bg()
 	panel.add_theme_stylebox_override("panel", style)
 	add_child(panel)
 	var hbox := HBoxContainer.new()

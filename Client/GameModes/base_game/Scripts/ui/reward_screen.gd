@@ -29,17 +29,7 @@ func _create_ui() -> void:
 	panel.set_anchors_preset(Control.PRESET_CENTER)
 	panel.custom_minimum_size = Vector2(800, 600)
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var panel_style := StyleBoxFlat.new()
-	panel_style.bg_color = Color(0.08, 0.06, 0.1, 0.95)
-	panel_style.corner_radius_top_left = 12
-	panel_style.corner_radius_top_right = 12
-	panel_style.corner_radius_bottom_left = 12
-	panel_style.corner_radius_bottom_right = 12
-	panel_style.border_width_left = 3
-	panel_style.border_width_right = 3
-	panel_style.border_width_top = 3
-	panel_style.border_width_bottom = 3
-	panel_style.border_color = Color(1, 0.85, 0.3, 0.6)
+	var panel_style: StyleBoxTexture = UITheme.make_dark_panel_bg()
 	panel.add_theme_stylebox_override("panel", panel_style)
 	add_child(panel)
 	_main_container = VBoxContainer.new()
@@ -154,17 +144,7 @@ func _create_card_button(card) -> Button:
 			CardDatabase.CardRarity.RARE: rarity_color = Color(1, 0.6, 0.2)
 			CardDatabase.CardRarity.UNCOMMON: rarity_color = Color(0.3, 0.7, 1)
 
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.15, 0.12, 0.1)
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_left = 8
-	style.corner_radius_bottom_right = 8
-	style.border_width_left = 2
-	style.border_width_right = 2
-	style.border_width_top = 2
-	style.border_width_bottom = 2
-	style.border_color = rarity_color
+	var style: StyleBoxTexture = UITheme.make_card_panel_style()
 	btn.add_theme_stylebox_override("normal", style)
 
 	btn.pressed.connect(func():

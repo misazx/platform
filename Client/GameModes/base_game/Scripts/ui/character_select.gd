@@ -214,22 +214,9 @@ class CharacterCardControl:
 		custom_minimum_size = Vector2(150, 180)
 		mouse_filter = Control.MOUSE_FILTER_STOP
 
-		var style := StyleBoxFlat.new()
-		style.bg_color = Color(0.12, 0.1, 0.08)
-		style.content_margin_left = 10
-		style.content_margin_right = 10
-		style.content_margin_top = 10
-		style.content_margin_bottom = 10
-		style.corner_radius_top_left = 8
-		style.corner_radius_top_right = 8
-		style.corner_radius_bottom_left = 8
-		style.corner_radius_bottom_right = 8
-		style.border_width_left = 2
-		style.border_width_right = 2
-		style.border_width_top = 2
-		style.border_width_bottom = 2
-		style.border_color = _get_data_color(data)
+		var style: StyleBoxTexture = UITheme.make_card_panel_style()
 		add_theme_stylebox_override("panel", style)
+		self_modulate = _get_data_color(data)
 
 		var vbox := VBoxContainer.new()
 		add_child(vbox)
@@ -258,16 +245,7 @@ class CharacterCardControl:
 
 	func set_selected(selected: bool) -> void:
 		_selected = selected
-
-		var style = get_theme_stylebox("panel") as StyleBoxFlat
-		if style != null:
-			var border_width := 4 if selected else 2
-			style.border_width_left = border_width
-			style.border_width_right = border_width
-			style.border_width_top = border_width
-			style.border_width_bottom = border_width
-			style.border_color = Color.GOLD if selected else _get_data_color(data)
-
+		self_modulate = Color.GOLD if selected else _get_data_color(data)
 		if selected:
 			create_tween().tween_property(self, "scale", Vector2(1.05, 1.05), 0.1)
 		else:
