@@ -29,6 +29,12 @@ namespace RoguelikeGame.UI.Panels
 
         public override void _Ready()
         {
+            SetAnchorsPreset(Control.LayoutPreset.FullRect);
+            OffsetLeft = 0;
+            OffsetTop = 0;
+            OffsetRight = 0;
+            OffsetBottom = 0;
+
             CreateUI();
             SetupEventHandlers();
             RefreshRoomInfo();
@@ -44,8 +50,6 @@ namespace RoguelikeGame.UI.Panels
 
         private void CreateUI()
         {
-            SetAnchorsPreset(Control.LayoutPreset.FullRect);
-
             var bg = new ColorRect
             {
                 Color = new Color(0.02f, 0.02f, 0.05f, 0.97f),
