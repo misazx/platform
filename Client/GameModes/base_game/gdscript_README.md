@@ -113,6 +113,8 @@ CardDatabase="*res://GameModes/base_game/Scripts/cards/card_database.gd"
 | **私有方法调用名不匹配** | `_rollback_update()` 但函数定义是`rollback_update()` | 内部回滚应提取为`_perform_rollback()`私有方法 |
 | **C#信号GDScript未监听** | C# `EmitSignal("MultiplayerSeedReceived", seed)` | GDScript需`session_manager.MultiplayerSeedReceived.connect(_on_seed)` |
 | **duplicate()返回Variant** | `var copy := dict.duplicate()` (Parse Error) | `duplicate()`返回Variant无法推断: `var copy: Dictionary = dict.duplicate()` |
+| **move_and_slide()返回bool** | `velocity = move_and_slide()` (类型不匹配) | Godot 4中返回bool: 直接调用`move_and_slide()`不赋值 |
+| **变量块级作用域** | `else: var x=0` 后在else外使用x(未声明) | 将变量声明提升到if/else之前的函数级作用域 |
 
 ---
 
