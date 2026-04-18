@@ -181,7 +181,7 @@ func _patrol(_delta: float) -> void:
 		patrol_direction = -1.0
 	elif global_position.x < start_position.x - patrol_range:
 		patrol_direction = 1.0
-	sprite.flip_h = patrol_direction < 0
+	sprite.flip_h = patrol_direction > 0
 	facing_right = patrol_direction > 0
 	if is_hostile:
 		var player := _get_player()
@@ -199,7 +199,7 @@ func _chase(_delta: float) -> void:
 		return
 	var dir: float = sign(player.global_position.x - global_position.x)
 	velocity.x = chase_speed * dir
-	sprite.flip_h = dir < 0
+	sprite.flip_h = dir > 0
 	facing_right = dir > 0
 	if dist < attack_range:
 		_attack_player(player)

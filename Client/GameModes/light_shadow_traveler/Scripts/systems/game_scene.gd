@@ -31,6 +31,7 @@ func _setup_scene() -> void:
 	level_manager.level_loaded.connect(_on_level_loaded)
 	level_manager.level_completed.connect(_on_level_completed)
 	level_manager.level_failed.connect(_on_level_failed)
+	level_manager.all_fragments_collected.connect(_on_all_fragments_collected)
 	hud = GameHUD.new()
 	add_child(hud)
 	environment = EnvironmentSystem.new()
@@ -229,6 +230,7 @@ func _spawn_player(data: Dictionary) -> void:
 	player.player_died.connect(_on_player_died)
 	player.fragment_collected.connect(_on_fragment_count_changed)
 	player.energy_changed.connect(_on_energy_changed)
+	player.checkpoint_reached.connect(_on_checkpoint_activated)
 	level_root.add_child(player)
 	if is_instance_valid(camera) and camera.get_parent():
 		camera.get_parent().remove_child(camera)
@@ -316,6 +318,10 @@ func _on_fragment_count_changed(count: int) -> void:
 	var data: Dictionary = level_manager.get_level_data(level_manager.current_level_id)
 	hud.update_fragments(count, data.get("fragments", []).size())
 
+func _on_all_fragments_collected(total: int) -> void:
+	hud.show_tutorial("所有记忆碎片已收集！", 2.0)
+	ParticleEffect.create_and_spawn(level_root, player.global_position if is_instance_valid(player) else Vector2.ZERO, ParticleEffect.EffectType.FRAGMENT_COLLECT, 30)
+
 func _on_goal_reached(body: Node2D) -> void:
 	if body is PlayerCharacter:
 		level_manager.complete_level()
@@ -390,6 +396,19 @@ func _on_switch_activated(switch_id: String) -> void:
 
 func _on_switch_deactivated(switch_id: String) -> void:
 	active_switches.erase(switch_id)
+	var target_id := ""
+	for child in level_root.get_children():
+		if child is LightShadowSwitch and child.switch_id == switch_id:
+			target_id = child.target_id
+			break
+	if target_id != "":
+		for child in level_root.get_children():
+			if child is FormPlatform:
+				if child.name == target_id or child.platform_id == target_id:
+					child.set_active(false)
+			elif child is MovingPlatform:
+				if child.name == target_id:
+					child.set_active(false)
 
 func _get_next_level_id() -> String:
 	var all_ids: Array = level_manager.levels_data.keys()
