@@ -92,7 +92,8 @@ namespace RoguelikeGame.Server.Services
             var player = new RoomPlayer
             {
                 RoomId = roomId,
-                UserId = userId
+                UserId = userId,
+                IsReady = room.HostId == userId
             };
 
             _context.RoomPlayers.Add(player);

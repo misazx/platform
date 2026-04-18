@@ -458,34 +458,54 @@ namespace RoguelikeGame.UI.Panels
         {
             _readyButton.Disabled = true;
 
-            bool success = await RoomManager.Instance.SetReadyAsync(!_isReady);
-
-            if (success)
+            try
             {
-                AddSystemMessage(_isReady ? "取消准备" : "已准备就绪");
-            }
-            else
-            {
-                AddSystemMessage("准备状态更新失败");
-            }
+                bool success = await RoomManager.Instance.SetReadyAsync(!_isReady);
 
-            _readyButton.Disabled = false;
-            RefreshRoomInfo();
+                if (success)
+                {
+                    AddSystemMessage(_isReady ? "取消准备" : "已准备就绪");
+                }
+                else
+                {
+                    AddSystemMessage("准备状态更新失败");
+                }
+            }
+            catch (Exception ex)
+            {
+                GD.PrintErr($"[RoomPanel] 准备操作异常: {ex.Message}");
+            }
+            finally
+            {
+                _readyButton.Disabled = false;
+                RefreshRoomInfo();
+            }
         }
 
         private async void OnStartGamePressed()
         {
             _startButton.Disabled = true;
 
-            bool success = await RoomManager.Instance.StartGameAsync();
+            try
+            {
+                bool success = await RoomManager.Instance.StartGameAsync();
 
-            if (success)
-            {
-                AddSystemMessage("🎮 游戏开始！");
+                if (success)
+                {
+                    AddSystemMessage("🎮 游戏开始！");
+                }
+                else
+                {
+                    AddSystemMessage("无法开始游戏，请确认所有玩家已准备");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                AddSystemMessage("无法开始游戏，请确认所有玩家已准备");
+                GD.PrintErr($"[RoomPanel] 开始游戏异常: {ex.Message}");
+                AddSystemMessage("❌ 开始游戏异常");
+            }
+            finally
+            {
                 _startButton.Disabled = false;
             }
         }
@@ -494,35 +514,54 @@ namespace RoguelikeGame.UI.Panels
         {
             _addBotButton.Disabled = true;
 
-            var result = await Network.Rooms.RoomManager.Instance.AddBotAsync("Normal");
-
-            if (result.Success)
+            try
             {
-                AddSystemMessage($"🤖 {result.Message}");
-            }
-            else
-            {
-                AddSystemMessage($"❌ 添加机器人失败: {result.Message}");
-            }
+                var result = await Network.Rooms.RoomManager.Instance.AddBotAsync("Normal");
 
-            _addBotButton.Disabled = false;
-            RefreshRoomInfo();
+                if (result.Success)
+                {
+                    AddSystemMessage($"🤖 {result.Message}");
+                }
+                else
+                {
+                    AddSystemMessage($"❌ 添加机器人失败: {result.Message}");
+                }
+            }
+            catch (Exception ex)
+            {
+                GD.PrintErr($"[RoomPanel] 添加机器人异常: {ex.Message}");
+                AddSystemMessage($"❌ 添加机器人异常: {ex.Message}");
+            }
+            finally
+            {
+                _addBotButton.Disabled = false;
+                RefreshRoomInfo();
+            }
         }
 
         private async void OnLeavePressed()
         {
             _leaveButton.Disabled = true;
 
-            var result = await RoomManager.Instance.LeaveRoomAsync();
+            try
+            {
+                var result = await RoomManager.Instance.LeaveRoomAsync();
 
-            if (result.Success)
-            {
-                AddSystemMessage("已离开房间");
-                OnLeaveRoom?.Invoke();
+                if (result.Success)
+                {
+                    AddSystemMessage("已离开房间");
+                }
+                else
+                {
+                    AddSystemMessage($"离开房间失败: {result.Message}");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                AddSystemMessage($"离开房间失败: {result.Message}");
+                GD.PrintErr($"[RoomPanel] 离开房间异常: {ex.Message}");
+            }
+            finally
+            {
                 OnLeaveRoom?.Invoke();
             }
         }

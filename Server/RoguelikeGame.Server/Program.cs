@@ -140,9 +140,7 @@ try
             {
                 try
                 {
-                    var sql = string.Format(
-                        "ALTER TABLE [{0}] ADD COLUMN [{1}] {2}",
-                        table, column, definition);
+                    var sql = $"ALTER TABLE \"{table}\" ADD COLUMN \"{column}\" {definition}";
                     context.Database.ExecuteSqlRaw(sql);
                     Log.Information("Schema migration: added column {Table}.{Column}", table, column);
                 }
