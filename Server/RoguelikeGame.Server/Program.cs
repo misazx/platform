@@ -104,6 +104,7 @@ try
     {
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         context.Database.EnsureCreated();
+
         try
         {
             context.Database.ExecuteSqlRaw(
@@ -114,6 +115,32 @@ try
                 "Status INTEGER NOT NULL DEFAULT 0, " +
                 "CreatedAt TEXT NOT NULL, " +
                 "AcceptedAt TEXT NULL)");
+        }
+        catch { }
+
+        try
+        {
+            var columns = new (string Table, string Column, string Definition)[]
+            {
+                ("Rooms", "Seed", "TEXT NULL"),
+                ("RoomPlayers", "IsBot", "INTEGER NOT NULL DEFAULT 0"),
+                ("RoomPlayers", "BotName", "TEXT NULL"),
+                ("RoomPlayers", "BotDifficulty", "TEXT NULL"),
+                ("RoomPlayers", "CharacterId", "TEXT NULL"),
+                ("RoomPlayers", "Score", "INTEGER NOT NULL DEFAULT 0"),
+                ("SaveEntries", "Seed", "TEXT NULL"),
+            };
+
+            foreach (var (table, column, definition) in columns)
+            {
+                try
+                {
+                    context.Database.ExecuteSqlRaw(
+                        "ALTER TABLE \"{0}\" ADD COLUMN \"{1}\" {2}",
+                        table, column, definition);
+                }
+                catch { }
+            }
         }
         catch { }
     }

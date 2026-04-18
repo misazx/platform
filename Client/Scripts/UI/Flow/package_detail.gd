@@ -153,8 +153,9 @@ func setup(package_id: String, package_data: Dictionary) -> void:
 	_package_id = package_id
 	_package_data = package_data
 
-	if PackageUIRegistry.instance != null:
-		_provider = PackageUIRegistry.instance.get_provider(package_id)
+	var ui_registry = get_node_or_null("/root/PackageUIRegistry")
+	if ui_registry != null:
+		_provider = ui_registry.get_provider(package_id)
 
 	var title_label = _header_area.get_node_or_null("PackageTitle")
 	if title_label != null:
@@ -486,11 +487,17 @@ func _fetch_leaderboard_from_server() -> void:
 	add_child(http)
 	http.request_completed.connect(_on_leaderboard_received)
 
-	var url := "http://127.0.0.1:5002/api/leaderboard/%s/top?top=20" % _package_id
+	var url := "%s/api/leaderboard/%s/top?top=20" % [_get_server_url(), _package_id]
 	var err := http.request(url)
 	if err != Error.OK:
 		_update_leaderboard_status("❌ 无法连接服务器")
 		http.queue_free()
+
+func _get_server_url() -> String:
+	var config = get_node_or_null("/root/ServerConfig")
+	if config != null:
+		return config.get_server_url()
+	return "http://127.0.0.1:5002"
 
 func _find_and_free_http(name_prefix: String) -> void:
 	for child in get_children():
@@ -626,9 +633,10 @@ func _upload_save_to_server(slot: Dictionary) -> void:
 		"characterId": data.get("character_id", ""),
 		"currentFloor": data.get("current_floor", 0),
 		"gold": data.get("gold", 0),
-		"currentHP": data.get("current_hp", 0),
-		"maxHP": data.get("max_hp", 0),
-		"isVictory": data.get("is_victory", false)
+		"currentHP": data.get("current_health", data.get("current_hp", 0)),
+		"maxHP": data.get("max_health", data.get("max_hp", 0)),
+		"isVictory": data.get("is_victory", false),
+		"seed": str(data.get("seed", ""))
 	}
 
 	var http := HTTPRequest.new()
@@ -636,7 +644,7 @@ func _upload_save_to_server(slot: Dictionary) -> void:
 	add_child(http)
 	http.request_completed.connect(_on_save_uploaded)
 
-	var url := "http://127.0.0.1:5002/api/save/%s/upload" % _package_id
+	var url := "%s/api/save/%s/upload" % [_get_server_url(), _package_id]
 	var token: String = auth_system.GetAuthToken()
 	var headers := ["Content-Type: application/json", "Authorization: Bearer %s" % token]
 	var body := JSON.stringify(request_body)
@@ -663,7 +671,7 @@ func _fetch_server_saves() -> void:
 	add_child(http)
 	http.request_completed.connect(_on_server_saves_received)
 
-	var url := "http://127.0.0.1:5002/api/save/%s" % _package_id
+	var url := "%s/api/save/%s" % [_get_server_url(), _package_id]
 	var token: String = auth_system.GetAuthToken()
 	var headers := ["Authorization: Bearer %s" % token]
 	var err := http.request(url, headers)
@@ -814,7 +822,7 @@ func _download_save_from_server(slot_id: int) -> void:
 	add_child(http)
 	http.request_completed.connect(_on_save_downloaded)
 
-	var url := "http://127.0.0.1:5002/api/save/%s/download/%d" % [_package_id, slot_id]
+	var url := "%s/api/save/%s/download/%d" % [_get_server_url(), _package_id, slot_id]
 	var token: String = auth_system.GetAuthToken()
 	var headers := ["Authorization: Bearer %s" % token]
 	var err := http.request(url, headers)
@@ -876,7 +884,7 @@ func _delete_server_save(slot_id: int) -> void:
 	add_child(http)
 	http.request_completed.connect(_on_server_save_deleted)
 
-	var url := "http://127.0.0.1:5002/api/save/%s/delete/%d" % [_package_id, slot_id]
+	var url := "%s/api/save/%s/delete/%d" % [_get_server_url(), _package_id, slot_id]
 	var token: String = auth_system.GetAuthToken()
 	var headers := ["Authorization: Bearer %s" % token]
 	var err := http.request(url, headers, HTTPClient.METHOD_DELETE)
@@ -903,7 +911,7 @@ func _fetch_achievements_from_server() -> void:
 	add_child(http)
 	http.request_completed.connect(_on_server_achievements_received)
 
-	var url := "http://127.0.0.1:5002/api/achievement/%s?userId=%s" % [_package_id, _get_user_id()]
+	var url := "%s/api/achievement/%s?userId=%s" % [_get_server_url(), _package_id, _get_user_id()]
 	var token: String = auth_system.GetAuthToken()
 	var headers := ["Authorization: Bearer %s" % token]
 	var err := http.request(url, headers)
