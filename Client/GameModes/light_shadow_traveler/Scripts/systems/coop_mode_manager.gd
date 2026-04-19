@@ -13,7 +13,7 @@ signal coop_partner_position_updated(position: Vector2, form: String)
 signal coop_switch_activated(switch_id: String, activated_by: String)
 signal coop_partner_died()
 signal coop_partner_revived()
-signal coop_puzzle_solved(puzzle_id: String)
+signal coop_puzzle_solved(puzzle_id: String, solved_by: String)
 signal coop_state_synced(state: Dictionary)
 signal coop_level_completed(level_id: String)
 
@@ -65,6 +65,7 @@ func initialize_coop(local_role: int) -> void:
 	_is_active = true
 	_is_reviving = false
 	_revive_timer = 0.0
+	set_process(true)
 
 	_create_partner_avatar()
 
@@ -131,12 +132,12 @@ func on_switch_deactivated(switch_id: String) -> void:
 func on_local_puzzle_solved(puzzle_id: String) -> void:
 	if _puzzle_states.has(puzzle_id): return
 	_puzzle_states[puzzle_id] = true
-	coop_puzzle_solved.emit(puzzle_id)
+	coop_puzzle_solved.emit(puzzle_id, "local")
 
 func on_remote_puzzle_solved(puzzle_id: String) -> void:
 	if _puzzle_states.has(puzzle_id): return
 	_puzzle_states[puzzle_id] = true
-	coop_puzzle_solved.emit(puzzle_id)
+	coop_puzzle_solved.emit(puzzle_id, "remote")
 
 func on_partner_died() -> void:
 	_partner_alive = false
@@ -203,7 +204,7 @@ func apply_remote_state(state: Dictionary) -> void:
 	if state.has("puzzle_states"):
 		for puzzle_id: String in state.puzzle_states:
 			if not _puzzle_states.get(puzzle_id, false) and state.puzzle_states[puzzle_id]:
-				coop_puzzle_solved.emit(puzzle_id)
+				coop_puzzle_solved.emit(puzzle_id, "remote")
 		_puzzle_states = state.puzzle_states.duplicate()
 
 func cleanup() -> void:

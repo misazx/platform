@@ -28,6 +28,7 @@ func _physics_process(_delta: float) -> void:
 	if not is_instance_valid(player) or player.is_dead:
 		return
 	_handle_push_light()
+	_sync_multiplayer_state()
 
 func _setup_scene() -> void:
 	level_manager = LevelManager.new()
@@ -55,6 +56,9 @@ func _setup_scene() -> void:
 	coop_manager.coop_puzzle_solved.connect(_on_coop_puzzle_solved)
 	coop_manager.coop_level_completed.connect(_on_coop_level_completed)
 	coop_manager.coop_state_synced.connect(_on_coop_state_synced)
+	race_manager.racer_position_updated.connect(_on_racer_position_updated)
+	coop_manager.coop_partner_position_updated.connect(_on_coop_partner_position_updated)
+	_connect_multiplayer_bridge()
 	bg_parallax = ParallaxBackground.new()
 	bg_parallax.name = "Background"
 	add_child(bg_parallax)
@@ -341,6 +345,13 @@ func _on_player_died() -> void:
 	hud.show_damage_flash()
 	hud.stop_timer()
 	level_manager.fail_level()
+	if _game_mode == "race":
+		pass
+	elif _game_mode == "coop":
+		coop_manager.on_local_died()
+		var bridge: MultiplayerBridge = MultiplayerBridge.instance
+		if bridge:
+			bridge.send_coop_player_died()
 	get_tree().create_timer(1.5).timeout.connect(func():
 		_respawn_at_checkpoint()
 	)
@@ -364,6 +375,14 @@ func _on_all_fragments_collected(total: int) -> void:
 
 func _on_goal_reached(body: Node2D) -> void:
 	if body is PlayerCharacter:
+		if _game_mode == "race":
+			race_manager.on_local_finish()
+			var bridge: MultiplayerBridge = MultiplayerBridge.instance
+			if bridge:
+				var finish_time: float = Time.get_ticks_msec() / 1000.0 - race_manager._race_start_time
+				bridge.send_race_finish(race_manager._local_racer_id, finish_time)
+		elif _game_mode == "coop":
+			coop_manager.on_level_completed(level_manager.current_level_id)
 		level_manager.complete_level()
 		var next_id: String = _get_next_level_id()
 		if next_id != "":
@@ -415,40 +434,45 @@ func _on_checkpoint_activated(checkpoint_id: String) -> void:
 			break
 	ParticleEffect.create_and_spawn(level_root, last_checkpoint_pos, ParticleEffect.EffectType.CHECKPOINT_ACTIVATE, 25)
 	hud.show_tutorial("检查点已激活", 1.5)
+	if _game_mode == "race":
+		race_manager.on_local_checkpoint(checkpoint_id)
+		var bridge: MultiplayerBridge = MultiplayerBridge.instance
+		if bridge:
+			bridge.send_race_checkpoint(race_manager._local_racer_id, checkpoint_id)
 
 func _on_switch_activated(switch_id: String) -> void:
 	active_switches[switch_id] = true
-	var target_id := ""
-	var target_type := ""
-	for child in level_root.get_children():
-		if child is LightShadowSwitch and child.switch_id == switch_id:
-			target_id = child.target_id
-			target_type = child.target_type
-			break
-	if target_id != "":
-		for child in level_root.get_children():
-			if child is FormPlatform:
-				if child.name == target_id or child.platform_id == target_id:
-					child.set_active(true)
-			elif child is MovingPlatform:
-				if child.name == target_id:
-					child.set_active(true)
+	_activate_switch_target(switch_id, true)
+	if _game_mode == "coop":
+		coop_manager.on_local_switch_activated(switch_id)
+		var bridge: MultiplayerBridge = MultiplayerBridge.instance
+		if bridge:
+			bridge.send_coop_switch(switch_id, true)
 
 func _on_switch_deactivated(switch_id: String) -> void:
 	active_switches.erase(switch_id)
+	_activate_switch_target(switch_id, false)
+	if _game_mode == "coop":
+		coop_manager.on_switch_deactivated(switch_id)
+		var bridge: MultiplayerBridge = MultiplayerBridge.instance
+		if bridge:
+			bridge.send_coop_switch(switch_id, false)
+
+func _activate_switch_target(switch_id: String, active: bool) -> void:
 	var target_id := ""
 	for child in level_root.get_children():
 		if child is LightShadowSwitch and child.switch_id == switch_id:
 			target_id = child.target_id
 			break
-	if target_id != "":
-		for child in level_root.get_children():
-			if child is FormPlatform:
-				if child.name == target_id or child.platform_id == target_id:
-					child.set_active(false)
-			elif child is MovingPlatform:
-				if child.name == target_id:
-					child.set_active(false)
+	if target_id == "":
+		return
+	for child in level_root.get_children():
+		if child is FormPlatform:
+			if child.name == target_id or child.platform_id == target_id:
+				child.set_active(active)
+		elif child is MovingPlatform:
+			if child.name == target_id:
+				child.set_active(active)
 
 func _get_next_level_id() -> String:
 	var all_ids: Array = level_manager.levels_data.keys()
@@ -560,18 +584,23 @@ func _on_coop_partner_revived() -> void:
 	hud.show_tutorial("搭档已复活！", 2.0)
 	if is_instance_valid(player):
 		player.heal(CoopModeManager.SHARED_HEAL_AMOUNT)
+	var bridge: MultiplayerBridge = MultiplayerBridge.instance
+	if bridge:
+		bridge.send_coop_player_revived()
 
 func _on_coop_switch_activated(switch_id: String, activated_by: String) -> void:
-	_on_switch_activated(switch_id)
+	if activated_by == "remote":
+		_activate_switch_target(switch_id, true)
 
-func _on_coop_puzzle_solved(puzzle_id: String) -> void:
+func _on_coop_puzzle_solved(puzzle_id: String, solved_by: String) -> void:
 	hud.show_tutorial("谜题已解决: " + puzzle_id, 2.0)
+	if solved_by == "local":
+		var bridge: MultiplayerBridge = MultiplayerBridge.instance
+		if bridge:
+			bridge.send_coop_puzzle_solved(puzzle_id)
 
 func _on_coop_level_completed(level_id: String) -> void:
 	level_manager.complete_level()
-
-func _on_coop_state_synced(state: Dictionary) -> void:
-	pass
 
 func _on_zone_entered(zone_type: String) -> void:
 	if zone_type == "shadow":
@@ -602,3 +631,95 @@ func _on_level_selected(level_id: String) -> void:
 func _on_level_select_back() -> void:
 	if _level_select and is_instance_valid(_level_select):
 		_level_select.visible = false
+
+func _connect_multiplayer_bridge() -> void:
+	var bridge: MultiplayerBridge = MultiplayerBridge.instance
+	if bridge == null:
+		return
+	bridge.bridge_race_position_updated.connect(_on_bridge_race_position)
+	bridge.bridge_race_checkpoint_reached.connect(_on_bridge_race_checkpoint)
+	bridge.bridge_race_finished.connect(_on_bridge_race_finish)
+	bridge.bridge_coop_position_updated.connect(_on_bridge_coop_position)
+	bridge.bridge_coop_switch_updated.connect(_on_bridge_coop_switch)
+	bridge.bridge_coop_puzzle_solved.connect(_on_bridge_coop_puzzle)
+	bridge.bridge_coop_player_died.connect(_on_bridge_coop_player_died)
+	bridge.bridge_coop_player_revived.connect(_on_bridge_coop_player_revived)
+
+func _sync_multiplayer_state() -> void:
+	if not is_instance_valid(player):
+		return
+	var pos: Vector2 = player.global_position
+	var form: String = "light" if player.is_light_form() else "shadow"
+	if _game_mode == "race":
+		race_manager.update_local_position(pos, form)
+	elif _game_mode == "coop":
+		coop_manager.update_local_state(pos, form)
+		_check_coop_proximity_revive()
+
+func _on_racer_position_updated(racer_id: String, position: Vector2, form: String) -> void:
+	if _game_mode != "race":
+		return
+	var bridge: MultiplayerBridge = MultiplayerBridge.instance
+	if bridge:
+		bridge.send_race_position(racer_id, position.x, position.y, form)
+
+func _on_coop_partner_position_updated(position: Vector2, form: String) -> void:
+	pass
+
+func _on_coop_state_synced(state: Dictionary) -> void:
+	if _game_mode != "coop":
+		return
+	var bridge: MultiplayerBridge = MultiplayerBridge.instance
+	if bridge and is_instance_valid(player):
+		bridge.send_coop_position(player.global_position.x, player.global_position.y, "light" if player.is_light_form() else "shadow")
+
+func _on_bridge_race_position(racer_id: String, x: float, y: float, form: String) -> void:
+	if _game_mode == "race":
+		race_manager.update_remote_racer(racer_id, Vector2(x, y), form)
+
+func _on_bridge_race_checkpoint(racer_id: String, checkpoint_id: String) -> void:
+	if _game_mode == "race":
+		race_manager.on_remote_checkpoint(racer_id, checkpoint_id)
+
+func _on_bridge_race_finish(racer_id: String, finish_time: float) -> void:
+	if _game_mode == "race":
+		race_manager.on_remote_finish(racer_id, finish_time)
+
+func _on_bridge_coop_position(user_id: String, x: float, y: float, form: String) -> void:
+	if _game_mode == "coop":
+		coop_manager.update_partner_state(Vector2(x, y), form)
+
+func _on_bridge_coop_switch(user_id: String, switch_id: String, activated: bool) -> void:
+	if _game_mode == "coop":
+		if activated:
+			coop_manager.on_remote_switch_activated(switch_id)
+		else:
+			coop_manager.on_switch_deactivated(switch_id)
+
+func _on_bridge_coop_puzzle(puzzle_id: String) -> void:
+	if _game_mode == "coop":
+		coop_manager.on_remote_puzzle_solved(puzzle_id)
+
+func _on_bridge_coop_player_died(user_id: String) -> void:
+	if _game_mode == "coop":
+		coop_manager.on_partner_died()
+
+func _on_bridge_coop_player_revived() -> void:
+	if _game_mode == "coop":
+		coop_manager._partner_alive = true
+		coop_manager._is_reviving = false
+		coop_manager._revive_timer = 0.0
+		hud.show_tutorial("搭档已复活！", 2.0)
+		if is_instance_valid(player):
+			player.heal(CoopModeManager.SHARED_HEAL_AMOUNT)
+
+const COOP_REVIVE_PROXIMITY: float = 80.0
+
+func _check_coop_proximity_revive() -> void:
+	if _game_mode != "coop":
+		return
+	if not coop_manager.is_partner_alive() and is_instance_valid(player):
+		var partner_pos: Vector2 = coop_manager._partner_position
+		var dist: float = player.global_position.distance_to(partner_pos)
+		if dist < COOP_REVIVE_PROXIMITY:
+			coop_manager.on_local_near_partner()
