@@ -93,7 +93,7 @@ namespace RoguelikeGame.Server.Hubs
                     players = room.Players.Select(p => new
                     {
                         p.UserId,
-                        username = p.User?.Username ?? "",
+                        username = p.IsBot ? (p.BotName ?? "Bot") : userNames.GetValueOrDefault(p.UserId, ""),
                         p.IsReady,
                         isHost = p.UserId == room.HostId
                     })
@@ -170,7 +170,7 @@ namespace RoguelikeGame.Server.Hubs
                     players = room.Players.Select(p => new
                     {
                         p.UserId,
-                        username = p.User?.Username ?? "",
+                        username = p.IsBot ? (p.BotName ?? "Bot") : userNames.GetValueOrDefault(p.UserId, ""),
                         p.IsReady,
                         isHost = p.UserId == room.HostId
                     })
@@ -196,7 +196,7 @@ namespace RoguelikeGame.Server.Hubs
                 players = room.Players.Select(p => new
                 {
                     p.UserId,
-                    username = p.User?.Username ?? "",
+                    username = p.IsBot ? (p.BotName ?? "Bot") : userNames.GetValueOrDefault(p.UserId, ""),
                     isHost = p.UserId == room.HostId
                 }),
                 timestamp = DateTime.UtcNow

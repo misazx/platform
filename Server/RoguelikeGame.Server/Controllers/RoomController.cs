@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using RoguelikeGame.Server.Data;
 using RoguelikeGame.Server.Models;
 using RoguelikeGame.Server.Services;
 using RoguelikeGame.Server.Hubs;
@@ -19,14 +21,16 @@ namespace RoguelikeGame.Server.Controllers
         private readonly ILogger<RoomController> _logger;
         private readonly IHubContext<GameHub> _hubContext;
         private readonly IBotGameService _botGameService;
+        private readonly ApplicationDbContext _dbContext;
 
-        public RoomController(IRoomService roomService, IAuthService authService, ILogger<RoomController> logger, IHubContext<GameHub> hubContext, IBotGameService botGameService)
+        public RoomController(IRoomService roomService, IAuthService authService, ILogger<RoomController> logger, IHubContext<GameHub> hubContext, IBotGameService botGameService, ApplicationDbContext dbContext)
         {
             _roomService = roomService;
             _authService = authService;
             _logger = logger;
             _hubContext = hubContext;
             _botGameService = botGameService;
+            _dbContext = dbContext;
         }
 
         [HttpPost("create")]
@@ -55,6 +59,11 @@ namespace RoguelikeGame.Server.Controllers
                     message = "房间创建成功"
                 });
             }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning("创建房间失败: {Message}", ex.Message);
+                return BadRequest(new { success = false, message = ex.Message });
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "创建房间失败");
@@ -76,12 +85,19 @@ namespace RoguelikeGame.Server.Controllers
                 {
                     _logger.LogInformation("玩家加入房间: {UserId} -> {RoomId}", userId, roomId);
 
+                    var playerUserIds = room.Players.Where(p => !p.IsBot).Select(p => p.UserId).Distinct().ToList();
+                    var hostUserId = room.HostId;
+                    var allUserIds = playerUserIds.Append(hostUserId).Distinct().ToList();
+                    var userNames = await _dbContext.Users
+                        .Where(u => allUserIds.Contains(u.Id))
+                        .ToDictionaryAsync(u => u.Id, u => u.Username);
+
                     var roomData = new
                     {
                         room.Id,
                         room.Name,
                         room.HostId,
-                        hostName = room.Host?.Username ?? "",
+                        hostName = userNames.GetValueOrDefault(hostUserId, ""),
                         room.Status,
                         room.Mode,
                         room.MaxPlayers,
@@ -93,8 +109,9 @@ namespace RoguelikeGame.Server.Controllers
                         {
                             p.Id,
                             p.UserId,
-                            username = p.User?.Username ?? "",
+                            username = p.IsBot ? (p.BotName ?? "Bot") : userNames.GetValueOrDefault(p.UserId, ""),
                             p.IsReady,
+                            p.IsBot,
                             p.CharacterId,
                             p.Score,
                             p.JoinedAt
@@ -141,12 +158,19 @@ namespace RoguelikeGame.Server.Controllers
             {
                 var rooms = await _roomService.GetPublicRoomsAsync(page, pageSize);
 
+                var allPlayerUserIds = rooms.SelectMany(r => r.Players.Where(p => !p.IsBot).Select(p => p.UserId))
+                    .Concat(rooms.Select(r => r.HostId))
+                    .Distinct().ToList();
+                var userNames = await _dbContext.Users
+                    .Where(u => allPlayerUserIds.Contains(u.Id))
+                    .ToDictionaryAsync(u => u.Id, u => u.Username);
+
                 var roomList = rooms.Select(r => new
                 {
                     r.Id,
                     r.Name,
                     r.HostId,
-                    hostName = r.Host?.Username ?? "",
+                    hostName = userNames.GetValueOrDefault(r.HostId, ""),
                     r.Status,
                     r.Mode,
                     r.MaxPlayers,
@@ -158,8 +182,9 @@ namespace RoguelikeGame.Server.Controllers
                     {
                         p.Id,
                         p.UserId,
-                        username = p.User?.Username ?? "",
+                        username = p.IsBot ? (p.BotName ?? "Bot") : userNames.GetValueOrDefault(p.UserId, ""),
                         p.IsReady,
+                        p.IsBot,
                         p.CharacterId,
                         p.Score,
                         p.JoinedAt
@@ -192,12 +217,18 @@ namespace RoguelikeGame.Server.Controllers
                 return NotFound(new { success = false, message = "房间不存在" });
             }
 
+            var playerUserIds = room.Players.Where(p => !p.IsBot).Select(p => p.UserId).Distinct().ToList();
+            var allUserIds = playerUserIds.Append(room.HostId).Distinct().ToList();
+            var userNames = await _dbContext.Users
+                .Where(u => allUserIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => u.Username);
+
             var roomData = new
             {
                 room.Id,
                 room.Name,
                 room.HostId,
-                hostName = room.Host?.Username ?? "",
+                hostName = userNames.GetValueOrDefault(room.HostId, ""),
                 room.Status,
                 room.Mode,
                 room.MaxPlayers,
@@ -209,8 +240,9 @@ namespace RoguelikeGame.Server.Controllers
                 {
                     p.Id,
                     p.UserId,
-                    username = p.User?.Username ?? "",
+                    username = p.IsBot ? (p.BotName ?? "Bot") : userNames.GetValueOrDefault(p.UserId, ""),
                     p.IsReady,
+                    p.IsBot,
                     p.CharacterId,
                     p.Score,
                     p.JoinedAt

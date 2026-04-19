@@ -34,6 +34,12 @@ namespace RoguelikeGame.Server.Services
 
         public async Task<Room> CreateRoomAsync(string hostId, string name, GameMode mode, int maxPlayers = 4, string? password = null)
         {
+            var hostExists = await _context.Users.AnyAsync(u => u.Id == hostId);
+            if (!hostExists)
+            {
+                throw new InvalidOperationException($"用户 {hostId} 不存在，请重新注册");
+            }
+
             var room = new Room
             {
                 Name = name,
@@ -55,9 +61,14 @@ namespace RoguelikeGame.Server.Services
 
         public async Task<(bool Success, Room? Room, string Message)> JoinRoomAsync(string roomId, string userId, string? password = null)
         {
+            var userExists = await _context.Users.AnyAsync(u => u.Id == userId);
+            if (!userExists)
+            {
+                return (false, null, "用户不存在，请重新注册");
+            }
+
             var room = await _context.Rooms
                 .Include(r => r.Players)
-                .ThenInclude(p => p.User)
                 .FirstOrDefaultAsync(r => r.Id == roomId);
 
             if (room == null)
@@ -151,7 +162,6 @@ namespace RoguelikeGame.Server.Services
             return await _context.Rooms
                 .Include(r => r.Host)
 				.Include(r => r.Players)
-					.ThenInclude(p => p.User)
                 .Where(r => r.Status == RoomStatus.Waiting && !r.HasPassword)
                 .OrderByDescending(r => r.CreatedAt)
                 .Skip((page - 1) * pageSize)
@@ -163,7 +173,6 @@ namespace RoguelikeGame.Server.Services
         {
             return await _context.Rooms
                 .Include(r => r.Players)
-                    .ThenInclude(p => p.User)
                 .FirstOrDefaultAsync(r => r.Id == roomId);
         }
 

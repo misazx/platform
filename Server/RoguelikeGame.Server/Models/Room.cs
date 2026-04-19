@@ -67,9 +67,6 @@ namespace RoguelikeGame.Server.Models
         [Required]
         public string UserId { get; set; } = "";
 
-        [ForeignKey("UserId")]
-        public User? User { get; set; }
-
         public bool IsReady { get; set; } = false;
         public bool IsBot { get; set; } = false;
         public string? BotName { get; set; }
