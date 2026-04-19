@@ -13,11 +13,39 @@ var _selected_index: int = -1
 var _characters: Array = []
 var _character_cards: Array = []
 
+var _is_multiplayer: bool = false
+var _multiplayer_status_label: Label = null
+
 func _ready() -> void:
 	_setup_node_references()
 	_setup_signals()
+	_detect_multiplayer_mode()
 	load_characters()
 	print("[CharacterSelect] Ready")
+
+func _detect_multiplayer_mode() -> void:
+	var mp_bridge = get_node_or_null("/root/MultiplayerBridge")
+	if mp_bridge != null and mp_bridge.has_method("is_multiplayer_game"):
+		_is_multiplayer = mp_bridge.is_multiplayer_game()
+	if _is_multiplayer:
+		_multiplayer_status_label = Label.new()
+		_multiplayer_status_label.text = "🌐 多人合作模式 - 选择你的角色"
+		_multiplayer_status_label.modulate = Color(0.5, 0.9, 1.0)
+		_multiplayer_status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_multiplayer_status_label.add_theme_font_size_override("font_size", 14)
+		_multiplayer_status_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+		_multiplayer_status_label.position = Vector2(0, 5)
+		_multiplayer_status_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(_multiplayer_status_label)
+		_connect_multiplayer_signals()
+		print("[CharacterSelect] Multiplayer mode detected")
+
+func _connect_multiplayer_signals() -> void:
+	var mp_bridge = get_node_or_null("/root/MultiplayerBridge")
+	if mp_bridge == null:
+		return
+	if mp_bridge.has_signal("bridge_player_ready_changed"):
+		mp_bridge.bridge_player_ready_changed.connect(_on_remote_player_ready_changed)
 
 func _setup_node_references() -> void:
 	_character_grid = get_node_or_null("CharGrid")
@@ -152,10 +180,35 @@ func _on_confirm_pressed() -> void:
 				deck_strings.append(card_id)
 			if game_manager.has_method("SetSelectedCharacter"):
 				game_manager.call("SetSelectedCharacter", character_id, character_name, max_hp, starting_gold, deck_strings, starting_relic)
-			if game_manager.has_method("GoToMap"):
-				game_manager.call("GoToMap")
+			if _is_multiplayer:
+				_notify_character_ready(character_id)
+				if _multiplayer_status_label != null:
+					_multiplayer_status_label.text = "✅ 角色已选择: %s - 等待其他玩家..." % character_name
+					_multiplayer_status_label.modulate = Color(0.5, 1.0, 0.5)
+				if _confirm_button != null:
+					_confirm_button.disabled = true
+					_confirm_button.text = "已确认"
+			else:
+				if game_manager.has_method("GoToMap"):
+					game_manager.call("GoToMap")
 		else:
 			get_tree().change_scene_to_file("res://GameModes/base_game/Scenes/MapScene.tscn")
+
+func _notify_character_ready(character_id: String) -> void:
+	var hub_client = get_node_or_null("/root/GameHubClient")
+	if hub_client != null and hub_client.has_method("notify_ready_changed_async"):
+		var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
+		if room_id != "":
+			hub_client.call("notify_ready_changed_async", room_id, true)
+	print("[CharacterSelect] Notified server: character=%s ready=true" % character_id)
+
+func _on_remote_player_ready_changed(player_id: String, is_ready: bool) -> void:
+	print("[CharacterSelect] Remote player %s ready: %s" % [player_id, str(is_ready)])
+	if _multiplayer_status_label != null:
+		var status_text: String = "✅ 角色已选择 - 等待其他玩家..."
+		if is_ready:
+			status_text = "✅ 对手已准备 - 等待游戏开始..."
+		_multiplayer_status_label.text = status_text
 
 func _on_back_pressed() -> void:
 	print("[CharacterSelect] Back pressed")

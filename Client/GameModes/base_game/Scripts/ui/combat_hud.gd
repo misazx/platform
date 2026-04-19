@@ -4,6 +4,8 @@ signal card_played(card_id: String)
 signal end_turn()
 signal card_played_with_target(card_id: String, target_index: int)
 signal show_pile_view_requested(pile_name: String)
+signal combat_won()
+signal combat_lost()
 
 var _root_container: Control
 var _combat_bg: ColorRect
@@ -35,6 +37,13 @@ var _is_player_turn: bool = true
 var _is_processing: bool = false
 var _is_selecting_target: bool = false
 var _pending_card: Control = null
+
+var _is_coop_mode: bool = false
+var _combat_system: Node = null
+var _coop_player_status_areas: Array = []
+var _local_player_index: int = 0
+var _player_count: int = 1
+var _coop_turn_indicator: Label = null
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -334,7 +343,330 @@ func _create_bottom_buttons() -> void:
 	bottom_bar.add_child(_discard_pile_btn)
 
 func _connect_signals() -> void:
-	pass
+	_detect_multiplayer_mode()
+	_initialize_combat_system()
+	_connect_bridge_signals()
+
+func _detect_multiplayer_mode() -> void:
+	var mp_bridge = get_node_or_null("/root/MultiplayerBridge")
+	if mp_bridge != null and mp_bridge.has_method("is_multiplayer_game"):
+		_is_coop_mode = mp_bridge.is_multiplayer_game()
+	if _is_coop_mode:
+		if mp_bridge.has_method("get_local_player_index"):
+			_local_player_index = mp_bridge.get_local_player_index()
+		if mp_bridge.has_method("get_player_count"):
+			_player_count = mp_bridge.get_player_count()
+		print("[CombatHUD] 多人合作模式: player_count=%d local_index=%d" % [_player_count, _local_player_index])
+
+func _initialize_combat_system() -> void:
+	if _is_coop_mode:
+		var coop_script := load("res://GameModes/base_game/Scripts/combat/coop_combat_system.gd") as GDScript
+		if coop_script == null:
+			push_error("[CombatHUD] Failed to load CoopCombatEngine script!")
+			return
+		_combat_system = Node.new()
+		_combat_system.set_script(coop_script)
+		add_child(_combat_system)
+
+		if _combat_system.has_signal("coop_combat_won"):
+			_combat_system.coop_combat_won.connect(func(): combat_won.emit())
+		if _combat_system.has_signal("coop_combat_lost"):
+			_combat_system.coop_combat_lost.connect(func(): combat_lost.emit())
+		if _combat_system.has_signal("coop_turn_started"):
+			_combat_system.coop_turn_started.connect(_on_coop_turn_started)
+		if _combat_system.has_signal("coop_card_played"):
+			_combat_system.coop_card_played.connect(_on_coop_card_played)
+		if _combat_system.has_signal("coop_damage_dealt"):
+			_combat_system.coop_damage_dealt.connect(_on_coop_damage_dealt)
+		if _combat_system.has_signal("coop_block_gained"):
+			_combat_system.coop_block_gained.connect(_on_coop_block_gained)
+
+		_create_coop_player_status_areas()
+
+		var mp_bridge = get_node_or_null("/root/MultiplayerBridge")
+		var seed_val: int = 0
+		if mp_bridge != null and mp_bridge.has_method("get_sync_seed"):
+			seed_val = mp_bridge.get_sync_seed()
+
+		var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
+		var char_id: String = "ironclad"
+		if main_node != null and main_node.has_method("GetSelectedCharacterId"):
+			char_id = str(main_node.call("GetSelectedCharacterId"))
+
+		var enemies_data: Array = _get_enemies_for_combat()
+		_combat_system.call("initialize_coop_combat", enemies_data, _player_count, seed_val, _local_player_index)
+		print("[CombatHUD] Coop combat initialized: enemies=%d players=%d seed=%d" % [enemies_data.size(), _player_count, seed_val])
+		_sync_coop_ui_from_system()
+	else:
+		var combat_script := load("res://GameModes/base_game/Scripts/combat/sts_combat_system.gd") as GDScript
+		if combat_script == null:
+			push_error("[CombatHUD] Failed to load StsCombatEngine script!")
+			return
+		_combat_system = Node.new()
+		_combat_system.set_script(combat_script)
+		add_child(_combat_system)
+
+		if _combat_system.has_signal("combat_won"):
+			_combat_system.combat_won.connect(func(): combat_won.emit())
+		if _combat_system.has_signal("combat_lost"):
+			_combat_system.combat_lost.connect(func(): combat_lost.emit())
+		if _combat_system.has_signal("damage_dealt"):
+			_combat_system.damage_dealt.connect(_on_damage_dealt)
+		if _combat_system.has_signal("block_gained"):
+			_combat_system.block_gained.connect(_on_block_gained)
+		if _combat_system.has_signal("turn_started"):
+			_combat_system.turn_started.connect(_on_turn_started)
+		if _combat_system.has_signal("turn_ended"):
+			_combat_system.turn_ended.connect(_on_turn_ended)
+
+		var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
+		var char_id: String = "ironclad"
+		if main_node != null and main_node.has_method("GetSelectedCharacterId"):
+			char_id = str(main_node.call("GetSelectedCharacterId"))
+		_combat_system.call("initialize_combat", _get_enemies_for_combat(), 0)
+		print("[CombatHUD] Single player combat initialized with character: %s" % char_id)
+		_sync_single_ui_from_system()
+
+func _connect_bridge_signals() -> void:
+	var mp_bridge = get_node_or_null("/root/MultiplayerBridge")
+	if mp_bridge == null:
+		return
+	if mp_bridge.has_signal("bridge_coop_card_played"):
+		mp_bridge.bridge_coop_card_played.connect(_on_bridge_coop_card_played)
+	if mp_bridge.has_signal("bridge_coop_turn_ended"):
+		mp_bridge.bridge_coop_turn_ended.connect(_on_bridge_coop_turn_ended)
+	print("[CombatHUD] Bridge signals connected")
+
+func _get_enemies_for_combat() -> Array:
+	var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
+	var enemy_id: String = ""
+	if main_node != null and main_node.has_method("GetLastClickedEnemyId"):
+		enemy_id = str(main_node.call("GetLastClickedEnemyId"))
+
+	var enemy_db = get_node_or_null("/root/EnemyDatabase")
+	if enemy_db != null and enemy_db.has_method("get_enemy"):
+		var enemy_data = enemy_db.call("get_enemy", enemy_id if enemy_id != "" else "cultist")
+		if enemy_data != null and not enemy_data.is_empty():
+			return [enemy_data]
+
+	return [
+		{"id": "cultist", "name": "Cultist", "max_hp": 50, "current_hp": 50, "block": 0, "status_effects": []}
+	]
+
+func _create_coop_player_status_areas() -> void:
+	for i in range(_player_count):
+		var status_area := VBoxContainer.new()
+		status_area.custom_minimum_size = Vector2(160, 55)
+		status_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		status_area.position = Vector2(12, 330 + i * 60)
+
+		var header := HBoxContainer.new()
+		header.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		status_area.add_child(header)
+
+		var name_lbl := Label.new()
+		name_lbl.text = "玩家%d" % (i + 1) if i != _local_player_index else "玩家%d (你)" % (i + 1)
+		name_lbl.modulate = Color(0.5, 0.9, 1.0) if i == _local_player_index else Color(0.8, 0.8, 0.8)
+		name_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		name_lbl.add_theme_font_size_override("font_size", 10)
+		header.add_child(name_lbl)
+
+		var hp_lbl := Label.new()
+		hp_lbl.text = "80/80"
+		hp_lbl.modulate = Color(1, 0.4, 0.4)
+		hp_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hp_lbl.add_theme_font_size_override("font_size", 9)
+		header.add_child(hp_lbl)
+
+		var energy_lbl := Label.new()
+		energy_lbl.text = "3/3"
+		energy_lbl.modulate = Color(1, 0.85, 0.2)
+		energy_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		energy_lbl.add_theme_font_size_override("font_size", 9)
+		header.add_child(energy_lbl)
+
+		var hp_bar := ProgressBar.new()
+		hp_bar.max_value = 80
+		hp_bar.value = 80
+		hp_bar.custom_minimum_size = Vector2(150, 10)
+		hp_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hp_bar.add_theme_stylebox_override("background", UITheme.make_bar_bg_style())
+		var hp_style := StyleBoxFlat.new()
+		hp_style.bg_color = Color(0.85, 0.2, 0.2)
+		hp_style.set_corner_radius_all(3)
+		hp_bar.add_theme_stylebox_override("fill", hp_style)
+		status_area.add_child(hp_bar)
+
+		_coop_player_status_areas.append({
+			"area": status_area,
+			"name_label": name_lbl,
+			"hp_label": hp_lbl,
+			"energy_label": energy_lbl,
+			"hp_bar": hp_bar,
+			"player_index": i,
+		})
+		_root_container.add_child(status_area)
+
+	_coop_turn_indicator = Label.new()
+	_coop_turn_indicator.text = "玩家1的回合"
+	_coop_turn_indicator.modulate = Color(1, 0.92, 0.3)
+	_coop_turn_indicator.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_coop_turn_indicator.add_theme_font_size_override("font_size", 13)
+	_coop_turn_indicator.position = Vector2(500, 4)
+	_root_container.add_child(_coop_turn_indicator)
+
+	_player_status_area.visible = false
+
+func _sync_coop_ui_from_system() -> void:
+	if _combat_system == null or not _combat_system.has_method("get_enemies"):
+		return
+
+	var enemies: Array = _combat_system.call("get_enemies")
+	for i in range(enemies.size()):
+		var e: Dictionary = enemies[i]
+		if i >= _enemies_ui.size():
+			add_enemy(e.get("name", "Enemy"), e.get("max_hp", 50))
+		else:
+			update_enemy_health(i, e.get("current_hp", 0), e.get("max_hp", 50))
+			if e.has("current_intent") and e.current_intent != null:
+				var intent: Dictionary = e.current_intent
+				update_enemy_intent(i, intent.get("description", ""), intent.get("icon", ""))
+
+	for i in range(_player_count):
+		if i < _coop_player_status_areas.size():
+			var player_data: Dictionary = {}
+			if _combat_system.has_method("get_player_by_index"):
+				player_data = _combat_system.call("get_player_by_index", i)
+			if not player_data.is_empty():
+				_update_coop_player_status(i, player_data)
+
+	if _combat_system.has_method("is_local_player_turn"):
+		var is_my_turn: bool = _combat_system.call("is_local_player_turn")
+		set_phase(is_my_turn)
+		if _coop_turn_indicator != null:
+			var current_idx: int = _combat_system.call("get_current_player_index") if _combat_system.has_method("get_current_player_index") else 0
+			_coop_turn_indicator.text = "玩家%d的回合" % (current_idx + 1)
+			if is_my_turn:
+				_coop_turn_indicator.modulate = Color(0.5, 0.9, 0.5)
+			else:
+				_coop_turn_indicator.modulate = Color(0.9, 0.4, 0.3)
+
+	if _combat_system.has_method("get_local_player"):
+		var local_player: Dictionary = _combat_system.call("get_local_player")
+		if not local_player.is_empty():
+			update_energy(local_player.get("energy", 0), local_player.get("max_energy", 3))
+			update_health(local_player.get("current_hp", 0), local_player.get("max_hp", 80))
+			update_block(local_player.get("block", 0))
+			if local_player.has("hand"):
+				update_hand(local_player.hand)
+
+	if _combat_system.has_method("get_turn_number"):
+		set_turn_number(_combat_system.call("get_turn_number"))
+
+func _sync_single_ui_from_system() -> void:
+	if _combat_system == null:
+		return
+
+	if _combat_system.has_method("get_enemies"):
+		var enemies: Array = _combat_system.call("get_enemies")
+		for i in range(enemies.size()):
+			var e: Dictionary = enemies[i]
+			if i >= _enemies_ui.size():
+				add_enemy(e.get("name", "Enemy"), e.get("max_hp", 50))
+			else:
+				update_enemy_health(i, e.get("current_hp", 0), e.get("max_hp", 50))
+
+	if _combat_system.has_method("get_player"):
+		var player: Dictionary = _combat_system.call("get_player")
+		if not player.is_empty():
+			update_energy(player.get("energy", 0), player.get("max_energy", 3))
+			update_health(player.get("current_hp", 0), player.get("max_hp", 80))
+			update_block(player.get("block", 0))
+			if player.has("hand"):
+				update_hand(player.hand)
+
+	if _combat_system.has_method("get_turn_number"):
+		set_turn_number(_combat_system.call("get_turn_number"))
+
+func _update_coop_player_status(player_index: int, player_data: Dictionary) -> void:
+	if player_index < 0 or player_index >= _coop_player_status_areas.size():
+		return
+	var status: Dictionary = _coop_player_status_areas[player_index]
+	var hp_lbl: Label = status.get("hp_label")
+	var energy_lbl: Label = status.get("energy_label")
+	var hp_bar: ProgressBar = status.get("hp_bar")
+	if hp_lbl != null:
+		hp_lbl.text = "%d/%d" % [player_data.get("current_hp", 0), player_data.get("max_hp", 80)]
+	if energy_lbl != null:
+		energy_lbl.text = "%d/%d" % [player_data.get("energy", 0), player_data.get("max_energy", 3)]
+	if hp_bar != null:
+		hp_bar.max_value = player_data.get("max_hp", 80)
+		hp_bar.value = player_data.get("current_hp", 0)
+
+func _on_coop_turn_started(player_index: int, turn: int) -> void:
+	print("[CombatHUD] Coop turn started: player=%d turn=%d" % [player_index, turn])
+	set_turn_number(turn)
+	if _coop_turn_indicator != null:
+		_coop_turn_indicator.text = "玩家%d的回合" % (player_index + 1)
+	if _combat_system != null and _combat_system.has_method("is_local_player_turn"):
+		var is_my_turn: bool = _combat_system.call("is_local_player_turn")
+		set_phase(is_my_turn)
+		if _coop_turn_indicator != null:
+			_coop_turn_indicator.modulate = Color(0.5, 0.9, 0.5) if is_my_turn else Color(0.9, 0.4, 0.3)
+	_sync_coop_ui_from_system()
+
+func _on_coop_card_played(player_index: int, card: Dictionary, target_index: int) -> void:
+	print("[CombatHUD] Coop card played: player=%d card=%s target=%d" % [player_index, card.get("name", "?"), target_index])
+	_sync_coop_ui_from_system()
+
+func _on_coop_damage_dealt(target_index: int, target_name: String, amount: int, source_player: int) -> void:
+	if target_index >= 0:
+		show_enemy_hit_feedback(target_index)
+		show_damage(self, amount, _enemies_ui[target_index].global_position if target_index < _enemies_ui.size() else Vector2(500, 200), false)
+		update_enemy_health(target_index, _combat_system.call("get_enemies")[target_index].get("current_hp", 0), _combat_system.call("get_enemies")[target_index].get("max_hp", 50))
+	elif source_player == -1:
+		show_player_hit_feedback()
+	_sync_coop_ui_from_system()
+
+func _on_coop_block_gained(player_index: int, amount: int, total: int) -> void:
+	if player_index == _local_player_index:
+		update_block(total)
+	_sync_coop_ui_from_system()
+
+func _on_damage_dealt(target_index: int, target_name: String, amount: int) -> void:
+	if target_index >= 0 and target_index < _enemies_ui.size():
+		show_enemy_hit_feedback(target_index)
+		show_damage(self, amount, _enemies_ui[target_index].global_position, false)
+	_sync_single_ui_from_system()
+
+func _on_block_gained(amount: int, total: int) -> void:
+	update_block(total)
+
+func _on_turn_started(turn: int) -> void:
+	set_turn_number(turn)
+	set_phase(true)
+	_sync_single_ui_from_system()
+
+func _on_turn_ended(turn: int) -> void:
+	set_phase(false)
+
+func _on_bridge_coop_card_played(player_index: int, card_data: String, target_index: int) -> void:
+	if not _is_coop_mode or _combat_system == null:
+		return
+	print("[CombatHUD] Bridge: remote card played player=%d target=%d" % [player_index, target_index])
+	var parsed = JSON.parse_string(card_data)
+	var card_dict: Dictionary = {}
+	if parsed != null and parsed is Dictionary:
+		card_dict = parsed as Dictionary
+	if _combat_system.has_method("apply_remote_card_play"):
+		_combat_system.call("apply_remote_card_play", player_index, card_dict, target_index)
+
+func _on_bridge_coop_turn_ended(player_index: int) -> void:
+	if not _is_coop_mode or _combat_system == null:
+		return
+	print("[CombatHUD] Bridge: remote turn ended player=%d" % player_index)
+	if _combat_system.has_method("apply_remote_turn_end"):
+		_combat_system.call("apply_remote_turn_end", player_index)
 
 func _on_draw_pile_clicked() -> void:
 	print("[CombatHUD] 📥 抽牌堆点击")

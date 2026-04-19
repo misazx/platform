@@ -19,6 +19,8 @@ namespace RoguelikeGame.Network.Realtime
         public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
         public string CurrentRoomId => _currentRoomId;
 
+        public string GetCurrentRoomId() => _currentRoomId;
+
         public event Action<string, string> OnPlayerJoinedRoom;
         public event Action<string, string> OnPlayerLeftRoom;
         public event Action<string, string, string> OnRoomChatMessage;
@@ -454,6 +456,11 @@ namespace RoguelikeGame.Network.Realtime
             await _hubConnection.InvokeAsync("NotifyReadyChanged", roomId, isReady);
         }
 
+        public void NotifyReadyChangedSync(string roomId, bool isReady)
+        {
+            _ = NotifyReadyChangedAsync(roomId, isReady);
+        }
+
         public async Task NotifyGameStartingAsync(string roomId)
         {
             if (_hubConnection?.State != HubConnectionState.Connected) return;
@@ -466,10 +473,20 @@ namespace RoguelikeGame.Network.Realtime
             await _hubConnection.InvokeAsync("SendCoopCardPlay", roomId, playerIndex, cardData, targetIndex);
         }
 
+        public void SendCoopCardPlaySync(string roomId, int playerIndex, string cardJson, int targetIndex)
+        {
+            _ = SendCoopCardPlayAsync(roomId, playerIndex, cardJson, targetIndex);
+        }
+
         public async Task SendCoopTurnEndAsync(string roomId, int playerIndex)
         {
             if (_hubConnection?.State != HubConnectionState.Connected) return;
             await _hubConnection.InvokeAsync("SendCoopTurnEnd", roomId, playerIndex);
+        }
+
+        public void SendCoopTurnEndSync(string roomId, int playerIndex)
+        {
+            _ = SendCoopTurnEndAsync(roomId, playerIndex);
         }
 
         public async Task SendRacePositionAsync(string roomId, string racerId, double x, double y, string form)

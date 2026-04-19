@@ -145,6 +145,10 @@ func _on_race_finished(racer_id: String, finish_time: float) -> void:
 
 func _on_game_started(sync_seed: int) -> void:
 	bridge_game_started.emit(sync_seed)
+	print("[MultiplayerBridge] Game started with seed: %d - transitioning to map" % sync_seed)
+	var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
+	if main_node != null and main_node.has_method("GoToMap"):
+		main_node.call("GoToMap")
 
 func _on_game_ended(victory: bool) -> void:
 	bridge_game_ended.emit(victory)
@@ -180,7 +184,7 @@ func send_coop_card_play(player_index: int, card_data: Dictionary, target_index:
 		push_warning("[MultiplayerBridge] No room ID, cannot send card play")
 		return
 	var card_json: String = JSON.stringify(card_data)
-	hub_client.call("send_coop_card_play_async", room_id, player_index, card_json, target_index)
+	hub_client.call("send_coop_card_play_sync", room_id, player_index, card_json, target_index)
 	print("[MultiplayerBridge] Sent coop card play: player=%d card=%s target=%d" % [player_index, card_data.get("name", "?"), target_index])
 
 func send_coop_turn_end(player_index: int) -> void:
@@ -192,7 +196,7 @@ func send_coop_turn_end(player_index: int) -> void:
 	if room_id == "":
 		push_warning("[MultiplayerBridge] No room ID, cannot send turn end")
 		return
-	hub_client.call("send_coop_turn_end_async", room_id, player_index)
+	hub_client.call("send_coop_turn_end_sync", room_id, player_index)
 	print("[MultiplayerBridge] Sent coop turn end: player=%d" % player_index)
 
 func send_coop_position(x: float, y: float, form: String) -> void:

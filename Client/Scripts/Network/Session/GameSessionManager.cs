@@ -449,6 +449,30 @@ namespace RoguelikeGame.Network.Session
 			return _gameState.Players[localUserId];
 		}
 
+		public int GetLocalPlayerIndex()
+		{
+			var localUserId = AuthSystem.Instance?.CurrentUser?.Id;
+			if (localUserId == null) return 0;
+
+			int index = 0;
+			foreach (var playerId in _gameState.Players.Keys)
+			{
+				if (playerId == localUserId) return index;
+				index++;
+			}
+			return 0;
+		}
+
+		public int GetPlayerCount()
+		{
+			return _gameState.Players.Count;
+		}
+
+		public string GetCurrentRoomId()
+		{
+			return _gameState?.RoomId ?? "";
+		}
+
 		public PlayerState? GetPlayerState(string userId)
 		{
 			return _gameState.Players.GetValueOrDefault(userId);
