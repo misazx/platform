@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using RoguelikeGame.Server.Data;
 using RoguelikeGame.Server.Services;
 
 namespace RoguelikeGame.Server.Hubs
@@ -8,14 +10,16 @@ namespace RoguelikeGame.Server.Hubs
     {
         private readonly IRoomService _roomService;
         private readonly ILogger<GameHub> _logger;
+        private readonly ApplicationDbContext _dbContext;
 
         private static readonly Dictionary<string, string> _connectionRoomMap = new();
         private static readonly Dictionary<string, string> _connectionUserMap = new();
 
-        public GameHub(IRoomService roomService, ILogger<GameHub> logger)
+        public GameHub(IRoomService roomService, ILogger<GameHub> logger, ApplicationDbContext dbContext)
         {
             _roomService = roomService;
             _logger = logger;
+            _dbContext = dbContext;
         }
 
         public override async Task OnConnectedAsync()
@@ -81,6 +85,12 @@ namespace RoguelikeGame.Server.Hubs
             var room = await _roomService.GetRoomByIdAsync(roomId);
             if (room != null)
             {
+                var playerUserIds = room.Players.Where(p => !p.IsBot).Select(p => p.UserId).Distinct().ToList();
+                var allUserIds = playerUserIds.Append(room.HostId).Distinct().ToList();
+                var userNames = await _dbContext.Users
+                    .Where(u => allUserIds.Contains(u.Id))
+                    .ToDictionaryAsync(u => u.Id, u => u.Username);
+
                 await Clients.Caller.SendAsync("RoomStateUpdate", new
                 {
                     roomId = room.Id,
@@ -95,6 +105,7 @@ namespace RoguelikeGame.Server.Hubs
                         p.UserId,
                         username = p.IsBot ? (p.BotName ?? "Bot") : userNames.GetValueOrDefault(p.UserId, ""),
                         p.IsReady,
+                        p.IsBot,
                         isHost = p.UserId == room.HostId
                     })
                 });
@@ -162,6 +173,12 @@ namespace RoguelikeGame.Server.Hubs
             var room = await _roomService.GetRoomByIdAsync(roomId);
             if (room != null)
             {
+                var playerUserIds = room.Players.Where(p => !p.IsBot).Select(p => p.UserId).Distinct().ToList();
+                var allUserIds = playerUserIds.Append(room.HostId).Distinct().ToList();
+                var userNames = await _dbContext.Users
+                    .Where(u => allUserIds.Contains(u.Id))
+                    .ToDictionaryAsync(u => u.Id, u => u.Username);
+
                 await Clients.Group(roomId).SendAsync("RoomStateUpdate", new
                 {
                     roomId = room.Id,
@@ -172,6 +189,7 @@ namespace RoguelikeGame.Server.Hubs
                         p.UserId,
                         username = p.IsBot ? (p.BotName ?? "Bot") : userNames.GetValueOrDefault(p.UserId, ""),
                         p.IsReady,
+                        p.IsBot,
                         isHost = p.UserId == room.HostId
                     })
                 });
@@ -187,6 +205,12 @@ namespace RoguelikeGame.Server.Hubs
             if (room == null || room.HostId != userId) throw new HubException("仅房主可开始游戏");
 
             _logger.LogInformation("[GameHub] 游戏 [{RoomId}] 由 {UserId} 启动", roomId, userId);
+
+                var playerUserIds = room.Players.Where(p => !p.IsBot).Select(p => p.UserId).Distinct().ToList();
+                var allUserIds = playerUserIds.Append(room.HostId).Distinct().ToList();
+                var userNames = await _dbContext.Users
+                    .Where(u => allUserIds.Contains(u.Id))
+                    .ToDictionaryAsync(u => u.Id, u => u.Username);
 
             await Clients.Group(roomId).SendAsync("GameStarting", new
             {
