@@ -31,8 +31,76 @@ var _local_player_index: int = 0
 var _relic_managers: Array = []
 var _sync_timer: float = 0.0
 
+var _bot_player_indices: Array = []
+var _bot_user_ids: Dictionary = {}
+var _is_bot_turn_processing: bool = false
+
 func _ready() -> void:
 	pass
+
+func set_bot_info(bot_indices: Array, bot_user_ids: Dictionary) -> void:
+	_bot_player_indices = bot_indices
+	_bot_user_ids = bot_user_ids
+
+func is_bot_player(player_index: int) -> bool:
+	return _bot_player_indices.has(player_index)
+
+func _notify_bot_ai_if_needed() -> void:
+	if not is_bot_player(_current_player_index): return
+	if _is_combat_over: return
+	if _is_bot_turn_processing: return
+
+	_is_bot_turn_processing = true
+	var bot_user_id: String = _bot_user_ids.get(_current_player_index, "")
+	if bot_user_id == "": return
+
+	var player: Dictionary = _players[_current_player_index]
+	var hand_data: Array = []
+	for card in player.hand:
+		hand_data.append({
+			"id": card.get("id", ""),
+			"name": card.get("name", ""),
+			"cost": card.get("cost", 0),
+			"type": card.get("type", 0),
+			"damage": card.get("damage", 0),
+			"block": card.get("block", 0),
+			"target": card.get("target", 0),
+		})
+
+	var enemies_data: Array = []
+	for e in _enemies:
+		if not _is_enemy_dead(e):
+			enemies_data.append({
+				"id": e.get("id", ""),
+				"name": e.get("name", ""),
+				"current_hp": e.current_hp,
+				"max_hp": e.max_hp,
+				"block": e.get("block", 0),
+			})
+
+	var potions_data: Array = []
+	for p in player.get("potions", []):
+		potions_data.append({"id": p.get("id", ""), "name": p.get("name", "")})
+
+	var game_state := {
+		"hand": hand_data,
+		"player_hp": player.current_hp,
+		"player_max_hp": player.max_hp,
+		"player_energy": player.energy,
+		"player_block": player.block,
+		"enemies": enemies_data,
+		"potions": potions_data,
+	}
+
+	var hub_client = get_node_or_null("/root/GameHubClient")
+	if hub_client != null:
+		var room_id: String = ""
+		var session_mgr = get_node_or_null("/root/GameSessionManager")
+		if session_mgr != null:
+			room_id = session_mgr.GetCurrentRoomId()
+		if room_id != "":
+			var json_state: String = JSON.stringify(game_state)
+			hub_client.UpdateBotGameStateAsync(room_id, bot_user_id, json_state)
 
 func initialize_coop_combat(enemies: Array, player_count: int, seed_val: int, local_index: int = 0) -> void:
 	var effective_seed: int = seed_val
@@ -115,6 +183,7 @@ func _start_coop_turn() -> void:
 			_generate_enemy_intent(enemy)
 
 	coop_turn_started.emit(_current_player_index, _turn_number)
+	_notify_bot_ai_if_needed()
 
 func _draw_cards_for_player(player_index: int, count: int) -> void:
 	var player: Dictionary = _players[player_index]
@@ -261,6 +330,7 @@ func end_coop_player_turn(player_index: int) -> void:
 	else:
 		_current_phase = _current_player_index
 		coop_turn_started.emit(_current_player_index, _turn_number)
+		_notify_bot_ai_if_needed()
 
 func _execute_enemy_turns() -> void:
 	for enemy in _enemies:
@@ -493,6 +563,7 @@ func get_sync_state() -> Dictionary:
 	}
 
 func apply_remote_card_play(player_index: int, card_data: Dictionary, target_index: int) -> void:
+	_is_bot_turn_processing = false
 	var player: Dictionary = _players[player_index]
 	player.energy -= card_data.cost
 	player.hand.erase(card_data)
@@ -505,4 +576,5 @@ func apply_remote_card_play(player_index: int, card_data: Dictionary, target_ind
 	coop_card_played.emit(player_index, card_data, target_index)
 
 func apply_remote_turn_end(player_index: int) -> void:
+	_is_bot_turn_processing = false
 	end_coop_player_turn(player_index)

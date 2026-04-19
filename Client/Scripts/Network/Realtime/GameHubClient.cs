@@ -537,6 +537,12 @@ namespace RoguelikeGame.Network.Realtime
             await _hubConnection.InvokeAsync("SendCoopPlayerRevived", roomId);
         }
 
+        public async Task UpdateBotGameStateAsync(string roomId, string botUserId, string gameStateJson)
+        {
+            if (_hubConnection?.State != HubConnectionState.Connected) return;
+            await _hubConnection.InvokeAsync("UpdateBotGameState", roomId, botUserId, gameStateJson);
+        }
+
         public override void _ExitTree()
         {
             _ = DisconnectAsync();

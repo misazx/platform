@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using RoguelikeGame.Server.Models;
 using RoguelikeGame.Server.Services;
+using RoguelikeGame.Server.Hubs;
 
 namespace RoguelikeGame.Server.Controllers
 {
@@ -15,12 +17,16 @@ namespace RoguelikeGame.Server.Controllers
         private readonly IRoomService _roomService;
         private readonly IAuthService _authService;
         private readonly ILogger<RoomController> _logger;
+        private readonly IHubContext<GameHub> _hubContext;
+        private readonly IBotGameService _botGameService;
 
-        public RoomController(IRoomService roomService, IAuthService authService, ILogger<RoomController> logger)
+        public RoomController(IRoomService roomService, IAuthService authService, ILogger<RoomController> logger, IHubContext<GameHub> hubContext, IBotGameService botGameService)
         {
             _roomService = roomService;
             _authService = authService;
             _logger = logger;
+            _hubContext = hubContext;
+            _botGameService = botGameService;
         }
 
         [HttpPost("create")]
@@ -263,6 +269,22 @@ namespace RoguelikeGame.Server.Controllers
             if (success && botPlayer != null)
             {
                 _logger.LogInformation("机器人加入房间: {BotName} -> {RoomId}", botPlayer.BotName, roomId);
+
+                await _hubContext.Clients.Group(roomId).SendAsync("BotAdded", System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    botName = botPlayer.BotName,
+                    botId = botPlayer.Id,
+                    botDifficulty = botPlayer.BotDifficulty,
+                    isBot = true,
+                    isReady = botPlayer.IsReady,
+                    timestamp = DateTime.UtcNow
+                }));
+
+                var botDiff = Enum.TryParse<Shared.Bots.BotDifficulty>(botPlayer.BotDifficulty, true, out var diff) ? diff : Shared.Bots.BotDifficulty.Normal;
+                var room = await _roomService.GetRoomByIdAsync(roomId);
+                var playerIndex = room?.Players.Count(p => !p.IsBot) ?? 0;
+                _botGameService.RegisterRoomBot(roomId, botPlayer.UserId, botPlayer.BotName ?? "Bot", botDiff, playerIndex);
+
                 return Ok(new
                 {
                     success = true,
@@ -295,6 +317,15 @@ namespace RoguelikeGame.Server.Controllers
             if (success)
             {
                 _logger.LogInformation("机器人移出房间: {BotId} <- {RoomId}", request.BotId, roomId);
+
+                await _hubContext.Clients.Group(roomId).SendAsync("BotRemoved", System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    botId = request.BotId,
+                    timestamp = DateTime.UtcNow
+                }));
+
+                _botGameService.UnregisterRoomBot(roomId, request.BotId);
+
                 return Ok(new { success = true, message });
             }
             else

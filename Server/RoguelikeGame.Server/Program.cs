@@ -39,8 +39,10 @@ try
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IRoomService, RoomService>();
     builder.Services.AddScoped<IMatchmakingService, MatchmakingService>();
-    builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
-    builder.Services.AddHostedService<RoomCleanupService>();
+builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
+builder.Services.AddSingleton<IBotGameService, BotGameService>();
+builder.Services.AddHostedService<BotGameService>(sp => (BotGameService)sp.GetRequiredService<IBotGameService>());
+builder.Services.AddHostedService<RoomCleanupService>();
 
     builder.Services.AddAuthentication(options =>
     {
