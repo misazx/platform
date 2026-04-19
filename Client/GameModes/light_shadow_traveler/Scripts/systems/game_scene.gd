@@ -17,7 +17,7 @@ var _nearby_light: MovableLightSource = null
 var race_manager: RaceModeManager
 var coop_manager: CoopModeManager
 var _game_mode := "solo"
-var _level_select: LevelSelect
+var _level_select: LevelSelectScreen
 
 func _ready() -> void:
 	_setup_scene()
@@ -617,7 +617,7 @@ func show_level_select() -> void:
 	if _level_select and is_instance_valid(_level_select):
 		_level_select.visible = true
 		return
-	_level_select = LevelSelect.new()
+	_level_select = LevelSelectScreen.new()
 	_level_select.level_selected.connect(_on_level_selected)
 	_level_select.back_pressed.connect(_on_level_select_back)
 	_level_select.populate_levels(level_manager)
