@@ -6,6 +6,9 @@ signal level_completed(level_id: String)
 signal level_failed(level_id: String)
 signal all_fragments_collected(count: int)
 
+const LEVELS_CONFIG_PATH := "res://GameModes/light_shadow_traveler/Config/Data/levels.json"
+const PACKAGE_CONFIG_PATH := "res://GameModes/light_shadow_traveler/Config/Data/package_config.json"
+
 var current_chapter_id := ""
 var current_level_id := ""
 var current_level_data: Dictionary = {}
@@ -17,7 +20,7 @@ func _ready() -> void:
 	_load_levels_config()
 
 func _load_levels_config() -> void:
-	var config_path := "res://GameModes/light_shadow_traveler/Config/Data/levels.json"
+	var config_path := LEVELS_CONFIG_PATH
 	if not FileAccess.file_exists(config_path):
 		push_error("[LevelManager] Levels config not found: " + config_path)
 		return
@@ -97,7 +100,7 @@ func get_total_fragments() -> int:
 	return total
 
 func get_chapters() -> Array:
-	var config_path := "res://GameModes/light_shadow_traveler/Config/Data/package_config.json"
+	var config_path := PACKAGE_CONFIG_PATH
 	if not FileAccess.file_exists(config_path):
 		return []
 	var file := FileAccess.open(config_path, FileAccess.READ)

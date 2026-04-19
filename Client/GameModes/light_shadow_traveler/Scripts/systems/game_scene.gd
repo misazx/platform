@@ -14,6 +14,10 @@ var environment: EnvironmentSystem
 var current_level_id := ""
 var current_chapter_id := ""
 var _nearby_light: MovableLightSource = null
+var race_manager: RaceModeManager
+var coop_manager: CoopModeManager
+var _game_mode := "solo"
+var _level_select: LevelSelect
 
 func _ready() -> void:
 	_setup_scene()
@@ -36,6 +40,21 @@ func _setup_scene() -> void:
 	add_child(hud)
 	environment = EnvironmentSystem.new()
 	add_child(environment)
+	race_manager = RaceModeManager.new()
+	add_child(race_manager)
+	race_manager.race_started.connect(_on_race_started)
+	race_manager.race_finished.connect(_on_race_finished)
+	race_manager.racer_finished.connect(_on_racer_finished)
+	race_manager.racer_checkpoint.connect(_on_racer_checkpoint)
+	race_manager.ghost_created.connect(_on_ghost_created)
+	coop_manager = CoopModeManager.new()
+	add_child(coop_manager)
+	coop_manager.coop_partner_died.connect(_on_coop_partner_died)
+	coop_manager.coop_partner_revived.connect(_on_coop_partner_revived)
+	coop_manager.coop_switch_activated.connect(_on_coop_switch_activated)
+	coop_manager.coop_puzzle_solved.connect(_on_coop_puzzle_solved)
+	coop_manager.coop_level_completed.connect(_on_coop_level_completed)
+	coop_manager.coop_state_synced.connect(_on_coop_state_synced)
 	bg_parallax = ParallaxBackground.new()
 	bg_parallax.name = "Background"
 	add_child(bg_parallax)
@@ -218,6 +237,27 @@ func _build_level(data: Dictionary) -> void:
 		goal.add_child(goal_glow)
 		goal.body_entered.connect(_on_goal_reached)
 		level_root.add_child(goal)
+	var shadow_zones: Array = data.get("shadowZones", []) as Array
+	for sz_data in shadow_zones:
+		var sz := ShadowZone.new()
+		sz.position = Vector2(sz_data.get("x", 0), sz_data.get("y", 0))
+		sz.zone_radius = sz_data.get("radius", 150.0)
+		sz.heal_rate = sz_data.get("healRate", 5.0)
+		sz.speed_boost = sz_data.get("speedBoost", 1.3)
+		sz.zone_entered.connect(_on_zone_entered)
+		sz.zone_exited.connect(_on_zone_exited)
+		level_root.add_child(sz)
+	var light_zones: Array = data.get("lightZones", []) as Array
+	for lz_data in light_zones:
+		var lz := LightZone.new()
+		lz.position = Vector2(lz_data.get("x", 0), lz_data.get("y", 0))
+		lz.zone_radius = lz_data.get("radius", 150.0)
+		lz.light_energy = lz_data.get("energy", 1.5)
+		lz.is_permanent = lz_data.get("permanent", true)
+		lz.damage_rate = lz_data.get("damageRate", 2.0)
+		lz.zone_entered.connect(_on_zone_entered)
+		lz.zone_exited.connect(_on_zone_exited)
+		level_root.add_child(lz)
 
 func _spawn_player(data: Dictionary) -> void:
 	player = PlayerCharacter.new()
@@ -477,3 +517,88 @@ func _find_nearby_pushable_light() -> MovableLightSource:
 				closest_dist = dist
 				closest = ml
 	return closest
+
+func start_race_mode(racer_ids: Array, local_id: String) -> void:
+	_game_mode = "race"
+	race_manager.initialize_race(racer_ids, local_id)
+	race_manager.start_race()
+
+func start_coop_mode(local_role: int) -> void:
+	_game_mode = "coop"
+	coop_manager.initialize_coop(local_role)
+
+func _on_race_started() -> void:
+	hud.show_tutorial("竞速开始！", 2.0)
+
+func _on_race_finished(results: Array) -> void:
+	var first: Dictionary = results[0] if results.size() > 0 else {}
+	var winner_name: String = first.get("name", "未知")
+	hud.show_tutorial("竞速结束！冠军: " + winner_name, 5.0)
+
+func _on_racer_finished(racer_id: String, finish_time: float, placement: int) -> void:
+	if racer_id == race_manager._local_racer_id:
+		hud.show_tutorial("你获得第" + str(placement) + "名！", 3.0)
+
+func _on_racer_checkpoint(racer_id: String, checkpoint_id: String) -> void:
+	if racer_id == race_manager._local_racer_id:
+		if is_instance_valid(player):
+			player.light_speed += RaceModeManager.CHECKPOINT_BOOST_SPEED
+			player.shadow_speed += RaceModeManager.CHECKPOINT_BOOST_SPEED
+			get_tree().create_timer(RaceModeManager.CHECKPOINT_BOOST_DURATION).timeout.connect(func():
+				if is_instance_valid(player):
+					player.light_speed -= RaceModeManager.CHECKPOINT_BOOST_SPEED
+					player.shadow_speed -= RaceModeManager.CHECKPOINT_BOOST_SPEED
+			)
+
+func _on_ghost_created(racer_id: String, ghost_node: Node2D) -> void:
+	level_root.add_child(ghost_node)
+
+func _on_coop_partner_died() -> void:
+	hud.show_tutorial("搭档已阵亡！靠近搭档加速复活", 3.0)
+
+func _on_coop_partner_revived() -> void:
+	hud.show_tutorial("搭档已复活！", 2.0)
+	if is_instance_valid(player):
+		player.heal(CoopModeManager.SHARED_HEAL_AMOUNT)
+
+func _on_coop_switch_activated(switch_id: String, activated_by: String) -> void:
+	_on_switch_activated(switch_id)
+
+func _on_coop_puzzle_solved(puzzle_id: String) -> void:
+	hud.show_tutorial("谜题已解决: " + puzzle_id, 2.0)
+
+func _on_coop_level_completed(level_id: String) -> void:
+	level_manager.complete_level()
+
+func _on_coop_state_synced(state: Dictionary) -> void:
+	pass
+
+func _on_zone_entered(zone_type: String) -> void:
+	if zone_type == "shadow":
+		if is_instance_valid(player) and player.is_shadow_form():
+			hud.show_tutorial("暗影区域 - 持续恢复生命", 1.5)
+	elif zone_type == "light":
+		if is_instance_valid(player) and player.is_shadow_form():
+			hud.show_tutorial("光明区域 - 影形态受伤！", 1.5)
+
+func _on_zone_exited(zone_type: String) -> void:
+	pass
+
+func show_level_select() -> void:
+	if _level_select and is_instance_valid(_level_select):
+		_level_select.visible = true
+		return
+	_level_select = LevelSelect.new()
+	_level_select.level_selected.connect(_on_level_selected)
+	_level_select.back_pressed.connect(_on_level_select_back)
+	_level_select.populate_levels(level_manager)
+	add_child(_level_select)
+
+func _on_level_selected(level_id: String) -> void:
+	if _level_select and is_instance_valid(_level_select):
+		_level_select.visible = false
+	_load_and_build_level(level_id)
+
+func _on_level_select_back() -> void:
+	if _level_select and is_instance_valid(_level_select):
+		_level_select.visible = false

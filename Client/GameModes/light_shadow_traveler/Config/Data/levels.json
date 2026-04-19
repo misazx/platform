@@ -85,7 +85,9 @@
           "endPos": {
             "x": 1700,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "ff_02",
@@ -175,7 +177,9 @@
           "endPos": {
             "x": 1650,
             "y": 250
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "ff_03",
@@ -258,7 +262,17 @@
           "endPos": {
             "x": 1750,
             "y": 350
-          }
+          },
+          "shadowZones": [
+            {
+              "x": 600,
+              "y": 460,
+              "radius": 120,
+              "healRate": 3.0,
+              "speedBoost": 1.2
+            }
+          ],
+          "lightZones": []
         },
         {
           "id": "ff_04",
@@ -352,7 +366,9 @@
           "endPos": {
             "x": 1400,
             "y": 250
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "ff_05",
@@ -435,7 +451,18 @@
           "endPos": {
             "x": 1550,
             "y": 250
-          }
+          },
+          "shadowZones": [],
+          "lightZones": [
+            {
+              "x": 800,
+              "y": 440,
+              "radius": 130,
+              "energy": 1.5,
+              "permanent": true,
+              "damageRate": 1.5
+            }
+          ]
         },
         {
           "id": "ff_06",
@@ -532,7 +559,9 @@
           "endPos": {
             "x": 1750,
             "y": 250
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "ff_07",
@@ -634,7 +663,26 @@
           "endPos": {
             "x": 1850,
             "y": 350
-          }
+          },
+          "shadowZones": [
+            {
+              "x": 400,
+              "y": 400,
+              "radius": 100,
+              "healRate": 4.0,
+              "speedBoost": 1.3
+            }
+          ],
+          "lightZones": [
+            {
+              "x": 900,
+              "y": 380,
+              "radius": 110,
+              "energy": 2.0,
+              "permanent": true,
+              "damageRate": 2.0
+            }
+          ]
         },
         {
           "id": "ff_08",
@@ -735,7 +783,9 @@
           "endPos": {
             "x": 1500,
             "y": 100
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "ff_09",
@@ -843,7 +893,17 @@
           "endPos": {
             "x": 1450,
             "y": 400
-          }
+          },
+          "shadowZones": [
+            {
+              "x": 300,
+              "y": 420,
+              "radius": 140,
+              "healRate": 5.0,
+              "speedBoost": 1.4
+            }
+          ],
+          "lightZones": []
         },
         {
           "id": "ff_10",
@@ -950,7 +1010,18 @@
           "endPos": {
             "x": 1500,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": [
+            {
+              "x": 700,
+              "y": 350,
+              "radius": 150,
+              "energy": 2.5,
+              "permanent": true,
+              "damageRate": 2.5
+            }
+          ]
         }
       ]
     },
@@ -1033,7 +1104,9 @@
           "endPos": {
             "x": 1500,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "fs_02",
@@ -1110,7 +1183,9 @@
           "endPos": {
             "x": 1300,
             "y": 300
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "fs_03",
@@ -1198,7 +1273,9 @@
           "endPos": {
             "x": 1250,
             "y": 350
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "fs_04",
@@ -1289,7 +1366,9 @@
           "endPos": {
             "x": 1450,
             "y": 350
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "fs_05",
@@ -1378,7 +1457,9 @@
           "endPos": {
             "x": 1400,
             "y": 350
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "fs_06",
@@ -1476,7 +1557,9 @@
           "endPos": {
             "x": 1400,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "fs_07",
@@ -1581,7 +1664,9 @@
           "endPos": {
             "x": 1250,
             "y": 300
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "fs_08",
@@ -1673,7 +1758,9 @@
           "endPos": {
             "x": 1650,
             "y": 300
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "fs_09",
@@ -1790,7 +1877,9 @@
           "endPos": {
             "x": 1550,
             "y": 300
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "fs_10",
@@ -1911,7 +2000,9 @@
           "endPos": {
             "x": 1500,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         }
       ]
     },
@@ -1986,7 +2077,9 @@
           "endPos": {
             "x": 1300,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sc_02",
@@ -2068,7 +2161,9 @@
           "endPos": {
             "x": 1450,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sc_03",
@@ -2140,7 +2235,9 @@
           "endPos": {
             "x": 1400,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sc_04",
@@ -2236,7 +2333,9 @@
           "endPos": {
             "x": 1300,
             "y": 350
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sc_05",
@@ -2321,7 +2420,9 @@
           "endPos": {
             "x": 1200,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sc_06",
@@ -2416,7 +2517,9 @@
           "endPos": {
             "x": 1550,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sc_07",
@@ -2505,7 +2608,9 @@
           "endPos": {
             "x": 1250,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sc_08",
@@ -2596,7 +2701,9 @@
           "endPos": {
             "x": 1450,
             "y": 360
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sc_09",
@@ -2706,7 +2813,9 @@
           "endPos": {
             "x": 1450,
             "y": 300
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sc_10",
@@ -2812,7 +2921,9 @@
           "endPos": {
             "x": 1400,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         }
       ]
     },
@@ -2909,7 +3020,9 @@
           "endPos": {
             "x": 900,
             "y": 180
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sl_02",
@@ -2990,7 +3103,26 @@
           "endPos": {
             "x": 1200,
             "y": 400
-          }
+          },
+          "shadowZones": [
+            {
+              "x": 400,
+              "y": 400,
+              "radius": 100,
+              "healRate": 4.0,
+              "speedBoost": 1.3
+            }
+          ],
+          "lightZones": [
+            {
+              "x": 900,
+              "y": 380,
+              "radius": 110,
+              "energy": 2.0,
+              "permanent": true,
+              "damageRate": 2.0
+            }
+          ]
         },
         {
           "id": "sl_03",
@@ -3091,7 +3223,9 @@
           "endPos": {
             "x": 1250,
             "y": 300
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sl_04",
@@ -3181,7 +3315,9 @@
           "endPos": {
             "x": 1250,
             "y": 300
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sl_05",
@@ -3274,7 +3410,17 @@
           "endPos": {
             "x": 1350,
             "y": 300
-          }
+          },
+          "shadowZones": [
+            {
+              "x": 300,
+              "y": 420,
+              "radius": 140,
+              "healRate": 5.0,
+              "speedBoost": 1.4
+            }
+          ],
+          "lightZones": []
         },
         {
           "id": "sl_06",
@@ -3398,7 +3544,9 @@
           "endPos": {
             "x": 1300,
             "y": 250
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sl_07",
@@ -3513,7 +3661,9 @@
           "endPos": {
             "x": 1350,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sl_08",
@@ -3618,7 +3768,9 @@
           "endPos": {
             "x": 500,
             "y": 650
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sl_09",
@@ -3747,7 +3899,9 @@
           "endPos": {
             "x": 1300,
             "y": 300
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "sl_10",
@@ -3870,7 +4024,9 @@
           "endPos": {
             "x": 1400,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         }
       ]
     },
@@ -3994,7 +4150,9 @@
           "endPos": {
             "x": 1200,
             "y": 250
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "lt_02",
@@ -4091,7 +4249,9 @@
           "endPos": {
             "x": 1300,
             "y": 200
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "lt_03",
@@ -4186,7 +4346,9 @@
           "endPos": {
             "x": 1650,
             "y": 300
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "lt_04",
@@ -4325,7 +4487,9 @@
           "endPos": {
             "x": 1350,
             "y": 300
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "lt_05",
@@ -4450,7 +4614,9 @@
           "endPos": {
             "x": 500,
             "y": 70
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "lt_06",
@@ -4561,7 +4727,9 @@
           "endPos": {
             "x": 500,
             "y": 150
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "lt_07",
@@ -4690,7 +4858,9 @@
           "endPos": {
             "x": 1450,
             "y": 240
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "lt_08",
@@ -4832,7 +5002,9 @@
           "endPos": {
             "x": 1350,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "lt_09",
@@ -4994,7 +5166,9 @@
           "endPos": {
             "x": 1350,
             "y": 250
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         },
         {
           "id": "lt_10",
@@ -5148,7 +5322,9 @@
           "endPos": {
             "x": 1550,
             "y": 400
-          }
+          },
+          "shadowZones": [],
+          "lightZones": []
         }
       ]
     }

@@ -11,7 +11,9 @@ signal zone_exited(zone_type: String)
 var _dark_light: PointLight2D
 var _collision: CollisionShape2D
 var _pulse_time := 0.0
+var _heal_timer := 0.0
 var _bodies_in_zone: Array[Node2D] = []
+var _boosted_players: Dictionary = {}
 
 func _ready() -> void:
 	_setup_zone()
@@ -50,18 +52,36 @@ func _process(delta: float) -> void:
 	_pulse_time += delta * 0.8
 	if _dark_light:
 		_dark_light.energy = -1.0 + sin(_pulse_time) * 0.2
+	_heal_timer += delta
+	var can_heal: bool = _heal_timer >= 1.0 / heal_rate
+	if can_heal:
+		_heal_timer = 0.0
 	for body in _bodies_in_zone:
 		if body is PlayerCharacter and body.is_shadow_form():
-			body.heal(1) 
-			if Engine.get_frames_drawn() % 60 != 0 :
-				pass
+			if can_heal:
+				body.heal(1)
 
 func _on_body_entered(body: Node2D) -> void:
 	if body is PlayerCharacter:
 		_bodies_in_zone.append(body)
 		zone_entered.emit("shadow")
+		if body.is_shadow_form():
+			_apply_speed_boost(body, true)
 
 func _on_body_exited(body: Node2D) -> void:
 	_bodies_in_zone.erase(body)
 	if body is PlayerCharacter:
 		zone_exited.emit("shadow")
+		_apply_speed_boost(body, false)
+
+func _apply_speed_boost(body: PlayerCharacter, activate: bool) -> void:
+	if activate:
+		if not _boosted_players.has(body):
+			_boosted_players[body] = true
+			body.light_speed *= speed_boost
+			body.shadow_speed *= speed_boost
+	else:
+		if _boosted_players.has(body):
+			_boosted_players.erase(body)
+			body.light_speed /= speed_boost
+			body.shadow_speed /= speed_boost

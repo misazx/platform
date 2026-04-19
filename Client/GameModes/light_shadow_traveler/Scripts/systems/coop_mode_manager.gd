@@ -34,7 +34,7 @@ var _revive_timer: float = 0.0
 var _is_reviving: bool = false
 
 func _ready() -> void:
-	pass
+	set_process(false)
 
 func _process(delta: float) -> void:
 	if not _is_active: return
@@ -146,6 +146,7 @@ func on_partner_died() -> void:
 
 func on_local_died() -> void:
 	_local_alive = false
+	coop_partner_died.emit()
 
 func on_local_near_partner() -> void:
 	if not _partner_alive and _is_reviving:
