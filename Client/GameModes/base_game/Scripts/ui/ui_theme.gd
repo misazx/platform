@@ -87,13 +87,13 @@ static func make_small_button(text: String, icon_name: String = "", min_size: Ve
 		btn.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		btn.expand_icon = true
 	btn.text = text
-	var normal_style: StyleBoxTexture = _make_stylebox("btn_sq26_s1_normal", 6, 6, 6, 6, 4, 4, 4, 4)
+	var normal_style: StyleBoxTexture = _make_stylebox("btn_sq_s1_normal", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("normal", normal_style)
-	var hover_style: StyleBoxTexture = _make_stylebox("btn_sq26_s1_hover", 6, 6, 6, 6, 4, 4, 4, 4)
+	var hover_style: StyleBoxTexture = _make_stylebox("btn_sq_s1_hover", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("hover", hover_style)
-	var pressed_style: StyleBoxTexture = _make_stylebox("btn_sq26_s1_pressed", 6, 6, 6, 6, 4, 4, 4, 4)
+	var pressed_style: StyleBoxTexture = _make_stylebox("btn_sq_s1_pressed", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("pressed", pressed_style)
-	var disabled_style: StyleBoxTexture = _make_stylebox("btn_sq26_s1_disabled", 6, 6, 6, 6, 4, 4, 4, 4)
+	var disabled_style: StyleBoxTexture = _make_stylebox("btn_sq_s1_disabled", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("disabled", disabled_style)
 	btn.add_theme_color_override("font_color", Color(0.95, 0.9, 0.8))
 	btn.add_theme_color_override("font_hover_color", Color(1, 1, 1))

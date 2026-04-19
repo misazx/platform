@@ -3,6 +3,10 @@ extends AnimatableBody2D
 
 enum MoveType { HORIZONTAL, VERTICAL, CIRCULAR, PATH }
 
+const NORMAL_PLAT_PATH: String = "res://GameModes/light_shadow_traveler/Resources/Platforms/normal_platform.png"
+const LIGHT_PLAT_PATH: String = "res://GameModes/light_shadow_traveler/Resources/Platforms/light_platform.png"
+const SHADOW_PLAT_PATH: String = "res://GameModes/light_shadow_traveler/Resources/Platforms/shadow_platform.png"
+
 @export var move_type: MoveType = MoveType.HORIZONTAL
 @export var move_range := 200.0
 @export var move_speed := 80.0
@@ -18,40 +22,77 @@ var move_timer := 0.0
 var pause_timer := 0.0
 var move_direction := 1.0
 var is_pausing := false
+var _is_setup := false
+
 var collision_shape: CollisionShape2D
 var visual: ColorRect
+var plat_visual: TextureRect
 
 func _ready() -> void:
 	start_position = global_position
-	_setup_platform()
+	if not _is_setup:
+		_setup_platform()
 
 func set_active(active: bool) -> void:
 	if collision_shape:
 		collision_shape.disabled = not active
-	if visual:
+	if plat_visual and is_instance_valid(plat_visual):
+		plat_visual.visible = active
+		plat_visual.modulate.a = 1.0 if active else 0.3
+	if visual and visual.visible:
 		visual.visible = active
-		visual.color = Color(0.7, 0.8, 0.7, 0.9) if active else Color(0.3, 0.3, 0.3, 0.3)
 	set_physics_process(active)
 
 func _setup_platform() -> void:
-	collision_shape = CollisionShape2D.new()
-	collision_shape.name = "CollisionShape2D"
+	_is_setup = true
+	_clear_old_visuals()
 	var shape := RectangleShape2D.new()
 	shape.size = Vector2(platform_width, platform_height)
+	if collision_shape == null:
+		collision_shape = CollisionShape2D.new()
+		collision_shape.name = "CollisionShape2D"
+		add_child(collision_shape)
 	collision_shape.shape = shape
-	add_child(collision_shape)
-	visual = ColorRect.new()
-	visual.name = "Visual"
+	if visual == null:
+		visual = ColorRect.new()
+		visual.name = "Visual"
+		add_child(visual)
 	visual.size = Vector2(platform_width, platform_height)
-	visual.position = Vector2(-platform_width / 2, -platform_height / 2)
+	visual.position = Vector2(-platform_width / 2.0, -platform_height / 2.0)
 	visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(visual)
+	var plat_path: String = NORMAL_PLAT_PATH
+	var plat_color: Color = Color(0.5, 0.5, 0.5, 1.0)
 	if is_light_platform:
-		visual.color = Color(1.0, 0.95, 0.7, 0.9)
+		plat_path = LIGHT_PLAT_PATH
+		plat_color = Color(1.0, 0.95, 0.7, 0.9)
 	elif is_shadow_platform:
-		visual.color = Color(0.3, 0.35, 0.6, 0.85)
+		plat_path = SHADOW_PLAT_PATH
+		plat_color = Color(0.3, 0.35, 0.6, 0.85)
+	if ResourceLoader.exists(plat_path):
+		var tex: Texture2D = load(plat_path) as Texture2D
+		if tex:
+			plat_visual = TextureRect.new()
+			plat_visual.name = "PlatformSprite"
+			plat_visual.texture = tex
+			plat_visual.stretch_mode = TextureRect.STRETCH_TILE
+			plat_visual.size = Vector2(platform_width, platform_height)
+			plat_visual.position = Vector2(-platform_width / 2.0, -platform_height / 2.0)
+			plat_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			plat_visual.texture_repeat = CanvasItem.TEXTURE_REPEAT_MIRROR
+			add_child(plat_visual)
+			visual.visible = false
+		else:
+			visual.color = plat_color
+			visual.visible = true
 	else:
-		visual.color = Color(0.5, 0.5, 0.5, 1.0)
+		visual.color = plat_color
+		visual.visible = true
+
+func _clear_old_visuals() -> void:
+	for child in get_children():
+		if child is TextureRect and child.name == "PlatformSprite":
+			child.queue_free()
+			break
 
 func _physics_process(delta: float) -> void:
 	if is_pausing:
@@ -88,11 +129,11 @@ func _physics_process(delta: float) -> void:
 func setup_from_data(data: Dictionary) -> void:
 	position = Vector2(data.get("x", 0), data.get("y", 0))
 	start_position = position
-	platform_width = data.get("w", 120)
-	platform_height = data.get("h", 20)
-	move_speed = data.get("speed", 80)
-	move_range = data.get("range", 200)
-	pause_time = data.get("pause", 1.0)
+	platform_width = float(data.get("w", 120))
+	platform_height = float(data.get("h", 20))
+	move_speed = float(data.get("speed", 80))
+	move_range = float(data.get("range", 200))
+	pause_time = float(data.get("pause", 1.0))
 	var type_str: String = data.get("moveType", "horizontal")
 	match type_str:
 		"vertical":

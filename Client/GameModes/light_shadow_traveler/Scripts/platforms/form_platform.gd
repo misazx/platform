@@ -3,6 +3,10 @@ extends AnimatableBody2D
 
 enum PlatformType { NORMAL, LIGHT, SHADOW, SHADOW_WALL }
 
+const NORMAL_PLAT_PATH: String = "res://GameModes/light_shadow_traveler/Resources/Platforms/normal_platform.png"
+const LIGHT_PLAT_PATH: String = "res://GameModes/light_shadow_traveler/Resources/Platforms/light_platform.png"
+const SHADOW_PLAT_PATH: String = "res://GameModes/light_shadow_traveler/Resources/Platforms/shadow_platform.png"
+
 @export var platform_type: PlatformType = PlatformType.NORMAL
 @export var platform_width := 200.0
 @export var platform_height := 40.0
@@ -13,61 +17,79 @@ var _original_color: Color
 var _inactive_color := Color(0.3, 0.3, 0.3, 0.3)
 var _light_glow_tex: Texture2D
 var _shadow_glow_tex: Texture2D
+var _is_setup := false
 
 var collision_shape: CollisionShape2D
 var visual: ColorRect
+var plat_visual: TextureRect
 var glow: PointLight2D
 
 func _ready() -> void:
-	_setup_platform()
+	if not _is_setup:
+		_setup_platform()
 	_update_visuals()
 
 func _setup_platform() -> void:
-	if not collision_shape:
+	_is_setup = true
+	_clear_old_visuals()
+	var shape := RectangleShape2D.new()
+	shape.size = Vector2(platform_width, platform_height)
+	if collision_shape == null:
 		collision_shape = CollisionShape2D.new()
 		collision_shape.name = "CollisionShape2D"
 		add_child(collision_shape)
-	var shape := RectangleShape2D.new()
-	shape.size = Vector2(platform_width, platform_height)
 	collision_shape.shape = shape
 	collision_shape.one_way_collision = false
-	if not visual:
+	if visual == null:
 		visual = ColorRect.new()
 		visual.name = "Visual"
 		add_child(visual)
 	visual.size = Vector2(platform_width, platform_height)
-	visual.position = Vector2(-platform_width / 2, -platform_height / 2)
+	visual.position = Vector2(-platform_width / 2.0, -platform_height / 2.0)
 	visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var plat_path: String = ""
 	match platform_type:
 		PlatformType.NORMAL:
 			_original_color = Color(0.5, 0.5, 0.5, 1.0)
-			plat_path = "res://GameModes/light_shadow_traveler/Resources/Platforms/normal_platform.png"
+			plat_path = NORMAL_PLAT_PATH
 		PlatformType.LIGHT:
 			_original_color = Color(1.0, 0.95, 0.7, 0.9)
-			plat_path = "res://GameModes/light_shadow_traveler/Resources/Platforms/light_platform.png"
+			plat_path = LIGHT_PLAT_PATH
 		PlatformType.SHADOW:
 			_original_color = Color(0.3, 0.35, 0.6, 0.85)
-			plat_path = "res://GameModes/light_shadow_traveler/Resources/Platforms/shadow_platform.png"
+			plat_path = SHADOW_PLAT_PATH
 		PlatformType.SHADOW_WALL:
 			_original_color = Color(0.25, 0.28, 0.5, 0.9)
-			plat_path = "res://GameModes/light_shadow_traveler/Resources/Platforms/shadow_platform.png"
+			plat_path = SHADOW_PLAT_PATH
 	if plat_path != "" and ResourceLoader.exists(plat_path):
 		var tex: Texture2D = load(plat_path) as Texture2D
 		if tex:
-			var plat_visual := TextureRect.new()
+			plat_visual = TextureRect.new()
 			plat_visual.name = "PlatformSprite"
 			plat_visual.texture = tex
-			plat_visual.stretch_mode = TextureRect.STRETCH_SCALE
+			plat_visual.stretch_mode = TextureRect.STRETCH_TILE
 			plat_visual.size = Vector2(platform_width, platform_height)
-			plat_visual.position = Vector2(-platform_width / 2, -platform_height / 2)
+			plat_visual.position = Vector2(-platform_width / 2.0, -platform_height / 2.0)
 			plat_visual.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			plat_visual.texture_repeat = CanvasItem.TEXTURE_REPEAT_MIRROR
 			add_child(plat_visual)
 			visual.visible = false
-	if not glow:
+		else:
+			visual.color = _original_color
+			visual.visible = true
+	else:
+		visual.color = _original_color
+		visual.visible = true
+	if glow == null:
 		glow = PointLight2D.new()
 		glow.name = "PlatformGlow"
 		add_child(glow)
+
+func _clear_old_visuals() -> void:
+	for child in get_children():
+		if child is TextureRect and child.name == "PlatformSprite":
+			child.queue_free()
+			break
 
 func _process(_delta: float) -> void:
 	_update_activity()
@@ -89,12 +111,7 @@ func _update_activity() -> void:
 	collision_shape.disabled = not is_active
 
 func _update_visuals() -> void:
-	var plat_visual: TextureRect = null
-	for child in get_children():
-		if child is TextureRect and child.name == "PlatformSprite":
-			plat_visual = child as TextureRect
-			break
-	if plat_visual:
+	if plat_visual and is_instance_valid(plat_visual):
 		plat_visual.visible = is_active
 		plat_visual.modulate.a = 1.0 if is_active else 0.3
 	if visual and visual.visible:
@@ -131,7 +148,7 @@ func _make_glow_tex(color: Color) -> Texture2D:
 	img.fill(Color(0, 0, 0, 0))
 	for dy in range(-24, 24):
 		for dx in range(-24, 24):
-			var dist := sqrt(dx * dx + dy * dy) / 24.0
+			var dist: float = sqrt(dx * dx + dy * dy) / 24.0
 			if dist < 1.0:
 				img.set_pixel(24 + dx, 24 + dy, Color(color.r, color.g, color.b, (1.0 - dist) * 0.4))
 	return ImageTexture.create_from_image(img)
@@ -153,8 +170,8 @@ func set_active(active: bool) -> void:
 
 func setup_from_data(data: Dictionary) -> void:
 	position = Vector2(data.get("x", 0), data.get("y", 0))
-	platform_width = data.get("w", 200)
-	platform_height = data.get("h", 40)
+	platform_width = float(data.get("w", 200))
+	platform_height = float(data.get("h", 40))
 	var type_str: String = data.get("type", "normal")
 	match type_str:
 		"light":
