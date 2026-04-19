@@ -344,7 +344,6 @@ func _create_bottom_buttons() -> void:
 
 func _connect_signals() -> void:
 	_detect_multiplayer_mode()
-	_initialize_combat_system()
 	_connect_bridge_signals()
 
 func _detect_multiplayer_mode() -> void:

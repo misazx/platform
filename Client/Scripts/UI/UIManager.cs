@@ -54,7 +54,6 @@ namespace RoguelikeGame.UI
         {
             _mainMenu = LoadUIScreen("MainMenu");
             _characterSelect = LoadUIScreen("CharacterSelect");
-            _combatUI = LoadUIScreen("CombatScene");
             _mapView = LoadUIScreen("MapScene");
             _eventPanel = LoadUIScreen("EventPanel");
             _shopPanel = LoadUIScreen("ShopPanel");
@@ -151,8 +150,8 @@ namespace RoguelikeGame.UI
         {
             "MainMenu" => _mainMenu,
             "CharacterSelect" => _characterSelect,
-            "CombatScene" => _combatUI,
-            "CombatHUD" => _combatUI,
+            "CombatScene" => _combatUI ??= LoadUIScreen("CombatScene"),
+            "CombatHUD" => _combatUI ??= LoadUIScreen("CombatScene"),
             "MapScene" => _mapView,
             "MapView" => _mapView,
             "EventPanel" => _eventPanel,

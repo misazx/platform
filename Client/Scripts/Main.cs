@@ -19,6 +19,7 @@ namespace RoguelikeGame
         private Control _currentSceneContainer;
         private Node _currentScene;
         private Control _settingsPanel;
+        private string _lastClickedEnemyId = "";
         private bool _combatActive = false;
         private Generation.NodeType _lastClickedNodeType = Generation.NodeType.Monster;
         private int _lastClickedNodeId = -1;
@@ -576,13 +577,86 @@ namespace RoguelikeGame
             ClearCurrentScene();
             _combatActive = true;
 
+            if (!string.IsNullOrEmpty(enemyId))
+            {
+                _lastClickedEnemyId = enemyId;
+            }
+
             var combatScene = LoadScene("res://GameModes/base_game/Scenes/CombatScene.tscn");
             if (combatScene != null)
             {
                 _currentScene = combatScene;
                 _currentSceneContainer.AddChild(combatScene);
-                GD.Print("[Main] Combat scene loaded - GDScript will handle initialization");
+                _connectSceneSignals(combatScene, "combat_won", OnCombatWon);
+                _connectSceneSignals(combatScene, "combat_lost", OnCombatLost);
+
+                CallDeferred(nameof(_startCombatInScene), enemyId);
+                GD.Print("[Main] Combat scene loaded, will initialize combat system");
             }
+        }
+
+        private void _startCombatInScene(string enemyId)
+        {
+            if (_currentScene == null) return;
+            var combatHud = _findNodeRecursive(_currentScene, "CombatHUD") as Node;
+            if (combatHud != null && combatHud.HasMethod("start_combat"))
+            {
+                combatHud.Call("start_combat", enemyId);
+                GD.Print($"[Main] Called start_combat('{enemyId}') on CombatHUD");
+            }
+            else
+            {
+                GD.PrintErr("[Main] Could not find CombatHUD node with start_combat method");
+            }
+        }
+
+        private Node _findNodeRecursive(Node parent, string name)
+        {
+            if (parent.Name == name) return parent;
+            for (int i = 0; i < parent.GetChildCount(); i++)
+            {
+                var found = _findNodeRecursive(parent.GetChild(i), name);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        private void _connectSceneSignals(Node scene, string signalName, Action callback)
+        {
+            if (scene.HasSignal(signalName))
+            {
+                scene.Connect(signalName, Callable.From(callback));
+                GD.Print($"[Main] Connected {signalName} on root {scene.Name}");
+                return;
+            }
+            for (int i = 0; i < scene.GetChildCount(); i++)
+            {
+                var child = scene.GetChild(i);
+                if (child.HasSignal(signalName))
+                {
+                    child.Connect(signalName, Callable.From(callback));
+                    GD.Print($"[Main] Connected {signalName} on child {child.Name}");
+                    return;
+                }
+            }
+            GD.Print($"[Main] Signal {signalName} not found in {scene.Name}");
+        }
+
+        public void SetLastClickedEnemyId(string enemyId) => _lastClickedEnemyId = enemyId;
+        public string GetLastClickedEnemyId() => _lastClickedEnemyId;
+
+        private void OnCombatWon()
+        {
+            GD.Print("[Main] Combat Won!");
+            _combatActive = false;
+            GoToMap();
+        }
+
+        private void OnCombatLost()
+        {
+            GD.Print("[Main] Combat Lost!");
+            _combatActive = false;
+            GoToLobby();
         }
 
         public void GoToShop()
