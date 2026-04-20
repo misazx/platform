@@ -38,6 +38,9 @@ namespace RoguelikeGame.Server.Models
         public RoomStatus Status { get; set; } = RoomStatus.Waiting;
         public GameMode Mode { get; set; } = GameMode.PvP;
 
+        [MaxLength(100)]
+        public string? GameModeId { get; set; }
+
         public int MaxPlayers { get; set; } = 4;
         public int CurrentPlayers { get; set; } = 0;
 

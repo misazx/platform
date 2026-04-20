@@ -46,7 +46,8 @@ namespace RoguelikeGame.Server.Controllers
                     request.Name,
                     request.Mode,
                     request.MaxPlayers,
-                    request.Password
+                    request.Password,
+                    request.GameModeId
                 );
 
                 _logger.LogInformation("房间已创建: {RoomId} by {UserId}", room.Id, userId);
@@ -100,6 +101,7 @@ namespace RoguelikeGame.Server.Controllers
                         hostName = userNames.GetValueOrDefault(hostUserId, ""),
                         room.Status,
                         room.Mode,
+                        room.GameModeId,
                         room.MaxPlayers,
                         room.CurrentPlayers,
                         room.HasPassword,
@@ -173,6 +175,7 @@ namespace RoguelikeGame.Server.Controllers
                     hostName = userNames.GetValueOrDefault(r.HostId, ""),
                     r.Status,
                     r.Mode,
+                    r.GameModeId,
                     r.MaxPlayers,
                     r.CurrentPlayers,
                     r.HasPassword,
@@ -231,6 +234,7 @@ namespace RoguelikeGame.Server.Controllers
                 hostName = userNames.GetValueOrDefault(room.HostId, ""),
                 room.Status,
                 room.Mode,
+                room.GameModeId,
                 room.MaxPlayers,
                 room.CurrentPlayers,
                 room.HasPassword,
@@ -315,7 +319,8 @@ namespace RoguelikeGame.Server.Controllers
                 var botDiff = Enum.TryParse<Shared.Bots.BotDifficulty>(botPlayer.BotDifficulty, true, out var diff) ? diff : Shared.Bots.BotDifficulty.Normal;
                 var room = await _roomService.GetRoomByIdAsync(roomId);
                 var playerIndex = room?.Players.Count(p => !p.IsBot) ?? 0;
-                _botGameService.RegisterRoomBot(roomId, botPlayer.UserId, botPlayer.BotName ?? "Bot", botDiff, playerIndex);
+
+                _botGameService.RegisterRoomBot(roomId, botPlayer.UserId, botPlayer.BotName ?? "Bot", botDiff, playerIndex, room?.GameModeId ?? "", room?.Mode ?? GameMode.PvP);
 
                 return Ok(new
                 {
@@ -376,6 +381,9 @@ namespace RoguelikeGame.Server.Controllers
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public GameMode Mode { get; set; } = GameMode.PvP;
+
+        [MaxLength(100)]
+        public string? GameModeId { get; set; }
 
         [Range(2, 4)]
         public int MaxPlayers { get; set; } = 4;

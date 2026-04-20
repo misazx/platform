@@ -166,7 +166,7 @@ namespace RoguelikeGame.Network.Rooms
 			return request;
 		}
 
-		public async Task<RoomResult> CreateRoomAsync(string name, GameMode mode = GameMode.PvP, int maxPlayers = 4, string? password = null)
+		public async Task<RoomResult> CreateRoomAsync(string name, GameMode mode = GameMode.PvP, int maxPlayers = 4, string? password = null, string? gameModeId = null)
 		{
 			try
 			{
@@ -174,6 +174,7 @@ namespace RoguelikeGame.Network.Rooms
 				{
 					name,
 					mode = mode.ToString(),
+					gameModeId = gameModeId ?? "",
 					maxPlayers,
 					password = password ?? ""
 				};

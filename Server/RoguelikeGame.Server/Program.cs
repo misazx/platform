@@ -130,6 +130,7 @@ builder.Services.AddHostedService<RoomCleanupService>();
             var columns = new (string Table, string Column, string Definition)[]
             {
                 ("Rooms", "Seed", "TEXT NULL"),
+                ("Rooms", "GameModeId", "TEXT NULL"),
                 ("RoomPlayers", "IsBot", "INTEGER NOT NULL DEFAULT 0"),
                 ("RoomPlayers", "BotName", "TEXT NULL"),
                 ("RoomPlayers", "BotDifficulty", "TEXT NULL"),

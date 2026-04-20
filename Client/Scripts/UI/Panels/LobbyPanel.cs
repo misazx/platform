@@ -35,6 +35,8 @@ namespace RoguelikeGame.UI.Panels
 		public event Action OnLeave;
 		public event Action OnRoomCreatedAndJoined;
 
+		public string GameModeId { get; set; } = "";
+
 		private List<RoomInfo> _displayedRooms = new List<RoomInfo>();
 
 		public override void _Ready()
@@ -419,7 +421,7 @@ namespace RoguelikeGame.UI.Panels
 
 			_createRoomButton.Disabled = true;
 
-			var result = await RoomManager.Instance.CreateRoomAsync(name, mode, maxPlayers);
+			var result = await RoomManager.Instance.CreateRoomAsync(name, mode, maxPlayers, null, GameModeId);
 
 			if (result.Success)
 			{

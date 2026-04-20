@@ -341,6 +341,7 @@ namespace RoguelikeGame
 
             var lobbyPanel = new LobbyPanel();
             lobbyPanel.Name = "LobbyPanel";
+            lobbyPanel.GameModeId = packageId;
             AddChild(lobbyPanel);
 
             lobbyPanel.OnBackToMenu += () =>

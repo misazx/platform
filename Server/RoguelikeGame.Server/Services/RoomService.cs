@@ -10,7 +10,7 @@ namespace RoguelikeGame.Server.Services
 {
     public interface IRoomService
     {
-        Task<Room> CreateRoomAsync(string hostId, string name, GameMode mode, int maxPlayers = 4, string? password = null);
+        Task<Room> CreateRoomAsync(string hostId, string name, GameMode mode, int maxPlayers = 4, string? password = null, string? gameModeId = null);
         Task<(bool Success, Room? Room, string Message)> JoinRoomAsync(string roomId, string userId, string? password = null);
         Task<bool> LeaveRoomAsync(string roomId, string userId);
         Task<List<Room>> GetPublicRoomsAsync(int page = 1, int pageSize = 20);
@@ -32,7 +32,7 @@ namespace RoguelikeGame.Server.Services
             _context = context;
         }
 
-        public async Task<Room> CreateRoomAsync(string hostId, string name, GameMode mode, int maxPlayers = 4, string? password = null)
+        public async Task<Room> CreateRoomAsync(string hostId, string name, GameMode mode, int maxPlayers = 4, string? password = null, string? gameModeId = null)
         {
             var hostExists = await _context.Users.AnyAsync(u => u.Id == hostId);
             if (!hostExists)
@@ -45,6 +45,7 @@ namespace RoguelikeGame.Server.Services
                 Name = name,
                 HostId = hostId,
                 Mode = mode,
+                GameModeId = gameModeId,
                 MaxPlayers = maxPlayers,
                 HasPassword = !string.IsNullOrEmpty(password),
                 PasswordHash = password != null ? BCrypt.Net.BCrypt.HashPassword(password) : null,

@@ -39,6 +39,7 @@ namespace RoguelikeGame.Network.Realtime
         public event Action<string> OnCoopPuzzleSolved;
         public event Action<string> OnCoopPlayerDied;
         public event Action OnCoopPlayerRevived;
+        public event Action<string> OnLightShadowBotAction;
 
         public override void _Ready()
         {
@@ -411,6 +412,18 @@ namespace RoguelikeGame.Network.Realtime
             _hubConnection.On("CoopPlayerRevived", () =>
             {
                 OnCoopPlayerRevived?.Invoke();
+            });
+
+            _hubConnection.On<JsonElement>("LightShadowBotAction", (data) =>
+            {
+                try
+                {
+                    OnLightShadowBotAction?.Invoke(data.GetRawText());
+                }
+                catch (Exception ex)
+                {
+                    GD.PrintErr($"[GameHubClient] LightShadowBotAction 解析失败: {ex.Message}");
+                }
             });
         }
 
