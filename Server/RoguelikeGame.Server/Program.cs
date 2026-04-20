@@ -142,9 +142,13 @@ builder.Services.AddHostedService<RoomCleanupService>();
             {
                 try
                 {
-                    var checkSql = $"SELECT COUNT(*) FROM pragma_table_info('{table}') WHERE name='{column}'";
-                    var exists = context.Database.SqlQueryRaw<int>(checkSql).FirstOrDefault() > 0;
-                    if (exists)
+                    var connection = context.Database.GetDbConnection();
+                    connection.Open();
+                    using var cmd = connection.CreateCommand();
+                    cmd.CommandText = $"SELECT COUNT(*) FROM pragma_table_info('{table}') WHERE name='{column}'";
+                    var count = Convert.ToInt32(cmd.ExecuteScalar());
+                    connection.Close();
+                    if (count > 0)
                     {
                         Log.Debug("Schema migration skipped {Table}.{Column}: already exists", table, column);
                         continue;
