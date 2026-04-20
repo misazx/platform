@@ -278,6 +278,15 @@ namespace RoguelikeGame.Network.Auth
 				if (!response.IsSuccessStatusCode)
 				{
 					GD.PrintErr($"[AuthSystem] 获取用户信息失败: HTTP {response.StatusCode}");
+
+					if (response.StatusCode == System.Net.HttpStatusCode.NotFound ||
+						response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+					{
+						GD.Print("[AuthSystem] 用户不存在或Token无效，清除本地会话");
+						ClearSession();
+						EmitSignal(SignalName.SessionExpired);
+					}
+
 					return null;
 				}
 
@@ -313,7 +322,17 @@ namespace RoguelikeGame.Network.Auth
 			if (!IsAuthenticated) return false;
 
 			var userInfo = await GetCurrentUserAsync();
-			return userInfo != null;
+			if (userInfo == null)
+			{
+				if (IsAuthenticated)
+				{
+					GD.Print("[AuthSystem] Token验证失败，清除本地会话");
+					ClearSession();
+					EmitSignal(SignalName.SessionExpired);
+				}
+				return false;
+			}
+			return true;
 		}
 
 		public void PerformLogout()
