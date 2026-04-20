@@ -23,6 +23,8 @@ namespace RoguelikeGame.UI.Panels
         private Button _leaveButton;
         private Timer _refreshTimer;
         private bool _isReady;
+        private bool _refreshPending;
+        private double _refreshDebounceTime;
 
         public event Action OnLeaveRoom;
         public event Action OnGameStarted;
@@ -283,6 +285,13 @@ namespace RoguelikeGame.UI.Panels
 
         private async void RefreshRoomInfo()
         {
+            _refreshPending = true;
+            _refreshDebounceTime = 0.3;
+        }
+
+        private async void DoRefreshRoomInfo()
+        {
+            _refreshPending = false;
             var room = RoomManager.Instance?.CurrentRoom;
             if (room == null) return;
 
@@ -297,6 +306,18 @@ namespace RoguelikeGame.UI.Panels
             catch (Exception ex)
             {
                 GD.PrintErr($"[RoomPanel] 刷新房间信息失败: {ex.Message}");
+            }
+        }
+
+        public override void _Process(double delta)
+        {
+            if (_refreshPending)
+            {
+                _refreshDebounceTime -= delta;
+                if (_refreshDebounceTime <= 0)
+                {
+                    DoRefreshRoomInfo();
+                }
             }
         }
 
@@ -428,7 +449,6 @@ namespace RoguelikeGame.UI.Panels
             {
                 AddSystemMessage($"❌ 移除机器人失败: {result.Message}");
             }
-            RefreshRoomInfo();
         }
 
         private void UpdateButtonStates(RoomInfo room)
@@ -478,7 +498,6 @@ namespace RoguelikeGame.UI.Panels
             finally
             {
                 _readyButton.Disabled = false;
-                RefreshRoomInfo();
             }
         }
 
@@ -535,7 +554,6 @@ namespace RoguelikeGame.UI.Panels
             finally
             {
                 _addBotButton.Disabled = false;
-                RefreshRoomInfo();
             }
         }
 

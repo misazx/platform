@@ -173,13 +173,12 @@ namespace RoguelikeGame.Network.Realtime
 
         private void RegisterHandlers()
         {
-            _hubConnection.On<string>("PlayerJoinedRoom", (json) =>
+            _hubConnection.On<JsonElement>("PlayerJoinedRoom", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string playerId = ExtractString(doc, "playerId");
-                    string playerName = ExtractString(doc, "playerName");
+                    string playerId = ExtractString(data, "playerId");
+                    string playerName = ExtractString(data, "playerName");
                     GD.Print($"[GameHubClient] 玩家加入: {playerName}");
                     OnPlayerJoinedRoom?.Invoke(playerId, playerName);
                 }
@@ -189,13 +188,12 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("PlayerLeftRoom", (json) =>
+            _hubConnection.On<JsonElement>("PlayerLeftRoom", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string playerId = ExtractString(doc, "playerId");
-                    string playerName = ExtractString(doc, "playerName");
+                    string playerId = ExtractString(data, "playerId");
+                    string playerName = ExtractString(data, "playerName");
                     GD.Print($"[GameHubClient] 玩家离开: {playerName}");
                     OnPlayerLeftRoom?.Invoke(playerId, playerName);
                 }
@@ -205,14 +203,13 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("RoomChatMessage", (json) =>
+            _hubConnection.On<JsonElement>("RoomChatMessage", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string senderId = ExtractString(doc, "senderId");
-                    string senderName = ExtractString(doc, "senderName");
-                    string message = ExtractString(doc, "message");
+                    string senderId = ExtractString(data, "senderId");
+                    string senderName = ExtractString(data, "senderName");
+                    string message = ExtractString(data, "message");
                     OnRoomChatMessage?.Invoke(senderId, senderName, message);
                 }
                 catch (Exception ex)
@@ -221,13 +218,12 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("PlayerReadyChanged", (json) =>
+            _hubConnection.On<JsonElement>("PlayerReadyChanged", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string playerId = ExtractString(doc, "playerId");
-                    bool isReady = ExtractBool(doc, "isReady");
+                    string playerId = ExtractString(data, "playerId");
+                    bool isReady = ExtractBool(data, "isReady");
                     OnPlayerReadyChanged?.Invoke(playerId, isReady);
                 }
                 catch (Exception ex)
@@ -236,18 +232,17 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("RoomStateUpdate", (json) =>
+            _hubConnection.On<JsonElement>("RoomStateUpdate", (data) =>
             {
-                OnRoomStateUpdate?.Invoke(json);
+                OnRoomStateUpdate?.Invoke(data.GetRawText());
             });
 
-            _hubConnection.On<string>("GameStarting", (json) =>
+            _hubConnection.On<JsonElement>("GameStarting", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string seed = ExtractString(doc, "seed");
-                    string roomId = ExtractString(doc, "roomId");
+                    string seed = ExtractString(data, "seed");
+                    string roomId = ExtractString(data, "roomId");
                     GD.Print($"[GameHubClient] 游戏开始! Seed: {seed}");
                     OnGameStarting?.Invoke(seed, roomId);
                 }
@@ -258,12 +253,11 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("BotAdded", (json) =>
+            _hubConnection.On<JsonElement>("BotAdded", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string botName = ExtractString(doc, "botName");
+                    string botName = ExtractString(data, "botName");
                     OnBotAdded?.Invoke(botName);
                 }
                 catch (Exception ex)
@@ -272,12 +266,11 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("BotRemoved", (json) =>
+            _hubConnection.On<JsonElement>("BotRemoved", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string botName = ExtractString(doc, "botName");
+                    string botName = ExtractString(data, "botName");
                     OnBotRemoved?.Invoke(botName);
                 }
                 catch (Exception ex)
@@ -286,14 +279,13 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("CoopCardPlayed", (json) =>
+            _hubConnection.On<JsonElement>("CoopCardPlayed", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    int playerIndex = ExtractInt(doc, "playerIndex");
-                    string cardData = ExtractString(doc, "cardData");
-                    int targetIndex = ExtractInt(doc, "targetIndex");
+                    int playerIndex = ExtractInt(data, "playerIndex");
+                    string cardData = ExtractString(data, "cardData");
+                    int targetIndex = ExtractInt(data, "targetIndex");
                     OnCoopCardPlayed?.Invoke(playerIndex, cardData, targetIndex);
                 }
                 catch (Exception ex)
@@ -302,12 +294,11 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("CoopTurnEnded", (json) =>
+            _hubConnection.On<JsonElement>("CoopTurnEnded", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    int playerIndex = ExtractInt(doc, "playerIndex");
+                    int playerIndex = ExtractInt(data, "playerIndex");
                     OnCoopTurnEnded?.Invoke(playerIndex);
                 }
                 catch (Exception ex)
@@ -316,15 +307,14 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("RacePositionUpdate", (json) =>
+            _hubConnection.On<JsonElement>("RacePositionUpdate", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string racerId = ExtractString(doc, "racerId");
-                    float x = ExtractFloat(doc, "x");
-                    float y = ExtractFloat(doc, "y");
-                    string form = ExtractString(doc, "form");
+                    string racerId = ExtractString(data, "racerId");
+                    float x = ExtractFloat(data, "x");
+                    float y = ExtractFloat(data, "y");
+                    string form = ExtractString(data, "form");
                     OnRacePositionUpdate?.Invoke(racerId, x, y, form);
                 }
                 catch (Exception ex)
@@ -333,13 +323,12 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("RaceCheckpointReached", (json) =>
+            _hubConnection.On<JsonElement>("RaceCheckpointReached", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string racerId = ExtractString(doc, "racerId");
-                    string checkpointId = ExtractString(doc, "checkpointId");
+                    string racerId = ExtractString(data, "racerId");
+                    string checkpointId = ExtractString(data, "checkpointId");
                     OnRaceCheckpointReached?.Invoke(racerId, checkpointId);
                 }
                 catch (Exception ex)
@@ -348,13 +337,12 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("RaceFinished", (json) =>
+            _hubConnection.On<JsonElement>("RaceFinished", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string racerId = ExtractString(doc, "racerId");
-                    double finishTime = ExtractDouble(doc, "finishTime");
+                    string racerId = ExtractString(data, "racerId");
+                    double finishTime = ExtractDouble(data, "finishTime");
                     OnRaceFinished?.Invoke(racerId, finishTime);
                 }
                 catch (Exception ex)
@@ -363,15 +351,14 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("CoopPositionUpdate", (json) =>
+            _hubConnection.On<JsonElement>("CoopPositionUpdate", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string userId = ExtractString(doc, "userId");
-                    float x = ExtractFloat(doc, "x");
-                    float y = ExtractFloat(doc, "y");
-                    string form = ExtractString(doc, "form");
+                    string userId = ExtractString(data, "userId");
+                    float x = ExtractFloat(data, "x");
+                    float y = ExtractFloat(data, "y");
+                    string form = ExtractString(data, "form");
                     OnCoopPositionUpdate?.Invoke(userId, x, y, form);
                 }
                 catch (Exception ex)
@@ -380,14 +367,13 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("CoopSwitchUpdate", (json) =>
+            _hubConnection.On<JsonElement>("CoopSwitchUpdate", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string userId = ExtractString(doc, "userId");
-                    string switchId = ExtractString(doc, "switchId");
-                    bool activated = ExtractBool(doc, "activated");
+                    string userId = ExtractString(data, "userId");
+                    string switchId = ExtractString(data, "switchId");
+                    bool activated = ExtractBool(data, "activated");
                     OnCoopSwitchUpdate?.Invoke(userId, switchId, activated);
                 }
                 catch (Exception ex)
@@ -396,12 +382,11 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("CoopPuzzleSolved", (json) =>
+            _hubConnection.On<JsonElement>("CoopPuzzleSolved", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string puzzleId = ExtractString(doc, "puzzleId");
+                    string puzzleId = ExtractString(data, "puzzleId");
                     OnCoopPuzzleSolved?.Invoke(puzzleId);
                 }
                 catch (Exception ex)
@@ -410,12 +395,11 @@ namespace RoguelikeGame.Network.Realtime
                 }
             });
 
-            _hubConnection.On<string>("CoopPlayerDied", (json) =>
+            _hubConnection.On<JsonElement>("CoopPlayerDied", (data) =>
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(json).RootElement;
-                    string userId = ExtractString(doc, "userId");
+                    string userId = ExtractString(data, "userId");
                     OnCoopPlayerDied?.Invoke(userId);
                 }
                 catch (Exception ex)

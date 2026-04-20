@@ -302,7 +302,7 @@ namespace RoguelikeGame.Server.Controllers
             {
                 _logger.LogInformation("机器人加入房间: {BotName} -> {RoomId}", botPlayer.BotName, roomId);
 
-                await _hubContext.Clients.Group(roomId).SendAsync("BotAdded", System.Text.Json.JsonSerializer.Serialize(new
+                await _hubContext.Clients.Group(roomId).SendAsync("BotAdded", new
                 {
                     botName = botPlayer.BotName,
                     botId = botPlayer.Id,
@@ -310,7 +310,7 @@ namespace RoguelikeGame.Server.Controllers
                     isBot = true,
                     isReady = botPlayer.IsReady,
                     timestamp = DateTime.UtcNow
-                }));
+                });
 
                 var botDiff = Enum.TryParse<Shared.Bots.BotDifficulty>(botPlayer.BotDifficulty, true, out var diff) ? diff : Shared.Bots.BotDifficulty.Normal;
                 var room = await _roomService.GetRoomByIdAsync(roomId);
@@ -350,11 +350,11 @@ namespace RoguelikeGame.Server.Controllers
             {
                 _logger.LogInformation("机器人移出房间: {BotId} <- {RoomId}", request.BotId, roomId);
 
-                await _hubContext.Clients.Group(roomId).SendAsync("BotRemoved", System.Text.Json.JsonSerializer.Serialize(new
+                await _hubContext.Clients.Group(roomId).SendAsync("BotRemoved", new
                 {
                     botId = request.BotId,
                     timestamp = DateTime.UtcNow
-                }));
+                });
 
                 _botGameService.UnregisterRoomBot(roomId, request.BotId);
 
