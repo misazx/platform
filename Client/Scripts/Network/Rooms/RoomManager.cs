@@ -14,7 +14,8 @@ namespace RoguelikeGame.Network.Rooms
 	{
 		PvP,
 		PvE,
-		Coop
+		Coop,
+		Race
 	}
 
 	public enum RoomStatus
@@ -577,6 +578,40 @@ namespace RoguelikeGame.Network.Rooms
 			{
 				GD.PrintErr($"[RoomManager] 移除机器人异常: {ex.Message}");
 				return new RoomResult { Success = false, Message = $"网络错误: {ex.Message}" };
+			}
+		}
+
+		public async Task<bool> EndGameAsync(bool victory)
+		{
+			if (_currentRoom == null) return false;
+
+			try
+			{
+				var requestData = new { victory };
+				var request = CreateAuthorizedRequest(HttpMethod.Post, $"/api/rooms/{_currentRoom.Id}/end-game", requestData);
+				var response = await _httpClient.SendAsync(request);
+				var responseString = await response.Content.ReadAsStringAsync();
+				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
+
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
+
+				if (success)
+				{
+					_currentRoom.Status = RoomStatus.Waiting;
+
+					NetworkManager.Instance?.UpdateState(NetworkState.InRoom);
+
+					GD.Print($"[RoomManager] 游戏结束，返回房间: Victory={victory}");
+
+					EmitSignal(SignalName.RoomUpdated, _currentRoom.Id);
+				}
+
+				return success;
+			}
+			catch (Exception ex)
+			{
+				GD.PrintErr($"[RoomManager] 结束游戏异常: {ex.Message}");
+				return false;
 			}
 		}
 

@@ -19,6 +19,9 @@ signal bridge_player_joined_room(player_id: String, player_name: String)
 signal bridge_player_left_room(player_id: String, player_name: String)
 signal bridge_player_ready_changed(player_id: String, is_ready: bool)
 signal bridge_room_state_updated(state_json: String)
+signal bridge_light_shadow_bot_action(action_json: String)
+signal bridge_level_completed(level_id: String, user_id: String, result_json: String)
+signal bridge_game_ended(result_json: String)
 
 static var instance: MultiplayerBridge = null
 
@@ -95,6 +98,12 @@ func _connect_hub_client(hub_client: Node) -> void:
 		hub_client.OnPlayerReadyChanged.connect(_on_player_ready_changed)
 	if hub_client.has_signal("OnRoomStateUpdate"):
 		hub_client.OnRoomStateUpdate.connect(_on_room_state_update)
+	if hub_client.has_signal("OnLightShadowBotAction"):
+		hub_client.OnLightShadowBotAction.connect(_on_light_shadow_bot_action)
+	if hub_client.has_signal("OnLevelCompleted"):
+		hub_client.OnLevelCompleted.connect(_on_level_completed)
+	if hub_client.has_signal("OnGameEnded"):
+		hub_client.OnGameEnded.connect(_on_game_ended)
 
 	_is_connected = true
 	print("[MultiplayerBridge] Hub client signals connected")
@@ -173,6 +182,15 @@ func _on_player_ready_changed(player_id: String, is_ready: bool) -> void:
 
 func _on_room_state_update(state_json: String) -> void:
 	bridge_room_state_updated.emit(state_json)
+
+func _on_light_shadow_bot_action(action_json: String) -> void:
+	bridge_light_shadow_bot_action.emit(action_json)
+
+func _on_level_completed(level_id: String, user_id: String, result_json: String) -> void:
+	bridge_level_completed.emit(level_id, user_id, result_json)
+
+func _on_game_ended(result_json: String) -> void:
+	bridge_game_ended.emit(result_json)
 
 func send_coop_card_play(player_index: int, card_data: Dictionary, target_index: int) -> void:
 	var hub_client = get_node_or_null("/root/GameHubClient")
@@ -270,6 +288,24 @@ func send_race_finish(racer_id: String, finish_time: float) -> void:
 	if room_id == "":
 		return
 	hub_client.call("send_race_finish_async", room_id, racer_id, finish_time)
+
+func send_level_completed(level_id: String, user_id: String, result_data: Dictionary) -> void:
+	var hub_client = get_node_or_null("/root/GameHubClient")
+	if hub_client == null:
+		return
+	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
+	if room_id == "":
+		return
+	hub_client.call("send_level_completed_async", room_id, level_id, user_id, result_data)
+
+func send_game_ended(game_result: Dictionary) -> void:
+	var hub_client = get_node_or_null("/root/GameHubClient")
+	if hub_client == null:
+		return
+	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
+	if room_id == "":
+		return
+	hub_client.call("send_game_ended_async", room_id, game_result)
 
 func is_multiplayer_game() -> bool:
 	var bridge = get_node_or_null("/root/MultiplayerSeedBridge")

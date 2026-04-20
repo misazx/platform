@@ -339,6 +339,7 @@ namespace RoguelikeGame.UI.Panels
                 GameMode.PvP => "⚔️ PvP 对战",
                 GameMode.PvE => "🛡️ PvE 合作",
                 GameMode.Coop => "🤝 Coop 团队",
+                GameMode.Race => "🏁 Race 竞速",
                 _ => "📌 未知"
             };
 

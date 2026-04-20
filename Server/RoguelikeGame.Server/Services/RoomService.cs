@@ -217,11 +217,20 @@ namespace RoguelikeGame.Server.Services
 
         public async Task<bool> EndGameAsync(string roomId, bool victory)
         {
-            var room = await _context.Rooms.FindAsync(roomId);
+            var room = await _context.Rooms
+                .Include(r => r.Players)
+                .FirstOrDefaultAsync(r => r.Id == roomId);
+
             if (room == null) return false;
 
-            room.Status = RoomStatus.Finished;
-            room.FinishedAt = DateTime.UtcNow;
+            room.Status = RoomStatus.Waiting;
+            room.StartedAt = null;
+            room.FinishedAt = null;
+
+            foreach (var player in room.Players)
+            {
+                player.IsReady = false;
+            }
 
             await _context.SaveChangesAsync();
             return true;

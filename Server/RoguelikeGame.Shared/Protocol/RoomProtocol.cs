@@ -13,7 +13,8 @@ namespace RoguelikeGame.Shared.Protocol
     {
         PvP,
         PvE,
-        Coop
+        Coop,
+        Race
     }
 
     public class RoomInfo

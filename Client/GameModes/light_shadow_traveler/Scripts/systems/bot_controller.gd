@@ -37,17 +37,17 @@ func initialize_bot(bot_user_id: String, bot_name: String, player_index: int, mo
 	_bot_mode = mode
 	_is_active = true
 	set_process(true)
-	GD.Print("[BotController] 机器人初始化: ", bot_name, " (", bot_user_id, ") 模式: ", _get_mode_name(mode))
+	print("[BotController] 机器人初始化: ", bot_name, " (", bot_user_id, ") 模式: ", _get_mode_name(mode))
 
 func set_bot_character(character: PlayerCharacter) -> void:
 	_bot_character = character
-	GD.Print("[BotController] 机器人角色已设置")
+	print("[BotController] 机器人角色已设置")
 
 func on_server_action(action_json: String) -> void:
 	var json = JSON.new()
 	var parse_result = json.parse(action_json)
 	if parse_result != OK:
-		GD.PrintErr("[BotController] 解析机器人动作失败: ", json.get_error_message())
+		push_error("[BotController] 解析机器人动作失败: ", json.get_error_message())
 		return
 
 	var data: Dictionary = json.data as Dictionary

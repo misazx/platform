@@ -370,6 +370,34 @@ namespace RoguelikeGame.Server.Controllers
                 return BadRequest(new { success = false, message });
             }
         }
+
+        [HttpPost("{roomId}/end-game")]
+        public async Task<IActionResult> EndGame(string roomId, [FromBody] EndGameRequest request)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized();
+
+            var success = await _roomService.EndGameAsync(roomId, request.Victory);
+
+            if (success)
+            {
+                _logger.LogInformation("游戏结束: {RoomId}, Victory: {Victory}", roomId, request.Victory);
+
+                await _hubContext.Clients.Group(roomId).SendAsync("GameEnded", new
+                {
+                    roomId,
+                    victory = request.Victory,
+                    endedBy = userId,
+                    timestamp = DateTime.UtcNow
+                });
+
+                return Ok(new { success = true, message = "游戏已结束" });
+            }
+            else
+            {
+                return BadRequest(new { success = false, message = "无法结束游戏" });
+            }
+        }
     }
 
     public class CreateRoomRequest
@@ -410,5 +438,10 @@ namespace RoguelikeGame.Server.Controllers
     {
         [Required]
         public string BotId { get; set; } = "";
+    }
+
+    public class EndGameRequest
+    {
+        public bool Victory { get; set; }
     }
 }

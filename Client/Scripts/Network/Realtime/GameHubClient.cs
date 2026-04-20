@@ -26,6 +26,7 @@ namespace RoguelikeGame.Network.Realtime
         public event Action<string, string, string> OnRoomChatMessage;
         public event Action<string, bool> OnPlayerReadyChanged;
         public event Action<string, string> OnGameStarting;
+        public event Action<string, string, string> OnGameStartingExtended;
         public event Action<string> OnRoomStateUpdate;
         public event Action<string> OnBotAdded;
         public event Action<string> OnBotRemoved;
@@ -40,6 +41,8 @@ namespace RoguelikeGame.Network.Realtime
         public event Action<string> OnCoopPlayerDied;
         public event Action OnCoopPlayerRevived;
         public event Action<string> OnLightShadowBotAction;
+        public event Action<string, string, string> OnLevelCompleted;
+        public event Action<string> OnGameEnded;
 
         public override void _Ready()
         {
@@ -244,13 +247,17 @@ namespace RoguelikeGame.Network.Realtime
                 {
                     string seed = ExtractString(data, "seed");
                     string roomId = ExtractString(data, "roomId");
-                    GD.Print($"[GameHubClient] 游戏开始! Seed: {seed}");
+                    string mode = ExtractString(data, "mode");
+                    string gameModeId = ExtractString(data, "gameModeId");
+                    GD.Print($"[GameHubClient] 游戏开始! Seed: {seed}, Mode: {mode}, GameModeId: {gameModeId}");
                     OnGameStarting?.Invoke(seed, roomId);
+                    OnGameStartingExtended?.Invoke(seed, mode, gameModeId);
                 }
                 catch (Exception ex)
                 {
                     GD.PrintErr($"[GameHubClient] GameStarting 解析失败: {ex.Message}");
                     OnGameStarting?.Invoke("", "");
+                    OnGameStartingExtended?.Invoke("", "", "");
                 }
             });
 
@@ -285,7 +292,7 @@ namespace RoguelikeGame.Network.Realtime
                 try
                 {
                     int playerIndex = ExtractInt(data, "playerIndex");
-                    string cardData = ExtractString(data, "cardData");
+                    string cardData = data.TryGetProperty("cardData", out var cardEl) ? cardEl.GetRawText() : "{}";
                     int targetIndex = ExtractInt(data, "targetIndex");
                     OnCoopCardPlayed?.Invoke(playerIndex, cardData, targetIndex);
                 }
@@ -425,6 +432,34 @@ namespace RoguelikeGame.Network.Realtime
                     GD.PrintErr($"[GameHubClient] LightShadowBotAction 解析失败: {ex.Message}");
                 }
             });
+
+            _hubConnection.On<JsonElement>("LevelCompleted", (data) =>
+            {
+                try
+                {
+                    string levelId = ExtractString(data, "levelId");
+                    string userId = ExtractString(data, "userId");
+                    string resultJson = data.TryGetProperty("resultData", out var resultEl) ? resultEl.GetRawText() : "{}";
+                    OnLevelCompleted?.Invoke(levelId, userId, resultJson);
+                }
+                catch (Exception ex)
+                {
+                    GD.PrintErr($"[GameHubClient] LevelCompleted 解析失败: {ex.Message}");
+                }
+            });
+
+            _hubConnection.On<JsonElement>("GameEnded", (data) =>
+            {
+                try
+                {
+                    string resultJson = data.TryGetProperty("gameResult", out var resultEl) ? resultEl.GetRawText() : "{}";
+                    OnGameEnded?.Invoke(resultJson);
+                }
+                catch (Exception ex)
+                {
+                    GD.PrintErr($"[GameHubClient] GameEnded 解析失败: {ex.Message}");
+                }
+            });
         }
 
         public async Task JoinRoomAsync(string roomId)
@@ -538,6 +573,18 @@ namespace RoguelikeGame.Network.Realtime
         {
             if (_hubConnection?.State != HubConnectionState.Connected) return;
             await _hubConnection.InvokeAsync("UpdateBotGameState", roomId, botUserId, gameStateJson);
+        }
+
+        public async Task SendLevelCompletedAsync(string roomId, string levelId, string userId, object resultData)
+        {
+            if (_hubConnection?.State != HubConnectionState.Connected) return;
+            await _hubConnection.InvokeAsync("SendLevelCompleted", roomId, levelId, userId, resultData);
+        }
+
+        public async Task SendGameEndedAsync(string roomId, object gameResult)
+        {
+            if (_hubConnection?.State != HubConnectionState.Connected) return;
+            await _hubConnection.InvokeAsync("SendGameEnded", roomId, gameResult);
         }
 
         public override void _ExitTree()

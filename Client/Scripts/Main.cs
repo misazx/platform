@@ -11,6 +11,7 @@ using RoguelikeGame.UI.Panels;
 using RoguelikeGame.Generation;
 using RoguelikeGame.Packages;
 using RoguelikeGame.Combat;
+using RoguelikeGame.Network.Rooms;
 
 namespace RoguelikeGame
 {
@@ -650,13 +651,68 @@ namespace RoguelikeGame
         {
             GD.Print("[Main] Combat Won!");
             _combatActive = false;
-            GoToMap();
+
+            var bridge = GetNodeOrNull("/root/MultiplayerBridge");
+            if (bridge != null && bridge.HasMethod("is_multiplayer_game") && bridge.Call("is_multiplayer_game").AsBool())
+            {
+                EndGameAndReturnToRoom(true);
+            }
+            else
+            {
+                GoToMap();
+            }
         }
 
         private void OnCombatLost()
         {
             GD.Print("[Main] Combat Lost!");
             _combatActive = false;
+
+            var bridge = GetNodeOrNull("/root/MultiplayerBridge");
+            if (bridge != null && bridge.HasMethod("is_multiplayer_game") && bridge.Call("is_multiplayer_game").AsBool())
+            {
+                EndGameAndReturnToRoom(false);
+            }
+            else
+            {
+                GoToLobby();
+            }
+        }
+
+        private void EndGameAndReturnToRoom(bool victory)
+        {
+            GD.Print($"[Main] Ending game, victory={victory}, returning to room");
+
+            var bridge = GetNodeOrNull("/root/MultiplayerBridge");
+            if (bridge != null && bridge.HasMethod("send_game_ended"))
+            {
+                var gameResult = new Godot.Collections.Dictionary
+                {
+                    { "victory", victory },
+                    { "gameModeId", _currentPackageId ?? "base_game" },
+                    { "mode", "coop" }
+                };
+                bridge.Call("send_game_ended", gameResult);
+            }
+
+            var roomMgr = GetNodeOrNull<RoomManager>("/root/RoomManager");
+            if (roomMgr != null)
+            {
+                _ = roomMgr.EndGameAsync(victory);
+            }
+
+            GoToRoom();
+        }
+
+        public void GoToRoom()
+        {
+            GD.Print("[Main] Returning to room...");
+            ClearCurrentScene();
+            OpenRoomPanel();
+        }
+
+        public void GoToMainMenu()
+        {
             GoToLobby();
         }
 

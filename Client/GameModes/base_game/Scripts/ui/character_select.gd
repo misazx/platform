@@ -215,8 +215,10 @@ func _on_back_pressed() -> void:
 	if AudioManager.has_method("play_button_click"):
 		AudioManager.play_button_click()
 	var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
-	if main_node != null and main_node.has_method("go_to_main_menu"):
-		main_node.call("go_to_main_menu")
+	if main_node != null and main_node.has_method("GoToMainMenu"):
+		main_node.call("GoToMainMenu")
+	elif main_node != null and main_node.has_method("GoToLobby"):
+		main_node.call("GoToLobby")
 	elif get_tree().current_scene != null:
 		get_tree().change_scene_to_file("res://Scenes/Main.tscn")
 

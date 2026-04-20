@@ -98,6 +98,9 @@ namespace RoguelikeGame.Packages
 		[JsonPropertyName("supportsMultiplayer")]
 		public bool SupportsMultiplayer { get; set; } = false;
 
+		[JsonPropertyName("multiplayerModes")]
+		public List<string> MultiplayerModes { get; set; } = new();
+
 		[JsonPropertyName("maxPlayers")]
 		public int MaxPlayers { get; set; } = 4;
 

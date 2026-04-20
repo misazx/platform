@@ -217,10 +217,12 @@ namespace RoguelikeGame.Server.Hubs
                 roomId,
                 seed = room.Seed,
                 mode = room.Mode.ToString(),
+                gameModeId = room.GameModeId ?? "",
                 players = room.Players.Select(p => new
                 {
                     p.UserId,
                     username = p.IsBot ? (p.BotName ?? "Bot") : userNames.GetValueOrDefault(p.UserId, ""),
+                    p.IsBot,
                     isHost = p.UserId == room.HostId
                 }),
                 timestamp = DateTime.UtcNow
@@ -362,6 +364,28 @@ namespace RoguelikeGame.Server.Hubs
         {
             await Clients.Group(roomId).SendAsync("CoopPlayerRevived", new
             {
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        public async Task SendLevelCompleted(string roomId, string levelId, string userId, object resultData)
+        {
+            await Clients.Group(roomId).SendAsync("LevelCompleted", new
+            {
+                roomId,
+                levelId,
+                userId,
+                resultData,
+                timestamp = DateTime.UtcNow
+            });
+        }
+
+        public async Task SendGameEnded(string roomId, object gameResult)
+        {
+            await Clients.Group(roomId).SendAsync("GameEnded", new
+            {
+                roomId,
+                gameResult,
                 timestamp = DateTime.UtcNow
             });
         }

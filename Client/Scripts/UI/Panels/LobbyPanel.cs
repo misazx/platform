@@ -5,6 +5,7 @@ using Godot;
 using RoguelikeGame.Network;
 using RoguelikeGame.Network.Auth;
 using RoguelikeGame.Network.Rooms;
+using RoguelikeGame.Packages;
 
 namespace RoguelikeGame.UI.Panels
 {
@@ -190,10 +191,8 @@ namespace RoguelikeGame.UI.Panels
 			createHeader.AddChild(new Label { Text = "模式:", CustomMinimumSize = new Vector2(50, 30) });
 
 			_gameModeOption = new OptionButton();
-			_gameModeOption.AddItem("PvP 对战");
-			_gameModeOption.AddItem("PvE 合作");
-			_gameModeOption.AddItem("Coop 团队");
 			_gameModeOption.CustomMinimumSize = new Vector2(100, 32);
+			PopulateGameModeOptions();
 			createHeader.AddChild(_gameModeOption);
 
 			createHeader.AddChild(new Label { Text = "人数:", CustomMinimumSize = new Vector2(50, 30) });
@@ -399,6 +398,57 @@ namespace RoguelikeGame.UI.Panels
 			}
 		}
 
+		private readonly List<GameMode> _availableModes = new();
+
+		private void PopulateGameModeOptions()
+		{
+			_gameModeOption.Clear();
+			_availableModes.Clear();
+
+			var modeMap = new Dictionary<string, (GameMode Mode, string Label)>
+			{
+				{ "pvp", (GameMode.PvP, "PvP 对战") },
+				{ "pve", (GameMode.PvE, "PvE 合作") },
+				{ "coop", (GameMode.Coop, "Coop 团队") },
+				{ "race", (GameMode.Race, "Race 竞速") }
+			};
+
+			if (!string.IsNullOrEmpty(GameModeId))
+			{
+				var packageData = GetPackageData(GameModeId);
+				var multiplayerModes = packageData?.MultiplayerModes;
+
+				if (multiplayerModes != null && multiplayerModes.Count > 0)
+				{
+					foreach (var modeStr in multiplayerModes)
+					{
+						var lower = modeStr.ToLower();
+						if (modeMap.TryGetValue(lower, out var entry))
+						{
+							_gameModeOption.AddItem(entry.Label);
+							_availableModes.Add(entry.Mode);
+						}
+					}
+				}
+			}
+
+			if (_availableModes.Count == 0)
+			{
+				_gameModeOption.AddItem("Coop 团队");
+				_availableModes.Add(GameMode.Coop);
+			}
+		}
+
+		private PackageData? GetPackageData(string packageId)
+		{
+			var manager = PackageManager.Instance;
+			if (manager != null)
+			{
+				return manager.GetPackage(packageId);
+			}
+			return null;
+		}
+
 		private async void OnCreateRoomPressed()
 		{
 			string name = _roomNameInput.Text.Trim();
@@ -408,12 +458,7 @@ namespace RoguelikeGame.UI.Panels
 			}
 
 			int modeIndex = _gameModeOption.Selected;
-			var mode = modeIndex switch
-			{
-				0 => GameMode.PvP,
-				1 => GameMode.PvE,
-				_ => GameMode.Coop
-			};
+			var mode = modeIndex < _availableModes.Count ? _availableModes[modeIndex] : GameMode.Coop;
 
 			int maxPlayers = (int)_maxPlayersSpin.Value;
 

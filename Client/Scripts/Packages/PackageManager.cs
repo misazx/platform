@@ -173,7 +173,10 @@ namespace RoguelikeGame.Packages
 				ConfigFile = "res://GameModes/base_game/Config/Data/cards.json",
 				ReleaseDate = DateTime.Now,
 				Rating = 4.8,
-				DownloadCount = 10000
+				DownloadCount = 10000,
+				SupportsMultiplayer = true,
+				MultiplayerModes = new List<string> { "coop" },
+				MaxPlayers = 4
 			};
 
 			_availablePackages["base_game"] = baseGame;
@@ -314,6 +317,7 @@ namespace RoguelikeGame.Packages
 				ConfigFile = pkgDict.GetValueOrDefault("configFile", "").AsString(),
 				SupportsMultiplayer = ConvertToBool(pkgDict.GetValueOrDefault("supportsMultiplayer", Variant.From(false))),
 				MaxPlayers = ConvertToInt(pkgDict.GetValueOrDefault("maxPlayers", Variant.From(4))),
+				MultiplayerModes = ParseStringList(pkgDict, "multiplayerModes"),
 				HasLeaderboard = ConvertToBool(pkgDict.GetValueOrDefault("hasLeaderboard", Variant.From(true))),
 				LeaderboardType = pkgDict.GetValueOrDefault("leaderboardType", "score").AsString(),
 				Tags = ParseStringList(pkgDict, "tags"),

@@ -125,6 +125,10 @@ CardDatabase="*res://GameModes/base_game/Scripts/cards/card_database.gd"
 | **PRESET_TOP_RIGHT代码设置无效** | `node.anchors_preset = Control.PRESET_TOP_RIGHT` | 代码中设置预设可能不生效，应手动设`anchor_left=1.0, anchor_right=1.0`+`grow_horizontal` |
 | **信号未连接导致功能缺失** | 定义signal并emit但忘记connect | 每个signal定义必须对应connect调用，建议用信号流图审查闭环 |
 | **modulate.a未重置** | 冲刺时设`modulate.a=0.7`但结束后不恢复 | 每帧先重置`modulate.a=1.0`再按条件修改，避免状态残留 |
+| **C#方法名大小写** | `main_node.call("go_to_main_menu")` | C#方法名大小写敏感，应使用PascalCase: `main_node.call("GoToMainMenu")` |
+| **Bot角色未创建** | `BotController`创建但`_bot_character`为null | 创建BotController后必须创建PlayerCharacter并调用`set_bot_character()` |
+| **Bot触发终点** | `body_entered`信号Bot也会触发 | 检查`body.is_in_group("bot_player")`排除Bot触发 |
+| **多人游戏结束未返回房间** | 游戏结束直接回大厅 | 多人模式下应调用`EndGameAsync`重置房间状态后返回RoomPanel |
 
 ---
 

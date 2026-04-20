@@ -18,6 +18,7 @@ var race_manager: RaceModeManager
 var coop_manager: CoopModeManager
 var _game_mode := "solo"
 var _level_select: LevelSelectScreen
+var _bot_controllers: Dictionary = {}
 
 func _ready() -> void:
 	_setup_scene()
@@ -374,7 +375,7 @@ func _on_all_fragments_collected(total: int) -> void:
 	ParticleEffect.create_and_spawn(level_root, player.global_position if is_instance_valid(player) else Vector2.ZERO, ParticleEffect.EffectType.FRAGMENT_COLLECT, 30)
 
 func _on_goal_reached(body: Node2D) -> void:
-	if body is PlayerCharacter:
+	if body is PlayerCharacter and not body.is_in_group("bot_player"):
 		if _game_mode == "race":
 			race_manager.on_local_finish()
 			var bridge: MultiplayerBridge = MultiplayerBridge.instance
@@ -384,6 +385,7 @@ func _on_goal_reached(body: Node2D) -> void:
 		elif _game_mode == "coop":
 			coop_manager.on_level_completed(level_manager.current_level_id)
 		level_manager.complete_level()
+		_notify_level_completed()
 		var next_id: String = _get_next_level_id()
 		if next_id != "":
 			get_tree().create_timer(1.0).timeout.connect(func():
@@ -391,6 +393,77 @@ func _on_goal_reached(body: Node2D) -> void:
 			)
 		else:
 			hud.show_tutorial("恭喜通关！所有关卡已完成！", 10.0)
+			_notify_game_ended(true)
+
+func _notify_level_completed() -> void:
+	var bridge: MultiplayerBridge = MultiplayerBridge.instance
+	if bridge == null:
+		return
+	var level_id: String = level_manager.current_level_id
+	var user_id: String = ""
+	var auth = get_node_or_null("/root/AuthSystem")
+	if auth != null and auth.has_method("get_current_user_id"):
+		user_id = str(auth.call("get_current_user_id"))
+	var result_data: Dictionary = {
+		"levelId": level_id,
+		"fragments": level_manager.get_fragment_count(level_id),
+		"mode": _game_mode,
+	}
+	bridge.send_level_completed(level_id, user_id, result_data)
+
+func _notify_game_ended(victory: bool) -> void:
+	var bridge: MultiplayerBridge = MultiplayerBridge.instance
+	if bridge == null:
+		return
+	var game_result: Dictionary = {
+		"victory": victory,
+		"gameModeId": "light_shadow_traveler",
+		"mode": _game_mode,
+	}
+	bridge.send_game_ended(game_result)
+	_return_to_room_after_delay(victory)
+
+func _return_to_room_after_delay(victory: bool) -> void:
+	var delay: float = 8.0 if victory else 5.0
+	get_tree().create_timer(delay).timeout.connect(func():
+		_return_to_room()
+	)
+
+func _return_to_room() -> void:
+	var room_mgr = get_node_or_null("/root/RoomManager")
+	if room_mgr != null and room_mgr.has_method("EndGameAsync"):
+		room_mgr.Call("EndGameAsync", true)
+	var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
+	if main_node != null and main_node.has_method("GoToRoom"):
+		main_node.call("GoToRoom")
+	elif main_node != null and main_node.has_method("GoToLobby"):
+		main_node.call("GoToLobby")
+
+func _on_bridge_level_completed(level_id: String, user_id: String, result_json: String) -> void:
+	var json := JSON.new()
+	var parse_result := json.parse(result_json)
+	if parse_result != OK:
+		return
+	var data: Dictionary = json.data as Dictionary
+	if data.is_empty():
+		return
+	if _game_mode == "race":
+		pass
+	elif _game_mode == "coop":
+		if not level_manager.is_level_completed(level_id):
+			level_manager.complete_level()
+	hud.show_tutorial("远程玩家完成关卡: " + level_id, 2.0)
+
+func _on_bridge_game_ended(result_json: String) -> void:
+	var json := JSON.new()
+	var parse_result := json.parse(result_json)
+	if parse_result != OK:
+		return
+	var data: Dictionary = json.data as Dictionary
+	if data.is_empty():
+		return
+	var victory: bool = data.get("victory", false)
+	hud.show_tutorial("游戏结束！结果: " + ("胜利" if victory else "失败"), 5.0)
 
 func _on_level_completed(_level_id: String) -> void:
 	hud.show_tutorial("关卡完成！", 2.0)
@@ -644,6 +717,87 @@ func _connect_multiplayer_bridge() -> void:
 	bridge.bridge_coop_puzzle_solved.connect(_on_bridge_coop_puzzle)
 	bridge.bridge_coop_player_died.connect(_on_bridge_coop_player_died)
 	bridge.bridge_coop_player_revived.connect(_on_bridge_coop_player_revived)
+	bridge.bridge_light_shadow_bot_action.connect(_on_bridge_bot_action)
+	bridge.bridge_level_completed.connect(_on_bridge_level_completed)
+	bridge.bridge_game_ended.connect(_on_bridge_game_ended)
+	_initialize_bot_controllers()
+
+func _initialize_bot_controllers() -> void:
+	var session_mgr = get_node_or_null("/root/GameSessionManager")
+	if session_mgr == null:
+		return
+	if not session_mgr.has_method("GetPlayerCount"):
+		return
+	var player_count: int = session_mgr.GetPlayerCount()
+	for i in range(player_count):
+		var player_state_var = session_mgr.Call("GetPlayerByIndex", i)
+		if player_state_var == null:
+			continue
+		var player_state = player_state_var
+		if not player_state.has_method("get") and not player_state is Dictionary:
+			continue
+		var is_bot: bool = false
+		if player_state is Dictionary:
+			is_bot = player_state.get("IsBot", false)
+		else:
+			is_bot = player_state.IsBot
+		if not is_bot:
+			continue
+		var bot_user_id: String = ""
+		var bot_name: String = "Bot"
+		if player_state is Dictionary:
+			bot_user_id = str(player_state.get("UserId", ""))
+			bot_name = str(player_state.get("Username", "Bot"))
+		else:
+			bot_user_id = str(player_state.UserId)
+			bot_name = str(player_state.Username)
+		_create_bot_controller(bot_user_id, bot_name, i, _game_mode)
+
+func _on_bridge_bot_action(action_json: String) -> void:
+	var json := JSON.new()
+	var parse_result := json.parse(action_json)
+	if parse_result != OK:
+		return
+	var data: Dictionary = json.data as Dictionary
+	if data.is_empty():
+		return
+	var bot_user_id: String = data.get("botUserId", "")
+	if _bot_controllers.has(bot_user_id):
+		var bot_ctrl: BotController = _bot_controllers[bot_user_id]
+		bot_ctrl.on_server_action(action_json)
+	elif bot_user_id == "":
+		for ctrl in _bot_controllers.values():
+			ctrl.on_server_action(action_json)
+
+func _create_bot_controller(bot_user_id: String, bot_name: String, player_index: int, mode_str: String) -> BotController:
+	var bot_ctrl := BotController.new()
+	var mode: BotController.BotMode = BotController.BotMode.SOLO
+	match mode_str:
+		"race":
+			mode = BotController.BotMode.RACE
+		"coop":
+			mode = BotController.BotMode.COOP
+	bot_ctrl.initialize_bot(bot_user_id, bot_name, player_index, mode)
+	add_child(bot_ctrl)
+	var bot_char := _create_bot_character(bot_name, player_index)
+	if bot_char != null:
+		bot_ctrl.set_bot_character(bot_char)
+	_bot_controllers[bot_user_id] = bot_ctrl
+	return bot_ctrl
+
+func _create_bot_character(bot_name: String, player_index: int) -> PlayerCharacter:
+	var bot_char := PlayerCharacter.new()
+	bot_char.name = "Bot_" + bot_name
+	bot_char.add_to_group("player")
+	bot_char.add_to_group("bot_player")
+	if is_instance_valid(level_root):
+		var start_x: float = 100.0 + player_index * 50.0
+		bot_char.position = Vector2(start_x, 400.0)
+		level_root.add_child(bot_char)
+	else:
+		bot_char.position = Vector2(100.0 + player_index * 50.0, 400.0)
+		add_child(bot_char)
+	return bot_char
 
 func _sync_multiplayer_state() -> void:
 	if not is_instance_valid(player):

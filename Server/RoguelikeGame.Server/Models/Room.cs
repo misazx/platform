@@ -17,7 +17,8 @@ namespace RoguelikeGame.Server.Models
     {
         PvP,
         PvE,
-        Coop
+        Coop,
+        Race
     }
 
     public class Room

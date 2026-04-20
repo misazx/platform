@@ -117,8 +117,10 @@ func _on_save_pressed() -> void:
 func _on_back_pressed() -> void:
 	print("[MapView] Back pressed")
 	var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
-	if main_node != null and main_node.has_method("go_to_main_menu"):
-		main_node.call("go_to_main_menu")
+	if main_node != null and main_node.has_method("GoToMainMenu"):
+		main_node.call("GoToMainMenu")
+	elif main_node != null and main_node.has_method("GoToLobby"):
+		main_node.call("GoToLobby")
 
 func _setup_signals() -> void:
 	pass
