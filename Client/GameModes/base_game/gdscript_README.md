@@ -120,7 +120,8 @@ CardDatabase="*res://GameModes/base_game/Scripts/cards/card_database.gd"
 | **Control.GROW_DIRECTION_LEFT不存在** | `grow_horizontal = Control.GROW_DIRECTION_LEFT` | Godot 4中应为`Control.GROW_DIRECTION_BEGIN` |
 | **ImageTexture每帧创建导致null** | `_process`中每帧`ImageTexture.create_from_image(img)` | 缓存纹理到成员变量，只在首次创建，避免渲染器释放旧纹理时Parameter t null |
 | **豆包PNG无实际透明通道** | 直接load豆包生成的PNG显示白底 | 豆包生成PNG虽RGBA格式但alpha全255，需Python脚本批量去白底(亮度>threshold转透明) |
-| **Sprite2D缩放平台拉伸变形** | `Sprite2D.scale = Vector2(w/tex_w, h/tex_h)` | 平台用`TextureRect`+`STRETCH_SCALE`更好控制拉伸 |
+| **Sprite2D缩放平台拉伸变形** | `Sprite2D.scale = Vector2(w/tex_w, h/tex_h)` | 平台用`TextureRect`+代码平铺纹理(`_make_tiled_texture`+`STRETCH_SCALE`)，避免拉伸变形 |
+| **STRETCH_TILE不生效** | `TextureRect.stretch_mode = STRETCH_TILE` + `texture_repeat = MIRROR` | `CompressedTexture2D`默认`repeat/enabled=false`，STRETCH_TILE不生效。需在`.import`文件加`repeat/enabled=true`，或用代码`blit_rect`平铺生成新纹理后用`STRETCH_SCALE` |
 | **AI图片默认朝左需翻转** | `sprite.flip_h = input_dir < 0` (向右不翻转) | AI生成图片默认朝左，向右移动时需`flip_h = true`即`input_dir > 0` |
 | **PRESET_TOP_RIGHT代码设置无效** | `node.anchors_preset = Control.PRESET_TOP_RIGHT` | 代码中设置预设可能不生效，应手动设`anchor_left=1.0, anchor_right=1.0`+`grow_horizontal` |
 | **信号未连接导致功能缺失** | 定义signal并emit但忘记connect | 每个signal定义必须对应connect调用，建议用信号流图审查闭环 |
