@@ -3,7 +3,7 @@ extends Node
 
 signal bot_action_received(action_data: Dictionary)
 
-enum BotMode { SOLO, RACE, COOP }
+enum BotMode { SOLO, RACE, COOP, PVP }
 
 var _bot_user_id: String = ""
 var _bot_name: String = "Bot"

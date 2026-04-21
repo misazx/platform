@@ -600,15 +600,15 @@ namespace RoguelikeGame
         private void _startCombatInScene(string enemyId)
         {
             if (_currentScene == null) return;
-            var combatHud = _findNodeRecursive(_currentScene, "CombatHUD") as Node;
-            if (combatHud != null && combatHud.HasMethod("start_combat"))
+            // CombatScene 根节点已经附加了 combat_hud.gd 脚本
+            if (_currentScene.HasMethod("start_combat"))
             {
-                combatHud.Call("start_combat", enemyId);
-                GD.Print($"[Main] Called start_combat('{enemyId}') on CombatHUD");
+                _currentScene.Call("start_combat", enemyId);
+                GD.Print($"[Main] Called start_combat('{enemyId}') on CombatScene");
             }
             else
             {
-                GD.PrintErr("[Main] Could not find CombatHUD node with start_combat method");
+                GD.PrintErr("[Main] Could not find start_combat method on CombatScene");
             }
         }
 
@@ -683,6 +683,13 @@ namespace RoguelikeGame
         {
             GD.Print($"[Main] Ending game, victory={victory}, returning to room");
 
+            string modeStr = "coop";
+            var roomMgr = GetNodeOrNull<RoomManager>("/root/RoomManager");
+            if (roomMgr?.CurrentRoom != null)
+            {
+                modeStr = roomMgr.CurrentRoom.Mode.ToString().ToLower();
+            }
+
             var bridge = GetNodeOrNull("/root/MultiplayerBridge");
             if (bridge != null && bridge.HasMethod("send_game_ended"))
             {
@@ -690,12 +697,11 @@ namespace RoguelikeGame
                 {
                     { "victory", victory },
                     { "gameModeId", _currentPackageId ?? "base_game" },
-                    { "mode", "coop" }
+                    { "mode", modeStr }
                 };
                 bridge.Call("send_game_ended", gameResult);
             }
 
-            var roomMgr = GetNodeOrNull<RoomManager>("/root/RoomManager");
             if (roomMgr != null)
             {
                 _ = roomMgr.EndGameAsync(victory);

@@ -346,7 +346,7 @@ func _on_player_died() -> void:
 	hud.show_damage_flash()
 	hud.stop_timer()
 	level_manager.fail_level()
-	if _game_mode == "race":
+	if _game_mode == "race" or _game_mode == "pvp":
 		pass
 	elif _game_mode == "coop":
 		coop_manager.on_local_died()
@@ -376,7 +376,7 @@ func _on_all_fragments_collected(total: int) -> void:
 
 func _on_goal_reached(body: Node2D) -> void:
 	if body is PlayerCharacter and not body.is_in_group("bot_player"):
-		if _game_mode == "race":
+		if _game_mode == "race" or _game_mode == "pvp":
 			race_manager.on_local_finish()
 			var bridge: MultiplayerBridge = MultiplayerBridge.instance
 			if bridge:
@@ -447,7 +447,7 @@ func _on_bridge_level_completed(level_id: String, user_id: String, result_json: 
 	var data: Dictionary = json.data as Dictionary
 	if data.is_empty():
 		return
-	if _game_mode == "race":
+	if _game_mode == "race" or _game_mode == "pvp":
 		pass
 	elif _game_mode == "coop":
 		if not level_manager.is_level_completed(level_id):
@@ -507,7 +507,7 @@ func _on_checkpoint_activated(checkpoint_id: String) -> void:
 			break
 	ParticleEffect.create_and_spawn(level_root, last_checkpoint_pos, ParticleEffect.EffectType.CHECKPOINT_ACTIVATE, 25)
 	hud.show_tutorial("检查点已激活", 1.5)
-	if _game_mode == "race":
+	if _game_mode == "race" or _game_mode == "pvp":
 		race_manager.on_local_checkpoint(checkpoint_id)
 		var bridge: MultiplayerBridge = MultiplayerBridge.instance
 		if bridge:
@@ -624,6 +624,30 @@ func start_coop_mode(local_role: int) -> void:
 	_game_mode = "coop"
 	coop_manager.initialize_coop(local_role)
 
+func start_pvp_mode() -> void:
+	_game_mode = "pvp"
+	var local_user_id: String = ""
+	var auth := get_node_or_null("/root/AuthSystem")
+	if auth != null and auth.has_method("get_current_user_id"):
+		local_user_id = str(auth.call("get_current_user_id"))
+	var racer_ids: Array = [local_user_id]
+	var room_mgr := get_node_or_null("/root/RoomManager") as Node
+	if room_mgr != null:
+		var current_room: Variant = room_mgr.get("CurrentRoom")
+		if current_room != null:
+			var players: Variant = current_room.get("Players")
+			if players != null and players is Array:
+				racer_ids.clear()
+				for p in players:
+					var p_id: String = str(p.get("UserId", "") if p is Dictionary else p.get("Id", ""))
+					if p_id != "":
+						racer_ids.append(p_id)
+	if racer_ids.size() < 2:
+		racer_ids.append("bot_pvp_1")
+	race_manager.initialize_race(racer_ids, local_user_id)
+	race_manager.start_race()
+	hud.show_tutorial("PvP模式 - 先到达终点者获胜！", 3.0)
+
 func _on_race_started() -> void:
 	hud.show_tutorial("竞速开始！", 2.0)
 
@@ -720,38 +744,69 @@ func _connect_multiplayer_bridge() -> void:
 	bridge.bridge_light_shadow_bot_action.connect(_on_bridge_bot_action)
 	bridge.bridge_level_completed.connect(_on_bridge_level_completed)
 	bridge.bridge_game_ended.connect(_on_bridge_game_ended)
-	_initialize_bot_controllers()
+	bridge.bridge_game_started.connect(_on_bridge_game_started)
 
-func _initialize_bot_controllers() -> void:
-	var session_mgr = get_node_or_null("/root/GameSessionManager")
-	if session_mgr == null:
+func _on_bridge_game_started(sync_seed: int) -> void:
+	print("[GameScene] 游戏开始")
+	_try_set_game_mode_from_room()
+	# 机器人控制器将在收到第一个动作时动态创建
+
+func _try_set_game_mode_from_room() -> void:
+	var room_mgr := get_node_or_null("/root/RoomManager") as Node
+	if room_mgr == null:
+		print("[GameScene] RoomManager不存在，保持solo模式")
 		return
-	if not session_mgr.has_method("GetPlayerCount"):
+	var current_room: Variant = room_mgr.get("CurrentRoom")
+	if current_room == null or current_room is Nil:
+		print("[GameScene] 当前无房间，保持solo模式")
 		return
-	var player_count: int = session_mgr.GetPlayerCount()
-	for i in range(player_count):
-		var player_state_var = session_mgr.Call("GetPlayerByIndex", i)
-		if player_state_var == null:
-			continue
-		var player_state = player_state_var
-		if not player_state.has_method("get") and not player_state is Dictionary:
-			continue
-		var is_bot: bool = false
-		if player_state is Dictionary:
-			is_bot = player_state.get("IsBot", false)
-		else:
-			is_bot = player_state.IsBot
-		if not is_bot:
-			continue
-		var bot_user_id: String = ""
-		var bot_name: String = "Bot"
-		if player_state is Dictionary:
-			bot_user_id = str(player_state.get("UserId", ""))
-			bot_name = str(player_state.get("Username", "Bot"))
-		else:
-			bot_user_id = str(player_state.UserId)
-			bot_name = str(player_state.Username)
-		_create_bot_controller(bot_user_id, bot_name, i, _game_mode)
+	var mode_value: Variant = current_room.get("Mode")
+	var mode_str: String = ""
+	if mode_value != null:
+		mode_str = str(mode_value).to_lower()
+	var game_mode_id: String = str(current_room.get("GameModeId", "")).to_lower()
+	if game_mode_id != "light_shadow_traveler":
+		print("[GameScene] 非光影旅者玩法包: ", game_mode_id, "，保持solo模式")
+		return
+	var player_count: int = 1
+	var players: Variant = current_room.get("Players")
+	if players != null and players is Array:
+		player_count = players.size()
+	var local_user_id: String = ""
+	var auth := get_node_or_null("/root/AuthSystem")
+	if auth != null and auth.has_method("get_current_user_id"):
+		local_user_id = str(auth.call("get_current_user_id"))
+	match mode_str:
+		"race":
+			var racer_ids: Array = []
+			if players != null and players is Array:
+				for p in players:
+					var p_id: String = str(p.get("UserId", "") if p is Dictionary else p.get("Id", ""))
+					if p_id != "":
+						racer_ids.append(p_id)
+			if racer_ids.is_empty():
+				racer_ids = [local_user_id, "bot_race_1"]
+			print("[GameScene] 启动竞速模式, racers: ", racer_ids)
+			start_race_mode(racer_ids, local_user_id)
+		"coop":
+			var local_role: int = 0
+			if players != null and players is Array:
+				for i in range(players.size()):
+					var p: Dictionary = players[i] as Dictionary
+					var p_id: String = str(p.get("UserId", "") if p is Dictionary else p.get("Id", ""))
+					if p_id == local_user_id:
+						local_role = i % 2
+			print("[GameScene] 启动合作模式, role: ", local_role)
+			start_coop_mode(local_role)
+		"pvp":
+			print("[GameScene] 启动PvP模式")
+			start_pvp_mode()
+		"pve":
+			print("[GameScene] 启动PvE模式(与Coop相同)")
+			var local_role_pve: int = 0
+			start_coop_mode(local_role_pve)
+		_:
+			print("[GameScene] 未知模式: ", mode_str, "，保持solo模式")
 
 func _on_bridge_bot_action(action_json: String) -> void:
 	var json := JSON.new()
@@ -761,7 +816,17 @@ func _on_bridge_bot_action(action_json: String) -> void:
 	var data: Dictionary = json.data as Dictionary
 	if data.is_empty():
 		return
+
 	var bot_user_id: String = data.get("botUserId", "")
+	var player_index: int = data.get("playerIndex", 0)
+
+	# 如果机器人控制器不存在，动态创建
+	if not _bot_controllers.has(bot_user_id) and bot_user_id != "":
+		print("[GameScene] 动态创建机器人控制器: ", bot_user_id, " 索引: ", player_index)
+		# 从动作数据中提取机器人名称，或者使用默认值
+		var bot_name: String = "Bot" + str(player_index + 1)
+		_create_bot_controller(bot_user_id, bot_name, player_index, _game_mode)
+
 	if _bot_controllers.has(bot_user_id):
 		var bot_ctrl: BotController = _bot_controllers[bot_user_id]
 		bot_ctrl.on_server_action(action_json)
@@ -777,6 +842,8 @@ func _create_bot_controller(bot_user_id: String, bot_name: String, player_index:
 			mode = BotController.BotMode.RACE
 		"coop":
 			mode = BotController.BotMode.COOP
+		"pvp":
+			mode = BotController.BotMode.PVP
 	bot_ctrl.initialize_bot(bot_user_id, bot_name, player_index, mode)
 	add_child(bot_ctrl)
 	var bot_char := _create_bot_character(bot_name, player_index)
@@ -804,7 +871,7 @@ func _sync_multiplayer_state() -> void:
 		return
 	var pos: Vector2 = player.global_position
 	var form: String = "light" if player.is_light_form() else "shadow"
-	if _game_mode == "race":
+	if _game_mode == "race" or _game_mode == "pvp":
 		race_manager.update_local_position(pos, form)
 	elif _game_mode == "coop":
 		coop_manager.update_local_state(pos, form)
@@ -828,15 +895,15 @@ func _on_coop_state_synced(state: Dictionary) -> void:
 		bridge.send_coop_position(player.global_position.x, player.global_position.y, "light" if player.is_light_form() else "shadow")
 
 func _on_bridge_race_position(racer_id: String, x: float, y: float, form: String) -> void:
-	if _game_mode == "race":
+	if _game_mode == "race" or _game_mode == "pvp":
 		race_manager.update_remote_racer(racer_id, Vector2(x, y), form)
 
 func _on_bridge_race_checkpoint(racer_id: String, checkpoint_id: String) -> void:
-	if _game_mode == "race":
+	if _game_mode == "race" or _game_mode == "pvp":
 		race_manager.on_remote_checkpoint(racer_id, checkpoint_id)
 
 func _on_bridge_race_finish(racer_id: String, finish_time: float) -> void:
-	if _game_mode == "race":
+	if _game_mode == "race" or _game_mode == "pvp":
 		race_manager.on_remote_finish(racer_id, finish_time)
 
 func _on_bridge_coop_position(user_id: String, x: float, y: float, form: String) -> void:

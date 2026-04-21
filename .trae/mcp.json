@@ -3,7 +3,10 @@
     "tranycode-core": {
       "command": "python3",
       "args": ["/Users/zhuyong/trae-game/.trany/mcps/tranycode-core/main.py"],
-      "cwd": "/Users/zhuyong/trae-game"
+      "cwd": "/Users/zhuyong/trae-game/.trany/mcps/tranycode-core",
+      "env": {
+        "PYTHONPATH": "/Users/zhuyong/trae-game"
+      }
     }
   }
 }

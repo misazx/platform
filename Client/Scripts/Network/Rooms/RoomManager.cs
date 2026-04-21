@@ -50,6 +50,7 @@ namespace RoguelikeGame.Network.Rooms
 		public string HostName { get; set; } = "";
 		public RoomStatus Status { get; set; }
 		public GameMode Mode { get; set; }
+		public string? GameModeId { get; set; }
 		public int MaxPlayers { get; set; } = 4;
 		public int CurrentPlayers { get; set; }
 		public bool HasPassword { get; set; }
@@ -59,7 +60,7 @@ namespace RoguelikeGame.Network.Rooms
 
 		public override string ToString()
 		{
-			return $"{Name} ({CurrentPlayers}/{MaxPlayers}) [{Mode}] - {Status}";
+			return $"{Name} ({CurrentPlayers}/{MaxPlayers}) [{Mode}] GameModeId={GameModeId} - {Status}";
 		}
 	}
 
@@ -200,6 +201,7 @@ namespace RoguelikeGame.Network.Rooms
 						HostName = AuthSystem.Instance?.CurrentUser?.Username ?? "",
 						Status = RoomStatus.Waiting,
 						Mode = mode,
+						GameModeId = gameModeId,
 						MaxPlayers = maxPlayers,
 						HasPassword = !string.IsNullOrEmpty(password),
 						Seed = seed,
@@ -639,6 +641,7 @@ namespace RoguelikeGame.Network.Rooms
 					roomElement.TryGetProperty("status", out var stEl) ? stEl.GetString() ?? "Waiting" : "Waiting", out var status) ? status : RoomStatus.Waiting,
 				Mode = Enum.TryParse<GameMode>(
 					roomElement.TryGetProperty("mode", out var modeEl) ? modeEl.GetString() ?? "PvP" : "PvP", out var mode) ? mode : GameMode.PvP,
+				GameModeId = roomElement.TryGetProperty("gameModeId", out var gmiEl) ? gmiEl.GetString() : null,
 				MaxPlayers = roomElement.TryGetProperty("maxPlayers", out var mpEl) ? mpEl.GetInt32() : 4,
 				CurrentPlayers = roomElement.TryGetProperty("currentPlayers", out var cpEl) ? cpEl.GetInt32() : 0,
 				HasPassword = roomElement.TryGetProperty("hasPassword", out var hpEl) && hpEl.GetBoolean(),

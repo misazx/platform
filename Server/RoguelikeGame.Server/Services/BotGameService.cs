@@ -52,6 +52,8 @@ namespace RoguelikeGame.Server.Services
                 {
                     GameMode.Coop => BotModeLightShadowCoop,
                     GameMode.PvE => BotModeLightShadowRace,
+                    GameMode.Race => BotModeLightShadowRace,
+                    GameMode.PvP => BotModeLightShadowRace,
                     _ => BotModeLightShadowSolo
                 };
             }

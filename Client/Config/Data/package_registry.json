@@ -31,7 +31,7 @@
       "includeInBuild": true,
       "supportsMultiplayer": true,
       "maxPlayers": 4,
-      "multiplayerModes": ["coop"],
+      "multiplayerModes": ["coop", "pvp"],
       "hasLeaderboard": true,
       "leaderboardType": "score"
     },
@@ -59,7 +59,7 @@
       "includeInBuild": true,
       "supportsMultiplayer": true,
       "maxPlayers": 2,
-      "multiplayerModes": ["race", "coop"],
+      "multiplayerModes": ["race", "coop", "pvp"],
       "hasLeaderboard": true,
       "leaderboardType": "time"
     }

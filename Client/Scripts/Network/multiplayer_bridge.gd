@@ -11,7 +11,7 @@ signal bridge_race_position_updated(racer_id: String, x: float, y: float, form: 
 signal bridge_race_checkpoint_reached(racer_id: String, checkpoint_id: String)
 signal bridge_race_finished(racer_id: String, finish_time: float)
 signal bridge_game_started(sync_seed: int)
-signal bridge_game_ended(victory: bool)
+signal bridge_game_ended_victory(victory: bool)
 signal bridge_state_synced(room_id: String, current_turn: int)
 signal bridge_turn_changed(new_turn: int)
 signal bridge_player_action_received(player_id: String, action_type: String)
@@ -112,7 +112,7 @@ func _connect_session_manager(session_manager: Node) -> void:
 	if session_manager.has_signal("GameStarted"):
 		session_manager.GameStarted.connect(_on_game_started)
 	if session_manager.has_signal("GameEnded"):
-		session_manager.GameEnded.connect(_on_game_ended)
+		session_manager.GameEnded.connect(_on_game_ended_victory)
 	if session_manager.has_signal("StateSynced"):
 		session_manager.StateSynced.connect(_on_state_synced)
 	if session_manager.has_signal("TurnChanged"):
@@ -159,8 +159,8 @@ func _on_game_started(sync_seed: int) -> void:
 	if main_node != null and main_node.has_method("GoToMap"):
 		main_node.call("GoToMap")
 
-func _on_game_ended(victory: bool) -> void:
-	bridge_game_ended.emit(victory)
+func _on_game_ended_victory(victory: bool) -> void:
+	bridge_game_ended_victory.emit(victory)
 
 func _on_state_synced(room_id: String, current_turn: int) -> void:
 	bridge_state_synced.emit(room_id, current_turn)

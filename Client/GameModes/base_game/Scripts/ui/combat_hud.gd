@@ -39,6 +39,8 @@ var _is_selecting_target: bool = false
 var _pending_card: Control = null
 
 var _is_coop_mode: bool = false
+var _is_pvp_mode: bool = false
+var _game_mode_str: String = "solo"
 var _combat_system: Node = null
 var _coop_player_status_areas: Array = []
 var _local_player_index: int = 0
@@ -49,6 +51,10 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	_create_layout()
 	_connect_signals()
+
+func start_combat(enemy_id: String = "") -> void:
+	print("[CombatHUD] start_combat called with enemy_id: ", enemy_id)
+	_initialize_combat_system()
 
 func _create_layout() -> void:
 	_root_container = Control.new()
@@ -349,16 +355,72 @@ func _connect_signals() -> void:
 func _detect_multiplayer_mode() -> void:
 	var mp_bridge = get_node_or_null("/root/MultiplayerBridge")
 	if mp_bridge != null and mp_bridge.has_method("is_multiplayer_game"):
-		_is_coop_mode = mp_bridge.is_multiplayer_game()
-	if _is_coop_mode:
-		if mp_bridge.has_method("get_local_player_index"):
-			_local_player_index = mp_bridge.get_local_player_index()
-		if mp_bridge.has_method("get_player_count"):
-			_player_count = mp_bridge.get_player_count()
-		print("[CombatHUD] 多人合作模式: player_count=%d local_index=%d" % [_player_count, _local_player_index])
+		if mp_bridge.is_multiplayer_game():
+			var room_mgr = get_node_or_null("/root/RoomManager")
+			if room_mgr != null:
+				var current_room: Variant = room_mgr.get("CurrentRoom")
+				if current_room != null:
+					var mode_val: Variant = current_room.get("Mode")
+					var mode_str: String = str(mode_val).to_lower() if mode_val != null else ""
+					_game_mode_str = mode_str
+					match mode_str:
+						"pvp":
+							_is_pvp_mode = true
+							_is_coop_mode = false
+						"coop", "pve":
+							_is_pvp_mode = false
+							_is_coop_mode = true
+						_:
+							_is_pvp_mode = false
+							_is_coop_mode = true
+			else:
+				_is_coop_mode = true
+			if mp_bridge.has_method("get_local_player_index"):
+				_local_player_index = mp_bridge.get_local_player_index()
+			if mp_bridge.has_method("get_player_count"):
+				_player_count = mp_bridge.get_player_count()
+			print("[CombatHUD] 多人模式: mode=%s pvp=%s coop=%s player_count=%d local_index=%d" % [_game_mode_str, _is_pvp_mode, _is_coop_mode, _player_count, _local_player_index])
 
 func _initialize_combat_system() -> void:
-	if _is_coop_mode:
+	if _is_pvp_mode:
+		var coop_script := load("res://GameModes/base_game/Scripts/combat/coop_combat_system.gd") as GDScript
+		if coop_script == null:
+			push_error("[CombatHUD] Failed to load CoopCombatEngine script for PvP!")
+			return
+		_combat_system = Node.new()
+		_combat_system.set_script(coop_script)
+		add_child(_combat_system)
+
+		if _combat_system.has_signal("coop_combat_won"):
+			_combat_system.coop_combat_won.connect(func(): combat_won.emit())
+		if _combat_system.has_signal("coop_combat_lost"):
+			_combat_system.coop_combat_lost.connect(func(): combat_lost.emit())
+		if _combat_system.has_signal("coop_turn_started"):
+			_combat_system.coop_turn_started.connect(_on_coop_turn_started)
+		if _combat_system.has_signal("coop_card_played"):
+			_combat_system.coop_card_played.connect(_on_coop_card_played)
+		if _combat_system.has_signal("coop_damage_dealt"):
+			_combat_system.coop_damage_dealt.connect(_on_coop_damage_dealt)
+		if _combat_system.has_signal("coop_block_gained"):
+			_combat_system.coop_block_gained.connect(_on_coop_block_gained)
+
+		_create_coop_player_status_areas()
+
+		var mp_bridge = get_node_or_null("/root/MultiplayerBridge")
+		var seed_val: int = 0
+		if mp_bridge != null and mp_bridge.has_method("get_sync_seed"):
+			seed_val = mp_bridge.get_sync_seed()
+
+		var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
+		var char_id: String = "ironclad"
+		if main_node != null and main_node.has_method("GetSelectedCharacterId"):
+			char_id = str(main_node.call("GetSelectedCharacterId"))
+
+		var pvp_enemies: Array = _get_pvp_opponent_data()
+		_combat_system.call("initialize_coop_combat", pvp_enemies, _player_count, seed_val, _local_player_index)
+		print("[CombatHUD] PvP combat initialized: opponents=%d players=%d seed=%d" % [pvp_enemies.size(), _player_count, seed_val])
+		_sync_coop_ui_from_system()
+	elif _is_coop_mode:
 		var coop_script := load("res://GameModes/base_game/Scripts/combat/coop_combat_system.gd") as GDScript
 		if coop_script == null:
 			push_error("[CombatHUD] Failed to load CoopCombatEngine script!")
@@ -450,6 +512,11 @@ func _get_enemies_for_combat() -> Array:
 
 	return [
 		{"id": "cultist", "name": "Cultist", "max_hp": 50, "current_hp": 50, "block": 0, "status_effects": []}
+	]
+
+func _get_pvp_opponent_data() -> Array:
+	return [
+		{"id": "pvp_opponent", "name": "对手玩家", "max_hp": 75, "current_hp": 75, "block": 0, "status_effects": [], "is_player_controlled": true}
 	]
 
 func _create_coop_player_status_areas() -> void:

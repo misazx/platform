@@ -175,7 +175,7 @@ namespace RoguelikeGame.Packages
 				Rating = 4.8,
 				DownloadCount = 10000,
 				SupportsMultiplayer = true,
-				MultiplayerModes = new List<string> { "coop" },
+				MultiplayerModes = new List<string> { "coop", "pvp" },
 				MaxPlayers = 4
 			};
 
