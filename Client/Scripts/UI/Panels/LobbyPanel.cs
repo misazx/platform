@@ -19,6 +19,7 @@ namespace RoguelikeGame.UI.Panels
 		private Label _welcomeLabel;
 		private Label _playerInfoLabel;
 		private LineEdit _roomNameInput;
+		private OptionButton _packageOption;
 		private OptionButton _gameModeOption;
 		private SpinBox _maxPlayersSpin;
 		private RichTextLabel _chatOutput;
@@ -26,6 +27,8 @@ namespace RoguelikeGame.UI.Panels
 		private Label _onlineCountLabel;
 		private Control _friendsPanel;
 		private ConnectionStatusIndicator _connectionIndicator;
+
+		private readonly List<PackageData> _availablePackages = new();
 
 		public event Action<RoomInfo> OnJoinRoom;
 		public event Action OnCreateRoom;
@@ -187,6 +190,14 @@ namespace RoguelikeGame.UI.Panels
 				CustomMinimumSize = new Vector2(180, 32)
 			};
 			createHeader.AddChild(_roomNameInput);
+
+			createHeader.AddChild(new Label { Text = "玩法:", CustomMinimumSize = new Vector2(50, 30) });
+
+			_packageOption = new OptionButton();
+			_packageOption.CustomMinimumSize = new Vector2(140, 32);
+			PopulatePackageOptions();
+			_packageOption.Connect("item_selected", new Callable(this, nameof(OnPackageSelected)));
+			createHeader.AddChild(_packageOption);
 
 			createHeader.AddChild(new Label { Text = "模式:", CustomMinimumSize = new Vector2(50, 30) });
 
@@ -399,6 +410,57 @@ namespace RoguelikeGame.UI.Panels
 		}
 
 		private readonly List<GameMode> _availableModes = new();
+
+		private void PopulatePackageOptions()
+		{
+			_packageOption.Clear();
+			_availablePackages.Clear();
+
+			var manager = PackageManager.Instance;
+			if (manager != null)
+			{
+				var packages = manager.GetAllPackages();
+				if (packages != null)
+				{
+					foreach (var pkg in packages)
+					{
+						_packageOption.AddItem($"{pkg.Name}");
+						_availablePackages.Add(pkg);
+					}
+				}
+			}
+
+			if (_availablePackages.Count == 0)
+			{
+				_packageOption.AddItem("杀戮尖塔复刻版");
+				_availablePackages.Add(new PackageData
+				{
+					Id = "base_game",
+					Name = "杀戮尖塔复刻版",
+					MultiplayerModes = new List<string> { "coop", "pvp" },
+					MaxPlayers = 4
+				});
+			}
+
+			GameModeId = _availablePackages.Count > 0 ? _availablePackages[0].Id : "";
+			PopulateGameModeOptions();
+		}
+
+		private void OnPackageSelected(long index)
+		{
+			if (index >= 0 && index < _availablePackages.Count)
+			{
+				GameModeId = _availablePackages[(int)index].Id;
+				var selectedPkg = _availablePackages[(int)index];
+				_maxPlayersSpin.MaxValue = selectedPkg.MaxPlayers > 0 ? selectedPkg.MaxPlayers : 4;
+				_maxPlayersSpin.Value = Math.Min((int)_maxPlayersSpin.Value, (int)_maxPlayersSpin.MaxValue);
+			}
+			else
+			{
+				GameModeId = "";
+			}
+			PopulateGameModeOptions();
+		}
 
 		private void PopulateGameModeOptions()
 		{
