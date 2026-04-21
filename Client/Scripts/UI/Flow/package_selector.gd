@@ -96,31 +96,9 @@ func _build_ui() -> void:
 	scroll.add_child(_package_grid)
 
 func _add_category_button(text: String, category_id: String) -> void:
-	var btn := Button.new()
-	btn.text = text
-	btn.custom_minimum_size = Vector2(100, 36)
-	btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	var btn: Button = UITheme.make_small_button(text, "", Vector2(100, 36))
 	btn.toggle_mode = true
 	btn.button_pressed = (category_id == "all")
-
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.1, 0.15, 0.9)
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_left = 8
-	style.corner_radius_bottom_right = 8
-	style.border_width_left = 1
-	style.border_width_right = 1
-	style.border_width_top = 1
-	style.border_width_bottom = 1
-	style.border_color = Color(0.3, 0.3, 0.4, 0.6)
-	btn.add_theme_stylebox_override("normal", style)
-
-	var pressed_style := style.duplicate() as StyleBoxFlat
-	pressed_style.bg_color = Color(0.2, 0.18, 0.28, 0.95)
-	pressed_style.border_color = Color(0.6, 0.5, 0.9, 0.9)
-	btn.add_theme_stylebox_override("pressed", pressed_style)
-
 	btn.pressed.connect(func(): _on_category_selected(category_id))
 	_category_bar.add_child(btn)
 
@@ -174,21 +152,7 @@ func _create_package_card(pkg: Dictionary) -> PanelContainer:
 	var is_installed: bool = pkg.get("isFree", true)
 	var accent := Color(0.2, 0.6, 0.3) if is_installed else Color(0.6, 0.4, 0.2)
 
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.08, 0.06, 0.1, 0.95)
-	style.corner_radius_top_left = 12
-	style.corner_radius_top_right = 12
-	style.corner_radius_bottom_left = 12
-	style.corner_radius_bottom_right = 12
-	style.border_width_left = 2
-	style.border_width_right = 2
-	style.border_width_top = 2
-	style.border_width_bottom = 2
-	style.border_color = accent
-	style.content_margin_top = 12
-	style.content_margin_bottom = 12
-	style.content_margin_left = 14
-	style.content_margin_right = 14
+	var style: StyleBoxTexture = UITheme.make_card_panel_style()
 	card.add_theme_stylebox_override("panel", style)
 
 	var vbox := VBoxContainer.new()
@@ -269,9 +233,7 @@ func _create_package_card(pkg: Dictionary) -> PanelContainer:
 	)
 
 	card.mouse_entered.connect(func():
-		var hover_style := style.duplicate() as StyleBoxFlat
-		hover_style.bg_color = Color(0.12, 0.1, 0.15, 0.98)
-		hover_style.border_color = accent.lightened(0.3)
+		var hover_style: StyleBoxTexture = UITheme.make_card_panel_style()
 		card.add_theme_stylebox_override("panel", hover_style)
 	)
 

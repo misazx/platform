@@ -33,7 +33,7 @@ func _create_layout() -> void:
 	title_label.modulate = Color(0.9, 0.7, 0.3)
 	container.add_child(title_row)
 	var take_btn: Button = UITheme.make_button("打开宝箱", "icon_star", Vector2(200, 48))
-	take_btn.pressed.connect(func(): treasure_taken.emit({}); visible = false)
+	take_btn.pressed.connect(func(): treasure_taken.emit({}); close_pressed.emit(); visible = false)
 	container.add_child(take_btn)
 	var skip_btn: Button = UITheme.make_button("跳过", "", Vector2(140, 40))
 	skip_btn.pressed.connect(func(): close_pressed.emit(); visible = false)

@@ -804,20 +804,7 @@ namespace RoguelikeGame
                 CustomMinimumSize = new Vector2(400, 300)
             };
 
-            var style = new StyleBoxFlat
-            {
-                BgColor = new Color(0.1f, 0.1f, 0.15f, 0.95f),
-                CornerRadiusTopLeft = 12,
-                CornerRadiusTopRight = 12,
-                CornerRadiusBottomLeft = 12,
-                CornerRadiusBottomRight = 12,
-                BorderWidthLeft = 2,
-                BorderWidthRight = 2,
-                BorderWidthTop = 2,
-                BorderWidthBottom = 2,
-                BorderColor = new Color(0.3f, 0.3f, 0.4f)
-            };
-            panel.AddThemeStyleboxOverride("panel", style);
+            panel.AddThemeStyleboxOverride("panel", UITheme.MakeSettingsPanelBg());
 
             var vbox = new VBoxContainer();
             panel.AddChild(vbox);

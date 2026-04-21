@@ -51,6 +51,7 @@ func _setup_scene() -> void:
 	race_manager.ghost_created.connect(_on_ghost_created)
 	coop_manager = CoopModeManager.new()
 	add_child(coop_manager)
+	coop_manager.coop_local_died.connect(_on_coop_local_died)
 	coop_manager.coop_partner_died.connect(_on_coop_partner_died)
 	coop_manager.coop_partner_revived.connect(_on_coop_partner_revived)
 	coop_manager.coop_switch_activated.connect(_on_coop_switch_activated)
@@ -350,9 +351,6 @@ func _on_player_died() -> void:
 		pass
 	elif _game_mode == "coop":
 		coop_manager.on_local_died()
-		var bridge: MultiplayerBridge = MultiplayerBridge.instance
-		if bridge:
-			bridge.send_coop_player_died()
 	get_tree().create_timer(1.5).timeout.connect(func():
 		_respawn_at_checkpoint()
 	)
@@ -367,8 +365,7 @@ func _on_fragment_collected(_fragment: MemoryFragment) -> void:
 	hud.update_fragments(count, data.get("fragments", []).size())
 
 func _on_fragment_count_changed(count: int) -> void:
-	var data: Dictionary = level_manager.get_level_data(level_manager.current_level_id)
-	hud.update_fragments(count, data.get("fragments", []).size())
+	pass
 
 func _on_all_fragments_collected(total: int) -> void:
 	hud.show_tutorial("所有记忆碎片已收集！", 2.0)
@@ -674,6 +671,12 @@ func _on_racer_checkpoint(racer_id: String, checkpoint_id: String) -> void:
 func _on_ghost_created(racer_id: String, ghost_node: Node2D) -> void:
 	level_root.add_child(ghost_node)
 
+func _on_coop_local_died() -> void:
+	if _game_mode == "coop":
+		var bridge: MultiplayerBridge = MultiplayerBridge.instance
+		if bridge:
+			bridge.send_coop_player_died()
+
 func _on_coop_partner_died() -> void:
 	hud.show_tutorial("搭档已阵亡！靠近搭档加速复活", 3.0)
 
@@ -681,9 +684,6 @@ func _on_coop_partner_revived() -> void:
 	hud.show_tutorial("搭档已复活！", 2.0)
 	if is_instance_valid(player):
 		player.heal(CoopModeManager.SHARED_HEAL_AMOUNT)
-	var bridge: MultiplayerBridge = MultiplayerBridge.instance
-	if bridge:
-		bridge.send_coop_player_revived()
 
 func _on_coop_switch_activated(switch_id: String, activated_by: String) -> void:
 	if activated_by == "remote":

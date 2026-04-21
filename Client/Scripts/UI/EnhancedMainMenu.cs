@@ -6,6 +6,7 @@ using RoguelikeGame.Packages;
 using RoguelikeGame.Network;
 using RoguelikeGame.Network.Auth;
 using RoguelikeGame.UI.Panels;
+using RoguelikeGame.Client.UI;
 
 namespace RoguelikeGame.UI
 {
@@ -140,43 +141,8 @@ namespace RoguelikeGame.UI
 
 		private Button CreateStyledButton(string text)
 		{
-			var button = new Button();
-			button.Text = text;
-			button.CustomMinimumSize = new Vector2(280, 55);
+			var button = UITheme.MakeWideButton(text, "", new Vector2(280, 55));
 			button.AddThemeFontSizeOverride("font_size", 19);
-
-			var style = new StyleBoxFlat
-			{
-				BgColor = new Color(0.15f, 0.15f, 0.25f, 0.9f),
-				CornerRadiusTopLeft = 10,
-				CornerRadiusTopRight = 10,
-				CornerRadiusBottomLeft = 10,
-				CornerRadiusBottomRight = 10,
-				BorderWidthLeft = 2,
-				BorderWidthRight = 2,
-				BorderWidthTop = 2,
-				BorderWidthBottom = 2,
-				BorderColor = new Color(0.4f, 0.5f, 0.7f, 0.7f),
-				ContentMarginTop = 12,
-				ContentMarginBottom = 12
-			};
-			button.AddThemeStyleboxOverride("normal", style);
-
-			var hoverStyle = new StyleBoxFlat
-			{
-				BgColor = new Color(0.2f, 0.22f, 0.35f, 0.95f),
-				CornerRadiusTopLeft = 10,
-				CornerRadiusTopRight = 10,
-				CornerRadiusBottomLeft = 10,
-				CornerRadiusBottomRight = 10,
-				BorderWidthLeft = 2,
-				BorderWidthRight = 2,
-				BorderWidthTop = 2,
-				BorderWidthBottom = 2,
-				BorderColor = new Color(0.5f, 0.6f, 0.9f, 0.9f)
-			};
-			button.AddThemeStyleboxOverride("hover", hoverStyle);
-
 			return button;
 		}
 

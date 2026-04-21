@@ -2,6 +2,7 @@ using Godot;
 using RoguelikeGame.Core;
 using System.Collections.Generic;
 using RoguelikeGame.Audio;
+using RoguelikeGame.Client.UI;
 
 namespace RoguelikeGame.UI
 {
@@ -198,25 +199,7 @@ namespace RoguelikeGame.UI
                 Position = new Vector2(0, -200)
             };
 
-            var styleBox = new StyleBoxFlat
-            {
-                BgColor = new Color(0.15f, 0.12f, 0.08f, 0.95f),
-                ContentMarginLeft = 20,
-                ContentMarginRight = 20,
-                ContentMarginTop = 15,
-                ContentMarginBottom = 15,
-                CornerRadiusTopLeft = 8,
-                CornerRadiusTopRight = 8,
-                CornerRadiusBottomLeft = 8,
-                CornerRadiusBottomRight = 8,
-                BorderWidthLeft = 2,
-                BorderWidthRight = 2,
-                BorderWidthTop = 2,
-                BorderWidthBottom = 2,
-                BorderColor = new Color(1f, 0.85f, 0.3f, 1f)
-            };
-
-            container.AddThemeStyleboxOverride("panel", styleBox);
+            container.AddThemeStyleboxOverride("panel", UITheme.MakeMediumPanelBg());
 
             var hbox = new HBoxContainer
             {

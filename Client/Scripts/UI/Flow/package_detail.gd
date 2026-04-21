@@ -47,22 +47,7 @@ func _build_ui() -> void:
 	_main_panel.custom_minimum_size = Vector2(900, 620)
 	_main_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
-	var panel_style := StyleBoxFlat.new()
-	panel_style.bg_color = Color(0.08, 0.06, 0.1, 0.98)
-	panel_style.corner_radius_top_left = 16
-	panel_style.corner_radius_top_right = 16
-	panel_style.corner_radius_bottom_left = 16
-	panel_style.corner_radius_bottom_right = 16
-	panel_style.border_width_left = 2
-	panel_style.border_width_right = 2
-	panel_style.border_width_top = 2
-	panel_style.border_width_bottom = 2
-	panel_style.border_color = Color(0.4, 0.35, 0.55, 0.8)
-	panel_style.content_margin_top = 16
-	panel_style.content_margin_bottom = 16
-	panel_style.content_margin_left = 20
-	panel_style.content_margin_right = 20
-	_main_panel.add_theme_stylebox_override("panel", panel_style)
+	_main_panel.add_theme_stylebox_override("panel", UITheme.make_dark_panel_bg())
 	center.add_child(_main_panel)
 
 	var main_vbox := VBoxContainer.new()
@@ -100,23 +85,7 @@ func _build_ui() -> void:
 	btn_spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_header_area.add_child(btn_spacer)
 
-	_start_button = Button.new()
-	_start_button.text = "▶ 开始游戏"
-	_start_button.custom_minimum_size = Vector2(130, 38)
-	_start_button.mouse_filter = Control.MOUSE_FILTER_STOP
-
-	var start_style := StyleBoxFlat.new()
-	start_style.bg_color = Color(0.15, 0.4, 0.2, 0.95)
-	start_style.corner_radius_top_left = 8
-	start_style.corner_radius_top_right = 8
-	start_style.corner_radius_bottom_left = 8
-	start_style.corner_radius_bottom_right = 8
-	start_style.border_width_left = 2
-	start_style.border_width_right = 2
-	start_style.border_width_top = 2
-	start_style.border_width_bottom = 2
-	start_style.border_color = Color(0.3, 0.7, 0.4)
-	_start_button.add_theme_stylebox_override("normal", start_style)
+	_start_button = UITheme.make_button("▶ 开始游戏", "", Vector2(130, 38))
 	_start_button.pressed.connect(_on_start_pressed)
 	_header_area.add_child(_start_button)
 
@@ -283,17 +252,7 @@ func _create_save_slot(slot: Dictionary) -> PanelContainer:
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	var has_save: bool = slot.get("has_save", false)
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.1, 0.08, 0.12, 0.9) if has_save else Color(0.06, 0.05, 0.08, 0.8)
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_left = 8
-	style.corner_radius_bottom_right = 8
-	style.border_width_left = 1
-	style.border_width_right = 1
-	style.border_width_top = 1
-	style.border_width_bottom = 1
-	style.border_color = Color(0.3, 0.5, 0.35) if has_save else Color(0.2, 0.2, 0.25)
+	var style: StyleBoxTexture = UITheme.make_card_panel_style()
 	panel.add_theme_stylebox_override("panel", style)
 
 	var hbox := HBoxContainer.new()
@@ -398,17 +357,7 @@ func _create_achievement_item(ach: Dictionary) -> PanelContainer:
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	var unlocked: bool = ach.get("unlocked", false)
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.1, 0.1, 0.05, 0.9) if unlocked else Color(0.06, 0.05, 0.08, 0.8)
-	style.corner_radius_top_left = 6
-	style.corner_radius_top_right = 6
-	style.corner_radius_bottom_left = 6
-	style.corner_radius_bottom_right = 6
-	style.border_width_left = 1
-	style.border_width_right = 1
-	style.border_width_top = 1
-	style.border_width_bottom = 1
-	style.border_color = Color(0.7, 0.6, 0.2) if unlocked else Color(0.2, 0.2, 0.25)
+	var style: StyleBoxTexture = UITheme.make_card_panel_style()
 	panel.add_theme_stylebox_override("panel", style)
 
 	var hbox := HBoxContainer.new()
@@ -734,17 +683,7 @@ func _create_server_save_slot(sv: Dictionary) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size = Vector2(800, 60)
 
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.06, 0.08, 0.14, 0.9)
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_left = 8
-	style.corner_radius_bottom_right = 8
-	style.border_width_left = 1
-	style.border_width_right = 1
-	style.border_width_top = 1
-	style.border_width_bottom = 1
-	style.border_color = Color(0.2, 0.4, 0.7)
+	var style: StyleBoxTexture = UITheme.make_card_panel_style()
 	panel.add_theme_stylebox_override("panel", style)
 
 	var hbox := HBoxContainer.new()
@@ -986,18 +925,7 @@ func _show_mode_select() -> void:
 	_mode_select_panel.z_index = 100
 	_mode_select_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.07, 0.06, 0.12, 0.98)
-	style.corner_radius_top_left = 20
-	style.corner_radius_top_right = 20
-	style.corner_radius_bottom_left = 20
-	style.corner_radius_bottom_right = 20
-	style.border_width_left = 3
-	style.border_width_right = 3
-	style.border_width_top = 3
-	style.border_width_bottom = 3
-	style.border_color = Color(0.4, 0.55, 0.85)
-	_mode_select_panel.add_theme_stylebox_override("panel", style)
+	_mode_select_panel.add_theme_stylebox_override("panel", UITheme.make_dark_panel_bg())
 	add_child(_mode_select_panel)
 
 	var vbox := VBoxContainer.new()

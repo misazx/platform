@@ -126,6 +126,97 @@ public static class UITheme
         return MakeStylebox("bar_bg", 8, 8, 8, 8, 2, 2, 2, 2);
     }
 
+    public static StyleBoxTexture MakeDialogPanelBg()
+    {
+        return MakeStylebox("panel_dialog", 14, 14, 14, 14, 20, 20, 15, 15);
+    }
+
+    public static StyleBoxTexture MakeWidePanelBg()
+    {
+        return MakeStylebox("panel_wide", 10, 10, 10, 10, 10, 10, 8, 8);
+    }
+
+    public static StyleBoxTexture MakeSettingsPanelBg()
+    {
+        return MakeStylebox("settings_menu", 12, 12, 12, 12, 15, 15, 12, 12);
+    }
+
+    public static Button MakeWideButton(string text, string iconName = "", Vector2 minSize = default)
+    {
+        if (minSize == default) minSize = new Vector2(280, 55);
+        var btn = new Button
+        {
+            CustomMinimumSize = minSize,
+            MouseFilter = Control.MouseFilterEnum.Stop,
+            Text = text
+        };
+        if (!string.IsNullOrEmpty(iconName))
+        {
+            btn.Icon = GetIcon(iconName);
+            btn.IconAlignment = HorizontalAlignment.Left;
+            btn.ExpandIcon = true;
+        }
+        btn.AddThemeStyleboxOverride("normal", MakeStylebox("btn_wide_normal", 10, 10, 8, 8, 12, 12, 10, 10));
+        btn.AddThemeStyleboxOverride("hover", MakeStylebox("btn_wide_hover", 10, 10, 8, 8, 12, 12, 10, 10));
+        btn.AddThemeStyleboxOverride("pressed", MakeStylebox("btn_wide_pressed", 10, 10, 8, 8, 12, 12, 10, 10));
+        btn.AddThemeStyleboxOverride("disabled", MakeStylebox("btn_wide_disabled", 10, 10, 8, 8, 12, 12, 10, 10));
+        btn.AddThemeColorOverride("font_color", new Color(0.95f, 0.9f, 0.8f));
+        btn.AddThemeColorOverride("font_hover_color", new Color(1f, 1f, 1f));
+        btn.AddThemeColorOverride("font_pressed_color", new Color(0.8f, 0.75f, 0.65f));
+        btn.AddThemeColorOverride("font_disabled_color", new Color(0.5f, 0.45f, 0.4f, 0.6f));
+        btn.AddThemeFontSizeOverride("font_size", 18);
+        return btn;
+    }
+
+    public static Button MakeModeButton(string text, string description, Vector2 minSize = default)
+    {
+        if (minSize == default) minSize = new Vector2(460, 90);
+        var btn = new Button
+        {
+            CustomMinimumSize = minSize,
+            MouseFilter = Control.MouseFilterEnum.Stop,
+            Text = ""
+        };
+        var vbox = new VBoxContainer();
+        vbox.AddThemeConstantOverride("separation", 5);
+        vbox.MouseFilter = Control.MouseFilterEnum.Ignore;
+        btn.AddChild(vbox);
+        var titleLabel = new Label
+        {
+            Text = text,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            MouseFilter = Control.MouseFilterEnum.Ignore
+        };
+        titleLabel.AddThemeFontSizeOverride("font_size", 22);
+        vbox.AddChild(titleLabel);
+        if (!string.IsNullOrEmpty(description))
+        {
+            var descLabel = new Label
+            {
+                Text = description,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                CustomMinimumSize = new Vector2(minSize.X - 30, 36),
+                AutowrapMode = TextServer.AutowrapMode.WordSmart,
+                MouseFilter = Control.MouseFilterEnum.Ignore
+            };
+            descLabel.AddThemeFontSizeOverride("font_size", 11);
+            descLabel.Modulate = new Color(0.68f, 0.72f, 0.82f);
+            vbox.AddChild(descLabel);
+        }
+        btn.AddThemeStyleboxOverride("normal", MakeStylebox("btn_sq_s2_normal", 8, 8, 8, 8, 8, 8, 6, 6));
+        btn.AddThemeStyleboxOverride("hover", MakeStylebox("btn_sq_s2_hover", 8, 8, 8, 8, 8, 8, 6, 6));
+        btn.AddThemeStyleboxOverride("pressed", MakeStylebox("btn_sq_s2_pressed", 8, 8, 8, 8, 8, 8, 6, 6));
+        btn.AddThemeStyleboxOverride("disabled", MakeStylebox("btn_sq_s2_disabled", 8, 8, 8, 8, 8, 8, 6, 6));
+        btn.AddThemeColorOverride("font_color", new Color(0.95f, 0.9f, 0.8f));
+        btn.AddThemeColorOverride("font_hover_color", new Color(1f, 1f, 1f));
+        return btn;
+    }
+
+    public static StyleBoxTexture MakeInputFieldStyle()
+    {
+        return MakeStylebox("panel_dark", 10, 10, 10, 10, 8, 8, 6, 6);
+    }
+
     public static TextureRect MakeIconRect(string name, Vector2 size = default)
     {
         if (size == default) size = new Vector2(24, 24);

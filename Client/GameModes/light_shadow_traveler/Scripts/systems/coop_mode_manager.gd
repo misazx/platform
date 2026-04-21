@@ -11,6 +11,7 @@ enum CoopRole { LIGHT_PLAYER, SHADOW_PLAYER }
 
 signal coop_partner_position_updated(position: Vector2, form: String)
 signal coop_switch_activated(switch_id: String, activated_by: String)
+signal coop_local_died()
 signal coop_partner_died()
 signal coop_partner_revived()
 signal coop_puzzle_solved(puzzle_id: String, solved_by: String)
@@ -147,7 +148,7 @@ func on_partner_died() -> void:
 
 func on_local_died() -> void:
 	_local_alive = false
-	coop_partner_died.emit()
+	coop_local_died.emit()
 
 func on_local_near_partner() -> void:
 	if not _partner_alive and _is_reviving:

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using RoguelikeGame.Packages;
+using RoguelikeGame.Client.UI;
 
 namespace RoguelikeGame.UI
 {
@@ -144,24 +145,7 @@ namespace RoguelikeGame.UI
 				MouseFilter = MouseFilterEnum.Stop
 			};
 
-			var style = new StyleBoxFlat
-			{
-				BgColor = new Color(0.1f, 0.1f, 0.15f, 0.98f),
-				CornerRadiusTopLeft = 20,
-				CornerRadiusTopRight = 20,
-				CornerRadiusBottomLeft = 20,
-				CornerRadiusBottomRight = 20,
-				BorderWidthLeft = 3,
-				BorderWidthRight = 3,
-				BorderWidthTop = 3,
-				BorderWidthBottom = 3,
-				BorderColor = new Color(0.4f, 0.6f, 0.8f, 0.9f),
-				ContentMarginTop = 25,
-				ContentMarginBottom = 25,
-				ContentMarginLeft = 25,
-				ContentMarginRight = 25
-			};
-			_detailPanel.AddThemeStyleboxOverride("panel", style);
+			_detailPanel.AddThemeStyleboxOverride("panel", UITheme.MakeDialogPanelBg());
 
 			AddChild(_detailPanel);
 		}
@@ -251,23 +235,7 @@ namespace RoguelikeGame.UI
 				CustomMinimumSize = new Vector2(750, 140)
 			};
 
-			var cardStyle = new StyleBoxFlat
-			{
-				BgColor = isInstalled ? new Color(0.15f, 0.2f, 0.15f, 0.95f) : new Color(0.12f, 0.12f, 0.18f, 0.95f),
-				CornerRadiusTopLeft = 12,
-				CornerRadiusTopRight = 12,
-				CornerRadiusBottomLeft = 12,
-				CornerRadiusBottomRight = 12,
-				BorderWidthLeft = 2,
-				BorderWidthRight = 2,
-				BorderWidthTop = 2,
-				BorderWidthBottom = 2,
-				BorderColor = canLaunch ? new Color(0.3f, 0.7f, 0.3f, 0.8f) : new Color(0.4f, 0.5f, 0.6f, 0.6f),
-				ContentMarginTop = 15,
-				ContentMarginBottom = 15,
-				ContentMarginLeft = 15,
-				ContentMarginRight = 15
-			};
+			var cardStyle = UITheme.MakeCardPanelStyle();
 			card.AddThemeStyleboxOverride("panel", cardStyle);
 
 			var hBox = new HBoxContainer();

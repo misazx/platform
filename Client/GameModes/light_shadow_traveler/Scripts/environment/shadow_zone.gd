@@ -77,11 +77,12 @@ func _on_body_exited(body: Node2D) -> void:
 func _apply_speed_boost(body: PlayerCharacter, activate: bool) -> void:
 	if activate:
 		if not _boosted_players.has(body):
-			_boosted_players[body] = true
+			_boosted_players[body] = {"light_speed": body.light_speed, "shadow_speed": body.shadow_speed}
 			body.light_speed *= speed_boost
 			body.shadow_speed *= speed_boost
 	else:
 		if _boosted_players.has(body):
+			var original: Dictionary = _boosted_players[body]
+			body.light_speed = original.light_speed
+			body.shadow_speed = original.shadow_speed
 			_boosted_players.erase(body)
-			body.light_speed /= speed_boost
-			body.shadow_speed /= speed_boost

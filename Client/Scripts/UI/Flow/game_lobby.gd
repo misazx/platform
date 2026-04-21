@@ -174,41 +174,10 @@ func _get_auth_system():
 	return null
 
 func _add_menu_button(text: String, callback: Callable, accent_color: Color) -> void:
-	var btn := Button.new()
-	btn.text = text
-	btn.custom_minimum_size = Vector2(320, 56)
-	btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	var btn: Button = UITheme.make_wide_button(text, "", Vector2(320, 56))
 	btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-
-	var normal_style := StyleBoxFlat.new()
-	normal_style.bg_color = Color(0.1, 0.08, 0.12, 0.92)
-	normal_style.corner_radius_top_left = 10
-	normal_style.corner_radius_top_right = 10
-	normal_style.corner_radius_bottom_left = 10
-	normal_style.corner_radius_bottom_right = 10
-	normal_style.border_width_left = 2
-	normal_style.border_width_right = 2
-	normal_style.border_width_top = 2
-	normal_style.border_width_bottom = 2
-	normal_style.border_color = accent_color
-	normal_style.content_margin_top = 12
-	normal_style.content_margin_bottom = 12
-	normal_style.content_margin_left = 24
-	normal_style.content_margin_right = 24
-	btn.add_theme_stylebox_override("normal", normal_style)
-
-	var hover_style := normal_style.duplicate() as StyleBoxFlat
-	hover_style.bg_color = Color(0.15, 0.12, 0.18, 0.95)
-	hover_style.border_color = accent_color.lightened(0.3)
-	btn.add_theme_stylebox_override("hover", hover_style)
-
-	var pressed_style := normal_style.duplicate() as StyleBoxFlat
-	pressed_style.bg_color = Color(0.08, 0.06, 0.1, 0.98)
-	btn.add_theme_stylebox_override("pressed", pressed_style)
-
 	btn.add_theme_font_size_override("font_size", 20)
 	btn.modulate = Color(0.95, 0.92, 0.88)
-
 	btn.pressed.connect(callback)
 	_menu_container.add_child(btn)
 

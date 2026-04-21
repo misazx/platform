@@ -120,46 +120,19 @@ func _create_env_particle(color: Color, min_speed: float, max_speed: float) -> N
 	return node
 
 func add_light_zone(pos: Vector2, radius: float, energy: float) -> void:
-	var zone := Area2D.new()
-	var shape := CircleShape2D.new()
-	shape.radius = radius
-	var col := CollisionShape2D.new()
-	col.shape = shape
-	zone.add_child(col)
+	var zone := LightZone.new()
 	zone.position = pos
-	var light := PointLight2D.new()
-	light.color = Color(1.0, 0.95, 0.8, 0.3)
-	light.energy = energy
-	light.texture = _make_zone_glow()
-	zone.add_child(light)
+	zone.zone_radius = radius
+	zone.light_energy = energy
 	add_child(zone)
 	_light_zones.append(zone)
 
 func add_shadow_zone(pos: Vector2, radius: float) -> void:
-	var zone := Area2D.new()
-	var shape := CircleShape2D.new()
-	shape.radius = radius
-	var col := CollisionShape2D.new()
-	col.shape = shape
-	zone.add_child(col)
+	var zone := ShadowZone.new()
 	zone.position = pos
-	var dark := PointLight2D.new()
-	dark.color = Color(0.1, 0.1, 0.2, 0.5)
-	dark.energy = -1.5
-	dark.texture = _make_zone_glow()
-	zone.add_child(dark)
+	zone.zone_radius = radius
 	add_child(zone)
 	_shadow_zones.append(zone)
-
-func _make_zone_glow() -> Texture2D:
-	var img := Image.create(64, 64, false, Image.FORMAT_RGBA8)
-	img.fill(Color(0, 0, 0, 0))
-	for dy in range(-32, 32):
-		for dx in range(-32, 32):
-			var dist := sqrt(dx * dx + dy * dy) / 32.0
-			if dist < 1.0:
-				img.set_pixel(32 + dx, 32 + dy, Color(1, 1, 1, (1.0 - dist) * 0.5))
-	return ImageTexture.create_from_image(img)
 
 func _process(delta: float) -> void:
 	_time_of_day += delta * 0.02

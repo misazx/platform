@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Godot;
 using RoguelikeGame.Network;
 using RoguelikeGame.Network.Core;
-using RoguelikeGame.UI.Panels;
+using RoguelikeGame.Client.UI;
 
 namespace RoguelikeGame.UI.Panels
 {
@@ -50,20 +50,7 @@ namespace RoguelikeGame.UI.Panels
 				SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
 			};
 			mainPanel.SetAnchorsPreset(Control.LayoutPreset.Center);
-			var panelStyle = new StyleBoxFlat
-			{
-				BgColor = new Color(0.08f, 0.07f, 0.12f, 0.98f),
-				CornerRadiusTopLeft = 20,
-				CornerRadiusTopRight = 20,
-				CornerRadiusBottomLeft = 20,
-				CornerRadiusBottomRight = 20,
-				BorderWidthLeft = 3,
-				BorderWidthRight = 3,
-				BorderWidthTop = 3,
-				BorderWidthBottom = 3,
-				BorderColor = new Color(0.3f, 0.5f, 0.9f, 1f)
-			};
-			mainPanel.AddThemeStyleboxOverride("panel", panelStyle);
+			mainPanel.AddThemeStyleboxOverride("panel", UITheme.MakeDarkPanelBg());
 			AddChild(mainPanel);
 
 			var vbox = new VBoxContainer();
@@ -168,63 +155,7 @@ namespace RoguelikeGame.UI.Panels
 
 		private Button CreateModeButton(string title, string description, Color accentColor)
 		{
-			var button = new Button();
-			button.CustomMinimumSize = new Vector2(550, 90);
-
-			var vbox = new VBoxContainer();
-				vbox.AddThemeConstantOverride("separation", 5);
-			button.AddChild(vbox);
-
-			var titleLabel = new Label
-			{
-				Text = title,
-				HorizontalAlignment = HorizontalAlignment.Center
-			};
-			titleLabel.AddThemeFontSizeOverride("font_size", 22);
-			titleLabel.Modulate = accentColor;
-			vbox.AddChild(titleLabel);
-
-			var descLabel = new Label
-			{
-				Text = description,
-				HorizontalAlignment = HorizontalAlignment.Center,
-				CustomMinimumSize = new Vector2(500, 40),
-				AutowrapMode = TextServer.AutowrapMode.WordSmart
-			};
-			descLabel.AddThemeFontSizeOverride("font_size", 12);
-			descLabel.Modulate = new Color(0.75f, 0.78f, 0.85f);
-			vbox.AddChild(descLabel);
-
-			var style = new StyleBoxFlat
-			{
-				BgColor = new Color(0.12f, 0.12f, 0.18f, 0.9f),
-				CornerRadiusTopLeft = 12,
-				CornerRadiusTopRight = 12,
-				CornerRadiusBottomLeft = 12,
-				CornerRadiusBottomRight = 12,
-				BorderWidthLeft = 2,
-				BorderWidthRight = 2,
-				BorderWidthTop = 2,
-				BorderWidthBottom = 2,
-				BorderColor = accentColor * new Color(0.6f, 0.6f, 0.6f, 0.8f)
-			};
-			button.AddThemeStyleboxOverride("normal", style);
-
-			var hoverStyle = new StyleBoxFlat
-			{
-				BgColor = new Color(0.15f, 0.15f, 0.22f, 0.95f),
-				CornerRadiusTopLeft = 12,
-				CornerRadiusTopRight = 12,
-				CornerRadiusBottomLeft = 12,
-				CornerRadiusBottomRight = 12,
-				BorderWidthLeft = 2,
-				BorderWidthRight = 2,
-				BorderWidthTop = 2,
-				BorderWidthBottom = 2,
-				BorderColor = accentColor
-			};
-			button.AddThemeStyleboxOverride("hover", hoverStyle);
-
+			var button = UITheme.MakeModeButton(title, description, new Vector2(550, 90));
 			return button;
 		}
 

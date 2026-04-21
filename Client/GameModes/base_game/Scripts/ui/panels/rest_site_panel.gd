@@ -33,13 +33,13 @@ func _create_layout() -> void:
 	container.add_child(title_row)
 	_rest_btn = UITheme.make_button("休息 (恢复30%HP)", "icon_heart", Vector2(240, 44))
 	_rest_btn.mouse_filter = Control.MOUSE_FILTER_STOP
-	_rest_btn.pressed.connect(func(): rest_action_chosen.emit("rest"); visible = false)
+	_rest_btn.pressed.connect(func(): rest_action_chosen.emit("rest"); close_pressed.emit(); visible = false)
 	container.add_child(_rest_btn)
 	_smith_btn = UITheme.make_button("锻造 (升级一张卡牌)", "icon_sword", Vector2(240, 44))
 	_smith_btn.mouse_filter = Control.MOUSE_FILTER_STOP
-	_smith_btn.pressed.connect(func(): rest_action_chosen.emit("smith"); visible = false)
+	_smith_btn.pressed.connect(func(): rest_action_chosen.emit("smith"); close_pressed.emit(); visible = false)
 	container.add_child(_smith_btn)
 	_recall_btn = UITheme.make_button("回忆 (查看牌组)", "icon_star", Vector2(240, 44))
 	_recall_btn.mouse_filter = Control.MOUSE_FILTER_STOP
-	_recall_btn.pressed.connect(func(): rest_action_chosen.emit("recall"); visible = false)
+	_recall_btn.pressed.connect(func(): rest_action_chosen.emit("recall"); close_pressed.emit(); visible = false)
 	container.add_child(_recall_btn)

@@ -6,6 +6,7 @@ using RoguelikeGame.UI.Panels;
 using RoguelikeGame.Network;
 using RoguelikeGame.Network.Auth;
 using RoguelikeGame.Network.Rooms;
+using RoguelikeGame.Client.UI;
 
 namespace RoguelikeGame.UI
 {
@@ -70,44 +71,8 @@ namespace RoguelikeGame.UI
 
 			int insertIndex = 1; // 在"开始游戏"按钮之后
 
-			_multiplayerButton = new Button
-			{
-				Text = "🌐 多人游戏",
-				CustomMinimumSize = new Vector2(280, 55)
-			};
+			_multiplayerButton = UITheme.MakeWideButton("🌐 多人游戏", "", new Vector2(280, 55));
 			_multiplayerButton.AddThemeFontSizeOverride("font_size", 19);
-
-			var style = new StyleBoxFlat
-			{
-				BgColor = new Color(0.15f, 0.18f, 0.28f, 0.9f),
-				CornerRadiusTopLeft = 10,
-				CornerRadiusTopRight = 10,
-				CornerRadiusBottomLeft = 10,
-				CornerRadiusBottomRight = 10,
-				BorderWidthLeft = 2,
-				BorderWidthRight = 2,
-				BorderWidthTop = 2,
-				BorderWidthBottom = 2,
-				BorderColor = new Color(0.4f, 0.5f, 0.9f, 0.7f),
-				ContentMarginTop = 12,
-				ContentMarginBottom = 12
-			};
-			_multiplayerButton.AddThemeStyleboxOverride("normal", style);
-
-			var hoverStyle = new StyleBoxFlat
-			{
-				BgColor = new Color(0.2f, 0.24f, 0.38f, 0.95f),
-				CornerRadiusTopLeft = 10,
-				CornerRadiusTopRight = 10,
-				CornerRadiusBottomLeft = 10,
-				CornerRadiusBottomRight = 10,
-				BorderWidthLeft = 2,
-				BorderWidthRight = 2,
-				BorderWidthTop = 2,
-				BorderWidthBottom = 2,
-				BorderColor = new Color(0.5f, 0.6f, 1.0f, 0.9f)
-			};
-			_multiplayerButton.AddThemeStyleboxOverride("hover", hoverStyle);
 
 			_multiplayerButton.Pressed += OnMultiplayerPressed;
 

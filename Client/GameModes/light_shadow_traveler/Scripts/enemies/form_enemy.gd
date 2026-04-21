@@ -158,7 +158,7 @@ func _setup_health_bar() -> void:
 	health_bar.position = Vector2(-15, -22)
 	health_bar.show_percentage = false
 	health_bar.add_theme_stylebox_override("background", UITheme.make_bar_bg_style())
-	var fill_style := StyleBoxFlat.new()
+	var fill_style: StyleBoxFlat = StyleBoxFlat.new()
 	fill_style.bg_color = Color(0.9, 0.2, 0.2)
 	fill_style.set_corner_radius_all(2)
 	health_bar.add_theme_stylebox_override("fill", fill_style)

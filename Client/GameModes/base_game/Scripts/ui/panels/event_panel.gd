@@ -70,6 +70,6 @@ func set_event(event_data: Dictionary) -> void:
 	for i in range(choices.size()):
 		var btn: Button = UITheme.make_button(choices[i].get("text", "选项 %d" % (i + 1)), "", Vector2(460, 44))
 		var idx := i
-		btn.pressed.connect(func(): choice_made.emit(idx); visible = false)
+		btn.pressed.connect(func(): choice_made.emit(idx); close_pressed.emit(); visible = false)
 		scroll_vbox.add_child(btn)
 		_choice_buttons.append(btn)

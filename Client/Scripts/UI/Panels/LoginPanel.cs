@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Godot;
 using RoguelikeGame.Network.Auth;
+using RoguelikeGame.Client.UI;
 
 namespace RoguelikeGame.UI.Panels
 {
@@ -47,20 +48,7 @@ namespace RoguelikeGame.UI.Panels
 				SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
 			};
 			mainPanel.SetAnchorsPreset(Control.LayoutPreset.Center);
-			var panelStyle = new StyleBoxFlat
-			{
-				BgColor = new Color(0.08f, 0.07f, 0.12f, 0.98f),
-				CornerRadiusTopLeft = 20,
-				CornerRadiusTopRight = 20,
-				CornerRadiusBottomLeft = 20,
-				CornerRadiusBottomRight = 20,
-				BorderWidthLeft = 3,
-				BorderWidthRight = 3,
-				BorderWidthTop = 3,
-				BorderWidthBottom = 3,
-				BorderColor = new Color(0.4f, 0.6f, 0.9f, 1f)
-			};
-			mainPanel.AddThemeStyleboxOverride("panel", panelStyle);
+			mainPanel.AddThemeStyleboxOverride("panel", UITheme.MakeDarkPanelBg());
 			AddChild(mainPanel);
 
 			var vbox = new VBoxContainer();
@@ -165,22 +153,7 @@ namespace RoguelikeGame.UI.Panels
 				CustomMinimumSize = new Vector2(380, 40)
 			};
 			input.AddThemeFontSizeOverride("font_size", 16);
-
-			var style = new StyleBoxFlat
-			{
-				BgColor = new Color(0.12f, 0.12f, 0.18f, 0.8f),
-				CornerRadiusTopLeft = 8,
-				CornerRadiusTopRight = 8,
-				CornerRadiusBottomLeft = 8,
-				CornerRadiusBottomRight = 8,
-				BorderWidthLeft = 2,
-				BorderWidthRight = 2,
-				BorderWidthTop = 2,
-				BorderWidthBottom = 2,
-				BorderColor = new Color(0.4f, 0.45f, 0.55f, 0.6f)
-			};
-			input.AddThemeStyleboxOverride("normal", style);
-
+			input.AddThemeStyleboxOverride("normal", UITheme.MakeInputFieldStyle());
 			return input;
 		}
 
