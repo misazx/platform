@@ -732,7 +732,7 @@ namespace RoguelikeGame
             {
                 _currentScene = shopScene;
                 _currentSceneContainer.AddChild(shopScene);
-            }
+                _connectSceneSignals(shopScene, "close_pressed", OnPanelClosed);            }
         }
 
         public void GoToRest()
@@ -745,7 +745,7 @@ namespace RoguelikeGame
             {
                 _currentScene = restScene;
                 _currentSceneContainer.AddChild(restScene);
-            }
+                _connectSceneSignals(restScene, "close_pressed", OnPanelClosed);            }
         }
 
         public void GoToEvent()
@@ -758,7 +758,7 @@ namespace RoguelikeGame
             {
                 _currentScene = eventScene;
                 _currentSceneContainer.AddChild(eventScene);
-            }
+                _connectSceneSignals(eventScene, "close_pressed", OnPanelClosed);            }
         }
 
         public void GoToTreasure()
@@ -771,7 +771,7 @@ namespace RoguelikeGame
             {
                 _currentScene = treasureScene;
                 _currentSceneContainer.AddChild(treasureScene);
-            }
+                _connectSceneSignals(treasureScene, "close_pressed", OnPanelClosed);            }
         }
 
         public void ShowSettings()
@@ -804,7 +804,7 @@ namespace RoguelikeGame
                 CustomMinimumSize = new Vector2(400, 300)
             };
 
-            panel.AddThemeStyleboxOverride("panel", new StyleBoxFlat { BgColor = new Color(0.1f, 0.1f, 0.15f, 0.95f), CornerRadiusTopLeft = 12, CornerRadiusTopRight = 12, CornerRadiusBottomLeft = 12, CornerRadiusBottomRight = 12 });
+            panel.AddThemeStyleboxOverride("panel", MakeSettingsPanelBg());
 
             var vbox = new VBoxContainer();
             panel.AddChild(vbox);
@@ -856,6 +856,32 @@ namespace RoguelikeGame
             vbox.AddChild(closeButton);
 
             return panel;
+        }
+
+        private static StyleBoxTexture MakeSettingsPanelBg()
+        {
+            var texPath = "res://GameModes/base_game/Resources/UI/settings_menu.png";
+            var tex = ResourceLoader.Load(texPath) as Texture2D;
+            var style = new StyleBoxTexture();
+            if (tex != null)
+                style.Texture = tex;
+            style.TextureMarginLeft = 12;
+            style.TextureMarginRight = 12;
+            style.TextureMarginTop = 12;
+            style.TextureMarginBottom = 12;
+            style.ContentMarginLeft = 15;
+            style.ContentMarginRight = 15;
+            style.ContentMarginTop = 12;
+            style.ContentMarginBottom = 12;
+            style.AxisStretchHorizontal = StyleBoxTexture.AxisStretchMode.Tile;
+            style.AxisStretchVertical = StyleBoxTexture.AxisStretchMode.Tile;
+            return style;
+        }
+
+        private void OnPanelClosed()
+        {
+            GD.Print("[Main] Panel closed, returning to map");
+            GoToMap();
         }
 
         public void QuitGame()
