@@ -398,6 +398,65 @@ namespace RoguelikeGame.Server.Controllers
                 return BadRequest(new { success = false, message = "无法结束游戏" });
             }
         }
+
+        [HttpPost("{roomId}/change-mode")]
+        public async Task<IActionResult> ChangeMode(string roomId, [FromBody] ChangeModeRequest request)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized();
+
+            var (success, message) = await _roomService.ChangeModeAsync(roomId, userId, request.Mode);
+
+            if (success)
+            {
+                _logger.LogInformation("房间模式变更: {RoomId} -> {Mode}", roomId, request.Mode);
+
+                await _hubContext.Clients.Group(roomId).SendAsync("RoomModeChanged", new
+                {
+                    roomId,
+                    mode = request.Mode.ToString(),
+                    changedBy = userId,
+                    timestamp = DateTime.UtcNow
+                });
+
+                await _hubContext.Clients.Group("lobby").SendAsync("RoomUpdated", roomId);
+
+                return Ok(new { success = true, message });
+            }
+            else
+            {
+                return BadRequest(new { success = false, message });
+            }
+        }
+
+        [HttpPost("{roomId}/swap-slot")]
+        public async Task<IActionResult> SwapSlot(string roomId, [FromBody] SwapSlotRequest request)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized();
+
+            var (success, message) = await _roomService.SwapPlayerSlotAsync(roomId, userId, request.FromSlot, request.ToSlot);
+
+            if (success)
+            {
+                _logger.LogInformation("玩家交换槽位: {RoomId} [{From} <-> {To}]", roomId, request.FromSlot, request.ToSlot);
+
+                await _hubContext.Clients.Group(roomId).SendAsync("PlayerSlotSwapped", new
+                {
+                    roomId,
+                    fromSlot = request.FromSlot,
+                    toSlot = request.ToSlot,
+                    swappedBy = userId,
+                    timestamp = DateTime.UtcNow
+                });
+
+                return Ok(new { success = true, message });
+            }
+            else
+            {
+                return BadRequest(new { success = false, message });
+            }
+        }
     }
 
     public class CreateRoomRequest
@@ -443,5 +502,20 @@ namespace RoguelikeGame.Server.Controllers
     public class EndGameRequest
     {
         public bool Victory { get; set; }
+    }
+
+    public class ChangeModeRequest
+    {
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public GameMode Mode { get; set; }
+    }
+
+    public class SwapSlotRequest
+    {
+        [Range(0, 3)]
+        public int FromSlot { get; set; }
+
+        [Range(0, 3)]
+        public int ToSlot { get; set; }
     }
 }

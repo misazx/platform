@@ -370,12 +370,20 @@ namespace RoguelikeGame.UI.Panels
 							GameMode.PvP => "⚔️",
 							GameMode.PvE => "🛡️",
 							GameMode.Coop => "🤝",
+							GameMode.Race => "🏁",
 							_ => "📌"
+						};
+
+						string gameModeLabel = room.GameModeId switch
+						{
+							"base_game" => "卡牌",
+							"light_shadow_traveler" => "光影",
+							_ => room.GameModeId ?? ""
 						};
 
 						string itemText =
 							$"{statusIcon} {modeIcon} {room.Name}\n" +
-							$"   👥 {room.CurrentPlayers}/{room.MaxPlayers} | 🎭 {room.HostName}";
+							$"   👥 {room.CurrentPlayers}/{room.MaxPlayers} | 🎭 {room.HostName} | 🎮 {gameModeLabel}";
 
 						_roomList.AddItem(itemText);
 					}
@@ -417,16 +425,12 @@ namespace RoguelikeGame.UI.Panels
 			_availablePackages.Clear();
 
 			var manager = PackageManager.Instance;
-			if (manager != null)
+			if (manager != null && manager.AvailablePackages != null)
 			{
-				var packages = manager.GetAllPackages();
-				if (packages != null)
+				foreach (var pkg in manager.AvailablePackages.Values)
 				{
-					foreach (var pkg in packages)
-					{
-						_packageOption.AddItem($"{pkg.Name}");
-						_availablePackages.Add(pkg);
-					}
+					_packageOption.AddItem($"{pkg.Name}");
+					_availablePackages.Add(pkg);
 				}
 			}
 

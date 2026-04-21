@@ -43,6 +43,8 @@ namespace RoguelikeGame.Network.Realtime
         public event Action<string> OnLightShadowBotAction;
         public event Action<string, string, string> OnLevelCompleted;
         public event Action<string> OnGameEnded;
+        public event Action<string, string> OnRoomModeChanged;
+        public event Action<int, int> OnPlayerSlotSwapped;
 
         public override void _Ready()
         {
@@ -458,6 +460,34 @@ namespace RoguelikeGame.Network.Realtime
                 catch (Exception ex)
                 {
                     GD.PrintErr($"[GameHubClient] GameEnded 解析失败: {ex.Message}");
+                }
+            });
+
+            _hubConnection.On<JsonElement>("RoomModeChanged", (data) =>
+            {
+                try
+                {
+                    string mode = ExtractString(data, "mode");
+                    string roomId = ExtractString(data, "roomId");
+                    OnRoomModeChanged?.Invoke(roomId, mode);
+                }
+                catch (Exception ex)
+                {
+                    GD.PrintErr($"[GameHubClient] RoomModeChanged 解析失败: {ex.Message}");
+                }
+            });
+
+            _hubConnection.On<JsonElement>("PlayerSlotSwapped", (data) =>
+            {
+                try
+                {
+                    int fromSlot = ExtractInt(data, "fromSlot");
+                    int toSlot = ExtractInt(data, "toSlot");
+                    OnPlayerSlotSwapped?.Invoke(fromSlot, toSlot);
+                }
+                catch (Exception ex)
+                {
+                    GD.PrintErr($"[GameHubClient] PlayerSlotSwapped 解析失败: {ex.Message}");
                 }
             });
         }

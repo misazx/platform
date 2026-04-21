@@ -21,6 +21,8 @@ namespace RoguelikeGame.Server.Services
         Task CleanupExpiredRoomsAsync();
         Task<(bool Success, RoomPlayer? BotPlayer, string Message)> AddBotAsync(string roomId, string hostId, string difficulty = "Normal");
         Task<(bool Success, string Message)> RemoveBotAsync(string roomId, string hostId, string botId);
+        Task<(bool Success, string Message)> ChangeModeAsync(string roomId, string hostId, GameMode newMode);
+        Task<(bool Success, string Message)> SwapPlayerSlotAsync(string roomId, string requesterId, int fromSlot, int toSlot);
     }
 
     public class RoomService : IRoomService
@@ -347,6 +349,91 @@ namespace RoguelikeGame.Server.Services
             await _context.SaveChangesAsync();
 
             return (true, $"机器人 {botName} 已移除");
+        }
+
+        public async Task<(bool Success, string Message)> ChangeModeAsync(string roomId, string hostId, GameMode newMode)
+        {
+            var room = await _context.Rooms
+                .Include(r => r.Players)
+                .FirstOrDefaultAsync(r => r.Id == roomId);
+
+            if (room == null)
+            {
+                return (false, "房间不存在");
+            }
+
+            if (room.HostId != hostId)
+            {
+                return (false, "仅房主可修改模式");
+            }
+
+            if (room.Status == RoomStatus.Playing)
+            {
+                return (false, "游戏中不可修改模式");
+            }
+
+            room.Mode = newMode;
+
+            foreach (var player in room.Players.Where(p => p.UserId != room.HostId && !p.IsBot))
+            {
+                player.IsReady = false;
+            }
+
+            if (room.Status == RoomStatus.Ready)
+            {
+                room.Status = RoomStatus.Waiting;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return (true, $"模式已更改为 {newMode}");
+        }
+
+        public async Task<(bool Success, string Message)> SwapPlayerSlotAsync(string roomId, string requesterId, int fromSlot, int toSlot)
+        {
+            var room = await _context.Rooms
+                .Include(r => r.Players.OrderBy(p => p.JoinedAt))
+                .FirstOrDefaultAsync(r => r.Id == roomId);
+
+            if (room == null)
+            {
+                return (false, "房间不存在");
+            }
+
+            var playerList = room.Players.OrderBy(p => p.JoinedAt).ToList();
+
+            if (fromSlot < 0 || fromSlot >= playerList.Count || toSlot < 0 || toSlot >= playerList.Count)
+            {
+                return (false, "无效的槽位");
+            }
+
+            if (fromSlot == toSlot)
+            {
+                return (true, "无需交换");
+            }
+
+            var requester = playerList.FirstOrDefault(p => p.UserId == requesterId);
+            if (requester == null)
+            {
+                return (false, "请求者不在房间中");
+            }
+
+            var fromPlayer = playerList[fromSlot];
+            bool isRequesterInvolved = fromPlayer.UserId == requesterId || playerList[toSlot].UserId == requesterId;
+            bool isHost = room.HostId == requesterId;
+
+            if (!isRequesterInvolved && !isHost)
+            {
+                return (false, "仅可交换自己的位置或房主可交换任意位置");
+            }
+
+            var tempJoinedAt = fromPlayer.JoinedAt;
+            fromPlayer.JoinedAt = playerList[toSlot].JoinedAt;
+            playerList[toSlot].JoinedAt = tempJoinedAt;
+
+            await _context.SaveChangesAsync();
+
+            return (true, "位置已交换");
         }
     }
 }

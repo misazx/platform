@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using RoguelikeGame.Network;
 using RoguelikeGame.Network.Auth;
 using RoguelikeGame.Network.Rooms;
+using RoguelikeGame.Packages;
 
 namespace RoguelikeGame.UI.Panels
 {
@@ -13,6 +15,8 @@ namespace RoguelikeGame.UI.Panels
         private Label _roomTitleLabel;
         private Label _roomStatusIcon;
         private Label _roomModeLabel;
+        private OptionButton _modeOption;
+        private readonly List<GameMode> _availableModes = new();
         private Label _roomPlayerCountLabel;
         private VBoxContainer _playerListContainer;
         private RichTextLabel _chatOutput;
@@ -110,6 +114,14 @@ namespace RoguelikeGame.UI.Panels
             };
             _roomModeLabel.AddThemeFontSizeOverride("font_size", 13);
             infoRow.AddChild(_roomModeLabel);
+
+            _modeOption = new OptionButton
+            {
+                CustomMinimumSize = new Vector2(120, 28),
+                Visible = false
+            };
+            _modeOption.Connect("item_selected", new Callable(this, nameof(OnModeOptionSelected)));
+            infoRow.AddChild(_modeOption);
 
             _roomPlayerCountLabel = new Label
             {
@@ -254,6 +266,8 @@ namespace RoguelikeGame.UI.Panels
                 hubClient.OnGameStarting += OnHubGameStarting;
                 hubClient.OnBotAdded += OnHubBotAdded;
                 hubClient.OnBotRemoved += OnHubBotRemoved;
+                hubClient.OnRoomModeChanged += OnHubModeChanged;
+                hubClient.OnPlayerSlotSwapped += OnHubSlotSwapped;
             }
         }
 
@@ -278,6 +292,8 @@ namespace RoguelikeGame.UI.Panels
                 hubClient.OnGameStarting -= OnHubGameStarting;
                 hubClient.OnBotAdded -= OnHubBotAdded;
                 hubClient.OnBotRemoved -= OnHubBotRemoved;
+                hubClient.OnRoomModeChanged -= OnHubModeChanged;
+                hubClient.OnPlayerSlotSwapped -= OnHubSlotSwapped;
             }
 
             base._ExitTree();
@@ -334,7 +350,7 @@ namespace RoguelikeGame.UI.Panels
                 _ => "❓ 未知"
             };
 
-            _roomModeLabel.Text = room.Mode switch
+            string modeText = room.Mode switch
             {
                 GameMode.PvP => "⚔️ PvP 对战",
                 GameMode.PvE => "🛡️ PvE 合作",
@@ -343,13 +359,93 @@ namespace RoguelikeGame.UI.Panels
                 _ => "📌 未知"
             };
 
+            bool isHost = RoomManager.Instance?.IsHost ?? false;
+
+            if (isHost)
+            {
+                _roomModeLabel.Visible = false;
+                _modeOption.Visible = true;
+                PopulateModeOptions(room);
+                int currentIdx = _availableModes.IndexOf(room.Mode);
+                if (currentIdx >= 0)
+                    _modeOption.Selected = currentIdx;
+            }
+            else
+            {
+                _roomModeLabel.Visible = true;
+                _modeOption.Visible = false;
+                _roomModeLabel.Text = modeText;
+            }
+
             _roomPlayerCountLabel.Text = $"👥 {room.CurrentPlayers}/{room.MaxPlayers}";
 
-            UpdatePlayerList(room);
+            var sortedPlayers = room.Players.OrderBy(p => p.JoinedAt).ToList();
+            UpdatePlayerList(room, sortedPlayers);
             UpdateButtonStates(room);
         }
 
-        private void UpdatePlayerList(RoomInfo room)
+        private void PopulateModeOptions(RoomInfo room)
+        {
+            _modeOption.Clear();
+            _availableModes.Clear();
+
+            var modeMap = new Dictionary<string, (GameMode Mode, string Label)>
+            {
+                { "pvp", (GameMode.PvP, "⚔️ PvP 对战") },
+                { "pve", (GameMode.PvE, "🛡️ PvE 合作") },
+                { "coop", (GameMode.Coop, "🤝 Coop 团队") },
+                { "race", (GameMode.Race, "🏁 Race 竞速") }
+            };
+
+            string gameModeId = room.GameModeId ?? "";
+            if (!string.IsNullOrEmpty(gameModeId))
+            {
+                var pkg = PackageManager.Instance?.GetPackage(gameModeId);
+                if (pkg?.MultiplayerModes != null && pkg.MultiplayerModes.Count > 0)
+                {
+                    foreach (var modeStr in pkg.MultiplayerModes)
+                    {
+                        if (modeMap.TryGetValue(modeStr.ToLower(), out var entry))
+                        {
+                            _modeOption.AddItem(entry.Label);
+                            _availableModes.Add(entry.Mode);
+                        }
+                    }
+                }
+            }
+
+            if (_availableModes.Count == 0)
+            {
+                _modeOption.AddItem("🤝 Coop 团队");
+                _availableModes.Add(GameMode.Coop);
+            }
+        }
+
+        private async void OnModeOptionSelected(long index)
+        {
+            if (index < 0 || index >= _availableModes.Count) return;
+
+            var newMode = _availableModes[(int)index];
+            bool success = await RoomManager.Instance.ChangeModeAsync(newMode);
+
+            if (success)
+            {
+                AddSystemMessage($"模式已更改为 {_modeOption.GetItemText((int)index)}");
+            }
+            else
+            {
+                AddSystemMessage("模式更改失败");
+                var room = RoomManager.Instance?.CurrentRoom;
+                if (room != null)
+                {
+                    int currentIdx = _availableModes.IndexOf(room.Mode);
+                    if (currentIdx >= 0)
+                        _modeOption.Selected = currentIdx;
+                }
+            }
+        }
+
+        private void UpdatePlayerList(RoomInfo room, List<PlayerInfo> sortedPlayers)
         {
             foreach (var child in _playerListContainer.GetChildren())
             {
@@ -357,70 +453,119 @@ namespace RoguelikeGame.UI.Panels
             }
 
             bool isHost = RoomManager.Instance?.IsHost ?? false;
+            string currentUserId = AuthSystem.Instance?.CurrentUser?.Id ?? "";
 
-            foreach (var player in room.Players)
+            for (int slotIndex = 0; slotIndex < room.MaxPlayers; slotIndex++)
             {
+                bool hasPlayer = slotIndex < sortedPlayers.Count;
+                var player = hasPlayer ? sortedPlayers[slotIndex] : null;
+
                 var playerRow = new HBoxContainer();
-                playerRow.AddThemeConstantOverride("separation", 8);
+                playerRow.AddThemeConstantOverride("separation", 6);
                 playerRow.CustomMinimumSize = new Vector2(320, 36);
 
-                var roleIcon = new Label
+                var slotLabel = new Label
                 {
-                    Text = player.IsHost ? "👑" : (player.IsBot ? "🤖" : "  "),
-                    CustomMinimumSize = new Vector2(24, 30)
+                    Text = $"#{slotIndex + 1}",
+                    CustomMinimumSize = new Vector2(28, 30)
                 };
-                roleIcon.AddThemeFontSizeOverride("font_size", 16);
-                playerRow.AddChild(roleIcon);
+                slotLabel.AddThemeFontSizeOverride("font_size", 12);
+                slotLabel.Modulate = new Color(0.5f, 0.5f, 0.55f);
+                playerRow.AddChild(slotLabel);
 
-                var nameLabel = new Label
+                if (hasPlayer && player != null)
                 {
-                    Text = player.Username,
-                    CustomMinimumSize = new Vector2(120, 30)
-                };
-                nameLabel.AddThemeFontSizeOverride("font_size", 15);
-                if (player.IsHost)
-                    nameLabel.Modulate = new Color(1f, 0.85f, 0.3f);
-                else if (player.IsBot)
-                    nameLabel.Modulate = new Color(0.6f, 0.8f, 1f);
-                else
-                    nameLabel.Modulate = new Color(0.85f, 0.9f, 0.95f);
-                playerRow.AddChild(nameLabel);
-
-                var spacer = new Control
-                {
-                    SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
-                };
-                playerRow.AddChild(spacer);
-
-                var readyLabel = new Label
-                {
-                    Text = player.IsReady ? "✅ 已准备" : "⏳ 未准备",
-                    CustomMinimumSize = new Vector2(80, 30),
-                    HorizontalAlignment = HorizontalAlignment.Right
-                };
-                readyLabel.AddThemeFontSizeOverride("font_size", 12);
-                readyLabel.Modulate = player.IsReady ? new Color(0.4f, 0.9f, 0.5f) : new Color(0.6f, 0.6f, 0.6f);
-                playerRow.AddChild(readyLabel);
-
-                if (isHost && player.IsBot)
-                {
-                    var removeBtn = new Button
+                    var roleIcon = new Label
                     {
-                        Text = "✕",
-                        CustomMinimumSize = new Vector2(28, 28)
+                        Text = player.IsHost ? "👑" : (player.IsBot ? "🤖" : "  "),
+                        CustomMinimumSize = new Vector2(24, 30)
                     };
-                    removeBtn.AddThemeFontSizeOverride("font_size", 12);
-                    removeBtn.Modulate = new Color(0.9f, 0.4f, 0.4f);
-                    var botId = player.Id;
-                    removeBtn.Pressed += async () => await RemoveBot(botId);
-                    playerRow.AddChild(removeBtn);
+                    roleIcon.AddThemeFontSizeOverride("font_size", 16);
+                    playerRow.AddChild(roleIcon);
+
+                    var nameLabel = new Label
+                    {
+                        Text = player.Username,
+                        CustomMinimumSize = new Vector2(100, 30)
+                    };
+                    nameLabel.AddThemeFontSizeOverride("font_size", 14);
+                    if (player.IsHost)
+                        nameLabel.Modulate = new Color(1f, 0.85f, 0.3f);
+                    else if (player.IsBot)
+                        nameLabel.Modulate = new Color(0.6f, 0.8f, 1f);
+                    else
+                        nameLabel.Modulate = new Color(0.85f, 0.9f, 0.95f);
+                    playerRow.AddChild(nameLabel);
+
+                    var spacer = new Control
+                    {
+                        SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
+                    };
+                    playerRow.AddChild(spacer);
+
+                    var statusLabel = new Label
+                    {
+                        Text = player.IsHost ? "👑 房主" : (player.IsReady ? "✅ 已准备" : "⏳ 未准备"),
+                        CustomMinimumSize = new Vector2(70, 30),
+                        HorizontalAlignment = HorizontalAlignment.Right
+                    };
+                    statusLabel.AddThemeFontSizeOverride("font_size", 11);
+                    if (player.IsHost)
+                        statusLabel.Modulate = new Color(1f, 0.85f, 0.3f);
+                    else
+                        statusLabel.Modulate = player.IsReady ? new Color(0.4f, 0.9f, 0.5f) : new Color(0.6f, 0.6f, 0.6f);
+                    playerRow.AddChild(statusLabel);
+
+                    bool isLocalPlayer = player.Id == currentUserId;
+                    bool canSwap = (isLocalPlayer || isHost) && !player.IsHost;
+
+                    if (canSwap && room.Players.Count > 1)
+                    {
+                        var swapBtn = new Button
+                        {
+                            Text = "⇅",
+                            CustomMinimumSize = new Vector2(28, 28)
+                        };
+                        swapBtn.AddThemeFontSizeOverride("font_size", 14);
+                        swapBtn.Modulate = new Color(0.5f, 0.7f, 0.9f);
+                        int fromSlot = slotIndex;
+                        swapBtn.Pressed += async () => await SwapPlayerSlot(fromSlot);
+                        playerRow.AddChild(swapBtn);
+                    }
+
+                    if (isHost && player.IsBot)
+                    {
+                        var removeBtn = new Button
+                        {
+                            Text = "✕",
+                            CustomMinimumSize = new Vector2(28, 28)
+                        };
+                        removeBtn.AddThemeFontSizeOverride("font_size", 12);
+                        removeBtn.Modulate = new Color(0.9f, 0.4f, 0.4f);
+                        var botId = player.Id;
+                        removeBtn.Pressed += async () => await RemoveBot(botId);
+                        playerRow.AddChild(removeBtn);
+                    }
+                }
+                else
+                {
+                    var emptyLabel = new Label
+                    {
+                        Text = "  空位",
+                        CustomMinimumSize = new Vector2(100, 30)
+                    };
+                    emptyLabel.AddThemeFontSizeOverride("font_size", 14);
+                    emptyLabel.Modulate = new Color(0.35f, 0.35f, 0.4f);
+                    playerRow.AddChild(emptyLabel);
                 }
 
                 var styleBox = new StyleBoxFlat
                 {
-                    BgColor = player.IsHost ? new Color(0.15f, 0.12f, 0.05f, 0.8f) :
-                              player.IsBot ? new Color(0.05f, 0.1f, 0.15f, 0.8f) :
-                              new Color(0.08f, 0.08f, 0.12f, 0.8f),
+                    BgColor = hasPlayer && player != null
+                        ? (player.IsHost ? new Color(0.15f, 0.12f, 0.05f, 0.8f) :
+                           player.IsBot ? new Color(0.05f, 0.1f, 0.15f, 0.8f) :
+                           new Color(0.08f, 0.08f, 0.12f, 0.8f))
+                        : new Color(0.04f, 0.04f, 0.06f, 0.5f),
                     CornerRadiusTopLeft = 6,
                     CornerRadiusTopRight = 6,
                     CornerRadiusBottomLeft = 6,
@@ -436,6 +581,37 @@ namespace RoguelikeGame.UI.Panels
                 panel.AddChild(playerRow);
 
                 _playerListContainer.AddChild(panel);
+            }
+        }
+
+        private async Task SwapPlayerSlot(int fromSlot)
+        {
+            var room = RoomManager.Instance?.CurrentRoom;
+            if (room == null) return;
+
+            string currentUserId = AuthSystem.Instance?.CurrentUser?.Id ?? "";
+            bool isHost = RoomManager.Instance?.IsHost ?? false;
+
+            var sortedPlayers = room.Players.OrderBy(p => p.JoinedAt).ToList();
+
+            for (int toSlot = 0; toSlot < sortedPlayers.Count; toSlot++)
+            {
+                if (toSlot == fromSlot) continue;
+
+                var targetPlayer = sortedPlayers[toSlot];
+                if (isHost || targetPlayer.Id == currentUserId)
+                {
+                    bool success = await RoomManager.Instance.SwapSlotAsync(fromSlot, toSlot);
+                    if (success)
+                    {
+                        AddSystemMessage($"位置已交换: #{fromSlot + 1} ↔ #{toSlot + 1}");
+                    }
+                    else
+                    {
+                        AddSystemMessage("位置交换失败");
+                    }
+                    return;
+                }
             }
         }
 
@@ -700,6 +876,18 @@ namespace RoguelikeGame.UI.Panels
         private void OnHubBotRemoved(string botName)
         {
             AddSystemMessage($"🤖 机器人 {botName} 已移除");
+            RefreshRoomInfo();
+        }
+
+        private void OnHubModeChanged(string roomId, string mode)
+        {
+            AddSystemMessage($"🔄 房间模式已更改为 {mode}");
+            RefreshRoomInfo();
+        }
+
+        private void OnHubSlotSwapped(int fromSlot, int toSlot)
+        {
+            AddSystemMessage($"🔄 玩家位置交换: #{fromSlot + 1} ↔ #{toSlot + 1}");
             RefreshRoomInfo();
         }
     }

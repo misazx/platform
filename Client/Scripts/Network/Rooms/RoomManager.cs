@@ -617,6 +617,65 @@ namespace RoguelikeGame.Network.Rooms
 			}
 		}
 
+		public async Task<bool> ChangeModeAsync(GameMode newMode)
+		{
+			if (_currentRoom == null) return false;
+
+			try
+			{
+				var requestData = new { mode = newMode.ToString() };
+				var request = CreateAuthorizedRequest(HttpMethod.Post, $"/api/rooms/{_currentRoom.Id}/change-mode", requestData);
+				var response = await _httpClient.SendAsync(request);
+				var responseString = await response.Content.ReadAsStringAsync();
+				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
+
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
+
+				if (success)
+				{
+					_currentRoom.Mode = newMode;
+					GD.Print($"[RoomManager] 模式已更改: {newMode}");
+					EmitSignal(SignalName.RoomUpdated, _currentRoom.Id);
+				}
+
+				return success;
+			}
+			catch (Exception ex)
+			{
+				GD.PrintErr($"[RoomManager] 修改模式异常: {ex.Message}");
+				return false;
+			}
+		}
+
+		public async Task<bool> SwapSlotAsync(int fromSlot, int toSlot)
+		{
+			if (_currentRoom == null) return false;
+
+			try
+			{
+				var requestData = new { fromSlot, toSlot };
+				var request = CreateAuthorizedRequest(HttpMethod.Post, $"/api/rooms/{_currentRoom.Id}/swap-slot", requestData);
+				var response = await _httpClient.SendAsync(request);
+				var responseString = await response.Content.ReadAsStringAsync();
+				var result = JsonSerializer.Deserialize<JsonElement>(responseString);
+
+				bool success = result.TryGetProperty("success", out var sEl) && sEl.GetBoolean();
+
+				if (success)
+				{
+					GD.Print($"[RoomManager] 槽位已交换: {fromSlot} <-> {toSlot}");
+					await RefreshCurrentRoomAsync();
+				}
+
+				return success;
+			}
+			catch (Exception ex)
+			{
+				GD.PrintErr($"[RoomManager] 交换槽位异常: {ex.Message}");
+				return false;
+			}
+		}
+
 		private async Task RefreshCurrentRoomAsync()
 		{
 			if (_currentRoom == null) return;
@@ -675,7 +734,7 @@ namespace RoguelikeGame.Network.Rooms
 						BotName = botName,
 						BotDifficulty = botDiff,
 						Score = playerEl.TryGetProperty("score", out var scoreEl) ? scoreEl.GetInt32() : 0,
-						JoinedAt = DateTime.UtcNow
+						JoinedAt = playerEl.TryGetProperty("joinedAt", out var jaEl) && DateTime.TryParse(jaEl.GetString(), out var jaVal) ? jaVal : DateTime.UtcNow
 					});
 				}
 			}
