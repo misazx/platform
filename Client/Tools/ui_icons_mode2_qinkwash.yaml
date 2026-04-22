@@ -1,0 +1,105 @@
+defaults:
+  model: "doubao-seedream-5-0-260128"
+  gen_size: "2K"
+  output_format: "png"
+  watermark: false
+  concurrency: 3
+  retry: 3
+  style_prefix: "中国水墨画风格，Q版可爱，传统国画笔触，水墨晕染效果，"
+  style_suffix: "，纯透明背景"
+
+batches:
+  # ==================== 角色精灵（Characters）====================
+  - name: "玩家角色_光形态"
+    size: "64x64"
+    style: "Q版水墨角色，中国传统水墨人物画风，"
+    output_dir: "Client/GameModes/light_shadow_traveler/Resources/Characters"
+    resources:
+      - filename: "light_form.png"
+        prompt: "光形态玩家角色精灵图，Q版水墨小人，发光的暖白色身体，头顶有微弱光晕，圆润可爱的造型，正面朝向，双臂自然下垂，小短腿站立姿态，水墨渲染的光影效果"
+        negative: "写实,3D,像素,暗色,黑色,阴影感,复杂背景,非Q版"
+
+  - name: "玩家角色_影形态"
+    size: "64x64"
+    style: "Q版水墨角色，中国传统水墨人物画风，"
+    output_dir: "Client/GameModes/light_shadow_traveler/Resources/Characters"
+    resources:
+      - filename: "shadow_form.png"
+        prompt: "影形态玩家角色精灵图，Q版水墨小人，深蓝紫色半透明身体，如烟雾般飘渺的轮廓，神秘优雅的造型，正面朝向，半透明幽灵般质感，水墨晕染边缘"
+        negative: "写实,3D,像素,明亮,白色,实体感,复杂背景,非Q版"
+
+  # ==================== 敌人精灵（Enemies）====================
+  - name: "敌人_普通"
+    size: "48x48"
+    style: "Q版水墨怪物，中国传统志怪画风，可爱但不失威胁，"
+    output_dir: "Client/GameModes/light_shadow_traveler/Resources/Enemies"
+    resources:
+      - filename: "light_enemy.png"
+        prompt: "光属性敌人精灵图，Q版水墨小怪物，暖白色或淡黄色身体，圆形胖乎乎造型，两只小眼睛，小短腿，看起来有点呆萌但会攻击玩家，水墨笔触柔和"
+        negative: "写实,恐怖,3D,像素,黑暗,邪恶,复杂背景"
+      - filename: "shadow_enemy.png"
+        prompt: "影属性敌人精灵图，Q版水墨小怪物，深紫蓝色身体，半透明烟雾状质感，飘忽不定的小型生物，圆滚滚但略带诡异感，水墨晕染边缘"
+        negative: "写实,恐怖过度,3D,像素,明亮,实体感,复杂背景"
+
+  - name: "敌人_Boss守卫"
+    size: "80x80"
+    style: "Q版水墨Boss怪物，中国传统神兽画风，威严但不吓人，"
+    output_dir: "Client/GameModes/light_shadow_traveler/Resources/Enemies"
+    resources:
+      - filename: "shadow_guardian.png"
+        prompt: "影之守卫Boss精灵图，Q版水墨大型怪物，深紫色岩石质感身体，高大魁梧造型，头上有角状装饰，双手握拳，威严站姿，但表情带点憨厚，水墨厚重笔触"
+        negative: "写实,恐怖,3D,像素,小型,纤细,复杂背景"
+
+  # ==================== UI图标 ====================
+  - name: "UI_心形图标"
+    size: "32x32"
+    style: "极简水墨UI图标，中国传统印章风格，"
+    output_dir: "Client/GameModes/light_shadow_traveler/Resources/UI"
+    resources:
+      - filename: "heart_full.png"
+        prompt: "满血心形UI图标，红色饱满爱心形状，水墨笔触绘制的心形，鲜艳红色填充，圆润可爱，游戏HUD生命值显示用"
+        negative: "写实,3D,像素,复杂,多色彩,长条形,方形"
+      - filename: "heart_empty.png"
+        prompt: "空血心形UI图标，空心爱心轮廓形状，灰色或淡红色线条描边的心形，表示失去的生命值，水墨线条勾勒"
+        negative: "写实,3D,像素,复杂,实心填充,多色彩"
+
+  - name: "UI_传送门和碎片"
+    size: "48x48"
+    style: "Q版水墨物品图标，中国传统法器画风，"
+    output_dir: "Client/GameModes/light_shadow_traveler/Resources/UI"
+    resources:
+      - filename: "goal_portal.png"
+        prompt: "目标传送门图标，魔法传送门符号，圆形旋转门框，蓝紫色光芒从中透出，时空扭曲感，水墨阵法效果"
+        negative: "写实,3D,像素,现代科技,简单几何"
+      - filename: "memory_fragment.png"
+        prompt: "记忆碎片收集品图标，破碎的水晶碎片形状，淡紫蓝色半透明晶体，散发微光，神秘珍贵感，水墨晶莹质感"
+        negative: "写实,3D,像素,金属,石头,方块形"
+
+  # ==================== 平台纹理（Platforms）====================
+  - name: "平台纹理"
+    size: "64x64"
+    style: "可平铺的水墨材质纹理，中国传统建筑元素，"
+    output_dir: "Client/GameModes/light_shadow_traveler/Resources/Platforms"
+    resources:
+      - filename: "normal_platform.png"
+        prompt: "普通平台纹理贴图，石板地面材质，灰褐色石材纹理，可无缝平铺，水墨石纹笔触，古朴的石质表面"
+        negative: "写实照片,3D渲染,卡通,鲜艳色彩,图案化"
+      - filename: "light_platform.png"
+        prompt: "光平台纹理贴图，发光的暖白色石材纹理，带有金色光芒点缀，神圣温暖的平台材质，可无缝平铺，水墨金辉效果"
+        negative: "写实照片,3D渲染,卡通,暗色调,冷色"
+      - filename: "shadow_platform.png"
+        prompt: "影平台纹理贴图，深蓝紫色暗影石材纹理，带有幽暗雾气效果，阴森神秘的 Platform 材质，可无缝平铺，水墨暗影效果"
+        negative: "写实照片,3D渲染,卡通,明亮,暖色"
+
+  # ==================== 特效粒子（Effects）====================
+  - name: "形态切换特效"
+    size: "48x48"
+    style: "Q版水墨特效粒子，中国传统法术符咒效果，"
+    output_dir: "Client/GameModes/light_shadow_traveler/Resources/Effects"
+    resources:
+      - filename: "form_switch_light.png"
+        prompt: "光形态切换特效粒子图，金黄色光芒爆发效果，放射状光线从中心扩散，温暖神圣的能量释放感，水墨光晕渲染"
+        negative: "写实,3D,像素,暗色,冷色,静态无动感"
+      - filename: "form_switch_shadow.png"
+        prompt: "影形态切换特效粒子图，深紫色烟雾漩涡效果，旋转的暗影能量聚集，神秘诡异的变身感，水墨烟云渲染"
+        negative: "写实,3D,像素,明亮,暖色,静态无动感"
