@@ -140,3 +140,35 @@ static func make_icon_button(icon_name: String, min_size: Vector2 = Vector2(36, 
 	var disabled_style: StyleBoxTexture = _make_stylebox("btn_sq_s2_disabled", 6, 6, 6, 6, 4, 4, 4, 4)
 	btn.add_theme_stylebox_override("disabled", disabled_style)
 	return btn
+
+
+static func make_wide_button(text: String, icon_name: String = "", min_size: Vector2 = Vector2(280, 55)) -> Button:
+	var btn := Button.new()
+	btn.custom_minimum_size = min_size
+	btn.mouse_filter = Control.MOUSE_FILTER_STOP
+	if icon_name != "":
+		btn.icon = get_icon(icon_name)
+		btn.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		btn.expand_icon = true
+	btn.text = text
+	var normal_style: StyleBoxTexture = _make_stylebox("btn_wide_normal", 10, 10, 8, 8, 12, 12, 10, 10)
+	btn.add_theme_stylebox_override("normal", normal_style)
+	var hover_style: StyleBoxTexture = _make_stylebox("btn_wide_hover", 10, 10, 8, 8, 12, 12, 10, 10)
+	btn.add_theme_stylebox_override("hover", hover_style)
+	var pressed_style: StyleBoxTexture = _make_stylebox("btn_wide_pressed", 10, 10, 8, 8, 12, 12, 10, 10)
+	btn.add_theme_stylebox_override("pressed", pressed_style)
+	var disabled_style2: StyleBoxTexture = _make_stylebox("btn_wide_disabled", 10, 10, 8, 8, 12, 12, 10, 10)
+	btn.add_theme_stylebox_override("disabled", disabled_style2)
+	btn.add_theme_color_override("font_color", Color(0.95, 0.9, 0.8))
+	btn.add_theme_color_override("font_hover_color", Color(1, 1, 1))
+	btn.add_theme_color_override("font_pressed_color", Color(0.8, 0.75, 0.65))
+	btn.add_theme_font_size_override("font_size", 18)
+	return btn
+
+static func make_dialog_panel_bg() -> StyleBoxTexture:
+	var style: StyleBoxTexture = _make_stylebox("panel_dialog", 14, 14, 14, 14, 20, 20, 15, 15)
+	return style
+
+static func make_input_field_style() -> StyleBoxTexture:
+	var style: StyleBoxTexture = _make_stylebox("panel_dark", 10, 10, 10, 10, 8, 8, 6, 6)
+	return style
