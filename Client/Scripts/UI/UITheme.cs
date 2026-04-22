@@ -200,7 +200,7 @@ public static class UITheme
                 MouseFilter = Control.MouseFilterEnum.Ignore
             };
             descLabel.AddThemeFontSizeOverride("font_size", 11);
-            descLabel.Modulate = new Color(0.68f, 0.72f, 0.82f);
+            descLabel.Modulate = new Color(0.88f, 0.9f, 0.95f);
             vbox.AddChild(descLabel);
         }
         btn.AddThemeStyleboxOverride("normal", MakeStylebox("btn_sq_s2_normal", 8, 8, 8, 8, 8, 8, 6, 6));

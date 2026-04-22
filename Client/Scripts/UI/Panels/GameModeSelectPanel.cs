@@ -64,7 +64,7 @@ namespace RoguelikeGame.UI.Panels
 
 			_titleLabel = new Label
 			{
-				Text = "🎮 选择游戏模式",
+				Text = "选择游戏模式",
 				HorizontalAlignment = HorizontalAlignment.Center,
 				CustomMinimumSize = new Vector2(480, 50)
 			};
@@ -88,7 +88,7 @@ namespace RoguelikeGame.UI.Panels
 			vbox.AddChild(new HSeparator());
 
 			_singlePlayerButton = CreateModeButton(
-				"🎯 单人模式",
+				"单人模式",
 				"独自探索，不受干扰\n享受完整的单机体验",
 				new Color(0.25f, 0.7f, 0.45f)
 			);
@@ -100,7 +100,7 @@ namespace RoguelikeGame.UI.Panels
 			vbox.AddChild(_multiplayerSection);
 
 			_createRoomButton = CreateModeButton(
-				"🏠 创建房间",
+				"创建房间",
 				"创建新房间，邀请好友加入\n等待其他玩家匹配",
 				new Color(0.3f, 0.55f, 0.85f)
 			);
@@ -108,7 +108,7 @@ namespace RoguelikeGame.UI.Panels
 			_multiplayerSection.AddChild(_createRoomButton);
 
 			_joinRoomButton = CreateModeButton(
-				"🔍 加入房间",
+				"加入房间",
 				"浏览可用房间列表\n快速加入他人的游戏",
 				new Color(0.65f, 0.4f, 0.8f)
 			);
@@ -141,8 +141,8 @@ namespace RoguelikeGame.UI.Panels
 		{
 			if (_currentPackage == null) return;
 
-			string multiIcon = _currentPackage.SupportsMultiplayer ? "🌐" : "🎮";
-			_titleLabel.Text = $"{multiIcon} {_currentPackage.Name} - 选择模式";
+			string multiIcon = _currentPackage.SupportsMultiplayer ? "多人" : "单人";
+			_titleLabel.Text = $"{_currentPackage.Name} - 选择模式";
 
 			_packageInfoLabel.Text =
 				$"版本: {_currentPackage.Version} | " +
@@ -167,7 +167,7 @@ namespace RoguelikeGame.UI.Panels
 			{
 				_createRoomButton.Disabled = true;
 				_joinRoomButton.Disabled = true;
-				_statusLabel.Text += "\n⚠️ 多人模式需要先连接服务器";
+				_statusLabel.Text += "\n多人模式需要先连接服务器";
 			}
 			else
 			{

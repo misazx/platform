@@ -98,22 +98,22 @@ namespace RoguelikeGame.UI
 			spacer1.CustomMinimumSize = new Vector2(0, 40);
 			vbox.AddChild(spacer1);
 
-			_newGameButton = CreateStyledButton("🎮 开始游戏");
+			_newGameButton = CreateStyledButton("开始游戏", "icon_sword");
 			vbox.AddChild(_newGameButton);
 
-			_packageStoreButton = CreateStyledButton("📦 游戏包商店");
-		_packageStoreButton.Modulate = new Color(0.9f, 0.85f, 1f);
-		vbox.AddChild(_packageStoreButton);
+			_packageStoreButton = CreateStyledButton("游戏包商店", "icon_diamond");
+			_packageStoreButton.Modulate = new Color(0.9f, 0.85f, 1f);
+			vbox.AddChild(_packageStoreButton);
 
-		_multiplayerButton = CreateStyledButton("🌐 多人游戏");
-		_multiplayerButton.Modulate = new Color(0.7f, 0.85f, 1f);
-		vbox.AddChild(_multiplayerButton);
+			_multiplayerButton = CreateStyledButton("多人游戏", "icon_triangle");
+			_multiplayerButton.Modulate = new Color(0.7f, 0.85f, 1f);
+			vbox.AddChild(_multiplayerButton);
 
-		_leaderboardButton = CreateStyledButton("🏆 排行榜");
-		_leaderboardButton.Modulate = new Color(1f, 0.85f, 0.3f);
-		vbox.AddChild(_leaderboardButton);
+			_leaderboardButton = CreateStyledButton("排行榜", "icon_star");
+			_leaderboardButton.Modulate = new Color(1f, 0.85f, 0.3f);
+			vbox.AddChild(_leaderboardButton);
 
-		_continueButton = CreateStyledButton("📂 继续游戏");
+			_continueButton = CreateStyledButton("继续游戏", "icon_coin");
 			_continueButton.Disabled = true;
 			vbox.AddChild(_continueButton);
 
@@ -121,7 +121,7 @@ namespace RoguelikeGame.UI
 			spacer2.CustomMinimumSize = new Vector2(0, 30);
 			vbox.AddChild(spacer2);
 
-			_quitButton = CreateStyledButton("🚪 退出游戏");
+			_quitButton = CreateStyledButton("退出游戏", "icon_cross");
 			_quitButton.Modulate = new Color(0.8f, 0.8f, 0.85f);
 			vbox.AddChild(_quitButton);
 
@@ -139,9 +139,9 @@ namespace RoguelikeGame.UI
 			CreatePackageStoreOverlay();
 		}
 
-		private Button CreateStyledButton(string text)
+		private Button CreateStyledButton(string text, string iconName = "")
 		{
-			var button = UITheme.MakeWideButton(text, "", new Vector2(280, 55));
+			var button = UITheme.MakeWideButton(text, iconName, new Vector2(280, 55));
 			button.AddThemeFontSizeOverride("font_size", 19);
 			return button;
 		}
@@ -366,11 +366,7 @@ namespace RoguelikeGame.UI
 
 			userBar.AddChild(new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill });
 
-			_authButton = new Button
-			{
-				Text = "🔐 登录 / 注册",
-				CustomMinimumSize = new Vector2(140, 32)
-			};
+			_authButton = UITheme.MakeButton("登录 / 注册", "icon_shield", new Vector2(140, 32));
 			_authButton.AddThemeFontSizeOverride("font_size", 13);
 			_authButton.Pressed += OnAuthButtonPressed;
 			userBar.AddChild(_authButton);
