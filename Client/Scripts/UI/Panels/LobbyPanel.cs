@@ -7,6 +7,7 @@ using RoguelikeGame.Network;
 using RoguelikeGame.Network.Auth;
 using RoguelikeGame.Network.Rooms;
 using RoguelikeGame.Packages;
+using RoguelikeGame.Client.UI;
 
 namespace RoguelikeGame.UI.Panels
 {
@@ -134,19 +135,11 @@ namespace RoguelikeGame.UI.Panels
 
 			sidebar.AddChild(new Control { CustomMinimumSize = new Vector2(0, 10) });
 
-			_logoutButton = new Button
-			{
-				Text = "🚪 登出",
-				CustomMinimumSize = new Vector2(220, 40)
-			};
+			_logoutButton = UITheme.MakeSmallButton("登出", "icon_cross", new Vector2(220, 40));
 			_logoutButton.Pressed += () => OnLogout?.Invoke();
 			sidebar.AddChild(_logoutButton);
 
-			_backButton = new Button
-			{
-				Text = "← 返回菜单",
-				CustomMinimumSize = new Vector2(220, 35)
-			};
+			_backButton = UITheme.MakeSmallButton("返回菜单", "icon_arrow_left", new Vector2(220, 35));
 			_backButton.Modulate = new Color(0.8f, 0.8f, 0.85f);
 			_backButton.Pressed += () => OnBackToMenu?.Invoke();
 			sidebar.AddChild(_backButton);
@@ -164,18 +157,14 @@ namespace RoguelikeGame.UI.Panels
 
 			var titleLabel = new Label
 			{
-				Text = "🏠 游戏大厅",
+				Text = "游戏大厅",
 				CustomMinimumSize = new Vector2(300, 45)
 			};
 			titleLabel.AddThemeFontSizeOverride("font_size", 28);
 			titleLabel.Modulate = new Color(1f, 0.92f, 0.7f);
 			topBar.AddChild(titleLabel);
 
-			_refreshButton = new Button
-			{
-				Text = "🔄 刷新列表",
-				CustomMinimumSize = new Vector2(120, 38)
-			};
+			_refreshButton = UITheme.MakeSmallButton("刷新列表", "icon_refresh", new Vector2(120, 38));
 			_refreshButton.Pressed += async () => await LoadRoomList();
 			topBar.AddChild(_refreshButton);
 
@@ -189,7 +178,7 @@ namespace RoguelikeGame.UI.Panels
 			createHeader.AddThemeConstantOverride("separation", 10);
 			createRoomSection.AddChild(createHeader);
 
-			createHeader.AddChild(new Label { Text = "🎮 创建房间:", CustomMinimumSize = new Vector2(100, 30) });
+			createHeader.AddChild(new Label { Text = "创建房间:", CustomMinimumSize = new Vector2(100, 30) });
 
 			_roomNameInput = new LineEdit
 			{
@@ -226,11 +215,7 @@ namespace RoguelikeGame.UI.Panels
 			};
 			createHeader.AddChild(_maxPlayersSpin);
 
-			_createRoomButton = new Button
-			{
-				Text = "✨ 创建房间",
-				CustomMinimumSize = new Vector2(130, 36)
-			};
+			_createRoomButton = UITheme.MakeSmallButton("创建房间", "icon_plus", new Vector2(130, 36));
 			_createRoomButton.Pressed += OnCreateRoomPressed;
 			createHeader.AddChild(_createRoomButton);
 
@@ -238,7 +223,7 @@ namespace RoguelikeGame.UI.Panels
 
 			var roomListLabel = new Label
 			{
-				Text = "📋 可用房间列表:",
+				Text = "可用房间列表:",
 				CustomMinimumSize = new Vector2(400, 28)
 			};
 			roomListLabel.AddThemeFontSizeOverride("font_size", 16);
@@ -329,12 +314,12 @@ namespace RoguelikeGame.UI.Panels
 
 		private void OnHubPlayerJoined(string playerId, string playerName)
 		{
-			AddSystemMessage($"🟢 {playerName} 加入了房间");
+			AddSystemMessage($"{playerName} 加入了房间");
 		}
 
 		private void OnHubPlayerLeft(string playerId, string playerName)
 		{
-			AddSystemMessage($"🔴 {playerName} 离开了房间");
+			AddSystemMessage($"{playerName} 离开了房间");
 		}
 
 		private void RefreshUserInfo()
@@ -354,7 +339,7 @@ namespace RoguelikeGame.UI.Panels
 				_roomList.Clear();
 				_displayedRooms.Clear();
 
-				_roomList.AddItem("⏳ 正在加载房间列表...");
+				_roomList.AddItem("正在加载房间列表...");
 
 				var result = await RoomManager.Instance.GetRoomListAsync();
 
@@ -368,19 +353,19 @@ namespace RoguelikeGame.UI.Panels
 					{
 						string statusIcon = room.Status switch
 						{
-							RoomStatus.Waiting => "✅",
-							RoomStatus.Full => "🔒",
-							RoomStatus.Ready => "⚡",
-							_ => "❓"
+							RoomStatus.Waiting => "[等待]",
+							RoomStatus.Full => "[满员]",
+							RoomStatus.Ready => "[准备]",
+							_ => "[未知]"
 						};
 
 						string modeIcon = room.Mode switch
 						{
-							GameMode.PvP => "⚔️",
-							GameMode.PvE => "🛡️",
-							GameMode.Coop => "🤝",
-							GameMode.Race => "🏁",
-							_ => "📌"
+							GameMode.PvP => "[对战]",
+							GameMode.PvE => "[合作]",
+							GameMode.Coop => "[团队]",
+							GameMode.Race => "[竞速]",
+							_ => "[其他]"
 						};
 
 						string gameModeLabel = room.GameModeId switch
@@ -392,7 +377,7 @@ namespace RoguelikeGame.UI.Panels
 
 						string itemText =
 							$"{statusIcon} {modeIcon} {room.Name}\n" +
-							$"   👥 {room.CurrentPlayers}/{room.MaxPlayers} | 🎭 {room.HostName} | 🎮 {gameModeLabel}";
+							$"   玩家: {room.CurrentPlayers}/{room.MaxPlayers} | 房主: {room.HostName} | 玩法: {gameModeLabel}";
 
 						_roomList.AddItem(itemText);
 					}
@@ -401,7 +386,7 @@ namespace RoguelikeGame.UI.Panels
 				}
 				else
 				{
-					_roomList.AddItem("😴 暂无可用房间，快来创建一个吧！");
+					_roomList.AddItem("暂无可用房间，快来创建一个吧！");
 					_onlineCountLabel.Text = "在线房间: 0";
 				}
 			}
@@ -410,7 +395,7 @@ namespace RoguelikeGame.UI.Panels
 				GD.PrintErr($"[LobbyPanel] 加载房间列表失败: {ex.Message}");
 				_roomList.Clear();
 				_displayedRooms.Clear();
-				_roomList.AddItem($"❌ 加载失败: {ex.Message}");
+				_roomList.AddItem($"加载失败: {ex.Message}");
 			}
 		}
 
@@ -586,15 +571,15 @@ namespace RoguelikeGame.UI.Panels
 			var result = await RoomManager.Instance.CreateRoomAsync(name, mode, maxPlayers, null, GameModeId);
 
 			if (result.Success)
-			{
-				AddSystemMessage($"✅ 房间 '{name}' 创建成功！");
-				OnRoomCreatedAndJoined?.Invoke();
-			}
-			else
-			{
-				AddSystemMessage($"❌ 创建失败: {result.Message}");
-				_createRoomButton.Disabled = false;
-			}
+				{
+					AddSystemMessage($"房间 '{name}' 创建成功！");
+					OnRoomCreatedAndJoined?.Invoke();
+				}
+				else
+				{
+					AddSystemMessage($"创建失败: {result.Message}");
+					_createRoomButton.Disabled = false;
+				}
 		}
 
 		private void OnChatSubmitted(string text)
@@ -630,13 +615,13 @@ namespace RoguelikeGame.UI.Panels
 
 		private void OnRoomCreatedHandler(string roomId, string roomName)
 		{
-			AddSystemMessage($"🏠 房间已创建: {roomName}");
+			AddSystemMessage($"房间已创建: {roomName}");
 			LoadRoomList();
 		}
 
 		private void OnRoomJoinedHandler(string roomId, string roomName)
 		{
-			AddSystemMessage($"✅ 已加入房间: {roomName}");
+			AddSystemMessage($"已加入房间: {roomName}");
 		}
 
 		public void Update()
