@@ -195,16 +195,17 @@ namespace RoguelikeGame.UI.Panels
 
 			_packageOption = new OptionButton();
 			_packageOption.CustomMinimumSize = new Vector2(140, 32);
-			PopulatePackageOptions();
-			_packageOption.Connect("item_selected", new Callable(this, nameof(OnPackageSelected)));
 			createHeader.AddChild(_packageOption);
 
 			createHeader.AddChild(new Label { Text = "模式:", CustomMinimumSize = new Vector2(50, 30) });
 
 			_gameModeOption = new OptionButton();
 			_gameModeOption.CustomMinimumSize = new Vector2(100, 32);
-			PopulateGameModeOptions();
 			createHeader.AddChild(_gameModeOption);
+
+			// 初始化完成后再填充选项
+			PopulatePackageOptions();
+			_packageOption.Connect("item_selected", new Callable(this, nameof(OnPackageSelected)));
 
 			createHeader.AddChild(new Label { Text = "人数:", CustomMinimumSize = new Vector2(50, 30) });
 
