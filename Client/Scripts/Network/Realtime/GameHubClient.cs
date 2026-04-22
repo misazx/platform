@@ -551,6 +551,61 @@ namespace RoguelikeGame.Network.Realtime
             _ = SendCoopTurnEndAsync(roomId, playerIndex);
         }
 
+        public void SendCoopPositionSync(string roomId, double x, double y, string form)
+        {
+            _ = SendCoopPositionAsync(roomId, x, y, form);
+        }
+
+        public void SendCoopSwitchSync(string roomId, string switchId, bool activated)
+        {
+            _ = SendCoopSwitchAsync(roomId, switchId, activated);
+        }
+
+        public void SendCoopPuzzleSolvedSync(string roomId, string puzzleId)
+        {
+            _ = SendCoopPuzzleSolvedAsync(roomId, puzzleId);
+        }
+
+        public void SendCoopPlayerDiedSync(string roomId)
+        {
+            _ = SendCoopPlayerDiedAsync(roomId);
+        }
+
+        public void SendCoopPlayerRevivedSync(string roomId)
+        {
+            _ = SendCoopPlayerRevivedAsync(roomId);
+        }
+
+        public void SendRacePositionSync(string roomId, string racerId, double x, double y, string form)
+        {
+            _ = SendRacePositionAsync(roomId, racerId, x, y, form);
+        }
+
+        public void SendRaceCheckpointSync(string roomId, string racerId, string checkpointId)
+        {
+            _ = SendRaceCheckpointAsync(roomId, racerId, checkpointId);
+        }
+
+        public void SendRaceFinishSync(string roomId, string racerId, double finishTime)
+        {
+            _ = SendRaceFinishAsync(roomId, racerId, finishTime);
+        }
+
+        public void SendLevelCompletedSync(string roomId, string levelId, string userId, object resultData)
+        {
+            _ = SendLevelCompletedAsync(roomId, levelId, userId, resultData);
+        }
+
+        public void SendGameEndedSync(string roomId, object gameResult)
+        {
+            _ = SendGameEndedAsync(roomId, gameResult);
+        }
+
+        public void UpdateLightShadowGameStateSync(string roomId, string botUserId, string gameStateJson)
+        {
+            _ = UpdateBotGameStateAsync(roomId, botUserId, gameStateJson);
+        }
+
         public async Task SendRacePositionAsync(string roomId, string racerId, double x, double y, string form)
         {
             if (_hubConnection?.State != HubConnectionState.Connected) return;
@@ -603,6 +658,11 @@ namespace RoguelikeGame.Network.Realtime
         {
             if (_hubConnection?.State != HubConnectionState.Connected) return;
             await _hubConnection.InvokeAsync("UpdateBotGameState", roomId, botUserId, gameStateJson);
+        }
+
+        public void UpdateBotGameStateSync(string roomId, string botUserId, string gameStateJson)
+        {
+            _ = UpdateBotGameStateAsync(roomId, botUserId, gameStateJson);
         }
 
         public async Task SendLevelCompletedAsync(string roomId, string levelId, string userId, object resultData)

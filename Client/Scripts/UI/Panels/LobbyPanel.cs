@@ -48,6 +48,13 @@ namespace RoguelikeGame.UI.Panels
 			CreateUI();
 			SetupEventHandlers();
 			RefreshUserInfo();
+			// 先填充选项
+			PopulatePackageOptions();
+			// 如果有指定GameModeId，选择对应的包
+			if (!string.IsNullOrEmpty(GameModeId))
+			{
+				SelectPackageById(GameModeId);
+			}
 			LoadRoomList();
 		}
 
@@ -447,8 +454,37 @@ namespace RoguelikeGame.UI.Panels
 				});
 			}
 
-			GameModeId = _availablePackages.Count > 0 ? _availablePackages[0].Id : "";
-			PopulateGameModeOptions();
+			// 注意：不在这里设置GameModeId，让_Ready或SelectPackageById来处理
+		}
+
+		private void SelectPackageById(string packageId)
+		{
+			// 查找对应的包索引
+			for (int i = 0; i < _availablePackages.Count; i++)
+			{
+				if (_availablePackages[i].Id == packageId)
+				{
+					_packageOption.Selected = i;
+					GameModeId = packageId;
+
+					// 更新最大玩家数
+					var selectedPkg = _availablePackages[i];
+					_maxPlayersSpin.MaxValue = selectedPkg.MaxPlayers > 0 ? selectedPkg.MaxPlayers : 4;
+					_maxPlayersSpin.Value = Math.Min((int)_maxPlayersSpin.Value, (int)_maxPlayersSpin.MaxValue);
+
+					PopulateGameModeOptions();
+					GD.Print($"[LobbyPanel] Selected package: {selectedPkg.Name} (ID: {packageId})");
+					return;
+				}
+			}
+
+			GD.Print($"[LobbyPanel] Package not found: {packageId}, using first package");
+			if (_availablePackages.Count > 0)
+			{
+				_packageOption.Selected = 0;
+				GameModeId = _availablePackages[0].Id;
+				PopulateGameModeOptions();
+			}
 		}
 
 		private void OnPackageSelected(long index)

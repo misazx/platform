@@ -19,6 +19,8 @@ var coop_manager: CoopModeManager
 var _game_mode := "solo"
 var _level_select: LevelSelectScreen
 var _bot_controllers: Dictionary = {}
+var _game_state_update_timer: Timer = null
+var _is_game_active: bool = false
 
 func _ready() -> void:
 	_setup_scene()
@@ -418,6 +420,7 @@ func _notify_game_ended(victory: bool) -> void:
 		"mode": _game_mode,
 	}
 	bridge.send_game_ended(game_result)
+	_stop_sending_game_state_updates()
 	_return_to_room_after_delay(victory)
 
 func _return_to_room_after_delay(victory: bool) -> void:
@@ -427,6 +430,7 @@ func _return_to_room_after_delay(victory: bool) -> void:
 	)
 
 func _return_to_room() -> void:
+	cleanup_game()
 	var room_mgr = get_node_or_null("/root/RoomManager")
 	if room_mgr != null and room_mgr.has_method("EndGameAsync"):
 		room_mgr.Call("EndGameAsync", true)
@@ -749,7 +753,10 @@ func _connect_multiplayer_bridge() -> void:
 func _on_bridge_game_started(sync_seed: int) -> void:
 	print("[GameScene] 游戏开始")
 	_try_set_game_mode_from_room()
-	# 机器人控制器将在收到第一个动作时动态创建
+	# 立即初始化机器人控制器
+	_initialize_bots_on_game_start()
+	# 开始定期发送游戏状态更新
+	_start_sending_game_state_updates()
 
 func _try_set_game_mode_from_room() -> void:
 	var room_mgr := get_node_or_null("/root/RoomManager") as Node
@@ -757,7 +764,7 @@ func _try_set_game_mode_from_room() -> void:
 		print("[GameScene] RoomManager不存在，保持solo模式")
 		return
 	var current_room: Variant = room_mgr.get("CurrentRoom")
-	if current_room == null or current_room is Nil:
+	if current_room == null:
 		print("[GameScene] 当前无房间，保持solo模式")
 		return
 	var mode_value: Variant = current_room.get("Mode")
@@ -865,6 +872,177 @@ func _create_bot_character(bot_name: String, player_index: int) -> PlayerCharact
 		bot_char.position = Vector2(100.0 + player_index * 50.0, 400.0)
 		add_child(bot_char)
 	return bot_char
+
+func _initialize_bots_on_game_start() -> void:
+	var room_mgr := get_node_or_null("/root/RoomManager") as Node
+	if room_mgr == null:
+		print("[GameScene] RoomManager 不存在，无法初始化机器人")
+		return
+
+	var current_room: Variant = room_mgr.get("CurrentRoom")
+	if current_room == null:
+		print("[GameScene] 当前无房间")
+		return
+
+	var players: Variant = current_room.get("Players")
+	if players == null or not players is Array:
+		print("[GameScene] 无玩家列表")
+		return
+
+	var bot_index: int = 0
+	for i in range(players.size()):
+		var p: Variant = players[i]
+		if p is Dictionary:
+			var is_bot: bool = p.get("IsBot", false)
+			if is_bot:
+				var bot_user_id: String = str(p.get("UserId", "bot_" + str(bot_index)))
+				var bot_name: String = str(p.get("BotName", "Bot" + str(bot_index + 1)))
+				print("[GameScene] 初始化机器人: ", bot_name, " (", bot_user_id, ")")
+				_create_bot_controller(bot_user_id, bot_name, bot_index, _game_mode)
+				bot_index += 1
+
+func _start_sending_game_state_updates() -> void:
+	_is_game_active = true
+	if is_instance_valid(_game_state_update_timer):
+		_game_state_update_timer.queue_free()
+	_game_state_update_timer = Timer.new()
+	_game_state_update_timer.wait_time = 0.1  # 每 100ms 发送一次更新
+	_game_state_update_timer.timeout.connect(_send_game_state_update)
+	add_child(_game_state_update_timer)
+	_game_state_update_timer.start()
+
+func _send_game_state_update() -> void:
+	if not _is_game_active:
+		return
+	if not is_instance_valid(player):
+		return
+
+	var bridge: MultiplayerBridge = MultiplayerBridge.instance
+	if bridge == null:
+		return
+
+	# 构建游戏状态
+	var game_state: Dictionary = {
+		"playerPosition": {
+			"x": player.position.x,
+			"y": player.position.y
+		},
+		"playerForm": "light" if player.is_light_form() else "shadow",
+		"playerHealth": player.current_health,
+		"playerEnergy": player.form_energy,
+		"isPlayerDead": player.is_dead,
+		"levelId": level_manager.current_level_id,
+		"timestamp": Time.get_ticks_msec()
+	}
+
+	# 添加关卡相关信息
+	if is_instance_valid(level_root):
+		# 收集激活的开关状态
+		var active_switch_ids: Array = []
+		for key in active_switches:
+			if active_switches[key]:
+				active_switch_ids.append(key)
+		game_state["activeSwitches"] = active_switch_ids
+
+		# 收集记忆碎片收集情况
+		var collected_fragments: int = level_manager.get_fragment_count(level_manager.current_level_id)
+		game_state["collectedFragments"] = collected_fragments
+
+	# 向每个机器人发送游戏状态
+	for bot_user_id in _bot_controllers:
+		bridge.send_light_shadow_game_state(bot_user_id, game_state)
+
+func _stop_sending_game_state_updates() -> void:
+	_is_game_active = false
+	if is_instance_valid(_game_state_update_timer):
+		_game_state_update_timer.stop()
+		_game_state_update_timer.queue_free()
+		_game_state_update_timer = null
+
+func cleanup_game() -> void:
+	print("[GameScene] 清理游戏资源...")
+	_stop_sending_game_state_updates()
+	_cleanup_bot_controllers()
+	_disconnect_multiplayer_bridge()
+	_cleanup_mode_managers()
+	_cleanup_player()
+	_clear_level()
+	if is_instance_valid(hud):
+		hud.stop_timer()
+	active_switches.clear()
+	_game_mode = "solo"
+	_is_game_active = false
+
+func _cleanup_bot_controllers() -> void:
+	for bot_user_id in _bot_controllers.keys():
+		var bot_ctrl: BotController = _bot_controllers[bot_user_id]
+		if is_instance_valid(bot_ctrl):
+			if is_instance_valid(bot_ctrl._bot_character):
+				bot_ctrl._bot_character.queue_free()
+			bot_ctrl.queue_free()
+	_bot_controllers.clear()
+
+func _disconnect_multiplayer_bridge() -> void:
+	var bridge: MultiplayerBridge = MultiplayerBridge.instance
+	if bridge == null:
+		return
+	if bridge.bridge_race_position_updated.is_connected(_on_bridge_race_position):
+		bridge.bridge_race_position_updated.disconnect(_on_bridge_race_position)
+	if bridge.bridge_race_checkpoint_reached.is_connected(_on_bridge_race_checkpoint):
+		bridge.bridge_race_checkpoint_reached.disconnect(_on_bridge_race_checkpoint)
+	if bridge.bridge_race_finished.is_connected(_on_bridge_race_finish):
+		bridge.bridge_race_finished.disconnect(_on_bridge_race_finish)
+	if bridge.bridge_coop_position_updated.is_connected(_on_bridge_coop_position):
+		bridge.bridge_coop_position_updated.disconnect(_on_bridge_coop_position)
+	if bridge.bridge_coop_switch_updated.is_connected(_on_bridge_coop_switch):
+		bridge.bridge_coop_switch_updated.disconnect(_on_bridge_coop_switch)
+	if bridge.bridge_coop_puzzle_solved.is_connected(_on_bridge_coop_puzzle):
+		bridge.bridge_coop_puzzle_solved.disconnect(_on_bridge_coop_puzzle)
+	if bridge.bridge_coop_player_died.is_connected(_on_bridge_coop_player_died):
+		bridge.bridge_coop_player_died.disconnect(_on_bridge_coop_player_died)
+	if bridge.bridge_coop_player_revived.is_connected(_on_bridge_coop_player_revived):
+		bridge.bridge_coop_player_revived.disconnect(_on_bridge_coop_player_revived)
+	if bridge.bridge_light_shadow_bot_action.is_connected(_on_bridge_bot_action):
+		bridge.bridge_light_shadow_bot_action.disconnect(_on_bridge_bot_action)
+	if bridge.bridge_level_completed.is_connected(_on_bridge_level_completed):
+		bridge.bridge_level_completed.disconnect(_on_bridge_level_completed)
+	if bridge.bridge_game_ended.is_connected(_on_bridge_game_ended):
+		bridge.bridge_game_ended.disconnect(_on_bridge_game_ended)
+	if bridge.bridge_game_started.is_connected(_on_bridge_game_started):
+		bridge.bridge_game_started.disconnect(_on_bridge_game_started)
+
+func _cleanup_mode_managers() -> void:
+	if is_instance_valid(race_manager):
+		race_manager._race_active = false
+		for ghost_id in race_manager._ghost_nodes.keys():
+			var ghost: Node2D = race_manager._ghost_nodes[ghost_id]
+			if is_instance_valid(ghost):
+				ghost.queue_free()
+		race_manager._ghost_nodes.clear()
+		race_manager._racers.clear()
+		race_manager._finish_order.clear()
+	if is_instance_valid(coop_manager):
+		coop_manager._is_active = false
+		coop_manager.set_process(false)
+
+func _cleanup_player() -> void:
+	if not is_instance_valid(player):
+		return
+	if player.form_changed.is_connected(_on_form_changed):
+		player.form_changed.disconnect(_on_form_changed)
+	if player.health_changed.is_connected(_on_health_changed):
+		player.health_changed.disconnect(_on_health_changed)
+	if player.player_died.is_connected(_on_player_died):
+		player.player_died.disconnect(_on_player_died)
+	if player.fragment_collected.is_connected(_on_fragment_count_changed):
+		player.fragment_collected.disconnect(_on_fragment_count_changed)
+	if player.energy_changed.is_connected(_on_energy_changed):
+		player.energy_changed.disconnect(_on_energy_changed)
+	if player.checkpoint_reached.is_connected(_on_checkpoint_activated):
+		player.checkpoint_reached.disconnect(_on_checkpoint_activated)
+
+func _exit_tree() -> void:
+	cleanup_game()
 
 func _sync_multiplayer_state() -> void:
 	if not is_instance_valid(player):

@@ -224,7 +224,7 @@ func send_coop_position(x: float, y: float, form: String) -> void:
 	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
 	if room_id == "":
 		return
-	hub_client.call("send_coop_position_async", room_id, x, y, form)
+	hub_client.call("send_coop_position_sync", room_id, x, y, form)
 
 func send_coop_switch(switch_id: String, activated: bool) -> void:
 	var hub_client = get_node_or_null("/root/GameHubClient")
@@ -233,7 +233,7 @@ func send_coop_switch(switch_id: String, activated: bool) -> void:
 	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
 	if room_id == "":
 		return
-	hub_client.call("send_coop_switch_async", room_id, switch_id, activated)
+	hub_client.call("send_coop_switch_sync", room_id, switch_id, activated)
 
 func send_coop_puzzle_solved(puzzle_id: String) -> void:
 	var hub_client = get_node_or_null("/root/GameHubClient")
@@ -242,7 +242,7 @@ func send_coop_puzzle_solved(puzzle_id: String) -> void:
 	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
 	if room_id == "":
 		return
-	hub_client.call("send_coop_puzzle_solved_async", room_id, puzzle_id)
+	hub_client.call("send_coop_puzzle_solved_sync", room_id, puzzle_id)
 
 func send_coop_player_died() -> void:
 	var hub_client = get_node_or_null("/root/GameHubClient")
@@ -251,7 +251,7 @@ func send_coop_player_died() -> void:
 	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
 	if room_id == "":
 		return
-	hub_client.call("send_coop_player_died_async", room_id)
+	hub_client.call("send_coop_player_died_sync", room_id)
 
 func send_coop_player_revived() -> void:
 	var hub_client = get_node_or_null("/root/GameHubClient")
@@ -260,7 +260,7 @@ func send_coop_player_revived() -> void:
 	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
 	if room_id == "":
 		return
-	hub_client.call("send_coop_player_revived_async", room_id)
+	hub_client.call("send_coop_player_revived_sync", room_id)
 
 func send_race_position(racer_id: String, x: float, y: float, form: String) -> void:
 	var hub_client = get_node_or_null("/root/GameHubClient")
@@ -269,7 +269,7 @@ func send_race_position(racer_id: String, x: float, y: float, form: String) -> v
 	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
 	if room_id == "":
 		return
-	hub_client.call("send_race_position_async", room_id, racer_id, x, y, form)
+	hub_client.call("send_race_position_sync", room_id, racer_id, x, y, form)
 
 func send_race_checkpoint(racer_id: String, checkpoint_id: String) -> void:
 	var hub_client = get_node_or_null("/root/GameHubClient")
@@ -278,7 +278,7 @@ func send_race_checkpoint(racer_id: String, checkpoint_id: String) -> void:
 	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
 	if room_id == "":
 		return
-	hub_client.call("send_race_checkpoint_async", room_id, racer_id, checkpoint_id)
+	hub_client.call("send_race_checkpoint_sync", room_id, racer_id, checkpoint_id)
 
 func send_race_finish(racer_id: String, finish_time: float) -> void:
 	var hub_client = get_node_or_null("/root/GameHubClient")
@@ -287,7 +287,7 @@ func send_race_finish(racer_id: String, finish_time: float) -> void:
 	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
 	if room_id == "":
 		return
-	hub_client.call("send_race_finish_async", room_id, racer_id, finish_time)
+	hub_client.call("send_race_finish_sync", room_id, racer_id, finish_time)
 
 func send_level_completed(level_id: String, user_id: String, result_data: Dictionary) -> void:
 	var hub_client = get_node_or_null("/root/GameHubClient")
@@ -296,7 +296,7 @@ func send_level_completed(level_id: String, user_id: String, result_data: Dictio
 	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
 	if room_id == "":
 		return
-	hub_client.call("send_level_completed_async", room_id, level_id, user_id, result_data)
+	hub_client.call("send_level_completed_sync", room_id, level_id, user_id, result_data)
 
 func send_game_ended(game_result: Dictionary) -> void:
 	var hub_client = get_node_or_null("/root/GameHubClient")
@@ -305,7 +305,17 @@ func send_game_ended(game_result: Dictionary) -> void:
 	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
 	if room_id == "":
 		return
-	hub_client.call("send_game_ended_async", room_id, game_result)
+	hub_client.call("send_game_ended_sync", room_id, game_result)
+
+func send_light_shadow_game_state(bot_user_id: String, game_state: Dictionary) -> void:
+	var hub_client = get_node_or_null("/root/GameHubClient")
+	if hub_client == null:
+		return
+	var room_id: String = hub_client.call("get_current_room_id") if hub_client.has_method("get_current_room_id") else ""
+	if room_id == "":
+		return
+	var game_state_json: String = JSON.stringify(game_state)
+	hub_client.call("update_light_shadow_game_state_sync", room_id, bot_user_id, game_state_json)
 
 func is_multiplayer_game() -> bool:
 	var bridge = get_node_or_null("/root/MultiplayerSeedBridge")
