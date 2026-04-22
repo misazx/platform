@@ -657,7 +657,7 @@ namespace RoguelikeGame.Network.Realtime
         public async Task UpdateBotGameStateAsync(string roomId, string botUserId, string gameStateJson)
         {
             if (_hubConnection?.State != HubConnectionState.Connected) return;
-            await _hubConnection.InvokeAsync("UpdateBotGameState", roomId, botUserId, gameStateJson);
+            await _hubConnection.InvokeAsync("UpdateLightShadowGameState", roomId, botUserId, gameStateJson);
         }
 
         public void UpdateBotGameStateSync(string roomId, string botUserId, string gameStateJson)

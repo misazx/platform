@@ -923,30 +923,58 @@ func _send_game_state_update() -> void:
 
 	# 构建游戏状态
 	var game_state: Dictionary = {
-		"playerPosition": {
-			"x": player.position.x,
-			"y": player.position.y
-		},
-		"playerForm": "light" if player.is_light_form() else "shadow",
-		"playerHealth": player.current_health,
-		"playerEnergy": player.form_energy,
-		"isPlayerDead": player.is_dead,
-		"levelId": level_manager.current_level_id,
+		"player_x": player.position.x,
+		"player_y": player.position.y,
+		"player_form": "light" if player.is_light_form() else "shadow",
+		"player_health": player.current_health,
+		"player_max_health": player.max_health,
+		"player_energy": player.form_energy,
+		"is_grounded": player.is_on_floor(),
+		"facing_right": player.facing_right,
+		"is_player_dead": player.is_dead,
+		"level_id": level_manager.current_level_id,
 		"timestamp": Time.get_ticks_msec()
 	}
 
-	# 添加关卡相关信息
 	if is_instance_valid(level_root):
-		# 收集激活的开关状态
 		var active_switch_ids: Array = []
 		for key in active_switches:
 			if active_switches[key]:
 				active_switch_ids.append(key)
-		game_state["activeSwitches"] = active_switch_ids
+		game_state["active_switches"] = active_switch_ids
 
-		# 收集记忆碎片收集情况
 		var collected_fragments: int = level_manager.get_fragment_count(level_manager.current_level_id)
-		game_state["collectedFragments"] = collected_fragments
+		game_state["fragments"] = collected_fragments
+
+		var checkpoint_ids: Array = []
+		for cp in get_tree().get_nodes_in_group("checkpoints"):
+			if cp is Area2D and cp.has_method("get_checkpoint_id"):
+				checkpoint_ids.append(cp.call("get_checkpoint_id"))
+		game_state["checkpoints"] = checkpoint_ids
+
+		var goal_nodes: Array = get_tree().get_nodes_in_group("goal")
+		if not goal_nodes.is_empty():
+			var goal: Node2D = goal_nodes[0] as Node2D
+			game_state["goal"] = {"x": goal.position.x, "y": goal.position.y}
+		else:
+			game_state["goal"] = {"x": 0.0, "y": 0.0}
+
+		var light_zones: Array = []
+		var shadow_zones: Array = []
+		for zone in get_tree().get_nodes_in_group("light_zones"):
+			if zone is Area2D:
+				light_zones.append({"x": zone.position.x, "y": zone.position.y})
+		for zone in get_tree().get_nodes_in_group("shadow_zones"):
+			if zone is Area2D:
+				shadow_zones.append({"x": zone.position.x, "y": zone.position.y})
+		game_state["light_zones"] = light_zones
+		game_state["shadow_zones"] = shadow_zones
+
+		var platform_data: Array = []
+		for plat in get_tree().get_nodes_in_group("platforms"):
+			if plat is Node2D:
+				platform_data.append({"x": plat.position.x, "y": plat.position.y})
+		game_state["platforms"] = platform_data
 
 	# 向每个机器人发送游戏状态
 	for bot_user_id in _bot_controllers:

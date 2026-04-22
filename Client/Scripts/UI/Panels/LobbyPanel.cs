@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using RoguelikeGame.Network;
@@ -452,9 +453,18 @@ namespace RoguelikeGame.UI.Panels
 					MultiplayerModes = new List<string> { "coop", "pvp" },
 					MaxPlayers = 4
 				});
+				_packageOption.AddItem("光影旅者");
+				_availablePackages.Add(new PackageData
+				{
+					Id = "light_shadow_traveler",
+					Name = "光影旅者",
+					MultiplayerModes = new List<string> { "race", "coop", "pvp" },
+					MaxPlayers = 2
+				});
 			}
 
-			// 注意：不在这里设置GameModeId，让_Ready或SelectPackageById来处理
+			GameModeId = _availablePackages.Count > 0 ? _availablePackages[0].Id : "";
+			PopulateGameModeOptions();
 		}
 
 		private void SelectPackageById(string packageId)
@@ -516,21 +526,25 @@ namespace RoguelikeGame.UI.Panels
 				{ "race", (GameMode.Race, "Race 竞速") }
 			};
 
+			PackageData? selectedPkg = null;
 			if (!string.IsNullOrEmpty(GameModeId))
 			{
-				var packageData = GetPackageData(GameModeId);
-				var multiplayerModes = packageData?.MultiplayerModes;
-
-				if (multiplayerModes != null && multiplayerModes.Count > 0)
+				selectedPkg = _availablePackages.FirstOrDefault(p => p.Id == GameModeId);
+				if (selectedPkg == null)
 				{
-					foreach (var modeStr in multiplayerModes)
+					selectedPkg = GetPackageData(GameModeId);
+				}
+			}
+
+			if (selectedPkg?.MultiplayerModes != null && selectedPkg.MultiplayerModes.Count > 0)
+			{
+				foreach (var modeStr in selectedPkg.MultiplayerModes)
+				{
+					var lower = modeStr.ToLower();
+					if (modeMap.TryGetValue(lower, out var entry))
 					{
-						var lower = modeStr.ToLower();
-						if (modeMap.TryGetValue(lower, out var entry))
-						{
-							_gameModeOption.AddItem(entry.Label);
-							_availableModes.Add(entry.Mode);
-						}
+						_gameModeOption.AddItem(entry.Label);
+						_availableModes.Add(entry.Mode);
 					}
 				}
 			}

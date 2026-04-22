@@ -47,6 +47,7 @@ var facing_right := true
 var form_energy := MAX_FORM_ENERGY
 var is_dashing := false
 var dash_timer := 0.0
+var is_bot_controlled := false
 var is_stealthing := false
 var can_wall_jump := false
 var wall_jump_dir := 0.0
@@ -154,6 +155,13 @@ func _create_player_sprite() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_dead:
+		return
+	if is_bot_controlled:
+		_apply_gravity(delta)
+		_check_fall_death()
+		_regen_energy(delta)
+		_update_visuals(delta)
+		was_on_floor = is_on_floor()
 		return
 	_update_timers(delta)
 	_handle_input()

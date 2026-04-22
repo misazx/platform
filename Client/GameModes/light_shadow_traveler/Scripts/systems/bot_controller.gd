@@ -11,7 +11,7 @@ var _player_index: int = 0
 var _is_active: bool = false
 var _bot_mode: BotMode = BotMode.SOLO
 
-var _move_direction: int = 0
+var _move_direction: float = 0.0
 var _should_jump: bool = false
 var _should_switch_form: bool = false
 var _should_dash: bool = false
@@ -22,12 +22,11 @@ var _bot_character: PlayerCharacter = null
 var _last_action_time: int = 0
 
 func _ready() -> void:
-	set_process(false)
+	set_physics_process(false)
 
-func _process(delta: float) -> void:
-	if not _is_active:
+func _physics_process(delta: float) -> void:
+	if not _is_active or not is_instance_valid(_bot_character):
 		return
-
 	_apply_bot_input(delta)
 
 func initialize_bot(bot_user_id: String, bot_name: String, player_index: int, mode: BotMode = BotMode.SOLO) -> void:
@@ -36,16 +35,18 @@ func initialize_bot(bot_user_id: String, bot_name: String, player_index: int, mo
 	_player_index = player_index
 	_bot_mode = mode
 	_is_active = true
-	set_process(true)
+	set_physics_process(true)
 	print("[BotController] 机器人初始化: ", bot_name, " (", bot_user_id, ") 模式: ", _get_mode_name(mode))
 
 func set_bot_character(character: PlayerCharacter) -> void:
 	_bot_character = character
+	if is_instance_valid(_bot_character):
+		_bot_character.set("is_bot_controlled", true)
 	print("[BotController] 机器人角色已设置")
 
 func on_server_action(action_json: String) -> void:
-	var json = JSON.new()
-	var parse_result = json.parse(action_json)
+	var json := JSON.new()
+	var parse_result: int = json.parse(action_json)
 	if parse_result != OK:
 		push_error("[BotController] 解析机器人动作失败: ", json.get_error_message())
 		return
@@ -58,7 +59,7 @@ func on_server_action(action_json: String) -> void:
 	if received_bot_user_id != _bot_user_id and received_bot_user_id != "":
 		return
 
-	_move_direction = data.get("moveDirection", 0)
+	_move_direction = float(data.get("moveDirection", 0))
 	_should_jump = data.get("shouldJump", false)
 	_should_switch_form = data.get("shouldSwitchForm", false)
 	_should_dash = data.get("shouldDash", false)
@@ -67,90 +68,38 @@ func on_server_action(action_json: String) -> void:
 
 	bot_action_received.emit(data)
 
-func _apply_bot_input(delta: float) -> void:
+func _apply_bot_input(_delta: float) -> void:
 	if not is_instance_valid(_bot_character):
 		return
 
-	match _bot_mode:
-		BotMode.RACE:
-			_apply_race_mode_input(delta)
-		BotMode.COOP:
-			_apply_coop_mode_input(delta)
-		_:
-			_apply_solo_mode_input(delta)
-
-func _apply_solo_mode_input(delta: float) -> void:
 	if _should_switch_form:
-		_bot_character._switch_form()
+		if _bot_character.has_method("switch_form_external"):
+			_bot_character.call("switch_form_external", _target_form)
 		_should_switch_form = false
 
-	if _should_jump:
-		_simulate_jump()
+	if _should_jump and _bot_character.is_on_floor():
+		var jump_force: float = _bot_character.get("light_jump_force") if _bot_character.is_light_form() else _bot_character.get("shadow_jump_force")
+		_bot_character.velocity.y = jump_force
 		_should_jump = false
 
 	if _should_dash and _bot_character.is_light_form():
-		_simulate_dash()
+		if _bot_character.has_method("_start_dash"):
+			_bot_character.call("_start_dash")
 		_should_dash = false
 
-	_simulate_movement(_move_direction)
-
-func _apply_race_mode_input(delta: float) -> void:
-	if _should_switch_form:
-		_bot_character._switch_form()
-		_should_switch_form = false
-
-	if _should_jump:
-		_simulate_jump()
-		_should_jump = false
-
-	if _should_dash and _bot_character.is_light_form():
-		_simulate_dash()
-		_should_dash = false
-
-	_simulate_movement(_move_direction)
-
-func _apply_coop_mode_input(delta: float) -> void:
-	if _should_switch_form:
-		_bot_character._switch_form()
-		_should_switch_form = false
-
-	if _should_jump:
-		_simulate_jump()
-		_should_jump = false
-
-	if _should_dash and _bot_character.is_light_form():
-		_simulate_dash()
-		_should_dash = false
-
-	_simulate_movement(_move_direction)
-
-func _simulate_movement(direction: int) -> void:
-	if direction == 0:
-		return
-
-	var input_dir: float = float(direction)
-	var speed: float = _bot_character.light_speed if _bot_character.is_light_form() else _bot_character.shadow_speed
-
-	_bot_character.velocity.x = input_dir * speed
-
-	if input_dir != 0:
-		_bot_character.sprite.flip_h = input_dir > 0
-		_bot_character.facing_right = input_dir > 0
+	if _move_direction != 0.0:
+		var speed: float = _bot_character.get("light_speed") if _bot_character.is_light_form() else _bot_character.get("shadow_speed")
+		_bot_character.velocity.x = _move_direction * speed
+		if _bot_character.has_method("set_facing"):
+			_bot_character.call("set_facing", _move_direction > 0.0)
+		if _bot_character.get("sprite") != null:
+			var sprite: Node = _bot_character.get("sprite")
+			if sprite is Sprite2D:
+				sprite.flip_h = _move_direction < 0.0
+	else:
+		_bot_character.velocity.x = 0.0
 
 	_bot_character.move_and_slide()
-
-func _simulate_jump() -> void:
-	if not _bot_character.is_on_floor():
-		return
-
-	var jump_force: float = _bot_character.light_jump_force if _bot_character.is_light_form() else _bot_character.shadow_jump_force
-	_bot_character.velocity.y = jump_force
-
-func _simulate_dash() -> void:
-	if _bot_character.form_energy < 25.0:
-		return
-
-	_bot_character._start_dash()
 
 func _get_mode_name(mode: BotMode) -> String:
 	match mode:
@@ -160,6 +109,8 @@ func _get_mode_name(mode: BotMode) -> String:
 			return "竞速"
 		BotMode.COOP:
 			return "合作"
+		BotMode.PVP:
+			return "对战"
 		_:
 			return "未知"
 
@@ -177,9 +128,11 @@ func is_active() -> bool:
 
 func cleanup() -> void:
 	_is_active = false
-	set_process(false)
+	set_physics_process(false)
+	if is_instance_valid(_bot_character):
+		_bot_character.set("is_bot_controlled", false)
 	_bot_character = null
-	_move_direction = 0
+	_move_direction = 0.0
 	_should_jump = false
 	_should_switch_form = false
 	_should_dash = false
