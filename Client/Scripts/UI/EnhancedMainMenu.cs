@@ -86,7 +86,7 @@ namespace RoguelikeGame.UI
 
 			var subtitleLabel = new Label
 			{
-				Text = "多玩法包系统 v1.0",
+				Text = "✨ 多玩法包系统 v1.0 ✨",
 				HorizontalAlignment = HorizontalAlignment.Center,
 				MouseFilter = MouseFilterEnum.Ignore
 			};
@@ -379,15 +379,15 @@ namespace RoguelikeGame.UI
 			if (AuthSystem.Instance?.IsAuthenticated == true && AuthSystem.Instance.CurrentUser != null)
 			{
 				var user = AuthSystem.Instance.CurrentUser;
-				_userStatusLabel.Text = $"{user.Username} | Lv.{user.Level} | 胜场: {user.GamesWon}";
+				_userStatusLabel.Text = $"👤 {user.Username} | Lv.{user.Level} | 胜场: {user.GamesWon}";
 				_userStatusLabel.Modulate = new Color(0.4f, 0.9f, 0.6f);
-				_authButton.Text = "登出";
+				_authButton.Text = "🚪 登出";
 			}
 			else
 			{
 				_userStatusLabel.Text = "未登录 - 单人模式可用，多人模式需登录";
 				_userStatusLabel.Modulate = new Color(0.6f, 0.62f, 0.68f);
-				_authButton.Text = "登录 / 注册";
+				_authButton.Text = "🔐 登录 / 注册";
 			}
 		}
 

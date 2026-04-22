@@ -57,7 +57,7 @@ namespace RoguelikeGame.UI.Panels
 
 			_titleLabel = new Label
 			{
-				Text = "账号登录",
+				Text = "🔐 账号登录",
 				HorizontalAlignment = HorizontalAlignment.Center,
 				CustomMinimumSize = new Vector2(400, 50)
 			};
@@ -102,11 +102,21 @@ namespace RoguelikeGame.UI.Panels
 
 			vbox.AddChild(new Control { CustomMinimumSize = new Vector2(0, 10) });
 
-			_loginButton = UITheme.MakeWideButton("登录", "icon_shield", new Vector2(380, 50));
+			_loginButton = new Button
+			{
+				Text = "✨ 登录",
+				CustomMinimumSize = new Vector2(380, 50)
+			};
+			_loginButton.AddThemeFontSizeOverride("font_size", 20);
 			_loginButton.Pressed += OnLoginPressed;
 			vbox.AddChild(_loginButton);
 
-			_registerButton = UITheme.MakeWideButton("注册新账号", "icon_plus", new Vector2(380, 45));
+			_registerButton = new Button
+			{
+				Text = "📝 注册新账号",
+				CustomMinimumSize = new Vector2(380, 45)
+			};
+			_registerButton.AddThemeFontSizeOverride("font_size", 16);
 			_registerButton.Pressed += OnRegisterPressed;
 			_registerButton.Visible = false;
 			vbox.AddChild(_registerButton);
@@ -123,7 +133,11 @@ namespace RoguelikeGame.UI.Panels
 
 			vbox.AddChild(new HSeparator());
 
-			_backButton = UITheme.MakeSmallButton("返回", "icon_arrow_left", new Vector2(150, 38));
+			_backButton = new Button
+			{
+				Text = "← 返回",
+				CustomMinimumSize = new Vector2(150, 38)
+			};
 			_backButton.Pressed += () => OnBack?.Invoke();
 			var backContainer = new CenterContainer();
 			backContainer.AddChild(_backButton);
@@ -151,7 +165,7 @@ namespace RoguelikeGame.UI.Panels
 			_loginButton.Visible = !isRegisterMode;
 			_registerButton.Visible = isRegisterMode;
 
-			_titleLabel.Text = isRegisterMode ? "注册账号" : "账号登录";
+			_titleLabel.Text = isRegisterMode ? "📝 注册账号" : "🔐 账号登录";
 		}
 
 		private async void OnLoginPressed()
@@ -161,11 +175,11 @@ namespace RoguelikeGame.UI.Panels
 
 			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
 			{
-				SetStatus("请输入用户名和密码", Colors.Red);
+				SetStatus("❌ 请输入用户名和密码", Colors.Red);
 				return;
 			}
 
-			SetStatus("正在登录...", Colors.Yellow);
+			SetStatus("⏳ 正在登录...", Colors.Yellow);
 			_loginButton.Disabled = true;
 
 			try
@@ -174,7 +188,7 @@ namespace RoguelikeGame.UI.Panels
 
 				if (result.Success)
 				{
-					SetStatus("登录成功！", Colors.Green);
+					SetStatus("✅ 登录成功！", Colors.Green);
 
 					if (_rememberMeCheck.ButtonPressed)
 					{
@@ -186,12 +200,12 @@ namespace RoguelikeGame.UI.Panels
 				}
 				else
 				{
-					SetStatus($"登录失败: {result.Message}", Colors.Red);
+					SetStatus($"❌ 登录失败: {result.Message}", Colors.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				SetStatus($"错误: {ex.Message}", Colors.Red);
+				SetStatus($"❌ 错误: {ex.Message}", Colors.Red);
 			}
 			finally
 			{
@@ -207,17 +221,17 @@ namespace RoguelikeGame.UI.Panels
 
 			if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
 			{
-				SetStatus("请填写必填项", Colors.Red);
+				SetStatus("❌ 请填写必填项", Colors.Red);
 				return;
 			}
 
 			if (password.Length < 6)
 			{
-				SetStatus("密码至少需要6个字符", Colors.Red);
+				SetStatus("❌ 密码至少需要6个字符", Colors.Red);
 				return;
 			}
 
-			SetStatus("正在注册...", Colors.Yellow);
+			SetStatus("⏳ 正在注册...", Colors.Yellow);
 			_registerButton.Disabled = true;
 
 			try
@@ -226,7 +240,7 @@ namespace RoguelikeGame.UI.Panels
 
 				if (result.Success)
 				{
-					SetStatus("注册成功！正在自动登录...", Colors.Green);
+					SetStatus("✅ 注册成功！正在自动登录...", Colors.Green);
 
 					await Task.Delay(1000);
 
@@ -244,12 +258,12 @@ namespace RoguelikeGame.UI.Panels
 				}
 				else
 				{
-					SetStatus($"注册失败: {result.Message}", Colors.Red);
+					SetStatus($"❌ 注册失败: {result.Message}", Colors.Red);
 				}
 			}
 			catch (Exception ex)
 			{
-				SetStatus($"错误: {ex.Message}", Colors.Red);
+				SetStatus($"❌ 错误: {ex.Message}", Colors.Red);
 			}
 			finally
 			{

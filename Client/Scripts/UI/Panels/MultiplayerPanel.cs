@@ -62,7 +62,7 @@ namespace RoguelikeGame.UI.Panels
 
 			_titleLabel = new Label
 			{
-				Text = "多人游戏",
+				Text = "🌐 多人游戏",
 				HorizontalAlignment = HorizontalAlignment.Center,
 				CustomMinimumSize = new Vector2(500, 50)
 			};
@@ -88,7 +88,7 @@ namespace RoguelikeGame.UI.Panels
 			vbox.AddChild(new Control { CustomMinimumSize = new Vector2(0, 15) });
 
 			_lanButton = CreateModeButton(
-				"局域网对战",
+				"🏠 局域网对战",
 				"与同一网络下的好友对战\n低延迟 · 无需互联网",
 				new Color(0.2f, 0.6f, 0.4f)
 			);
@@ -96,7 +96,7 @@ namespace RoguelikeGame.UI.Panels
 			vbox.AddChild(_lanButton);
 
 			_onlineButton = CreateModeButton(
-				"在线多人游戏",
+				"🌍 在线多人游戏",
 				"与全球玩家匹配对战\n需要账号登录",
 				new Color(0.3f, 0.5f, 0.8f)
 			);
@@ -104,7 +104,7 @@ namespace RoguelikeGame.UI.Panels
 			vbox.AddChild(_onlineButton);
 
 			_bluetoothButton = CreateModeButton(
-				"蓝牙近距离联机",
+				"📱 蓝牙近距离联机",
 				"无需WiFi即可联机\n适合移动设备",
 				new Color(0.6f, 0.3f, 0.7f)
 			);
@@ -141,7 +141,12 @@ namespace RoguelikeGame.UI.Panels
 
 			vbox.AddChild(new HSeparator());
 
-			_backButton = UITheme.MakeSmallButton("返回主菜单", "icon_arrow_left", new Vector2(200, 45));
+			_backButton = new Button
+			{
+				Text = "← 返回主菜单",
+				CustomMinimumSize = new Vector2(200, 45)
+			};
+			_backButton.AddThemeFontSizeOverride("font_size", 16);
 			_backButton.Pressed += () => OnBack?.Invoke();
 			var backContainer = new CenterContainer();
 			backContainer.AddChild(_backButton);

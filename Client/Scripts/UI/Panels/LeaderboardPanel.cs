@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Godot;
 using RoguelikeGame.Network.Auth;
 using RoguelikeGame.Packages;
-using RoguelikeGame.Client.UI;
 
 namespace RoguelikeGame.UI.Panels
 {
@@ -70,7 +69,7 @@ namespace RoguelikeGame.UI.Panels
 
 			_titleLabel = new Label
 			{
-				Text = "排行榜",
+				Text = "🏆 排行榜",
 				CustomMinimumSize = new Vector2(300, 50)
 			};
 			_titleLabel.AddThemeFontSizeOverride("font_size", 30);
@@ -84,7 +83,7 @@ namespace RoguelikeGame.UI.Panels
 			_packageSelector.ItemSelected += OnPackageChanged;
 			headerRow.AddChild(_packageSelector);
 
-			_refreshButton = UITheme.MakeSmallButton("刷新", "icon_refresh", new Vector2(90, 36));
+			_refreshButton = new Button { Text = "🔄 刷新", CustomMinimumSize = new Vector2(90, 36) };
 			_refreshButton.Pressed += () => LoadLeaderboard();
 			headerRow.AddChild(_refreshButton);
 
@@ -155,7 +154,7 @@ namespace RoguelikeGame.UI.Panels
 			var backContainer = new CenterContainer();
 			mainContainer.AddChild(backContainer);
 
-			_backButton = UITheme.MakeSmallButton("返回主菜单", "icon_arrow_left", new Vector2(180, 42));
+			_backButton = new Button { Text = "← 返回主菜单", CustomMinimumSize = new Vector2(180, 42) };
 			_backButton.Pressed += () => OnBack?.Invoke();
 			backContainer.AddChild(_backButton);
 		}
@@ -173,7 +172,8 @@ namespace RoguelikeGame.UI.Panels
 				var pkg = kvp.Value;
 				if (pkg.HasLeaderboard && PackageManager.Instance.IsPackageInstalled(pkg.Id))
 				{
-					_packageSelector.AddItem($"{pkg.Name}");
+					string icon = pkg.SupportsMultiplayer ? "🌐" : "🎮";
+					_packageSelector.AddItem($"{icon} {pkg.Name}");
 					_packageSelector.SetItemMetadata(idx, pkg.Id);
 
 					if (selectedIndex < 0 && pkg.Id == "base_game")
@@ -199,7 +199,7 @@ namespace RoguelikeGame.UI.Panels
 		{
 			try
 			{
-				_statusLabel.Text = "正在加载排行榜...";
+				_statusLabel.Text = "⏳ 正在加载排行榜...";
 				_statusLabel.Modulate = Colors.Yellow;
 
 				string packageId = GetCurrentPackageId();
@@ -226,7 +226,7 @@ namespace RoguelikeGame.UI.Panels
 
 				if (!(result.TryGetProperty("success", out var sEl) && sEl.GetBoolean()))
 				{
-					_statusLabel.Text = "加载失败";
+					_statusLabel.Text = "❌ 加载失败";
 					_statusLabel.Modulate = Colors.Red;
 					return;
 				}
@@ -245,13 +245,13 @@ namespace RoguelikeGame.UI.Panels
 
 						string medal = rank switch
 						{
-							1 => "第1名",
-							2 => "第2名",
-							3 => "第3名",
+							1 => "🥇",
+							2 => "🥈",
+							3 => "🥉",
 							_ => $"#{rank}"
 						};
 
-						string victoryIcon = victory ? "胜利" : "失败";
+						string victoryIcon = victory ? "✅" : "❌";
 
 						FormatTime(timeSec, out string timeStr);
 
@@ -279,7 +279,7 @@ namespace RoguelikeGame.UI.Panels
 					int victories = stats.TryGetProperty("victories", out var v) ? v.GetInt32() : 0;
 					long highScore = stats.TryGetProperty("highestScore", out var hs) ? hs.GetInt64() : 0;
 
-					_statsLabel.Text = $"总场次: {totalGames} | 玩家: {players} | 胜利: {victories} | 最高分: {highScore}";
+					_statsLabel.Text = $"📊 总场次: {totalGames} | 玩家: {players} | 胜利: {victories} | 最高分: {highScore}";
 				}
 
 				if (AuthSystem.Instance?.IsAuthenticated == true && !string.IsNullOrEmpty(AuthSystem.Instance.CurrentUser?.Id))
@@ -291,13 +291,13 @@ namespace RoguelikeGame.UI.Panels
 					_userRankLabel.Text = "";
 				}
 
-				_statusLabel.Text = $"已加载 ({DateTime.Now:HH:mm:ss})";
+				_statusLabel.Text = $"✅ 已加载 ({DateTime.Now:HH:mm:ss})";
 				_statusLabel.Modulate = new Color(0.3f, 0.9f, 0.4f);
 			}
 			catch (Exception ex)
 			{
 				GD.PrintErr($"[Leaderboard] 加载失败: {ex.Message}");
-				_statusLabel.Text = "无法连接到服务器";
+				_statusLabel.Text = "❌ 无法连接到服务器";
 				_statusLabel.Modulate = Colors.Red;
 			}
 		}
@@ -316,7 +316,7 @@ namespace RoguelikeGame.UI.Panels
 				if (result.TryGetProperty("bestRank", out var rankEl) && rankEl.ValueKind != JsonValueKind.Null)
 				{
 					int rank = rankEl.GetInt32();
-					_userRankLabel.Text = rank > 0 ? $"你的排名: #{rank}" : "暂无记录";
+					_userRankLabel.Text = rank > 0 ? $"🎯 你的排名: #{rank}" : "暂无记录";
 				}
 				else
 				{

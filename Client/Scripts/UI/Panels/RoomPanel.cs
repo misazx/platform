@@ -102,7 +102,7 @@ namespace RoguelikeGame.UI.Panels
 
             _roomStatusIcon = new Label
             {
-                Text = "[等待]",
+                Text = "✅ 等待中",
                 CustomMinimumSize = new Vector2(100, 25)
             };
             _roomStatusIcon.AddThemeFontSizeOverride("font_size", 13);
@@ -110,7 +110,7 @@ namespace RoguelikeGame.UI.Panels
 
             _roomModeLabel = new Label
             {
-                Text = "PvP",
+                Text = "⚔️ PvP",
                 CustomMinimumSize = new Vector2(100, 25)
             };
             _roomModeLabel.AddThemeFontSizeOverride("font_size", 13);
@@ -126,7 +126,7 @@ namespace RoguelikeGame.UI.Panels
 
             _roomPlayerCountLabel = new Label
             {
-                Text = "1/4",
+                Text = "👥 1/4",
                 CustomMinimumSize = new Vector2(80, 25)
             };
             _roomPlayerCountLabel.AddThemeFontSizeOverride("font_size", 13);
@@ -136,7 +136,7 @@ namespace RoguelikeGame.UI.Panels
 
             var playerHeader = new Label
             {
-                Text = "玩家列表",
+                Text = "📋 玩家列表",
                 CustomMinimumSize = new Vector2(340, 28)
             };
             playerHeader.AddThemeFontSizeOverride("font_size", 16);
@@ -153,21 +153,37 @@ namespace RoguelikeGame.UI.Panels
             buttonBox.AddThemeConstantOverride("separation", 8);
             leftPanel.AddChild(buttonBox);
 
-            _readyButton = UITheme.MakeWideButton("准备", "icon_hand", new Vector2(320, 45));
+            _readyButton = new Button
+            {
+                Text = "✋ 准备",
+                CustomMinimumSize = new Vector2(320, 45)
+            };
             _readyButton.Pressed += OnReadyPressed;
             buttonBox.AddChild(_readyButton);
 
-            _startButton = UITheme.MakeWideButton("开始游戏", "icon_play", new Vector2(320, 45));
+            _startButton = new Button
+            {
+                Text = "🎮 开始游戏",
+                CustomMinimumSize = new Vector2(320, 45)
+            };
             _startButton.Pressed += OnStartGamePressed;
             _startButton.Visible = false;
             buttonBox.AddChild(_startButton);
 
-            _addBotButton = UITheme.MakeSmallButton("添加机器人", "icon_bot", new Vector2(320, 38));
+            _addBotButton = new Button
+            {
+                Text = "🤖 添加机器人",
+                CustomMinimumSize = new Vector2(320, 38)
+            };
             _addBotButton.Pressed += OnAddBotPressed;
             _addBotButton.Visible = false;
             buttonBox.AddChild(_addBotButton);
 
-            _leaveButton = UITheme.MakeSmallButton("退出房间", "icon_cross", new Vector2(320, 40));
+            _leaveButton = new Button
+            {
+                Text = "🚪 退出房间",
+                CustomMinimumSize = new Vector2(320, 40)
+            };
             _leaveButton.Modulate = new Color(0.9f, 0.4f, 0.4f);
             _leaveButton.Pressed += OnLeavePressed;
             buttonBox.AddChild(_leaveButton);
@@ -182,7 +198,7 @@ namespace RoguelikeGame.UI.Panels
 
             var chatHeader = new Label
             {
-                Text = "房间聊天",
+                Text = "💬 房间聊天",
                 CustomMinimumSize = new Vector2(0, 28)
             };
             chatHeader.AddThemeFontSizeOverride("font_size", 16);
@@ -221,7 +237,11 @@ namespace RoguelikeGame.UI.Panels
             _chatInput.Connect("text_submitted", new Callable(this, nameof(OnChatSubmitted)));
             chatRow.AddChild(_chatInput);
 
-            var sendButton = UITheme.MakeSmallButton("发送", "", new Vector2(80, 36));
+            var sendButton = new Button
+            {
+                Text = "发送",
+                CustomMinimumSize = new Vector2(80, 36)
+            };
             sendButton.Pressed += SendChatMessage;
             chatRow.AddChild(sendButton);
         }
@@ -324,20 +344,20 @@ namespace RoguelikeGame.UI.Panels
 
             _roomStatusIcon.Text = room.Status switch
             {
-                RoomStatus.Waiting => "[等待]",
-                RoomStatus.Full => "[已满]",
-                RoomStatus.Ready => "[就绪]",
-                RoomStatus.Playing => "[游戏中]",
-                _ => "[未知]"
+                RoomStatus.Waiting => "✅ 等待中",
+                RoomStatus.Full => "🔒 已满",
+                RoomStatus.Ready => "⚡ 已就绪",
+                RoomStatus.Playing => "🎮 游戏中",
+                _ => "❓ 未知"
             };
 
             string modeText = room.Mode switch
             {
-                GameMode.PvP => "PvP 对战",
-                GameMode.PvE => "PvE 合作",
-                GameMode.Coop => "Coop 团队",
-                GameMode.Race => "Race 竞速",
-                _ => "未知"
+                GameMode.PvP => "⚔️ PvP 对战",
+                GameMode.PvE => "🛡️ PvE 合作",
+                GameMode.Coop => "🤝 Coop 团队",
+                GameMode.Race => "🏁 Race 竞速",
+                _ => "📌 未知"
             };
 
             bool isHost = RoomManager.Instance?.IsHost ?? false;
@@ -358,7 +378,7 @@ namespace RoguelikeGame.UI.Panels
                 _roomModeLabel.Text = modeText;
             }
 
-            _roomPlayerCountLabel.Text = $"{room.CurrentPlayers}/{room.MaxPlayers}";
+            _roomPlayerCountLabel.Text = $"👥 {room.CurrentPlayers}/{room.MaxPlayers}";
 
             var sortedPlayers = room.Players.OrderBy(p => p.JoinedAt).ToList();
             UpdatePlayerList(room, sortedPlayers);
@@ -372,10 +392,10 @@ namespace RoguelikeGame.UI.Panels
 
             var modeMap = new Dictionary<string, (GameMode Mode, string Label)>
             {
-                { "pvp", (GameMode.PvP, "PvP 对战") },
-                { "pve", (GameMode.PvE, "PvE 合作") },
-                { "coop", (GameMode.Coop, "Coop 团队") },
-                { "race", (GameMode.Race, "Race 竞速") }
+                { "pvp", (GameMode.PvP, "⚔️ PvP 对战") },
+                { "pve", (GameMode.PvE, "🛡️ PvE 合作") },
+                { "coop", (GameMode.Coop, "🤝 Coop 团队") },
+                { "race", (GameMode.Race, "🏁 Race 竞速") }
             };
 
             string gameModeId = room.GameModeId ?? "";
@@ -397,7 +417,7 @@ namespace RoguelikeGame.UI.Panels
 
             if (_availableModes.Count == 0)
             {
-                _modeOption.AddItem("Coop 团队");
+                _modeOption.AddItem("🤝 Coop 团队");
                 _availableModes.Add(GameMode.Coop);
             }
         }
@@ -458,10 +478,10 @@ namespace RoguelikeGame.UI.Panels
                 {
                     var roleIcon = new Label
                     {
-                        Text = player.IsHost ? "[房主]" : (player.IsBot ? "[Bot]" : "  "),
-                        CustomMinimumSize = new Vector2(40, 30)
+                        Text = player.IsHost ? "👑" : (player.IsBot ? "🤖" : "  "),
+                        CustomMinimumSize = new Vector2(24, 30)
                     };
-                    roleIcon.AddThemeFontSizeOverride("font_size", 11);
+                    roleIcon.AddThemeFontSizeOverride("font_size", 16);
                     playerRow.AddChild(roleIcon);
 
                     var nameLabel = new Label
@@ -486,7 +506,7 @@ namespace RoguelikeGame.UI.Panels
 
                     var statusLabel = new Label
                     {
-                        Text = player.IsHost ? "房主" : (player.IsReady ? "已准备" : "未准备"),
+                        Text = player.IsHost ? "👑 房主" : (player.IsReady ? "✅ 已准备" : "⏳ 未准备"),
                         CustomMinimumSize = new Vector2(70, 30),
                         HorizontalAlignment = HorizontalAlignment.Right
                     };
@@ -586,11 +606,11 @@ namespace RoguelikeGame.UI.Panels
             var result = await Network.Rooms.RoomManager.Instance.RemoveBotAsync(botId);
             if (result.Success)
             {
-                AddSystemMessage($"{result.Message}");
+                AddSystemMessage($"🤖 {result.Message}");
             }
             else
             {
-                AddSystemMessage($"移除机器人失败: {result.Message}");
+                AddSystemMessage($"❌ 移除机器人失败: {result.Message}");
             }
         }
 
@@ -603,7 +623,7 @@ namespace RoguelikeGame.UI.Panels
             _isReady = currentPlayer?.IsReady ?? false;
 
             _readyButton.Visible = !isHost;
-            _readyButton.Text = _isReady ? "取消准备" : "准备";
+            _readyButton.Text = _isReady ? "❌ 取消准备" : "✋ 准备";
             _readyButton.Modulate = _isReady ? new Color(0.9f, 0.6f, 0.3f) : new Color(0.3f, 0.8f, 0.5f);
 
             _startButton.Visible = isHost;
@@ -654,7 +674,7 @@ namespace RoguelikeGame.UI.Panels
 
                 if (success)
                 {
-                    AddSystemMessage("游戏开始！");
+                    AddSystemMessage("🎮 游戏开始！");
                 }
                 else
                 {
@@ -664,7 +684,7 @@ namespace RoguelikeGame.UI.Panels
             catch (Exception ex)
             {
                 GD.PrintErr($"[RoomPanel] 开始游戏异常: {ex.Message}");
-                AddSystemMessage("开始游戏异常");
+                AddSystemMessage("❌ 开始游戏异常");
             }
             finally
             {
@@ -682,17 +702,17 @@ namespace RoguelikeGame.UI.Panels
 
                 if (result.Success)
                 {
-                    AddSystemMessage($"{result.Message}");
+                    AddSystemMessage($"🤖 {result.Message}");
                 }
                 else
                 {
-                    AddSystemMessage($"添加机器人失败: {result.Message}");
+                    AddSystemMessage($"❌ 添加机器人失败: {result.Message}");
                 }
             }
             catch (Exception ex)
             {
                 GD.PrintErr($"[RoomPanel] 添加机器人异常: {ex.Message}");
-                AddSystemMessage($"添加机器人异常: {ex.Message}");
+                AddSystemMessage($"❌ 添加机器人异常: {ex.Message}");
             }
             finally
             {
@@ -776,38 +796,38 @@ namespace RoguelikeGame.UI.Panels
 
         private void OnPlayerJoined(string playerId, string playerName)
         {
-            AddSystemMessage($"{playerName} 加入了房间");
+            AddSystemMessage($"👤 {playerName} 加入了房间");
             RefreshRoomInfo();
         }
 
         private void OnPlayerLeft(string playerId)
         {
-            AddSystemMessage("玩家离开了房间");
+            AddSystemMessage($"👤 玩家离开了房间");
             RefreshRoomInfo();
         }
 
         private void OnPlayerReadyChanged(string playerId, bool isReady)
         {
             string status = isReady ? "已准备" : "取消准备";
-            AddSystemMessage($"玩家{status}");
+            AddSystemMessage($"📋 玩家{status}");
             RefreshRoomInfo();
         }
 
         private void OnGameStarting()
         {
-            AddSystemMessage("游戏即将开始！");
+            AddSystemMessage("🎮 游戏即将开始！");
             OnGameStarted?.Invoke();
         }
 
         private void OnHubPlayerJoined(string playerId, string playerName)
         {
-            AddSystemMessage($"{playerName} 加入了房间");
+            AddSystemMessage($"👤 {playerName} 加入了房间");
             RefreshRoomInfo();
         }
 
         private void OnHubPlayerLeft(string playerId, string playerName)
         {
-            AddSystemMessage($"{playerName} 离开了房间");
+            AddSystemMessage($"👤 {playerName} 离开了房间");
             RefreshRoomInfo();
         }
 
@@ -823,37 +843,37 @@ namespace RoguelikeGame.UI.Panels
         private void OnHubReadyChanged(string playerId, bool isReady)
         {
             string status = isReady ? "已准备" : "取消准备";
-            AddSystemMessage($"玩家{status}");
+            AddSystemMessage($"📋 玩家{status}");
             RefreshRoomInfo();
         }
 
         private void OnHubGameStarting(string seed, string roomId)
         {
-            AddSystemMessage($"游戏即将开始！Seed: {seed}");
+            AddSystemMessage($"🎮 游戏即将开始！Seed: {seed}");
             OnGameStarted?.Invoke();
         }
 
         private void OnHubBotAdded(string botName)
         {
-            AddSystemMessage($"机器人 {botName} 已加入");
+            AddSystemMessage($"🤖 机器人 {botName} 已加入");
             RefreshRoomInfo();
         }
 
         private void OnHubBotRemoved(string botName)
         {
-            AddSystemMessage($"机器人 {botName} 已移除");
+            AddSystemMessage($"🤖 机器人 {botName} 已移除");
             RefreshRoomInfo();
         }
 
         private void OnHubModeChanged(string roomId, string mode)
         {
-            AddSystemMessage($"房间模式已更改为 {mode}");
+            AddSystemMessage($"🔄 房间模式已更改为 {mode}");
             RefreshRoomInfo();
         }
 
         private void OnHubSlotSwapped(int fromSlot, int toSlot)
         {
-            AddSystemMessage($"玩家位置交换: #{fromSlot + 1} ↔ #{toSlot + 1}");
+            AddSystemMessage($"🔄 玩家位置交换: #{fromSlot + 1} ↔ #{toSlot + 1}");
             RefreshRoomInfo();
         }
     }
