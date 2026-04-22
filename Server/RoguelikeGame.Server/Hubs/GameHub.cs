@@ -392,24 +392,62 @@ namespace RoguelikeGame.Server.Hubs
             });
         }
 
-        // 接收光影旅者游戏状态更新并转发给BotGameService
         public async Task UpdateLightShadowGameState(string roomId, string botUserId, object gameState)
         {
             try
             {
-                // 将gameState转换为字典
                 var stateDict = new Dictionary<string, object>();
                 if (gameState is System.Text.Json.JsonElement jsonElement)
                 {
-                    foreach (var prop in jsonElement.EnumerateObject())
+                    if (jsonElement.ValueKind == System.Text.Json.JsonValueKind.String)
+                    {
+                        var innerJson = jsonElement.GetString();
+                        if (!string.IsNullOrEmpty(innerJson))
+                        {
+                            jsonElement = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(innerJson);
+                        }
+                    }
+                    if (jsonElement.ValueKind == System.Text.Json.JsonValueKind.Object)
+                    {
+                        foreach (var prop in jsonElement.EnumerateObject())
+                        {
+                            switch (prop.Value.ValueKind)
+                            {
+                                case System.Text.Json.JsonValueKind.Number:
+                                    if (prop.Value.TryGetInt32(out int intVal))
+                                        stateDict[prop.Name] = intVal;
+                                    else if (prop.Value.TryGetDouble(out double doubleVal))
+                                        stateDict[prop.Name] = doubleVal;
+                                    break;
+                                case System.Text.Json.JsonValueKind.True:
+                                    stateDict[prop.Name] = true;
+                                    break;
+                                case System.Text.Json.JsonValueKind.False:
+                                    stateDict[prop.Name] = false;
+                                    break;
+                                case System.Text.Json.JsonValueKind.String:
+                                    stateDict[prop.Name] = prop.Value.GetString() ?? "";
+                                    break;
+                                case System.Text.Json.JsonValueKind.Object:
+                                case System.Text.Json.JsonValueKind.Array:
+                                    stateDict[prop.Name] = prop.Value;
+                                    break;
+                            }
+                        }
+                    }
+                }
+                else if (gameState is string gameStateStr)
+                {
+                    var parsed = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(gameStateStr);
+                    foreach (var prop in parsed.EnumerateObject())
                     {
                         switch (prop.Value.ValueKind)
                         {
                             case System.Text.Json.JsonValueKind.Number:
-                                if (prop.Value.TryGetInt32(out int intVal))
-                                    stateDict[prop.Name] = intVal;
-                                else if (prop.Value.TryGetDouble(out double doubleVal))
-                                    stateDict[prop.Name] = doubleVal;
+                                if (prop.Value.TryGetInt32(out int intVal2))
+                                    stateDict[prop.Name] = intVal2;
+                                else if (prop.Value.TryGetDouble(out double doubleVal2))
+                                    stateDict[prop.Name] = doubleVal2;
                                 break;
                             case System.Text.Json.JsonValueKind.True:
                                 stateDict[prop.Name] = true;
@@ -432,11 +470,13 @@ namespace RoguelikeGame.Server.Hubs
                     stateDict = dict;
                 }
 
+                _logger.LogDebug("Bot game state updated for {BotUserId} in room {RoomId}, keys: {Keys}",
+                    botUserId, roomId, string.Join(",", stateDict.Keys));
                 _botGameService.UpdateBotGameState(roomId, botUserId, stateDict);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to update bot game state");
+                _logger.LogError(ex, "Failed to update bot game state for {BotUserId} in room {RoomId}", botUserId, roomId);
             }
         }
     }

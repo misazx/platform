@@ -365,12 +365,21 @@ namespace RoguelikeGame.Server.Services
 
         private async Task ProcessLightShadowBotActions(RoomBotContext ctx, BotInstance bot, CancellationToken stoppingToken)
         {
-            // 光影旅者机器人使用更高频率的更新
             if (DateTime.UtcNow - ctx.LastActionTime < ctx.ActionCooldown) return;
 
             var bb = bot.Tree.Blackboard;
 
-            // 获取动作状态
+            var gameState = bb.Get<LightShadowGameState>(LightShadowBBKeys.GameState);
+            if (gameState == null)
+            {
+                if (DateTime.UtcNow - ctx.LastActionTime > TimeSpan.FromSeconds(5))
+                {
+                    _logger.LogDebug("LightShadow bot {BotUserId} has no game state yet, waiting for client to send state", ctx.BotUserId);
+                    ctx.LastActionTime = DateTime.UtcNow;
+                }
+                return;
+            }
+
             var currentAction = bb.Get<string>(LightShadowBBKeys.CurrentAction);
             var moveDir = bb.Get<int>(LightShadowBBKeys.MoveDirection);
             var shouldJump = bb.Get<bool>(LightShadowBBKeys.ShouldJump);

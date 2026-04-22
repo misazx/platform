@@ -11,6 +11,7 @@ signal bridge_race_position_updated(racer_id: String, x: float, y: float, form: 
 signal bridge_race_checkpoint_reached(racer_id: String, checkpoint_id: String)
 signal bridge_race_finished(racer_id: String, finish_time: float)
 signal bridge_game_started(sync_seed: int)
+signal bridge_game_starting(seed_str: String, mode: String, game_mode_id: String)
 signal bridge_game_ended_victory(victory: bool)
 signal bridge_state_synced(room_id: String, current_turn: int)
 signal bridge_turn_changed(new_turn: int)
@@ -100,6 +101,8 @@ func _connect_hub_client(hub_client: Node) -> void:
 		hub_client.OnRoomStateUpdate.connect(_on_room_state_update)
 	if hub_client.has_signal("OnLightShadowBotAction"):
 		hub_client.OnLightShadowBotAction.connect(_on_light_shadow_bot_action)
+	if hub_client.has_signal("OnGameStartingExtended"):
+		hub_client.OnGameStartingExtended.connect(_on_hub_game_starting_extended)
 	if hub_client.has_signal("OnLevelCompleted"):
 		hub_client.OnLevelCompleted.connect(_on_level_completed)
 	if hub_client.has_signal("OnGameEnded"):
@@ -154,10 +157,15 @@ func _on_race_finished(racer_id: String, finish_time: float) -> void:
 
 func _on_game_started(sync_seed: int) -> void:
 	bridge_game_started.emit(sync_seed)
-	print("[MultiplayerBridge] Game started with seed: %d - transitioning to map" % sync_seed)
-	var main_node := get_tree().root.get_node_or_null("/root/Main") as Node
-	if main_node != null and main_node.has_method("GoToMap"):
-		main_node.call("GoToMap")
+	print("[MultiplayerBridge] Game started with seed: %d" % sync_seed)
+
+func _on_hub_game_starting_extended(seed_str: String, mode: String, game_mode_id: String) -> void:
+	print("[MultiplayerBridge] GameStarting信号收到: seed=%s mode=%s gameModeId=%s" % [seed_str, mode, game_mode_id])
+	bridge_game_starting.emit(seed_str, mode, game_mode_id)
+	var sync_seed: int = 0
+	if seed_str != "":
+		sync_seed = hash(seed_str) & 0x7FFFFFFF
+	bridge_game_started.emit(sync_seed)
 
 func _on_game_ended_victory(victory: bool) -> void:
 	bridge_game_ended_victory.emit(victory)

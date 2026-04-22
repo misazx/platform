@@ -21,11 +21,13 @@ var _level_select: LevelSelectScreen
 var _bot_controllers: Dictionary = {}
 var _game_state_update_timer: Timer = null
 var _is_game_active: bool = false
+var _multiplayer_initialized: bool = false
 
 func _ready() -> void:
 	_setup_scene()
 	_setup_input_actions()
 	_load_and_build_level("ff_01")
+	call_deferred("_check_and_init_multiplayer")
 
 func _physics_process(_delta: float) -> void:
 	if not is_instance_valid(player) or player.is_dead:
@@ -749,14 +751,42 @@ func _connect_multiplayer_bridge() -> void:
 	bridge.bridge_level_completed.connect(_on_bridge_level_completed)
 	bridge.bridge_game_ended.connect(_on_bridge_game_ended)
 	bridge.bridge_game_started.connect(_on_bridge_game_started)
+	bridge.bridge_game_starting.connect(_on_bridge_game_starting)
 
 func _on_bridge_game_started(sync_seed: int) -> void:
-	print("[GameScene] 游戏开始")
+	print("[GameScene] bridge_game_started 信号收到, seed: ", sync_seed)
+	_init_multiplayer_features()
+
+func _on_bridge_game_starting(seed_str: String, mode: String, game_mode_id: String) -> void:
+	print("[GameScene] bridge_game_starting 信号收到: mode=", mode, " gameModeId=", game_mode_id)
+	if game_mode_id == "light_shadow_traveler":
+		_init_multiplayer_features()
+
+func _check_and_init_multiplayer() -> void:
+	var room_mgr := get_node_or_null("/root/RoomManager") as Node
+	if room_mgr == null:
+		print("[GameScene] RoomManager不存在，单人模式")
+		return
+	var current_room: Variant = room_mgr.get("CurrentRoom")
+	if current_room == null:
+		print("[GameScene] 当前无房间，单人模式")
+		return
+	var status: String = str(current_room.get("Status", "")).to_lower()
+	if status != "playing":
+		print("[GameScene] 房间状态非Playing: ", status, "，等待游戏开始信号")
+		return
+	print("[GameScene] 检测到多人游戏房间(Playing状态)，初始化多人功能")
+	_init_multiplayer_features()
+
+func _init_multiplayer_features() -> void:
+	if _multiplayer_initialized:
+		print("[GameScene] 多人功能已初始化，跳过重复初始化")
+		return
+	_multiplayer_initialized = true
 	_try_set_game_mode_from_room()
-	# 立即初始化机器人控制器
 	_initialize_bots_on_game_start()
-	# 开始定期发送游戏状态更新
 	_start_sending_game_state_updates()
+	print("[GameScene] 多人功能初始化完成, 模式: ", _game_mode, " Bot数量: ", _bot_controllers.size())
 
 func _try_set_game_mode_from_room() -> void:
 	var room_mgr := get_node_or_null("/root/RoomManager") as Node
@@ -896,6 +926,10 @@ func _initialize_bots_on_game_start() -> void:
 			var is_bot: bool = p.get("IsBot", false)
 			if is_bot:
 				var bot_user_id: String = str(p.get("UserId", "bot_" + str(bot_index)))
+				if _bot_controllers.has(bot_user_id):
+					print("[GameScene] 机器人已存在，跳过: ", bot_user_id)
+					bot_index += 1
+					continue
 				var bot_name: String = str(p.get("BotName", "Bot" + str(bot_index + 1)))
 				print("[GameScene] 初始化机器人: ", bot_name, " (", bot_user_id, ")")
 				_create_bot_controller(bot_user_id, bot_name, bot_index, _game_mode)
@@ -903,13 +937,16 @@ func _initialize_bots_on_game_start() -> void:
 
 func _start_sending_game_state_updates() -> void:
 	_is_game_active = true
+	if is_instance_valid(_game_state_update_timer) and not _game_state_update_timer.is_stopped():
+		return
 	if is_instance_valid(_game_state_update_timer):
 		_game_state_update_timer.queue_free()
 	_game_state_update_timer = Timer.new()
-	_game_state_update_timer.wait_time = 0.1  # 每 100ms 发送一次更新
+	_game_state_update_timer.wait_time = 0.1
 	_game_state_update_timer.timeout.connect(_send_game_state_update)
 	add_child(_game_state_update_timer)
 	_game_state_update_timer.start()
+	print("[GameScene] 游戏状态更新定时器已启动")
 
 func _send_game_state_update() -> void:
 	if not _is_game_active:
@@ -1038,6 +1075,8 @@ func _disconnect_multiplayer_bridge() -> void:
 		bridge.bridge_game_ended.disconnect(_on_bridge_game_ended)
 	if bridge.bridge_game_started.is_connected(_on_bridge_game_started):
 		bridge.bridge_game_started.disconnect(_on_bridge_game_started)
+	if bridge.bridge_game_starting.is_connected(_on_bridge_game_starting):
+		bridge.bridge_game_starting.disconnect(_on_bridge_game_starting)
 
 func _cleanup_mode_managers() -> void:
 	if is_instance_valid(race_manager):

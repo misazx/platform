@@ -657,7 +657,15 @@ namespace RoguelikeGame.Network.Realtime
         public async Task UpdateBotGameStateAsync(string roomId, string botUserId, string gameStateJson)
         {
             if (_hubConnection?.State != HubConnectionState.Connected) return;
-            await _hubConnection.InvokeAsync("UpdateLightShadowGameState", roomId, botUserId, gameStateJson);
+            try
+            {
+                var gameStateObj = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(gameStateJson);
+                await _hubConnection.InvokeAsync("UpdateLightShadowGameState", roomId, botUserId, gameStateObj);
+            }
+            catch (Exception ex)
+            {
+                GD.PrintErr($"[GameHubClient] UpdateBotGameState failed: {ex.Message}");
+            }
         }
 
         public void UpdateBotGameStateSync(string roomId, string botUserId, string gameStateJson)
