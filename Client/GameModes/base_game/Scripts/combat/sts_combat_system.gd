@@ -472,7 +472,7 @@ func _gen_fungus_ling_intent(roll: float) -> Dictionary:
 		return _create_attack_intent(6 + _turn_number / 3)
 
 func _gen_boss_intent(enemy: Dictionary, roll: float) -> Dictionary:
-	var phase: int = 1 if enemy.current_hp > enemy.max_hp / 2 else 2
+	var phase: int = 1 if _get_enemy_hp(enemy) > _get_enemy_max_hp(enemy) / 2 else 2
 	var cycle: int = _turn_number % 4
 	if phase == 1:
 		match cycle:
@@ -665,7 +665,7 @@ func _apply_damage_to_enemy(enemy: Dictionary, damage: int) -> void:
 	if enemy.has_status and enemy.get("has_status", false):
 		if _enemy_has_status(enemy, "vulnerable"):
 			damage = int(damage * 1.5)
-	enemy.current_hp -= damage
+	_set_enemy_hp(enemy, _get_enemy_hp(enemy) - damage)
 
 func _apply_damage_to_unit(unit: Dictionary, damage: int) -> void:
 	if unit.block > 0:
@@ -697,10 +697,33 @@ func _check_combat_end() -> void:
 		print("[StsCombatEngine] Player defeated!")
 
 func _is_enemy_dead(enemy: Dictionary) -> bool:
-	return enemy.current_hp <= 0
+	return enemy.get("current_hp", 0) <= 0
 
 func _is_player_dead() -> bool:
-	return _player.current_hp <= 0
+	return _player.get("current_hp", 0) <= 0
+
+func _get_enemy_hp(enemy: Dictionary) -> int:
+	return enemy.get("current_hp", enemy.get("max_health", enemy.get("max_hp", 50)))
+
+func _get_enemy_max_hp(enemy: Dictionary) -> int:
+	return enemy.get("max_hp", enemy.get("max_health", 50))
+
+func _set_enemy_hp(enemy: Dictionary, hp: int) -> void:
+	if enemy.has("current_hp"):
+		enemy["current_hp"] = hp
+	elif enemy.has("max_health"):
+		enemy["current_hp"] = hp
+	else:
+		enemy["current_hp"] = hp
+
+func _get_player_hp() -> int:
+	return _player.get("current_hp", 80)
+
+func _get_player_max_hp() -> int:
+	return _player.get("max_hp", 80)
+
+func _set_player_hp(hp: int) -> void:
+	_player["current_hp"] = hp
 
 func _player_has_status(status_id: String) -> bool:
 	return _get_status_stacks(_player, status_id) > 0

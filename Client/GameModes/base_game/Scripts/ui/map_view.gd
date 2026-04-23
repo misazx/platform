@@ -138,11 +138,14 @@ func _load_map_from_game_manager() -> void:
 func _restore_persistent_state() -> void:
 	_visited_node_ids = _persistent_visited.duplicate()
 	_reachable_node_ids = _persistent_reachable.duplicate()
-	for node in _current_map.nodes:
-		if node.id in _visited_node_ids:
+	if not _current_map.has("nodes"):
+		return
+	for node: Dictionary in _current_map.nodes:
+		var nid: int = node.get("id", -1)
+		if nid in _visited_node_ids:
 			node["is_visited"] = true
 			node["status"] = 2
-		elif node.id in _reachable_node_ids:
+		elif nid in _reachable_node_ids:
 			node["status"] = 1
 	_update_node_visuals()
 	print("[MapView] Restored state: visited=%s reachable=%s" % [str(_visited_node_ids), str(_reachable_node_ids)])

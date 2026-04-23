@@ -1,0 +1,72 @@
+{
+  "packageId": "light_shadow_traveler",
+  "displayName": "光影旅者",
+  "version": "1.0.0",
+  "author": "Anan Games",
+  "description": "治愈系2D横版平台跳跃游戏，以光影形态切换为核心创新机制",
+  "entryScene": "res://GameModes/light_shadow_traveler/Scenes/GameScene.tscn",
+  "testScene": "res://GameModes/light_shadow_traveler/Scenes/TestScene.tscn",
+  "categories": ["platformer", "puzzle", "multiplayer"],
+  "maxPlayers": 4,
+  "supportsSinglePlayer": true,
+  "supportsMultiPlayer": true,
+  "gameModes": [
+    {
+      "id": "solo",
+      "name": "单人冒险",
+      "description": "探索世界，收集记忆碎片",
+      "maxPlayers": 1
+    },
+    {
+      "id": "coop",
+      "name": "双人合作",
+      "description": "与好友一起解谜冒险",
+      "maxPlayers": 2
+    },
+    {
+      "id": "race",
+      "name": "竞速模式",
+      "description": "比拼速度，挑战最佳时间",
+      "maxPlayers": 4
+    },
+    {
+      "id": "pvp",
+      "name": "对战模式",
+      "description": "光影对决，技高一筹",
+      "maxPlayers": 2
+    }
+  ],
+  "difficultyLevels": ["casual", "normal", "hardcore"],
+  "chapters": [
+    {
+      "id": "forgotten_forest",
+      "name": "遗忘之森",
+      "order": 1,
+      "unlocked": true
+    },
+    {
+      "id": "faded_studio",
+      "name": "褪色画室",
+      "order": 2,
+      "unlocked": false
+    },
+    {
+      "id": "silent_concert_hall",
+      "name": "寂静音乐厅",
+      "order": 3,
+      "unlocked": false
+    },
+    {
+      "id": "sleeping_library",
+      "name": "沉睡图书馆",
+      "order": 4,
+      "unlocked": false
+    },
+    {
+      "id": "light_shadow_temple",
+      "name": "光影神殿",
+      "order": 5,
+      "unlocked": false
+    }
+  ]
+}

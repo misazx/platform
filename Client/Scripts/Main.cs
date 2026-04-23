@@ -758,7 +758,61 @@ namespace RoguelikeGame
             {
                 _currentScene = eventScene;
                 _currentSceneContainer.AddChild(eventScene);
-                _connectSceneSignals(eventScene, "close_pressed", OnPanelClosed);            }
+
+                if (eventScene.HasMethod("set_random_event"))
+                {
+                    eventScene.Call("set_random_event");
+                }
+
+                _connectSceneSignals(eventScene, "close_pressed", OnPanelClosed);
+                _connectSceneSignals(eventScene, "choice_made", OnEventChoiceMade);
+
+                GD.Print("[Main] Event panel initialized with random event");
+            }
+        }
+
+        private void OnEventChoiceMade(int choiceIndex, Godot.Collections.Dictionary choiceData)
+        {
+            string effect = choiceData.GetValueOrDefault("effect", "");
+            string text = choiceData.GetValueOrDefault("text", $"Option {choiceIndex + 1}");
+            GD.Print($"[Main] Event choice made: index={choiceIndex}, effect={effect}, text={text}");
+
+            switch (effect)
+            {
+                case "heal_and_card":
+                    double healPercent = choiceData.GetValueOrDefault("heal_percent", 0.2);
+                    int healAmount = (int)(_selectedCharacterMaxHp * healPercent);
+                    GD.Print($"[Main] Event: Heal {healPercent * 100}% ({healAmount} HP) + rare card");
+                    break;
+                case "heal_flat":
+                    int flatHeal = choiceData.GetValueOrDefault("heal_amount", 15);
+                    GD.Print($"[Main] Event: Heal {flatHeal} HP");
+                    break;
+                case "strength_damage":
+                    int strGain = choiceData.GetValueOrDefault("strength", 2);
+                    int dmgTaken = choiceData.GetValueOrDefault("damage", 5);
+                    GD.Print($"[Main] Event: Gain {strGain} Strength, take {dmgTaken} damage");
+                    break;
+                case "risk_gold":
+                    int riskDmg = choiceData.GetValueOrDefault("damage", 15);
+                    int goldGain = choiceData.GetValueOrDefault("gold", 50);
+                    _selectedCharacterGold += goldGain;
+                    GD.Print($"[Main] Event: Take {riskDmg} damage, gain {goldGain} gold");
+                    break;
+                case "combat":
+                    string enemyId = choiceData.GetValueOrDefault("enemy_id", "");
+                    GD.Print($"[Main] Event: Combat triggered with enemy: {enemyId}");
+                    CallDeferred(nameof(GoToCombat), enemyId);
+                    break;
+                case "relic_gift":
+                    int giftCost = choiceData.GetValueOrDefault("gold_cost", 30);
+                    _selectedCharacterGold -= giftCost;
+                    GD.Print($"[Main] Event: Spent {giftCost} gold for random relic");
+                    break;
+                default:
+                    GD.Print("[Main] Event: No special effect");
+                    break;
+            }
         }
 
         public void GoToTreasure()

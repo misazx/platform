@@ -60,6 +60,32 @@ func set_gold(gold: int) -> void:
 	_player_gold = gold
 	_gold_label.text = "%d 金币" % gold
 
+func generate_shop_items(character_id: String = "") -> void:
+	_items.clear()
+	var card_db = get_node_or_null("/root/CardDatabase") if has_node("/root/CardDatabase") else null
+	var relic_db = get_node_or_null("/root/RelicDatabase") if has_node("/root/RelicDatabase") else null
+	if card_db != null and card_db.has_method("get_cards_by_rarity"):
+		var common_cards: Array = card_db.call("get_cards_by_rarity", 1)
+		var uncommon_cards: Array = card_db.call("get_cards_by_rarity", 2)
+		for i in range(mini(3, common_cards.size())):
+			var card: Dictionary = common_cards[i]
+			_items.append({"type": "card", "name": card.get("name", ""), "id": card.get("id", ""), "cost": 50 + randi() % 30, "data": card})
+		for i in range(mini(2, uncommon_cards.size())):
+			var card: Dictionary = uncommon_cards[i]
+			_items.append({"type": "card", "name": card.get("name", ""), "id": card.get("id", ""), "cost": 75 + randi() % 50, "data": card})
+	if relic_db != null and relic_db.has_method("get_relics_by_tier"):
+		var common_relics: Array = relic_db.call("get_relics_by_tier", 1)
+		var uncommon_relics: Array = relic_db.call("get_relics_by_tier", 2)
+		if not common_relics.is_empty():
+			var relic: Dictionary = common_relics[randi() % common_relics.size()]
+			_items.append({"type": "relic", "name": relic.get("name", ""), "id": relic.get("id", ""), "cost": 150, "data": relic})
+		if not uncommon_relics.is_empty() and randi() % 3 == 0:
+			var relic: Dictionary = uncommon_relics[randi() % uncommon_relics.size()]
+			_items.append({"type": "relic", "name": relic.get("name", ""), "id": relic.get("id", ""), "cost": 250, "data": relic})
+	_items.append({"type": "potion", "name": "生命药水", "id": "health_potion", "cost": 50, "data": {"heal_amount": 30}})
+	_items.append({"type": "gold_bonus", "name": "神秘袋子 (+25-50金币)", "id": "mystery_bag", "cost": 75, "data": {}})
+	set_shop_items(_items)
+
 func set_shop_items(items: Array) -> void:
 	_items = items
 	for btn in _item_buttons:
@@ -77,7 +103,14 @@ func set_shop_items(items: Array) -> void:
 		var i_type: String = item.get("type", "")
 		var i_name: String = item.get("name", "")
 		var i_cost: int = item.get("cost", 50)
-		var btn: Button = UITheme.make_button("%s: %s (%d)" % [i_type, i_name, i_cost], "icon_coin", Vector2(500, 44))
+		var type_icon: String = ""
+		match i_type:
+			"card": type_icon = "🃏"
+			"relic": type_icon = "💎"
+			"potion": type_icon = "🧪"
+			"gold_bonus": type_icon = "💰"
+			_: type_icon = "📦"
+		var btn: Button = UITheme.make_button("%s %s (%d金)" % [type_icon, i_name, i_cost], "icon_coin", Vector2(500, 44))
 		btn.disabled = i_cost > _player_gold
 		var item_copy: Dictionary = item.duplicate()
 		btn.pressed.connect(func(): _on_item_bought(item_copy))
