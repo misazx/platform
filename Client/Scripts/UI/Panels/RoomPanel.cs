@@ -33,6 +33,7 @@ namespace RoguelikeGame.UI.Panels
 
         public event Action OnLeaveRoom;
         public event Action OnGameStarted;
+        private bool _gameStartedHandled = false;
 
         public override void _Ready()
         {
@@ -815,6 +816,8 @@ namespace RoguelikeGame.UI.Panels
 
         private void OnGameStarting()
         {
+            if (_gameStartedHandled) return;
+            _gameStartedHandled = true;
             AddSystemMessage("🎮 游戏即将开始！");
             OnGameStarted?.Invoke();
         }
@@ -849,6 +852,18 @@ namespace RoguelikeGame.UI.Panels
 
         private void OnHubGameStarting(string seed, string roomId)
         {
+            if (_gameStartedHandled) return;
+            _gameStartedHandled = true;
+
+            if (RoomManager.Instance != null)
+            {
+                var currentRoom = RoomManager.Instance.CurrentRoom;
+                if (currentRoom != null)
+                {
+                    currentRoom.Status = RoomStatus.Playing;
+                }
+            }
+
             AddSystemMessage($"🎮 游戏即将开始！Seed: {seed}");
             OnGameStarted?.Invoke();
         }

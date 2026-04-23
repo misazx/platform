@@ -12,6 +12,7 @@ namespace RoguelikeGame.Server.Services
         void UnregisterRoomBot(string roomId, string botUserId);
         void UpdateBotGameState(string roomId, string botUserId, Dictionary<string, object> gameState);
         void UnregisterRoomBots(string roomId);
+        List<RoomBotContext> GetRegisteredBots();
     }
 
     public class BotGameService : BackgroundService, IBotGameService
@@ -111,6 +112,11 @@ namespace RoguelikeGame.Server.Services
                 }
                 _roomBots.Remove(key);
             }
+        }
+
+        public List<RoomBotContext> GetRegisteredBots()
+        {
+            return _roomBots.Values.ToList();
         }
 
         public void UpdateBotGameState(string roomId, string botUserId, Dictionary<string, object> gameState)

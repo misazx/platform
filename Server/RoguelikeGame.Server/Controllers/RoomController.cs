@@ -285,6 +285,36 @@ namespace RoguelikeGame.Server.Controllers
             if (success)
             {
                 _logger.LogInformation("游戏开始: {RoomId}", roomId);
+
+                var room = await _roomService.GetRoomByIdAsync(roomId);
+                if (room != null)
+                {
+                    var playerUserIds = room.Players.Where(p => !p.IsBot).Select(p => p.UserId).Distinct().ToList();
+                    var allUserIds = playerUserIds.Append(room.HostId).Distinct().ToList();
+                    var userNames = await _dbContext.Users
+                        .Where(u => allUserIds.Contains(u.Id))
+                        .ToDictionaryAsync(u => u.Id, u => u.Username);
+
+                    await _hubContext.Clients.Group(roomId).SendAsync("GameStarting", new
+                    {
+                        roomId,
+                        seed = room.Seed,
+                        mode = room.Mode.ToString(),
+                        gameModeId = room.GameModeId ?? "",
+                        players = room.Players.Select(p => new
+                        {
+                            p.UserId,
+                            username = p.IsBot ? (p.BotName ?? "Bot") : userNames.GetValueOrDefault(p.UserId, ""),
+                            p.IsBot,
+                            isHost = p.UserId == room.HostId
+                        }),
+                        timestamp = DateTime.UtcNow
+                    });
+
+                    _logger.LogInformation("GameStarting SignalR event sent to room {RoomId}, mode={Mode}, gameModeId={GameModeId}",
+                        roomId, room.Mode, room.GameModeId);
+                }
+
                 return Ok(new { success = true, message = "游戏已开始" });
             }
             else
