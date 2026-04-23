@@ -772,5 +772,37 @@ namespace RoguelikeGame.Network.Rooms
 			_httpClient?.Dispose();
 			_instance = null;
 		}
+
+		public Godot.Collections.Dictionary GetCurrentRoomPlayersAsGodot()
+		{
+			var result = new Godot.Collections.Dictionary();
+			if (_currentRoom == null)
+			{
+				result.Add("success", false);
+				return result;
+			}
+
+			var playersArray = new Godot.Collections.Array();
+			foreach (var player in _currentRoom.Players)
+			{
+				var playerDict = new Godot.Collections.Dictionary
+				{
+					{ "UserId", player.UserId ?? "" },
+					{ "Username", player.Username ?? "" },
+					{ "IsBot", player.IsBot },
+					{ "IsHost", player.IsHost },
+					{ "BotName", player.BotName ?? "" },
+					{ "BotDifficulty", player.BotDifficulty ?? "" },
+					{ "Score", player.Score }
+				};
+				playersArray.Add(playerDict);
+			}
+
+			result.Add("success", true);
+			result.Add("status", _currentRoom.Status.ToString());
+			result.Add("gameModeId", _currentRoom.GameModeId ?? "");
+			result.Add("players", playersArray);
+			return result;
+		}
 	}
 }

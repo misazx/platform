@@ -24,9 +24,11 @@ var _is_game_active: bool = false
 var _multiplayer_initialized: bool = false
 
 func _ready() -> void:
+	print("[GameScene] _ready 开始")
 	_setup_scene()
 	_setup_input_actions()
 	_load_and_build_level("ff_01")
+	print("[GameScene] 关卡已加载完成，现在 call_deferred 检查多人")
 	call_deferred("_check_and_init_multiplayer")
 
 func _physics_process(_delta: float) -> void:
@@ -763,6 +765,7 @@ func _on_bridge_game_starting(seed_str: String, mode: String, game_mode_id: Stri
 		_init_multiplayer_features()
 
 func _check_and_init_multiplayer() -> void:
+	print("[GameScene] _check_and_init_multiplayer 被调用")
 	var room_mgr := get_node_or_null("/root/RoomManager") as Node
 	if room_mgr == null:
 		print("[GameScene] RoomManager不存在，单人模式")
@@ -772,8 +775,9 @@ func _check_and_init_multiplayer() -> void:
 		print("[GameScene] 当前无房间，单人模式")
 		return
 	var status: String = str(current_room.get("Status", "")).to_lower()
+	print("[GameScene] 房间状态: ", status)
 	if status != "playing":
-		print("[GameScene] 房间状态非Playing: ", status, "，等待游戏开始信号")
+		print("[GameScene] 房间状态非Playing，等待游戏开始信号")
 		return
 	print("[GameScene] 检测到多人游戏房间(Playing状态)，初始化多人功能")
 	_init_multiplayer_features()
@@ -890,6 +894,7 @@ func _create_bot_controller(bot_user_id: String, bot_name: String, player_index:
 	return bot_ctrl
 
 func _create_bot_character(bot_name: String, player_index: int) -> PlayerCharacter:
+	print("[GameScene] 创建机器人角色: ", bot_name, " 索引: ", player_index)
 	var bot_char := PlayerCharacter.new()
 	bot_char.name = "Bot_" + bot_name
 	bot_char.add_to_group("player")
@@ -898,42 +903,50 @@ func _create_bot_character(bot_name: String, player_index: int) -> PlayerCharact
 		var start_x: float = 100.0 + player_index * 50.0
 		bot_char.position = Vector2(start_x, 400.0)
 		level_root.add_child(bot_char)
+		print("[GameScene] 机器人角色已添加到 level_root，位置: ", bot_char.position)
 	else:
 		bot_char.position = Vector2(100.0 + player_index * 50.0, 400.0)
 		add_child(bot_char)
+		print("[GameScene] 机器人角色已添加到 GameScene，位置: ", bot_char.position)
 	return bot_char
 
 func _initialize_bots_on_game_start() -> void:
+	print("[GameScene] _initialize_bots_on_game_start 开始")
 	var room_mgr := get_node_or_null("/root/RoomManager") as Node
 	if room_mgr == null:
 		print("[GameScene] RoomManager 不存在，无法初始化机器人")
 		return
 
-	var current_room: Variant = room_mgr.get("CurrentRoom")
-	if current_room == null:
-		print("[GameScene] 当前无房间")
+	var room_data: Dictionary = room_mgr.GetCurrentRoomPlayersAsGodot()
+	print("[GameScene] GetCurrentRoomPlayersAsGodot 返回: ", room_data)
+	
+	var success: bool = room_data.get("success", false)
+	if not success:
+		print("[GameScene] 获取房间玩家数据失败")
 		return
 
-	var players: Variant = current_room.get("Players")
-	if players == null or not players is Array:
-		print("[GameScene] 无玩家列表")
-		return
-
+	var players: Array = room_data.get("players", [])
+	print("[GameScene] 玩家列表: ", players)
+	print("[GameScene] 玩家列表大小: ", players.size())
+	
 	var bot_index: int = 0
 	for i in range(players.size()):
-		var p: Variant = players[i]
-		if p is Dictionary:
-			var is_bot: bool = p.get("IsBot", false)
-			if is_bot:
-				var bot_user_id: String = str(p.get("UserId", "bot_" + str(bot_index)))
-				if _bot_controllers.has(bot_user_id):
-					print("[GameScene] 机器人已存在，跳过: ", bot_user_id)
-					bot_index += 1
-					continue
-				var bot_name: String = str(p.get("BotName", "Bot" + str(bot_index + 1)))
-				print("[GameScene] 初始化机器人: ", bot_name, " (", bot_user_id, ")")
-				_create_bot_controller(bot_user_id, bot_name, bot_index, _game_mode)
+		var p: Dictionary = players[i]
+		print("[GameScene] 检查玩家索引: ", i, " 数据: ", p)
+		var is_bot: bool = p.get("IsBot", false)
+		print("[GameScene] 玩家 ", i, " IsBot = ", is_bot)
+		if is_bot:
+			var bot_user_id: String = str(p.get("UserId", "bot_" + str(bot_index)))
+			var bot_name: String = str(p.get("BotName", "Bot" + str(bot_index + 1)))
+			print("[GameScene] 找到 Bot - UserId: ", bot_user_id, " BotName: ", bot_name)
+			if _bot_controllers.has(bot_user_id):
+				print("[GameScene] 机器人已存在，跳过: ", bot_user_id)
 				bot_index += 1
+				continue
+			print("[GameScene] 初始化机器人: ", bot_name, " (", bot_user_id, ")")
+			_create_bot_controller(bot_user_id, bot_name, bot_index, _game_mode)
+			bot_index += 1
+	print("[GameScene] _initialize_bots_on_game_start 结束，bot_index = ", bot_index)
 
 func _start_sending_game_state_updates() -> void:
 	_is_game_active = true
