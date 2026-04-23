@@ -1,8 +1,9 @@
-## graphify
+Use `/godogen` to generate or update this game from a natural language description.
 
-This project has a graphify knowledge graph at graphify-out/.
+The working directory is the project root. NEVER `cd` — use relative paths for all commands.
 
-Rules:
-- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
-- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
-- After modifying code files in this session, run `python3 -c "from graphify.watch import _rebuild_code; from pathlib import Path; _rebuild_code(Path('.'))"` to keep the graph current
+If `tg-push` is on PATH with `TG_BOT_TOKEN` and `TG_CHAT_ID` set, share key visuals via `tg-push --text "caption" --file path/to/image_or_video`: the reference image, the screenshot confirming each task is done, and the final video. For multi-line captions, pass real newlines — not the literal `\n` sequence.
+
+## Limitations
+
+- No audio support

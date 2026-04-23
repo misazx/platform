@@ -907,8 +907,12 @@ func _on_back_pressed() -> void:
 	back_pressed.emit()
 
 func _on_start_pressed() -> void:
+	print("[PackageDetail] _on_start_pressed CALLED!")
+	print("[PackageDetail] Package ID: ", _package_id)
 	var supports_multi: bool = _package_data.get("supportsMultiplayer", false)
+	print("[PackageDetail] supportsMultiplayer: ", supports_multi)
 	if supports_multi:
+		print("[PackageDetail] Showing mode select dialog...")
 		_show_mode_select()
 	else:
 		print("[PackageDetail] Single player only, starting: %s" % _package_id)

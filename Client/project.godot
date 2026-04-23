@@ -59,6 +59,7 @@ MultiProtocolManager="*res://Scripts/Network/MultiProtocolManager.cs"
 ConnectionManager="*res://Scripts/Network/Core/ConnectionManager.cs"
 MultiplayerSeedBridge="*res://Scripts/Network/multiplayer_seed_bridge.gd"
 ServerConfig="*res://Scripts/Network/server_config.gd"
+TestRuntime="*res://GameModes/light_shadow_traveler/Scripts/systems/test_runtime.gd"
 
 [display]
 
